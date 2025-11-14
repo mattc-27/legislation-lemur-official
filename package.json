@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "legislationlemur-latest",
   "private": true,
   "scripts": {
     "build": "turbo run build",
