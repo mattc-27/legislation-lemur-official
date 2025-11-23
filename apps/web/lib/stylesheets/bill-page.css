@@ -1,0 +1,1101 @@
+/* Layout */
+.bills-page {
+    max-width: 1100px;
+}
+
+.filters__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    align-items: end;
+}
+
+@media (max-width: 960px) {
+    .filters__grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+/* Inputs 
+.input, .select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-weak, #2d2f36);
+    background: var(--panel, #0f1115);
+    color: var(--text, #e6e6e6);
+    border-radius: 8px;
+}
+
+.input::placeholder {
+    color: #9aa0a6;
+}
+
+
+.btn {
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid var(--border, #3a3d46);
+    background: transparent;
+    color: var(--text);
+    transition: transform .06s ease, background .2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.btn--primary {
+    background: var(--accent, #6e7cff);
+    border-color: var(--accent);
+    color: #0c0d10;
+}
+
+.btn--primary:hover {
+    filter: brightness(1.05);
+}
+
+.btn--ghost {
+    background: transparent;
+}
+    .btn--full {
+    width: 100%;
+}
+*/
+
+/* Table */
+.table {
+    width: 100%;
+    border: 1px solid var(--border, #2a2d35);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table__head, .table__row {
+    display: grid;
+    grid-template-columns: 1.2fr 2.2fr 1fr 1fr 2.2fr .8fr 1.6fr;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+.table__head {
+    background: rgba(255, 255, 255, 0.04);
+    font-weight: 600;
+    color: #cfd2d7;
+}
+
+.table__row {
+    border-top: 1px solid var(--border-weak, #20222a);
+    align-items: start;
+}
+
+.cell--bill a {
+    font-weight: 600;
+}
+
+.cell--title {
+    color: #e9eaee;
+}
+
+.truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+/* Pills / chips 
+.pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-top: 6px;
+    border: 1px solid var(--border-weak, #2a2d35);
+    color: #cdd0d6;
+}
+
+.pill--house {
+    background: rgba(110, 124, 255, .12);
+    border-color: rgba(110, 124, 255, .35);
+}
+
+.pill--senate {
+    background: rgba(94, 214, 170, .12);
+    border-color: rgba(94, 214, 170, .35);
+}
+
+.chip {
+    display: inline-block;
+    margin: 2px 6px 2px 0;
+    padding: 2px 8px;
+    border: 1px solid #2a2d35;
+    border-radius: 999px;
+    font-size: 12px;
+    color: #cfd2d7;
+}
+*/
+
+/* Status
+.status {
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid #2a2d35;
+}
+
+.status--became_law {
+    background: rgba(94, 214, 170, .12);
+    border-color: rgba(94, 214, 170, .38);
+}
+
+.status--to_president {
+    background: rgba(94, 214, 170, .08);
+}
+
+.status--passed_senate, .status--passed_house {
+    background: rgba(110, 124, 255, .10);
+}
+
+.status--reported {
+    background: rgba(255, 224, 138, .10);
+}
+
+.status--committee {
+    background: rgba(255, 255, 255, .05);
+}
+
+.status--failed {
+    background: rgba(255, 118, 118, .10);
+}
+ */
+
+/* Chart */
+.chart {
+    width: 100%;
+}
+
+.chart__line {
+    fill: none;
+    stroke: var(--accent, #6e7cff);
+    stroke-width: 2;
+}
+
+.chart__line--secondary {
+    stroke: #8bd3c7;
+}
+
+.axis text {
+    fill: #aeb3bb;
+    font-size: 12px;
+}
+
+.axis path, .axis line {
+    stroke: #2a2d35;
+}
+
+.legend-text {
+    fill: #aeb3bb;
+    font-size: 12px;
+}
+
+.legend-dot {
+    fill: var(--accent, #6e7cff);
+}
+
+.legend-dot--secondary {
+    fill: #8bd3c7;
+}
+
+
+/* Pager */
+.pager {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    padding: 16px 0;
+}
+
+
+/* =========================================
+   Bills page — aligned with Member page UI
+   ========================================= */
+
+/* Container + header */
+
+
+.stack-32>*+* {
+    margin-top: 32px;
+}
+
+
+.search-header {
+    margin: clamp(18px, 3vh, 26px) 0 8px;
+}
+
+.section__title--sm {
+    font-size: clamp(1.05rem, .4vw + 1rem, 1.25rem);
+    margin-bottom: 4px;
+}
+
+.section__sub {
+    color: #64748b;
+    margin: 0;
+    font-size: 14px;
+}
+
+
+/* Filters grid + inputs */
+.filters__grid {
+    display: grid;
+    gap: clamp(10px, 1.8vw, 14px);
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    align-items: end;
+}
+
+@media (max-width: 1100px) {
+    .filters__grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .filters__grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* 
+.input, .select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #E5E7EB;
+    background: #fff;
+    color: #0f172a;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.input::placeholder {
+    color: #94A3B8;
+}
+
+.btn {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+    background: #fff;
+    color: #0f172a;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .06s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    background: #F8FAFC;
+    border-color: #dfe3ea;
+}
+
+.btn--primary {
+    background: #EEF2FF;
+    border-color: #C7D2FE;
+    color: #4338CA;
+}
+
+.btn--ghost {
+    background: #F8FAFC;
+    border-color: #E5E7EB;
+    color: #0f172a;
+}
+*/
+/* Div-based table */
+.table {
+    width: 100%;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.table--bills .table__head,
+.table--bills .table__row {
+    display: grid;
+    grid-template-columns: 1.2fr 2.2fr 1fr 1fr 2.2fr .8fr 1.6fr;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+.table__head {
+    background: #F8FAFC;
+    border-bottom: 1px solid #E5E7EB;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.table__body .table__row {
+    border-top: 1px solid #E5E7EB;
+    align-items: start;
+}
+
+.table__body .table__row:hover {
+    background: #FAFAFA;
+}
+
+@media (max-width: 960px) {
+
+    .table--bills .table__head,
+    .table--bills .table__row {
+        grid-template-columns: 1.4fr 2.6fr 1fr 1fr 2.6fr .8fr 1.6fr;
+    }
+}
+
+@media (max-width: 720px) {
+
+    .table--bills .table__head,
+    .table--bills .table__row {
+        grid-template-columns: 1.6fr 2.4fr 1fr 1fr;
+        /* collapse some cols */
+    }
+
+    .table--bills .table__head> :nth-child(n+5),
+    .table--bills .table__row> :nth-child(n+5) {
+        display: none;
+    }
+
+    /* hide latest action, subjects on small */
+}
+
+/* Cells, pills, chips, status */
+.cell--bill a {
+    color: #0f172a;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.cell--bill a:hover {
+    opacity: .9;
+}
+
+.cell--title {
+    color: #0f172a;
+}
+
+/*
+.pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-top: 6px;
+    border: 1px solid #E5E7EB;
+    color: #334155;
+    background: #F1F5F9;
+}
+
+.pill--house {
+    background: #DBEAFE;
+    border-color: #BFDBFE;
+    color: #1E40AF;
+}
+
+.pill--senate {
+    background: #D1FAE5;
+    border-color: #A7F3D0;
+    color: #065F46;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid #E5E7EB;
+    color: #0f172a;
+    background: #FFFFFF;
+    text-transform: capitalize;
+}
+
+.status--became_law {
+    background: #ECFDF5;
+    border-color: #D1FAE5;
+    color: #065F46;
+}
+
+.status--to_president {
+    background: #F0FDFA;
+    border-color: #CCFBF1;
+    color: #115E59;
+}
+
+.status--passed_house,
+.status--passed_senate {
+    background: #EEF2FF;
+    border-color: #C7D2FE;
+    color: #4338CA;
+}
+
+.status--reported {
+    background: #FFF7ED;
+    border-color: #FFEDD5;
+    color: #9A3412;
+}
+
+.status--committee {
+    background: #F8FAFC;
+}
+
+.status--failed {
+    background: #FEF2F2;
+    border-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    font-size: .85rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    border: 1px solid #E5E7EB;
+    background: #fff;
+    color: #0f172a;
+    margin-right: 6px;
+    margin-top: 4px;
+}
+*/
+
+.truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.muted {
+    color: #64748B;
+}
+
+.small {
+    font-size: 12px;
+}
+
+/* Chart (BillActivityMini) to match member viz chrome */
+.chart {
+    width: 100%;
+}
+
+.chart .axis text {
+    fill: #64748B;
+    font-size: 12px;
+}
+
+.chart .axis path, .chart .axis line {
+    stroke: #E5E7EB;
+}
+
+.chart__line {
+    fill: none;
+    stroke: #4338CA;
+    stroke-width: 2;
+}
+
+.chart__line--secondary {
+    stroke: #10B981;
+}
+
+/* Pager */
+.pager {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    padding: 8px 0 2px;
+}
+
+/* --- Bill hero --- */
+.bill-hero {
+    padding: 18px 20px;
+}
+
+.bill-hero__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.bill-hero__dates {
+    font-size: 14px;
+    color: var(--muted, #a8b0bb);
+}
+
+.bill-hero__dates .sep {
+    margin: 0 8px;
+    opacity: .6;
+}
+
+.bill-hero__grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+@media (max-width: 960px) {
+    .bill-hero__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bill-hero__cell {
+    background: var(--panel-muted, #0c0f14);
+    border: 1px solid var(--border-weak, #22262e);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #fff;
+}
+
+.bill-hero__cell--wide {
+    grid-column: span 3;
+}
+
+@media (max-width: 960px) {
+    .bill-hero__cell--wide {
+        grid-column: auto;
+    }
+}
+
+.bill-hero .label {
+    font-size: 12px;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--muted, #9aa0a6);
+    margin-bottom: 6px;
+}
+
+.bill-hero .value {
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.bill-hero .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+
+
+
+/* --- Document links (neutral buttons instead of bright blue) --- */
+.doc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.doc-list__item {}
+
+.doc-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border, #2b3038);
+    background: var(--panel, #0f1115);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text, #e6e6e6);
+}
+
+.doc-link:hover {
+    border-color: var(--border-strong, #3a414d);
+    transform: translateY(-1px);
+}
+
+.doc-link__title {
+    font-weight: 600;
+}
+
+.doc-link__meta {
+    font-size: 12px;
+    color: var(--muted, #9aa0a6);
+}
+
+
+
+
+/* --- Vertical timeline --- */
+.timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 10px;
+    position: relative;
+}
+
+.timeline:before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent 0, var(--border-weak, #20242c) 12px);
+}
+
+.timeline__item {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.timeline__item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline__dot {
+    position: absolute;
+    left: 3px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--panel, #0f1115);
+    border: 2px solid var(--border, #2b3038);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.02);
+}
+
+.timeline__content {
+    margin-left: 24px;
+}
+
+.timeline__meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.timeline__date {
+    font-size: 12px;
+    color: var(--muted, #9aa0a6);
+}
+
+.timeline__type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    background: var(--panel-muted, #0c0f14);
+    border: 1px solid var(--border-weak, #22262e);
+    padding: 2px 6px;
+    border-radius: 999px;
+    color: var(--muted, #a8b0bb);
+}
+
+.timeline__text {
+    line-height: 1.5;
+}
+
+
+
+
+/* 
+.panel .panel__header {
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 1;
+  padding-bottom: 8px;
+}
+
+.chip {
+  background: var(--panel, #0f1115);
+  border-color: var(--border-weak, #22262e);
+}
+  */
+
+
+/* ==========================
+   Bill detail layout shell
+   ========================== */
+
+.bill-detail {
+    max-width: 1120px;
+}
+
+.bill-detail__header {
+    max-width: 900px;
+    margin: 0 auto 4px;
+}
+
+.bill-detail__eyebrow {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    margin: 0 0 4px;
+}
+
+.bill-detail__title {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.5rem, 1.2vw + 1.3rem, 2.1rem);
+}
+
+.bill-detail__subtitle {
+    margin: 6px 0 0;
+    font-size: 0.95rem;
+    color: #4b5563;
+}
+
+.bill-detail__body {
+    display: grid;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.bill-detail__main {
+    min-width: 0;
+}
+
+.bill-detail__sidebar {
+    min-width: 0;
+}
+
+@media (min-width: 960px) {
+    .bill-detail__body {
+        grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.1fr);
+    }
+}
+
+.bill-detail__pager {
+    margin-top: 8px;
+}
+
+/* ==========================
+   Hero card
+   ========================== */
+
+.bill-hero {
+    max-width: 900px;
+    margin: 8px auto 0;
+}
+
+.bill-hero__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.bill-hero__dates {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.bill-hero__dates .sep {
+    margin: 0 4px;
+    opacity: 0.6;
+}
+
+.bill-hero__grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 960px) {
+    .bill-hero__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bill-hero__cell {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    padding: 10px 12px;
+}
+
+.bill-hero__cell--wide {
+    grid-column: span 2;
+}
+
+@media (max-width: 960px) {
+    .bill-hero__cell--wide {
+        grid-column: auto;
+    }
+}
+
+.bill-hero__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.bill-hero__value {
+    font-size: 0.95rem;
+    color: #0f172a;
+}
+
+.bill-hero__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* ==========================
+   Panel header + typography
+   ========================== */
+
+.panel__header {
+    margin-bottom: 10px;
+}
+
+.panel__title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* ==========================
+   Timeline
+   ========================== */
+
+.timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 10px;
+    position: relative;
+}
+
+.timeline:before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.timeline__item {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.timeline__item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline__dot {
+    position: absolute;
+    left: 3px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
+}
+
+.timeline__content {
+    margin-left: 24px;
+}
+
+.timeline__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.timeline__date {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.timeline__type {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-radius: 999px;
+    padding: 2px 6px;
+}
+
+.timeline__text {
+    font-size: 0.9rem;
+    color: #111827;
+    line-height: 1.5;
+}
+
+/* ==========================
+   Doc list (bill texts)
+   ========================== */
+
+.doc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.doc-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 11px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    text-decoration: none;
+    color: #0f172a;
+    font-size: 0.9rem;
+}
+
+.doc-link:hover {
+    background: #eff6ff;
+    border-color: #c7d2fe;
+}
+
+.doc-link__title {
+    font-weight: 600;
+}
+
+.doc-link__meta {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* ==========================
+   Sidebar lists
+   ========================== */
+
+.bill-cosponsors__list,
+.bill-committees__list,
+.bill-related__list {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.bill-cosponsors__item,
+.bill-committees__item,
+.bill-related__item {
+    font-size: 0.9rem;
+}
+
+.bill-cosponsors__link,
+.bill-related__link {
+    color: #0f172a;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.bill-cosponsors__more {
+    margin-top: 8px;
+}
+
+
+
+/* Reuse chips + status from the lighter styles */
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #0f172a;
+}
+
+.chip--link {
+    text-decoration: none;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    text-transform: capitalize;
+}
+
+.status--became_law {
+    background: #ecfdf5;
+    border-color: #d1fae5;
+    color: #065f46;
+}
+
+.status--to_president {
+    background: #f0fdfa;
+    border-color: #a7f3d0;
+    color: #047857;
+}
+
+.status--passed_house,
+.status--passed_senate {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #4338ca;
+}
+
+.status--reported {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    color: #9a3412;
+}
+
+.status--committee {
+    background: #f1f5f9;
+}
+
+.status--failed {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}

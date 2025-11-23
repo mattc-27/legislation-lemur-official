@@ -1,0 +1,186 @@
+/* ==========================
+   Error page design tokens
+   ========================== */
+
+:root {
+    --error-bg: #f9fafb;
+    --error-text-main: #0f172a;
+    --error-text-muted: #4b5563;
+    --error-text-kicker: #6b7280;
+    --error-text-hint: #9ca3af;
+    --error-link: #2563eb;
+
+    --error-card-bg: #ffffff;
+    --error-card-border: #e5e7eb;
+    --error-card-shadow:
+        0 10px 15px -10px rgba(15, 23, 42, 0.18),
+        0 4px 6px -2px rgba(15, 23, 42, 0.06);
+
+    --error-font-sans: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    --error-font-serif: var(--font-serif, "Georgia", "Times New Roman", serif);
+}
+
+
+/* ==========================
+   Error pages
+   ========================== */
+
+.error-page {
+    min-height: 100vh;
+    padding: clamp(32px, 7vh, 56px) clamp(16px, 4vw, 32px);
+    background: var(--error-bg);
+    color: var(--error-text-main);
+    font-family: var(--error-font-sans);
+}
+
+.error-page__inner {
+    max-width: 64rem;
+    /* ~1024px */
+    margin: 0 auto;
+}
+
+
+/* ==========================
+   Header / hero
+   ========================== */
+
+.error-header {
+    margin-bottom: clamp(24px, 4vh, 32px);
+}
+
+.error-kicker {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--error-text-kicker);
+    margin: 0 0 6px;
+}
+
+.error-title {
+    font-family: var(--error-font-serif);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.9rem, 1.2vw + 1.7rem, 2.4rem);
+    line-height: 1.15;
+    margin: 0 0 10px;
+    color: var(--error-text-main);
+}
+
+.error-subtitle {
+    font-size: 0.97rem;
+    line-height: 1.7;
+    color: var(--error-text-muted);
+    max-width: 40rem;
+    margin: 0 0 18px;
+}
+
+.error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+/* ==========================
+   Layout: copy + illustration
+   ========================== */
+
+.error-layout {
+    display: grid;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+@media (min-width: 900px) {
+    .error-layout {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        gap: 32px;
+    }
+}
+
+
+/* ==========================
+   Secondary copy / links
+   ========================== */
+
+.error-copy-secondary {
+    padding: 16px 0;
+}
+
+.error-secondary-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--error-text-kicker);
+    margin: 0 0 8px;
+}
+
+.error-links {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px;
+}
+
+.error-links li+li {
+    margin-top: 4px;
+}
+
+.error-links a {
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: var(--error-link);
+}
+
+.error-links a:hover {
+    text-decoration: underline;
+}
+
+.error-hint {
+    font-size: 0.85rem;
+    color: var(--error-text-hint);
+    margin: 6px 0 0;
+}
+
+
+/* ==========================
+   Illustration card
+   ========================== */
+
+.error-figure {
+    background: var(--error-card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--error-card-border);
+    padding: 14px;
+    margin: 0;
+    box-shadow: var(--error-card-shadow);
+}
+
+.error-figure__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+
+/* ==========================
+   Optional subtle entrance animation
+   ========================== */
+
+.error-figure[data-anim="fade-up"] {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: error-fade-up 380ms ease-out forwards;
+    animation-delay: 60ms;
+}
+
+@keyframes error-fade-up {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "projects": {
+    "dev": "metal-circle-424403-c9",
+    "prod": "legislationlemur-prod",
+    "default": "metal-circle-424403-c9"
+  },
+  "targets": {
+    "metal-circle-424403-c9": {
+      "hosting": {
+        "app": [
+          "metal-circle-424403-c9"
+        ]
+      }
+    },
+    "legislationlemur-prod": {
+      "hosting": {
+        "app": [
+          "legislationlemur-prod"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

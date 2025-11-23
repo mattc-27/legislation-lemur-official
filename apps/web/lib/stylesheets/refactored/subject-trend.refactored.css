@@ -1,0 +1,214 @@
+/* =========================================
+   Subject Trends – design tokens
+   ========================================= */
+
+:root {
+    /* Card */
+    --subjects-card-bg: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.96),
+            rgba(248, 250, 252, 0.98));
+    --subjects-card-border: rgba(148, 163, 184, 0.45);
+    --subjects-card-radius: 22px;
+    --subjects-card-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(15, 23, 42, 0.04);
+
+    /* Typography */
+    --subjects-title-color: #0f172a;
+    --subjects-subtitle-color: #4b5563;
+    --subjects-subtitle-max-width: 560px;
+    --subjects-font-sans: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+
+    /* Filters */
+    --subjects-filter-border: #d1d5db;
+    --subjects-filter-bg: #ffffff;
+    --subjects-filter-text: #4b5563;
+    --subjects-filter-hover-bg: #f3f4f6;
+    --subjects-filter-hover-border: #cbd5f5;
+    --subjects-filter-active-bg: #eef2ff;
+    --subjects-filter-active-border: #4f46e5;
+    --subjects-filter-active-text: #1d4ed8;
+
+    /* Chart axes / labels */
+    --subjects-axis-x-color: rgba(148, 163, 184, 0.9);
+    --subjects-axis-y-color: rgba(209, 213, 219, 0.9);
+    --subjects-tick-color: #4b5563;
+
+    /* Legend */
+    --subjects-legend-text: #4b5563;
+}
+
+
+/* =========================================
+   Section wrapper
+   ========================================= */
+
+.section-subjects-trend {
+    position: relative;
+    background: var(--subjects-card-bg);
+    border-radius: var(--subjects-card-radius);
+    padding: 18px 22px 20px;
+    border: 1px solid var(--subjects-card-border);
+    max-width: 1040px;
+    margin: 0 auto;
+    box-shadow: var(--subjects-card-shadow);
+    backdrop-filter: blur(16px) saturate(130%);
+    font-family: var(--subjects-font-sans);
+}
+
+.section-subjects-trend__header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.section-subjects-trend__title {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--subjects-title-color);
+}
+
+.section-subjects-trend__subtitle {
+    font-size: 0.8rem;
+    color: var(--subjects-subtitle-color);
+    max-width: var(--subjects-subtitle-max-width);
+}
+
+.section-subjects-trend__body {
+    margin-top: 6px;
+}
+
+
+/* =========================================
+   Filters row
+   ========================================= */
+
+.subjects-trend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.subjects-trend__filters {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* Pill filter buttons */
+.subjects-trend__filter-btn {
+    border-radius: 999px;
+    border: 1px solid var(--subjects-filter-border);
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    background: var(--subjects-filter-bg);
+    color: var(--subjects-filter-text);
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.subjects-trend__filter-btn:hover {
+    background: var(--subjects-filter-hover-bg);
+    border-color: var(--subjects-filter-hover-border);
+}
+
+.subjects-trend__filter-btn--active {
+    background: var(--subjects-filter-active-bg);
+    border-color: var(--subjects-filter-active-border);
+    color: var(--subjects-filter-active-text);
+}
+
+
+/* =========================================
+   Chart container
+   ========================================= */
+
+.subjects-chart__container {
+    width: 100%;
+    position: relative;
+}
+
+.subjects-chart__svg {
+    display: block;
+    width: 100%;
+}
+
+/* Axes & grid (light card) */
+.subjects-chart__axis--x .subjects-chart__tick-line {
+    stroke: var(--subjects-axis-x-color);
+    stroke-width: 1;
+}
+
+.subjects-chart__axis--y .subjects-chart__grid-line {
+    stroke: var(--subjects-axis-y-color);
+    stroke-width: 1;
+    opacity: 0.7;
+}
+
+.subjects-chart__tick-label {
+    font-size: 0.7rem;
+    fill: var(--subjects-tick-color);
+    text-anchor: middle;
+}
+
+.subjects-chart__tick-label--y {
+    text-anchor: end;
+}
+
+
+/* =========================================
+   Legend
+   ========================================= */
+
+.subjects-chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 10px;
+}
+
+.subjects-chart__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--subjects-legend-text);
+}
+
+.subjects-chart__legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+
+/* =========================================
+   Mobile tweaks
+   ========================================= */
+
+@media (max-width: 640px) {
+    .section-subjects-trend {
+        padding: 14px 14px 16px;
+    }
+
+    .section-subjects-trend__title {
+        font-size: 0.92rem;
+    }
+
+    .section-subjects-trend__subtitle {
+        font-size: 0.76rem;
+    }
+
+    .subjects-chart__tick-label {
+        font-size: 0.65rem;
+    }
+
+    .subjects-chart__legend {
+        margin-top: 8px;
+    }
+}

@@ -1,0 +1,319 @@
+/* ==========================
+   Vote UI design tokens
+   ========================== */
+
+:root {
+    --vote-font-sans: var(--font-sans);
+
+    --vote-panel-bg: #ffffff;
+    --vote-panel-border: #e5e7eb;
+    --vote-panel-radius: 12px;
+    --vote-panel-text: #111827;
+    --vote-panel-muted: #6b7280;
+    --vote-panel-soft: #374151;
+
+    --vote-chip-bg: #f3f4f6;
+    --vote-chip-border: #e5e7eb;
+    --vote-chip-green-bg: #ecfdf5;
+    --vote-chip-green-border: #a7f3d0;
+    --vote-chip-green-text: #065f46;
+
+    --vote-table-head-bg: #f8fafc;
+    --vote-table-border: #e5e7eb;
+    --vote-table-row-border: #f1f5f9;
+    --vote-table-row-hover: #fafafa;
+}
+
+
+/* ==========================
+   Vote summary panel
+   ========================== */
+
+.vote-panel {
+    --gap: 24px;
+
+    background: var(--vote-panel-bg);
+    border: 1px solid var(--vote-panel-border);
+    border-radius: var(--vote-panel-radius);
+    padding: 16px;
+    color: var(--vote-panel-text);
+    font-family: var(--vote-font-sans);
+}
+
+/* Header */
+
+.vote-panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.vote-panel__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Attendance badge (scoped) */
+
+.vote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--vote-panel-soft);
+    background: var(--vote-chip-bg);
+    border: 1px solid var(--vote-chip-border);
+    border-radius: 9999px;
+    padding: 6px 10px;
+}
+
+.vote-badge__strong {
+    color: var(--vote-panel-text);
+}
+
+/* Body layout */
+
+.vote-panel__body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--gap);
+}
+
+/* Gauge column */
+
+.gauge {
+    width: var(--gauge-size, 132px);
+    min-width: var(--gauge-size, 132px);
+    height: var(--gauge-size, 132px);
+    position: relative;
+}
+
+.gauge__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.gauge__center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.gauge__label {
+    text-align: center;
+    line-height: 1.1;
+}
+
+.gauge__value {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.gauge__unit {
+    font-size: 14px;
+    color: var(--vote-panel-muted);
+    margin-left: 2px;
+}
+
+.gauge__caption {
+    font-size: 11px;
+    color: var(--vote-panel-muted);
+    margin-top: 2px;
+}
+
+/* Text column */
+
+.vote-panel__text {
+    min-width: 240px;
+    flex: 1 1 240px;
+}
+
+.vote-panel__blurb {
+    margin: 0;
+    font-size: 14px;
+    color: var(--vote-panel-soft);
+}
+
+.text-strong {
+    font-weight: 600;
+}
+
+/* Pills / counters */
+
+.pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--vote-panel-soft);
+    background: var(--vote-chip-bg);
+    border: 1px solid var(--vote-chip-border);
+    border-radius: 8px;
+    padding: 6px 8px;
+}
+
+.pill--green {
+    background: var(--vote-chip-green-bg);
+    border-color: var(--vote-chip-green-border);
+    color: var(--vote-chip-green-text);
+}
+
+
+/* ==========================
+   Votes table container
+   ========================== */
+
+/* Wrapper around the votes table (aligned with bill table scrollers) */
+.votes-table-wrap {
+    border: 1px solid var(--line-1, var(--vote-table-border));
+    border-radius: 12px;
+    background: #fff;
+    max-height: var(--votes-maxh, 420px);
+    overflow: auto;
+}
+
+/* Table base */
+
+.votes-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Head — sticky + bill-table vibe */
+
+.votes-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--vote-table-head-bg);
+    text-align: left;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--vote-table-border);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+/* Body cells */
+
+.votes-table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--vote-table-row-border);
+    vertical-align: top;
+    font-size: 14px;
+}
+
+/* Hover row */
+
+.votes-table tbody tr:hover td {
+    background: var(--vote-table-row-hover);
+}
+
+
+/* ==========================
+   Table responsiveness
+   ========================== */
+
+/* Horizontal scroll helper for any table */
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-scroll table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Narrow viewports: compress table a bit */
+
+@media (max-width: 600px) {
+
+    .votes-table thead th,
+    .votes-table tbody td {
+        padding: 8px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .votes-table thead th:nth-child(4),
+    .votes-table tbody td:nth-child(4) {
+        white-space: normal;
+        /* let Question column wrap */
+    }
+
+    .table.table--sm th,
+    .table.table--sm td {
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    .table.table--sm th:nth-child(4),
+    .table.table--sm td:nth-child(4) {
+        white-space: normal;
+        /* Question can wrap */
+    }
+}
+
+/* Note: 
+   .member_votes-row, .votes-viz, .votes-list, .votes-list__scroller,
+   and .btn-showmore are intentionally NOT redefined here to avoid
+   conflicts with the canonical versions in member-styles.css. */
+
+
+/* Card should never exceed container width */
+.senate-vote-card {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Horizontal scroll on small screens */
+.senate-vote-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Give the table enough width to stay readable, but let it scroll */
+.senate-vote-table {
+    width: 100%;
+    min-width: 640px;
+    /* adjust if you want tighter */
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Optional: tweak paddings / font size on mobile for consistency */
+@media (max-width: 640px) {
+
+    .senate-vote-table th,
+    .senate-vote-table td {
+        padding: 8px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    /* Let the Question column wrap so it doesn't force extra width */
+    .senate-vote-table th:nth-child(3),
+    .senate-vote-table td:nth-child(3) {
+        white-space: normal;
+    }
+}

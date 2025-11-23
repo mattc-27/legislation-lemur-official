@@ -1,0 +1,31 @@
+:root {
+    /* Colors */
+    --lemur-color-bg: #ffffff;
+    --lemur-color-surface: #ffffff;
+    --lemur-color-surface-soft: #f8fafc;
+
+    --lemur-color-primary: #4f46e5;
+    --lemur-color-primary-soft: #eef2ff;
+    --lemur-color-primary-border: #4338ca;
+
+    --lemur-color-border-subtle: #e5e7eb;
+    --lemur-color-border-strong: #c7d2fe;
+
+    --lemur-color-text-main: #0f172a;
+    --lemur-color-text-muted: #4b5563;
+
+    /* Radii */
+    --lemur-radius-pill: 999px;
+    --lemur-radius-md: 12px;
+    --lemur-radius-sm: 8px;
+
+    /* Shadows */
+    --lemur-shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.06);
+    --lemur-shadow-elevated:
+        0 4px 14px rgba(15, 23, 42, 0.10);
+
+    /* Focus ring */
+    --lemur-focus-ring:
+        0 0 0 2px #fff,
+        0 0 0 4px var(--lemur-color-primary);
+}

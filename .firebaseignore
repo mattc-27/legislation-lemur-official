@@ -1,0 +1,11 @@
+**/node_modules/**
+**/.DS_Store
+
+# Don’t upload scratch/dev routes
+apps/web/app/(site)/development/**
+apps/web/app/(app)/bills/**
+apps/web/app/(app)/committees/**
+
+# Optional: tests, stories
+**/*.spec.@(js|jsx)
+**/*.story.@(jsx|mdx)

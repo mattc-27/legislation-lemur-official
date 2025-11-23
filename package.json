@@ -1,24 +1,31 @@
 {
   "name": "legislationlemur-latest",
   "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
-  },
-  "devDependencies": {
-    "prettier": "^3.6.2",
-    "turbo": "^2.6.1",
-    "typescript": "5.9.2"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "npm@10.8.2",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "packageManager": "npm@10.8.2",
+  "scripts": {
+    "build": "npm --prefix apps/web run build",
+    "dev": "npm --prefix apps/web run dev",
+    "start": "npm --prefix apps/web run start",
+    "lint": "npm --prefix apps/web run lint",
+    "serve": "firebase emulators:start",
+    "deploy:dev": "firebase deploy --only hosting:app --project dev",
+    "deploy:prod": "firebase deploy --only hosting:app --project prod",
+    "preview:dev": "firebase hosting:channel:deploy dev --only hosting:app --project dev --expires 7d"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.7",
+    "turbo": "^2.0.6"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "lucide-react": "^0.544.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "topojson-client": "^3.1.0",
+    "us-atlas": "^3.0.1"
+  }
 }
