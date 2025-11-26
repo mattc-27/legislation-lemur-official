@@ -4,16 +4,18 @@ import { pool } from "../db";
 import * as Sentry from "@sentry/nextjs";
 import { q, qExplain } from "../instrumented-query";
 
+/* ------------------------------------------
+Set to public schema, 11/25/2025
+----
+MATERAILIZED VIEWS using public schema tables 
+For stage, remove the `_v1` 
+--------------------------------------------- */
 
 // tiny WHERE builder
 function where(parts, params) {
   const text = parts.length ? "WHERE " + parts.join(" AND ") : "";
   return { text, params };
 }
-
-
-
-
 
 
 
@@ -76,7 +78,7 @@ export async function getCongressSummary(congress = 119) {
       house_total, house_d, house_r, house_i,
       senate_total, senate_d, senate_r, senate_i,
       updated_at
-    FROM mv.congress_summary_50
+    FROM mv.congress_summary_50_v1
     WHERE congress = $1
     LIMIT 1;
   `;
@@ -121,11 +123,11 @@ export async function getCommitteesDirectory(
                  'url', s.subcommittee_url,
                  'update_dt', s.update_dt
                ) ORDER BY s.subcommittee_name)
-        FROM stage.committee_subcommittees s
+        FROM public.committee_subcommittees s
         WHERE s.congress = c.congress
           AND s.parent_system_code = c.system_code
       ), '[]'::json) AS subcommittees
-    FROM stage.committees c
+    FROM public.committees c
     WHERE c.congress = $1
       AND ($2::text IS NULL OR c.chamber = $2)
       AND (
@@ -146,13 +148,13 @@ export async function getCommitteeCounts(congress) {
   const sql = `
     WITH parents AS (
       SELECT congress, chamber, COUNT(*)::int AS committees
-      FROM stage.committees
+      FROM public.committees
       WHERE congress = $1
       GROUP BY 1,2
     ),
     subs AS (
       SELECT congress, chamber, COUNT(*)::int AS subcommittees
-      FROM stage.committee_subcommittees
+      FROM public.committee_subcommittees
       WHERE congress = $1
       GROUP BY 1,2
     )
@@ -252,7 +254,7 @@ export async function getSubjectsTrend(
   // 1) Get the top subject names for the window
   const topSql = `
     SELECT subject_name
-    FROM mv.congress_subjects_trend
+    FROM mv.congress_subjects_trend_v1
     WHERE congress = $1
       AND ($2::date IS NULL OR month >= $2::date)
       AND ($3::date IS NULL OR month <  $3::date)
@@ -277,7 +279,7 @@ export async function getSubjectsTrend(
       month,
       subject_name,
       bills_count
-    FROM mv.congress_subjects_trend
+    FROM mv.congress_subjects_trend_v1
     WHERE congress = $1
       AND ($2::date IS NULL OR month >= $2::date)
       AND ($3::date IS NULL OR month <  $3::date)

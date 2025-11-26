@@ -3,11 +3,16 @@ import "server-only";
 import { pool } from "../db";
 import { q, qExplain } from "../instrumented-query";
 
-/**
- * Current congress helper (from stage.bills_meta_import)
- */
+/* ------------------------------------------
+Set to public schema, 11/25/2025
+----
+MATERAILIZED VIEWS using public schema tables 
+For stage, remove the `_v1` 
+--------------------------------------------- */
+
+/** Current congress helper  */
 export async function getCurrentCongress() {
-    const { rows } = await pool.query(`SELECT MAX(congress)::int AS c FROM stage.bills_meta_import;`);
+    const { rows } = await pool.query(`SELECT MAX(congress)::int AS c FROM public.bills_meta;`);
 
     return rows[0]?.c || null;
 }
@@ -41,7 +46,7 @@ export async function getBillsDirectory(
     const sql = `
  WITH base AS (
  SELECT *
- FROM mv.bill_core
+ FROM mv.bill_core_v1
  WHERE congress = $1
  AND ($2::text IS NULL OR origin_chamber = $2)
  AND ($3::date IS NULL OR introduced_date >= $3::date)
@@ -73,12 +78,12 @@ export async function getBillsDirectory(
     return { rows, total, congress };
 }
 
-
+//  FROM mv.bill_activity_weekly
 export async function getBillsActivity(congress) {
     if (!congress) congress = await getCurrentCongress();
     const sql = `
  SELECT week, introduced, actions
- FROM mv.bill_activity_weekly
+ FROM mv.bill_activity_weekly_v1
  WHERE congress = $1
  ORDER BY week;
  `;
@@ -86,11 +91,11 @@ export async function getBillsActivity(congress) {
     return rows;
 }
 
-
+// FROM mv.bill_core
 export async function getBillDetail({ type, number, congress }) {
     const sql = `
   SELECT bc.*, to_jsonb(bc.subjects) AS subjects
-  FROM mv.bill_core bc
+  FROM mv.bill_core_v1 bc
   WHERE bc.type = $1 AND bc.number = $2 AND bc.congress = $3
   LIMIT 1;
 `;
@@ -99,11 +104,15 @@ export async function getBillDetail({ type, number, congress }) {
     return rows[0] || null;
 }
 
+/* 
+FROM stage.bill_actions ba
+    JOIN stage.bills_meta_import
+    */
 export async function getBillActions({ type, number, congress, limit = 50 }) {
     const sql = `
     SELECT ba.id, ba.action_date, ba.action_code, ba.action_type, ba.action_text
-    FROM stage.bill_actions ba
-    JOIN stage.bills_meta_import bm ON bm.bill_id = ba.bill_id
+    FROM public.bill_actions ba
+    JOIN public.bills_meta bm ON bm.bill_id = ba.bill_id
     WHERE bm.type = $1 AND bm.number = $2 AND bm.congress = $3
     ORDER BY ba.action_date DESC NULLS LAST, ba.id DESC
     LIMIT $4;
@@ -126,12 +135,11 @@ export async function getBillSummaries({ type, number, congress }) {
 }
     */
 
-
 export async function getBillTextVersions({ type, number, congress }) {
     const sql = `
     SELECT t.id, t.format_type, t.version_date, t.format_url
-    FROM stage.bill_text_versions t
-    JOIN stage.bills_meta_import bm ON bm.bill_id = t.bill_id
+    FROM public.bill_text_versions t
+    JOIN public.bills_meta bm ON bm.bill_id = t.bill_id
     WHERE bm.type = $1 AND bm.number = $2 AND bm.congress = $3
     ORDER BY t.version_date DESC, t.id DESC;
   `;
@@ -142,8 +150,8 @@ export async function getBillTextVersions({ type, number, congress }) {
 export async function getBillCosponsors({ type, number, congress, limit = 50 }) {
     const sql = `
     SELECT d.member_id, d.role, d.is_original, d.joined_at, d.withdrawn_at, d.name
-    FROM mv.bill_cosponsors_denorm d
-    JOIN stage.bills_meta_import bm ON bm.bill_id = d.bill_id
+    FROM mv.bill_cosponsors_denorm_v1 d
+    JOIN public.bills_meta bm ON bm.bill_id = d.bill_id
     WHERE bm.type = $1 AND bm.number = $2 AND bm.congress = $3
     ORDER BY d.joined_at ASC
     LIMIT $4;
@@ -155,8 +163,8 @@ export async function getBillCosponsors({ type, number, congress, limit = 50 }) 
 export async function getBillCommittees({ type, number, congress }) {
     const sql = `
     SELECT bc.id, bc.committee_name, bc.committee_chamber, bc.committee_type, bc.activities
-    FROM stage.bill_committees bc
-    JOIN stage.bills_meta_import bm ON bm.bill_id = bc.bill_id
+    FROM public.bill_committees bc
+    JOIN public.bills_meta bm ON bm.bill_id = bc.bill_id
     WHERE bm.type = $1 AND bm.number = $2 AND bm.congress = $3
     ORDER BY bc.id ASC;
   `;
@@ -169,8 +177,8 @@ export async function getBillRelated({ type, number, congress }) {
     const sql = `
     SELECT r.id, r.related_bill_id, r.related_type, r.related_number, r.related_congress,
            r.relationship_type, r.latest_action_text, r.latest_action_date
-    FROM stage.related_bills r
-    JOIN stage.bills_meta_import bm ON bm.bill_id = r.bill_id
+    FROM public.related_bills_import r
+    JOIN public.bills_meta bm ON bm.bill_id = r.bill_id
     WHERE bm.type = $1 AND bm.number = $2 AND bm.congress = $3
     ORDER BY r.latest_action_date DESC NULLS LAST, r.id DESC;
   `;
