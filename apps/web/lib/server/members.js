@@ -4,6 +4,13 @@ import "server-only";
 import * as Sentry from "@sentry/nextjs";
 import { q, qExplain } from "../instrumented-query";
 
+/* ------------------------------------------
+Set to public schema, 11/25/2025
+----
+MATERAILIZED VIEWS using public schema tables 
+For stage, remove the `_v1` 
+--------------------------------------------- */
+
 async function qWithSentry(label, sql, params = [], extra = {}) {
     try {
         return await q(label, sql, params);
@@ -78,8 +85,8 @@ export async function getMemberProfile(bioguideId) {
     m.image_url          AS "imageUrl",
     m.url,
     cs.serving_since     AS "servingSince"
-  FROM stage.members m
-  LEFT JOIN mv.current_chamber_since cs
+  FROM public.members m
+  LEFT JOIN mv.current_chamber_since_v1 cs
     ON cs.bioguide_id = m.bioguide_id
    AND cs.chamber::text = m.chamber::text   -- <- fix
   WHERE m.bioguide_id = $1
@@ -100,7 +107,7 @@ export async function getMemberProfile(bioguideId) {
     return { ...profile, terms, about };
 }
 
-// ---------- TERMS (timeline source) ----------
+// ---------- TERMS (timeline source)  ----------
 export async function getMemberTerms(bioguideId) {
     const sql = `
     SELECT
@@ -110,7 +117,7 @@ export async function getMemberTerms(bioguideId) {
       t.end_year                   AS "endYear",
       (t.end_year IS NULL)         AS "isCurrent",
       t.year_range                 AS "yearRange"
-    FROM stage.member_terms t
+    FROM public.member_terms t
     WHERE t.member_id = $1
     ORDER BY t.start_year ASC NULLS LAST, t.end_year ASC NULLS LAST;
   `;
@@ -170,24 +177,26 @@ function ordinal(n) {
 }
 
 
-// ---------- Chamber lookup (kept if you still use it elsewhere) ----------
+// ---------- Chamber lookup (kept if you still use it elsewhere)
+// stage.senate_member_id_ref
+//  ----------
 export async function getMemberChamber(bioguideId) {
-    const sql = `SELECT chamber FROM stage.members WHERE bioguide_id = $1 LIMIT 1`;
+    const sql = `SELECT chamber FROM public.members WHERE bioguide_id = $1 LIMIT 1`;
     let r = await q("member:getChamber", sql, [bioguideId]);
     if (r.rows.length) return r.rows[0].chamber;
 
-    const fallback = `SELECT 1 FROM stage.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
+    const fallback = `SELECT 1 FROM public.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
     r = await q("member:getChamberFallback", fallback, [bioguideId]);
     return r.rows.length ? "Senate" : "House";
 }
 
 
-
+/// FROM mv.member_subject_counts
 export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
     const sql = `
     SELECT subject_name, total_count AS count,
            sponsored_count, cosponsored_count
-    FROM mv.member_subject_counts
+    FROM mv.member_subject_counts_v1
     WHERE bioguide_id = $1
     ORDER BY total_count DESC, subject_name ASC
     LIMIT $2;
@@ -197,11 +206,11 @@ export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
 }
 
 
-// ---------- MEMBER MONTHLY STATS ----------
+// ---------- MEMBER MONTHLY STATS FROM mv.member_monthly_activity ----------
 export async function getMemberMonthlyStats(bioguideId) {
     const sql = `
     SELECT month, sponsored_count AS sponsored, cosponsored_count AS cosponsored
-    FROM mv.member_monthly_activity
+    FROM mv.member_monthly_activity_v1
     WHERE bioguide_id = $1
     ORDER BY month DESC;
   `;
@@ -213,7 +222,7 @@ export async function getMemberKpis(bioguideId) {
     const sql = `
     SELECT votes_total, votes_missed, attendance_pct, alignment_pct,
            sponsored_bills, cosponsored_bills
-    FROM mv.member_kpis
+    FROM mv.member_kpis_v1
     WHERE bioguide_id = $1;
   `;
     const { rows } = await q("member:getKpis:mv", sql, [bioguideId]);
@@ -226,7 +235,7 @@ export async function getMemberKpis(bioguideId) {
 export async function getMemberMonthlyActivity(bioguideId) {
     const sql = `
     SELECT month, sponsored_count, cosponsored_count, total_count
-    FROM mv.member_monthly_activity
+    FROM mv.member_monthly_activity_v1
     WHERE bioguide_id = $1
     ORDER BY month ASC;
   `;
@@ -238,7 +247,7 @@ export async function getMemberBills(bioguideId, { limit = 50, offset = 0, congr
     const sql = `
     SELECT bill_id, type, number, title, latest_action_date, latest_action_text, url,
            my_role, cosponsor_count
-    FROM mv.member_legislation
+    FROM mv.member_legislation_v1
     WHERE bioguide_id = $1 AND congress = $2
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $3 OFFSET $4;
@@ -254,7 +263,7 @@ export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = 
     const sql = `
     SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
            policy_area, legislative_topic, legislative_topics, cosponsor_count
-    FROM mv.member_legislation
+    FROM mv.member_legislation_v1
     WHERE bioguide_id = $1 AND my_role = 's'
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
@@ -280,7 +289,7 @@ export async function getMemberCosponsoredLegislation(bioguideId, { max = 250, i
     const sql = `
     SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
            policy_area, legislative_topic, legislative_topics, cosponsor_count
-    FROM mv.member_legislation
+    FROM mv.member_legislation_v1
     WHERE bioguide_id = $1 AND my_role = 'c'
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
@@ -316,7 +325,7 @@ export async function getMemberVotes(bioguideId, { limit = 1000, cursor, chamber
       chamber, bioguide_id, vote_id, voted_at, session, rollcall_number,
       choice, question, result, bill_id, bill_display, bill_url,
       base_measure_number, base_measure_name, question_group, question_raw, party_alignment
-    FROM mv.member_votes
+    FROM mv.member_votes_v1
     WHERE bioguide_id = $1
       ${cursorClause}
       ${chamberClause}
@@ -347,7 +356,7 @@ export async function getMemberVotes(bioguideId, { limit = 1000, cursor, chamber
 export async function getHouseMemberVoteAlignment(bioguideId) {
     const sql = `
     SELECT alignment_pct, attendance_pct
-    FROM mv.member_alignment_house
+    FROM mv.member_alignment_house_v1
     WHERE bioguide_id = $1;
   `;
     const { rows } = await q("member:getHouseVoteAlignment:mv", sql, [bioguideId]);
@@ -358,7 +367,7 @@ export async function getHouseMemberVoteAlignment(bioguideId) {
 export async function getMemberVoteAgg(bioguideId) {
     const sql = `
     SELECT total_count, earliest, latest
-    FROM mv.member_vote_agg
+    FROM mv.member_vote_agg_v1
     WHERE bioguide_id = $1;
   `;
     const { rows } = await q("member:getVoteAgg", sql, [bioguideId]);
