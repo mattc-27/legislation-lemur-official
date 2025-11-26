@@ -18,7 +18,7 @@ export async function getStateRoster(stateCode) {
       chamber            AS chamber,
       image_url          AS "imageUrl",
       url
-    FROM mv.member_core
+    FROM mv.member_core_v1
     WHERE state_code = $1
     ORDER BY
       CASE WHEN chamber = 'Senate' THEN 0 ELSE 1 END,
@@ -86,7 +86,7 @@ export async function searchMembers({ q = "", state = "", chamber = "", party = 
       chamber       AS chamber,
       image_url     AS "imageUrl",
       url
-    FROM mv.member_core
+    FROM mv.member_core_v1
     ${where}
     ORDER BY
       CASE WHEN chamber = 'Senate' THEN 0 ELSE 1 END,
