@@ -1,6 +1,3 @@
-import * as Sentry from "@sentry/nextjs";
-
-
 export function genErrorId(prefix = "ERR") {
     const t = Date.now().toString(36);
     const r = Math.random().toString(36).slice(2, 8);
@@ -8,54 +5,49 @@ export function genErrorId(prefix = "ERR") {
 }
 
 export function extractErrorInfo(err) {
-    const safe = (x) => (typeof x === "string" ? x : JSON.stringify(x));
-    const info = {
+    return {
         name: err?.name || "Error",
         message: err?.message || "Unknown error",
         status: err?.status || err?.statusCode || err?.cause?.status || null,
         stack: typeof err?.stack === "string" ? err.stack : null,
+
+        // ✅ pg error code (e.g. 42P01)
+        code: err?.code || null,
+
+        cause: err?.cause
+            ? {
+                name: err.cause?.name || "Error",
+                message: err.cause?.message || String(err.cause),
+                status: err.cause?.status || err.cause?.statusCode || null,
+            }
+            : undefined,
     };
-    // Shallow cause chain (avoid cycles)
-    if (err?.cause) {
-        const c = err.cause;
-        info.cause = {
-            name: c?.name || "Error",
-            message: c?.message || String(c),
-            status: c?.status || c?.statusCode || null,
-        };
-    }
-    return info;
 }
 
 export async function reportError(err, context = {}) {
     const errorId = genErrorId();
     const info = extractErrorInfo(err);
 
-    console.error("[AppError]", errorId, { ...info, context });
+    // Server / client safe logging
+    try {
+        console.error("[AppError]", errorId, { ...info, context });
+    } catch {
+        // ignore
+    }
 
-    Sentry.captureException(err, {
-        tags: {
-            errorId,
-            kind: classifyError(info).kind,
-        },
-        extra: {
-            ...info,
-            context,
-        },
-    });
+    // If you later add a POST to your own API route, do it here.
+    // Keep it non-blocking and best-effort.
 
     return { errorId, info };
 }
 
-
 export function classifyError(info = {}) {
     const msg = `${info.message || ""} ${info.stack || ""}`.toLowerCase();
-
-    // quick detectors
     const has = (s) => msg.includes(s);
     const code = /(^|\D)(4\d\d|5\d\d|526)(\D|$)/.exec(msg)?.[2] || info.status;
 
-    // Congress.gov / Cloudflare SSL (your example)
+    const pgCode = info.code; // ✅ now exists
+
     if (code === "526" || has("invalid ssl certificate") || has("cloudflare ray id")) {
         return {
             kind: "upstream-ssl",
@@ -65,7 +57,6 @@ export function classifyError(info = {}) {
         };
     }
 
-    // Generic upstream 5xx
     if ((code && String(code).startsWith("5")) || has("502 ") || has("503 ") || has("504 ")) {
         return {
             kind: "upstream-5xx",
@@ -74,7 +65,6 @@ export function classifyError(info = {}) {
         };
     }
 
-    // Network / HTML instead of JSON
     if (has("<!doctype html") || has("text/html") || has("failed to fetch") || has("network")) {
         return {
             kind: "network",
@@ -83,17 +73,14 @@ export function classifyError(info = {}) {
         };
     }
 
-    // 404 / not found
     if (code === 404 || has("not found")) {
         return {
             kind: "not-found",
             title: "Not found",
             message: "We couldn’t find that resource.",
-            img: '/767bc289-6ee5-46ca-ae86-5a33154091d3.png'
         };
     }
 
-    // Rate limiting
     if (code === 429 || has("too many requests") || has("rate limit")) {
         return {
             kind: "rate-limit",
@@ -102,7 +89,6 @@ export function classifyError(info = {}) {
         };
     }
 
-    // Validation / 4xx generic
     if (code && String(code).startsWith("4")) {
         return {
             kind: "client",
@@ -111,7 +97,17 @@ export function classifyError(info = {}) {
         };
     }
 
-    // Fallback
+    if (pgCode === "42P01" || (has("relation") && has("does not exist"))) {
+        return {
+            kind: "db-missing-relation",
+            title: "Data view is missing",
+            message:
+                "The data source behind this page isn’t available right now. This is usually a deployment or migration mismatch. Try again later.",
+            img: "https://storage.googleapis.com/legislation-lemur-images/not-found-lemur.png",
+        };
+    }
+
+
     return {
         kind: "unknown",
         title: "We hit a snag",
@@ -119,12 +115,12 @@ export function classifyError(info = {}) {
     };
 }
 
-// Build props for ErrorView from an error/info
 export function buildErrorViewProps({ errorId, info }) {
     const c = classifyError(info);
     return {
         title: c.title,
         message: c.message,
+        img: c.img,
         errorId,
         details: info,
     };

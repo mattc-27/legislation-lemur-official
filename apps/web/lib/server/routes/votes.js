@@ -1,7 +1,7 @@
 // lib/congress.js
 import "server-only";
-// import { pool } from "@/modules/db/db";
-import { q, qExplain } from '../instrumented-query';
+import { pool } from "../db/db";
+import { q } from "../db/instrumented-query";
 
 /* ------------------------------------------
 Set to public schema, 11/25/2025
@@ -45,8 +45,8 @@ export async function getHouseMemberVotes(
              )
       END                                          AS bill_display,
       COALESCE(vm.url)             AS bill_url
-    FROM public.house_member_votes hv
-    JOIN public.votes_meta vm
+    FROM sandbox_public_v2.house_member_votes hv
+    JOIN sandbox_public_v2.house_rollcall_votes vm
       ON vm.congress        = hv.congress
      AND vm.chamber         = hv.chamber
      AND vm.session         = hv.session
@@ -61,8 +61,8 @@ export async function getHouseMemberVotes(
       COUNT(*)::int       AS total_count,
       MIN(vm.voted_at)    AS earliest,
       MAX(vm.voted_at)    AS latest
-    FROM public.house_member_votes hv
-    JOIN public.votes_meta vm
+    FROM sandbox_public_v2.house_member_votes hv
+    JOIN sandbox_public_v2.house_rollcall_votes vm
       ON vm.congress        = hv.congress
      AND vm.chamber         = hv.chamber
      AND vm.session         = hv.session
@@ -146,7 +146,7 @@ export async function getSenateMemberVotes(
           THEN 'Nay'
           ELSE NULL
         END AS ind_majority_position
-      FROM public.senate_member_votes p
+      FROM sandbox_public_v2.senate_member_votes p
       GROUP BY p.congress, p.session, p.rollcall_number
     )
     SELECT
@@ -193,8 +193,8 @@ export async function getSenateMemberVotes(
                END
         ELSE 'neutral'
       END AS party_alignment
-    FROM public.senate_member_votes p
-    JOIN public.senate_votes_meta m
+    FROM sandbox_public_v2.senate_member_votes p
+    JOIN sandbox_public_v2.senate_votes_meta m
       ON (m.congress, m.session, m.rollcall_number) =
          (p.congress, p.session, p.rollcall_number)
     JOIN party_majorities pm
@@ -261,7 +261,7 @@ export async function getHouseMemberVoteAlignment(bioguideId) {
           ELSE NULL
         END
       ) AS party_txt
-    FROM public.members m
+    FROM sandbox_public_v2.members m
     WHERE m.bioguide_id = $1
   ),
   party_line AS (
@@ -274,7 +274,7 @@ WHEN(j ->> 'yeaTotal'):: int = (j ->> 'nayTotal')::int       THEN NULL
 WHEN(j ->> 'yeaTotal'):: int > (j ->> 'nayTotal')::int       THEN 'Yea'
         ELSE 'Nay'
       END AS party_line_choice
-    FROM public.votes_meta vm
+    FROM sandbox_public_v2.house_rollcall_votes vm
     JOIN member_party mp ON TRUE
     LEFT JOIN LATERAL(
     SELECT j
@@ -292,7 +292,7 @@ WHEN(j ->> 'yeaTotal'):: int > (j ->> 'nayTotal')::int       THEN 'Yea'
   base AS(
 
     SELECT hv.identifier AS vote_id, hv.choice:: text AS choice_txt
-    FROM public.house_member_votes hv
+    FROM sandbox_public_v2.house_member_votes hv
     WHERE hv.member_id = $1
 )
 SELECT
@@ -339,11 +339,11 @@ export async function getMemberVoteAlignment(bioguideId) {
 
 // ---------- Chamber lookup (kept if you still use it elsewhere) ----------
 export async function getMemberChamber(bioguideId) {
-  const sql = `SELECT chamber FROM public.members WHERE bioguide_id = $1 LIMIT 1`;
+  const sql = `SELECT chamber FROM sandbox_public_v2.members WHERE bioguide_id = $1 LIMIT 1`;
   let r = await q("member:getChamber", sql, [bioguideId]);
   if (r.rows.length) return r.rows[0].chamber;
 
-  const fallback = `SELECT 1 FROM public.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
+  const fallback = `SELECT 1 FROM sandbox_public_v2.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
   r = await q("member:getChamberFallback", fallback, [bioguideId]);
   return r.rows.length ? "Senate" : "House";
 }

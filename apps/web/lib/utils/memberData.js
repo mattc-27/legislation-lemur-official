@@ -1,27 +1,28 @@
 // lib/memberData.js
-import * as Sentry from "@sentry/nextjs";
+import { normalizeMemberImageUrl } from "./memberImage";
 import {
     getMemberProfile,
     getMemberMonthlyStats,
     getMemberSponsoredLegislation,
     getMemberCosponsoredLegislation,
-    // getMemberRecentVotes,
     getHouseMemberVoteAlignment,
     getMemberKpis,
     getMemberMonthlyActivity,
     getMemberSubjects,
     getMemberBills,
     getMemberVoteAlignment,
-} from "../server/members";
+} from "../server/routes_stage/members";
+
+
+
 
 export async function fetchMemberData(bioguideId) {
     try {
         const [
-            profile,
+            profileRaw,
             monthly,
             sponsoredRes,
             cosponsoredRes,
-            // recentVotes,
             alignment,
             kpis,
             monthlyActivity,
@@ -32,7 +33,6 @@ export async function fetchMemberData(bioguideId) {
             getMemberMonthlyStats(bioguideId),
             getMemberSponsoredLegislation(bioguideId, { max: 250 }),
             getMemberCosponsoredLegislation(bioguideId, { max: 250 }),
-            // getMemberRecentVotes(bioguideId, { limit: 25 }),
             getHouseMemberVoteAlignment(bioguideId),
             getMemberVoteAlignment(bioguideId),
             getMemberKpis(bioguideId),
@@ -41,12 +41,16 @@ export async function fetchMemberData(bioguideId) {
             getMemberBills(bioguideId, { limit: 50 }),
         ]);
 
+        const profile = {
+            ...profileRaw,
+            imageUrl: normalizeMemberImageUrl(profileRaw?.imageUrl),
+        };
+
         return {
             profile,
             monthly,
             sponsoredRes,
             cosponsoredRes,
-            // recentVotes,
             alignment,
             kpis,
             monthlyActivity,
@@ -54,10 +58,18 @@ export async function fetchMemberData(bioguideId) {
             bills,
         };
     } catch (err) {
-        Sentry.captureException(err, {
-            tags: { helper: "fetchMemberData" },
-            extra: { bioguideId },
+        // Cloud Logging-friendly structured error
+        console.error("[fetchMemberData]", {
+            message: err?.message,
+            name: err?.name,
+            code: err?.code,           // pg code like 42P01, etc.
+            severity: err?.severity,
+            routine: err?.routine,
+            bioguideId,
+            service: process.env.K_SERVICE || null,
+            revision: process.env.K_REVISION || null,
         });
-        throw err; // still let the page error; Sentry now has the context
+
+        throw err; // let Next error boundary handle UI
     }
 }

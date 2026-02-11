@@ -1,14 +1,18 @@
 // lib/congress.js
 import "server-only";
-import { pool } from "../db";
-import * as Sentry from "@sentry/nextjs";
-import { q, qExplain } from "../instrumented-query";
+import { pool } from "../db/db";
+import { q } from "../db/instrumented-query";
 
 /* ------------------------------------------
 Set to public schema, 11/25/2025
 ----
 MATERAILIZED VIEWS using public schema tables 
 For stage, remove the `_v1` 
+
+Dev (new db/schema) - 
+sandbox_public_v2
+sandbox_lemur_views_v2
+sandbox_lemur_ref_v1
 --------------------------------------------- */
 
 // tiny WHERE builder
@@ -29,7 +33,7 @@ export async function getCongressComposition() {
       senate_counts,  -- jsonb: {"D":2,"R":0,"I":0}
       house_total,
       senate_total
-    FROM mv.congress_composition_json
+    FROM sandbox_lemur_ref_v1.congress_composition_json
     ORDER BY state;
   `;
   // Ensure stable keys for the client & (optionally) filter to 50 + DC + PR
@@ -62,12 +66,9 @@ export async function getCongressComposition() {
         senate_total: r.senate_total ?? 0,
       }));
   } catch (err) {
-    Sentry.captureException(err, {
-      tags: { helper: "getCongressComposition" },
-      extra: { congress },
-    });
-    throw err; // rethrow so Next still returns a 500 and surfaces it
+    console.log(err);
   }
+  //throw err; // rethrow so Next still returns a 500 and surfaces it
 }
 
 export async function getCongressSummary(congress = 119) {
@@ -78,7 +79,7 @@ export async function getCongressSummary(congress = 119) {
       house_total, house_d, house_r, house_i,
       senate_total, senate_d, senate_r, senate_i,
       updated_at
-    FROM mv.congress_summary_50_v1
+    FROM sandbox_lemur_views_v2.congress_summary_50_v1
     WHERE congress = $1
     LIMIT 1;
   `;
@@ -87,15 +88,67 @@ export async function getCongressSummary(congress = 119) {
     const { rows } = await pool.query(sql, [congress]);
     // optional: keep this while debugging
     // console.log("getCongressSummary rows:", rows);
+    console.log(rows)
     return rows[0] || null;
   } catch (err) {
-    Sentry.captureException(err, {
-      tags: { helper: "getCongressSummary" },
-      extra: { congress },
-    });
-    throw err; // rethrow so Next still returns a 500 and surfaces it
+    console.log(err);
   }
+  throw err; // rethrow so Next still returns a 500 and surfaces it
+}
 
+
+export async function getCongressCompositionByState(congress = 119, state = "") {
+  const st = String(state || "").toUpperCase().trim();
+  if (!st) return null;
+
+  const sql = `
+    SELECT
+      congress,
+      state,
+      house_total, house_d, house_r, house_i,
+      senate_total, senate_d, senate_r, senate_i,
+      house_counts,
+      senate_counts,
+      updated_at
+    FROM mv.congress_composition_json
+    WHERE congress = $1
+      AND state = $2
+    LIMIT 1;
+  `;
+
+  try {
+    const { rows } = await pool.query(sql, [congress, st]);
+    return rows[0] || null;
+  } catch (err) {
+    console.log("getCongressCompositionByState error:", err);
+    throw err;
+  }
+}
+
+export async function getCongressCompositionForState(congress = 119, state = "") {
+  const st = (state || "").toUpperCase().trim();
+  if (!st) return null;
+
+  const sql = `
+    SELECT
+      congress,
+      state,
+      house_total, house_d, house_r, house_i,
+      senate_total, senate_d, senate_r, senate_i,
+      house_counts, senate_counts,
+      updated_at
+    FROM mv.congress_composition_json
+    WHERE congress = $1 AND state = $2
+    LIMIT 1;
+  `;
+
+  try {
+    const { rows } = await pool.query(sql, [congress, st]);
+    return rows[0] || null;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 }
 
 
@@ -123,11 +176,11 @@ export async function getCommitteesDirectory(
                  'url', s.subcommittee_url,
                  'update_dt', s.update_dt
                ) ORDER BY s.subcommittee_name)
-        FROM public.committee_subcommittees s
+        FROM sandbox_public_v2.committee_subcommittees s
         WHERE s.congress = c.congress
           AND s.parent_system_code = c.system_code
       ), '[]'::json) AS subcommittees
-    FROM public.committees c
+    FROM sandbox_public_v2.committees c
     WHERE c.congress = $1
       AND ($2::text IS NULL OR c.chamber = $2)
       AND (
@@ -148,13 +201,13 @@ export async function getCommitteeCounts(congress) {
   const sql = `
     WITH parents AS (
       SELECT congress, chamber, COUNT(*)::int AS committees
-      FROM public.committees
+      FROM sandbox_public_v2.committees
       WHERE congress = $1
       GROUP BY 1,2
     ),
     subs AS (
       SELECT congress, chamber, COUNT(*)::int AS subcommittees
-      FROM public.committee_subcommittees
+      FROM sandbox_public_v2.committee_subcommittees
       WHERE congress = $1
       GROUP BY 1,2
     )
@@ -191,7 +244,7 @@ export async function getCommitteeCounts(congress) {
  * 
  *     
  * SELECT subject_name
-    FROM mv.congress_subjects_trend
+    FROM sandbox_lemur_views_v2.congress_subjects_trend
     WHERE congress = 119
       AND month >= 12
       
@@ -200,61 +253,59 @@ export async function getCommitteeCounts(congress) {
     LIMIT 8;
  */
 const SESSION1_START = new Date(Date.UTC(2025, 0, 3)); // 2025-01-03
-const SESSION1_END = new Date(Date.UTC(2026, 0, 3)); // 2026-01-03 (exclusive)
 
-/**
- * timeWindow:
- *   - "session1" (default): Jan 3, 2025 → Jan 3, 2026 (exclusive)
- *   - "30d", "7d", "6mo": placeholders for future use
- */
 export async function getSubjectsTrend(
   congress,
   {
-    chamber = null,      // "House" | "Senate" | null
+    chamber = null,
     timeWindow = "session1",
     limitSubjects = 8,
   } = {},
 ) {
   const now = new Date();
 
+  // ✅ month-bucket-aligned exclusive end
+  const endExclusiveMonth = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth() + 1,
+    1
+  ));
+
   let start;
   let end;
 
   if (timeWindow === "session1") {
     start = SESSION1_START;
-    end = SESSION1_END;
+    end = endExclusiveMonth; // ✅ includes current month bucket if present
   } else if (timeWindow === "30d") {
-    // monthly MV, but this will just clamp to recent month(s)
     end = now;
     start = new Date(Date.UTC(
       now.getUTCFullYear(),
       now.getUTCMonth(),
-      now.getUTCDate() - 30,
+      now.getUTCDate() - 30
     ));
   } else if (timeWindow === "7d") {
     end = now;
     start = new Date(Date.UTC(
       now.getUTCFullYear(),
       now.getUTCMonth(),
-      now.getUTCDate() - 7,
+      now.getUTCDate() - 7
     ));
   } else if (timeWindow === "6mo") {
     end = now;
     start = new Date(Date.UTC(
       now.getUTCFullYear(),
       now.getUTCMonth() - 5,
-      1,
+      1
     ));
   } else {
-    // fallback: no date filter
     start = null;
     end = null;
   }
-
   // 1) Get the top subject names for the window
   const topSql = `
     SELECT subject_name
-    FROM mv.congress_subjects_trend_v1
+    FROM sandbox_lemur_app_views_v1.mv_congress_subjects_trend_v1
     WHERE congress = $1
       AND ($2::date IS NULL OR month >= $2::date)
       AND ($3::date IS NULL OR month <  $3::date)
@@ -279,7 +330,7 @@ export async function getSubjectsTrend(
       month,
       subject_name,
       bills_count
-    FROM mv.congress_subjects_trend_v1
+    FROM sandbox_lemur_app_views_v1.mv_congress_subjects_trend_v1
     WHERE congress = $1
       AND ($2::date IS NULL OR month >= $2::date)
       AND ($3::date IS NULL OR month <  $3::date)
@@ -293,6 +344,12 @@ export async function getSubjectsTrend(
     dataSql,
     [congress, start, end, chamber, subjects],
   );
+  let testArr = []
+  for (let i = 0; i < rows.length; i++) {
+    rows[i].month = rows[i].month.toISOString().slice(0, 7); // "YYYY-MM"
+    testArr.push(rows[i].month)
+  }
 
+  console.log(testArr[190])
   return { subjects, rows };
 }

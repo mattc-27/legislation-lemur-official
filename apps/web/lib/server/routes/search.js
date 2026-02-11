@@ -1,8 +1,8 @@
 // lib/congress.js
 import "server-only";
-// import { pool } from "@/modules/db/db";
-import * as Sentry from "@sentry/nextjs";
-import { q, qExplain } from "../instrumented-query";
+
+import { pool } from "../db/db";
+import { q } from "../db/instrumented-query";
 
 
 export async function getStateRoster(stateCode) {
@@ -33,15 +33,11 @@ export async function getStateRoster(stateCode) {
       representatives: rows.filter(r => r.chamber !== "Senate"),
     };
   } catch (err) {
-    Sentry.captureException(err, {
-      tags: { helper: "getStateRoster" },
-      extra: { congress },
-    });
-    throw err; // rethrow so Next still returns a 500 and surfaces it
+    console.log(err);
   }
-
-
+  throw err; // rethrow so Next still returns a 500 and surfaces it
 }
+
 
 
 export async function searchMembers({ q = "", state = "", chamber = "", party = "" } = {}) {
@@ -100,10 +96,7 @@ export async function searchMembers({ q = "", state = "", chamber = "", party = 
       representatives: rows.filter(r => r.chamber !== "Senate"),
     };
   } catch (err) {
-    Sentry.captureException(err, {
-      tags: { helper: "searchMembers" },
-      extra: { congress },
-    });
-    throw err; // rethrow so Next still returns a 500 and surfaces it
+    console.log(err);
   }
+  throw err; // rethrow so Next still returns a 500 and surfaces it
 }
