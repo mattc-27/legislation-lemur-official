@@ -1,39 +1,46 @@
 // apps/web/app/global-error.jsx
 "use client";
 
-import { useEffect, useState } from "react";
-import * as Sentry from "@sentry/nextjs";
-import NextError from "next/error";
+import { useEffect, useMemo, useState } from "react";
 import ErrorView from "./components/ui/system/ErrorView";
-import { reportError } from "@/lib/utils/errors";
-import { extractErrorInfo } from "@/lib/utils/errors";
+import { reportError, buildErrorViewProps, extractErrorInfo } from "@/lib/shared/errors/errors";
 
 export default function GlobalError({ error, reset }) {
-    const [state, setState] = useState({
-        errorId: null,
-        details: null,
-    });
-    useEffect(() => {
-        Sentry.captureException(error);
+    // Always have something to render immediately
+    const fallbackProps = useMemo(() => {
+        const info = extractErrorInfo(error);
+        return buildErrorViewProps({ errorId: null, info });
     }, [error]);
-    /*  useEffect(() => {
-          // Report once when the error changes
-          (async () => {
-              const { errorId, info } = await reportError(error, {
-                  where: "global-error",
-              });
-              setState({ errorId, details: info });
-          })();
-      }, [error]);
-      */
+
+    const [props, setProps] = useState(fallbackProps);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const { errorId, info } = await reportError(error, { where: "global-error" });
+                if (!cancelled) setProps(buildErrorViewProps({ errorId, info }));
+            } catch {
+                // keep fallback
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [error, fallbackProps]);
 
     return (
-        <ErrorView
-            title="This page failed to load"
-            message="You can try again, or come back later."
-            errorId={state.errorId}
-            details={state.details}
-            onRetry={reset}   // Next passes reset() to re-render the route
-        />
+        <html lang="en">
+            <body>
+                <ErrorView
+                    title="This page failed to load"
+                    message="You can try again, or come back later."
+                    {...props}
+                    onRetry={reset}
+                />
+            </body>
+        </html>
     );
 }

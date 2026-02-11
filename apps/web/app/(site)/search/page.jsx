@@ -2,21 +2,34 @@
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
-import SearchFilters from "@/app/components/search/SearchFilters";
-import SearchResultCard from "@/app/components/search/SearchResultCard";
-import CongressHexMap from '@/app/components/search/CongressHeatMap';
+import { searchMembers, getStateRoster } from "@/lib/server/routes/search";
+import { getCongressCompositionByState, getCongressSummary } from "@/lib/server/routes/views";
+import { getViewsFreshness, formatAsOfMMDDYYYY } from "@/lib/server/routes/viewStatus";
 
-import CongressPicker from "@/app/components/search/CongressPicker";
-import InfoStatCard from "@/app/components/search/InfoStatCard";
-import "../../../lib/stylesheets/refactored/home-styles.refactored.css";   // reuse hero/searchbox visuals
-import "../../../lib/stylesheets/refactored/search-styles.refactored.css"; // page-specific tweaks
-import "../../../lib/stylesheets/refactored/ui-controls.css";
+import SearchFilters from "@/app/components/features/search/SearchFilters";
+import SearchResultCard from "@/app/components/features/search/SearchResultCard";
+import CompositionPanel from "@/app/components/features/search/CompositionPanel";
 
-// import { searchMembers, getStateRoster } from "@/lib/server/search";
-import { searchMembers, getStateRoster } from "@/lib/server/search";
-import { getCongressComposition, getCongressSummary } from "@/lib/server/views";
+import '@/app/styles/active/ll-bills-archive.css';
+import '@/app/styles/active/member-search-base.css';
+import '@/app/styles/active/member-search-components.css';
+
+import CongressPicker from "@/app/components/features/search/CongressPicker";
 
 import { Landmark, Gavel, Users2 } from "lucide-react"; // ⟵ NEW
+
+/*
+// import FiltersPanelClient from "@/app/components/search/FiltersPanelClient";
+// import "../../../lib/stylesheets/refactored/home-styles.refactored.css";   // reuse hero/searchbox visuals
+// import "../../../lib/stylesheets/refactored/search-styles.refactored.css"; // page-specific tweaks
+// import "../../../lib/stylesheets/refactored/ui-controls.css";
+// import { searchMembers, getStateRoster } from "@/lib/server/search";
+// import InfoStatCard from "@/app/components/search/InfoStatCard";
+// import SearchOverviewSection from "@/app/components/search/SearchOverviewSection";
+// import CongressHexMap from '@/app/components/search/CongressHeatMap';
+// import SearchFiltersShell from "@/app/components/search/SearchFiltersShell";
+*/
+
 
 export const revalidate = 600;
 
@@ -32,17 +45,20 @@ export default async function SearchPage({ searchParams }) {
     const sp = await searchParams;
     const get = (k) => (typeof sp?.get === "function" ? sp.get(k) ?? "" : sp?.[k] ?? "");
 
-    const state = String(get("state")).toUpperCase();
+
     const q = String(get("q"));
     const chamber = String(get("chamber"));
     const party = String(get("party"));
     const congress = Number(get("congress")) || 119;
+    const state = String(searchParams?.state || "").toUpperCase();
 
 
-    const summary = await getCongressSummary(congress);
-    const composition = await getCongressComposition();
+    const summary = await getCongressSummary();
+    const composition = state
+        ? await getCongressCompositionByState(congress, state)
+        : null;
 
-
+    console.log(summary)
 
     // console.log(summary)
 
@@ -58,126 +74,75 @@ export default async function SearchPage({ searchParams }) {
         representatives = roster.representatives;
     }
 
-    const hasQuery = Boolean(q || state || chamber || party);
-
+    const hasQuery = Boolean(q || chamber || party || state);
+    const hasAnyFilters = hasQuery;
+    const freshness = await getViewsFreshness(["mv_member_core_v1"]);
+    const asOfText = formatAsOfMMDDYYYY(freshness.asOf);
     return (
-        <div className="container stack-32 search-page">
-            <header className="search-header stack-12">
-                <div className="page-tools">
-                    <h1 className="section__title">Explore Members of Congress</h1>
-                    <CongressPicker value={congress} options={[115, 116, 117, 118, 119]} label="Congress" />
+        <div className="ll3-bills ll3-members">
+            <header className="ll3-head">
+                <div className="ll3-head__top">
+                    <h1 className="ll3-h1">Explore Members of Congress</h1>
+                    <div className="ll3-head__meta">
+                        {/* put CongressPicker here styled like bills KPI area
+                               <CongressPicker /> */}
+
+                        {asOfText && (
+                            <span className="ll3-freshness">
+                                Data current as of <strong className="ll3-strong">{asOfText}</strong>
+                            </span>
+                        )}
+                    </div>
                 </div>
-                <p className="section__sub">
+                <p className="ll3-sub">
                     Find representatives and senators, view voting history, committees, and sponsored legislation.
                 </p>
             </header>
 
-
-
-            {/* Filters (Name field now uses the SAME dropdown UX as Home SearchBox) */}
-            <section className="panel panel--frost">
-                <SearchFilters initial={{ state, q, chamber, party }} />
+            <section className="ll3-control ll3-membersControl">
+                <div className="ll3-control__panel">
+                    {/* Filters go here */}
+                    <SearchFilters />
+                </div>
+                <div className="ll3-control__panel">
+                    {/* Composition/overview panel (server) */}
+                    <CompositionPanel congress={congress} state={state} />
+                </div>
             </section>
 
-            {!hasQuery && <p className="text-dim mt16">Search by name or choose a state to begin.</p>}
-
-            {hasQuery && (
-                <section className="stack-24">
-                    {senators.length > 0 && (
-                        <div className="stack-12">
-                            <h2 className="section__title section__title--sm">Senators</h2>
-                            <div className="grid-2">
-                                {senators.map((m) => <SearchResultCard key={m.bioguideId || m.id} m={m} />)}
+            <section className="ll3-results">
+                {hasQuery && (
+                    <section className="stack-24">
+                        {senators.length > 0 && (
+                            <div className="stack-12">
+                                <h2 className="section__title section__title--sm">
+                                    Senators <span className="section__count">({senators.length})</span>
+                                </h2>
+                                <div className="grid-2">
+                                    {senators.map((m) => <SearchResultCard key={m.bioguideId || m.id} m={m} />)}
+                                </div>
                             </div>
-                        </div>
-                    )}
-                    {representatives.length > 0 && (
-                        <div className="stack-12">
-                            <h2 className="section__title section__title--sm">Representatives</h2>
-                            <div className="grid-2">
-                                {representatives.map((m) => <SearchResultCard key={m.bioguideId || m.id} m={m} />)}
-                            </div>
-                        </div>
-                    )}
-                    {senators.length + representatives.length === 0 && (
-                        <p className="text-dim mt16">
-                            No members found{state ? ` for ${state}` : ""}{q ? ` matching “${q}”` : ""}.
-                        </p>
-                    )}
-                </section>
-            )}
+                        )}
 
-            {/* Light info cards with Lucide icons */}
-            {!hasQuery && summary && (
-                <>
-                    <section className="infocards grid-3 section-gap-28">
-                        <InfoStatCard
-                            title="House"
-                            primary={summary.house_total}
-                            meta={[
-                                { label: "D", value: summary.house_d, tone: "d" },
-                                { label: "R", value: summary.house_r, tone: "r" },
-                                { label: "I", value: summary.house_i, tone: "i" },
-                            ]}
-                            icon={<Landmark aria-hidden="true" />}
-                            accent="blue"
-                        />
-                        <InfoStatCard
-                            title="Senate"
-                            primary={summary.senate_total}
-                            meta={[
-                                { label: "D", value: summary.senate_d, tone: "d" },
-                                { label: "R", value: summary.senate_r, tone: "r" },
-                                { label: "I", value: summary.senate_i, tone: "i" },
-                            ]}
-                            icon={<Gavel aria-hidden="true" />}
-                            accent="red"
-                        />
-                        <InfoStatCard
-                            title="Total Members"
-                            primary={summary.house_total + summary.senate_total}
-                            meta={[
-                                { label: "House", value: summary.house_total },
-                                { label: "Senate", value: summary.senate_total },
-                            ]}
-                            icon={<Users2 aria-hidden="true" />}
-                            accent="slate"
-                        />
+                        {representatives.length > 0 && (
+                            <div className="stack-12">
+                                <h2 className="section__title section__title--sm">
+                                    Representatives <span className="section__count">({representatives.length})</span>
+                                </h2>
+                                <div className="grid-2">
+                                    {representatives.map((m) => <SearchResultCard key={m.bioguideId || m.id} m={m} />)}
+                                </div>
+                            </div>
+                        )}
+
+                        {senators.length + representatives.length === 0 && (
+                            <p className="search-empty">
+                                No members found{state ? ` for ${state}` : ""}{q ? ` matching “${q}”` : ""}.
+                            </p>
+                        )}
                     </section>
-
-                    {/* Single timestamp below the cards */}
-                    <p className="cards-footnote">Updated {new Date(summary.updated_at).toLocaleDateString()}</p>
-
-
-
-
-
-
-                    <section className="panel panel--frost section-gap-40">
-                        <div className="map-header">
-                            <h3 className="section__title section__title--sm">Congressional Representation by State</h3>
-                            <div className="legend">
-                                <span className="legend-chip legend-fill" aria-hidden="true"></span>
-                                <span>House majority by state</span>
-                                <span className="legend-sep">•</span>
-                                <span className="legend-chip legend-dot" aria-hidden="true"></span>
-                                <span>Senate seats</span>
-                            </div>
-                        </div>
-                        {/* Optional: shows a text fallback until the client component hydrates */}
-                        <Suspense fallback={<p className="map-loading-inline">Loading map…</p>}>
-                            <CongressHexMap
-                                data={composition}
-                                /* medium-light map bg so white labels pop without going dark */
-                                fillBackground="#E7EDF6"
-                                strokeStates="#D4DCE7"
-                                labelFill="#FFFFFF"
-                                labelHalo="#2B3A52"
-                            />
-                        </Suspense>
-                    </section>
-                </>
-            )}
+                )}
+            </section>
         </div>
     );
 }

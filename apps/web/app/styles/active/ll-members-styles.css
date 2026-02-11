@@ -1,0 +1,745 @@
+/* ll-member-page.v3.css (page-scoped; avoids collisions with existing .btn/.card/.chip) */
+
+.llmp3-page {
+    background:
+        radial-gradient(1000px 520px at 14% 0%, rgba(99, 102, 241, 0.10), transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, rgba(236, 72, 153, 0.08), transparent 62%),
+        linear-gradient(#ffffff, #ffffff);
+}
+
+.llmp3-wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 22px 16px 36px;
+    font-family: var(--font-sans, system-ui, -apple-system, Segoe UI, Arial, sans-serif);
+    color: #0f172a;
+}
+
+.llmp3-stack-24>*+* {
+    margin-top: 24px;
+}
+
+.llmp3-back__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, .75);
+    text-decoration: none;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.llmp3-back__btn:hover {
+    background: #fff;
+}
+
+/* ========== SEGMENTED CONTROL ========== */
+
+.segmented {
+    display: inline-flex;
+    gap: 6px;
+    padding: 4px;
+    border-radius: var(--lemur-radius-md);
+    border: 1px solid var(--lemur-color-border-subtle);
+    background: #f5f7fb;
+}
+
+.segmented__btn {
+    border-radius: var(--lemur-radius-sm);
+    border: 0;
+    background: transparent;
+    color: #475569;
+    padding: 6px 10px;
+    font: inherit;
+    cursor: pointer;
+    transition:
+        background 140ms ease,
+        color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+.segmented__btn--active {
+    background: #fff;
+    color: #111827;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+
+.llmp3-panel {
+    display: grid;
+    gap: 16px;
+}
+
+/* Cards */
+.llmp3-card {
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(2, 8, 23, .06);
+    padding: 18px;
+}
+
+.llmp3-card--soft {
+    background: #fbfcfe;
+    border-color: #e8ecf3;
+    box-shadow: 0 8px 18px rgba(2, 8, 23, .05);
+}
+
+.llmp3-card--hero {
+    background: rgba(255, 255, 255, 0.84);
+    border-color: rgba(2, 6, 23, 0.10);
+    backdrop-filter: saturate(1.1) blur(10px);
+    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+}
+
+@media (min-width:720px) {
+    .llmp3-card {
+        padding: 20px;
+    }
+}
+
+.llmp3-card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.llmp3-h1 {
+    margin: 0;
+    font-family: var(--font-serif, ui-serif, Georgia, serif);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.6rem, 1.0vw + 1.2rem, 2.1rem);
+    line-height: 1.15;
+}
+
+.llmp3-h2 {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-serif, ui-serif, Georgia, serif);
+    font-weight: 800;
+    font-size: 0.98rem;
+    letter-spacing: -0.01em;
+}
+
+.llmp3-asof {
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.llmp3-muted {
+    color: #64748b;
+}
+
+.llmp3-note {
+    margin: 10px 0 0;
+    color: #64748b;
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+
+/* Header block */
+.llmp3-head {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+}
+
+.llmp3-head__avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    box-shadow: 0 8px 18px rgba(2, 8, 23, .06);
+    display: grid;
+    place-items: center;
+}
+
+.llmp3-head__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.llmp3-head__ph {
+    font-weight: 900;
+    color: #94a3b8;
+    font-size: 1.4rem;
+}
+
+.llmp3-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin-top: 8px;
+    align-items: center;
+}
+
+.llmp3-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.llmp3-badge--party-D {
+    background: #dbeafe;
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+
+.llmp3-badge--party-R {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #7f1d1d;
+}
+
+.llmp3-badge--party-I {
+    background: #e5e7eb;
+    border-color: #d1d5db;
+    color: #111827;
+}
+
+.llmp3-kv {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.86rem;
+    color: #0f172a;
+}
+
+.llmp3-kv__label {
+    color: #64748b;
+    font-weight: 700;
+}
+
+.llmp3-kv__value {
+    font-weight: 800;
+}
+
+.llmp3-blurb {
+    margin: 14px 0 0;
+    color: #475569;
+    line-height: 1.55;
+    max-width: 85ch;
+}
+
+@media (max-width:520px) {
+    .llmp3-head {
+        grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    .llmp3-head__avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+    }
+}
+
+/* KPI row */
+.llmp3-kpis {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width:900px) {
+    .llmp3-kpis {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.llmp3-kpi {
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.llmp3-kpi__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    margin-bottom: 6px;
+}
+
+.llmp3-kpi__value {
+    font-family: var(--font-serif, ui-serif, Georgia, serif);
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+.llmp3-kpi__label {
+    margin-top: 2px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+/* Terms */
+.llmp3-terms {
+    display: grid;
+    gap: 16px;
+}
+
+@media (min-width:960px) {
+    .llmp3-terms {
+        grid-template-columns: minmax(280px, 1.4fr) minmax(220px, 1fr);
+        align-items: start;
+    }
+}
+
+.llmp3-terms__groupTitle {
+    margin: 0 0 8px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.llmp3-terms__list {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 22px;
+    list-style: none;
+}
+
+.llmp3-terms__list::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.llmp3-terms__item {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 10px;
+}
+
+.llmp3-terms__item::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, .10);
+}
+
+.llmp3-terms__item.is-current::before {
+    border-color: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, .12);
+}
+
+.llmp3-terms__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.llmp3-terms__badge.is-current {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+
+.llmp3-terms__meta {
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .10em;
+    opacity: .8;
+}
+
+.llmp3-terms__summary {
+    border-radius: 14px;
+    border: 1px solid #e8ecf3;
+    background: #fbfcfe;
+    padding: 14px;
+}
+
+.llmp3-terms__summaryTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.llmp3-dl {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.llmp3-dl__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.88rem;
+}
+
+.llmp3-dl__row dt {
+    color: #64748b;
+}
+
+.llmp3-dl__row dd {
+    margin: 0;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+/* Layout helper */
+.llmp3-grid-2 {
+    display: grid;
+    gap: 16px;
+}
+
+@media (min-width:1024px) {
+    .llmp3-grid-2 {
+        grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+        align-items: start;
+    }
+}
+
+/* Make sizing predictable */
+.llmp3-page, .llmp3-page * {
+    box-sizing: border-box;
+}
+
+/* ---------- small helpers ---------- */
+.llmp3-stack-16>*+* {
+    margin-top: 16px;
+}
+
+.llmp3-h3 {
+    margin: 0;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    font-family: var(--font-serif, ui-serif, Georgia, serif);
+}
+
+.llmp3-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.82rem;
+}
+
+/* link-like button (used for external + show more) */
+.llmp3-linkbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #0f172a;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(2, 8, 23, .06);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+.llmp3-linkbtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(2, 8, 23, .08);
+    border-color: #c7d2fe;
+}
+
+.llmp3-linkbtn:active {
+    transform: translateY(0);
+}
+
+/* ---------- SenateVotes ---------- */
+.llmp3-senvote__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.llmp3-senvote__meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.llmp3-tdwrap {
+    white-space: normal;
+}
+
+/* ---------- Table chrome ---------- */
+.llmp3-tablewrap {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fff;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.llmp3-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 720px;
+    /* so it scrolls nicely on small screens */
+}
+
+.llmp3-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #64748b;
+    font-weight: 900;
+}
+
+.llmp3-table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.llmp3-table tbody tr:hover td {
+    background: #fafafa;
+}
+
+/* ---------- Scoped badge polish (keeps your existing badgeForVote etc.) ---------- */
+.llmp3-page .badge {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    border: 1px solid rgba(2, 6, 23, .08);
+    background: #fff;
+    color: #0f172a;
+}
+
+.llmp3-page .badge--muted {
+    background: #f1f5f9;
+    color: #334155;
+    border-color: #e2e8f0;
+}
+
+.llmp3-page .badge--success {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.llmp3-page .badge--danger {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+.llmp3-page .badge--slate {
+    background: #f1f5f9;
+    color: #334155;
+    border-color: #e2e8f0;
+}
+
+.llmp3-page .badge--teal {
+    background: #ecfeff;
+    color: #155e75;
+    border-color: #a5f3fc;
+}
+
+.llmp3-page .badge--warning {
+    background: #fff7ed;
+    color: #9a3412;
+    border-color: #fed7aa;
+}
+
+/* ---------- VotesSection header layout (optional) ---------- */
+.llmp3-card__head .llmp3-asof {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* ActivityTimeline head */
+.llmp3-timeline__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+
+/* ==========================
+   Votes table (LLMP3 skin)
+   Scope to member page so it doesn't affect other tables.
+   ========================== */
+
+.member-page .votes-table-wrap {
+    border: 1px solid var(--member-card-border);
+    border-radius: 14px;
+    background: #fff;
+    overflow: auto;
+    max-height: var(--votes-maxh, 420px);
+    -webkit-overflow-scrolling: touch;
+}
+
+.member-page .votes-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 720px;
+    /* keeps columns readable; wrap scroll handles narrow screens */
+}
+
+/* sticky head */
+.member-page .votes-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--member-card-border);
+    text-align: left;
+
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--member-text-muted);
+    white-space: nowrap;
+}
+
+/* body cells */
+.member-page .votes-table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+    font-size: 14px;
+    color: var(--member-text-main);
+}
+
+/* hover */
+.member-page .votes-table tbody tr:hover td {
+    background: #fafafa;
+}
+
+/* links in Bill column */
+.member-page .votes-table a {
+    color: var(--member-text-main);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.member-page .votes-table a:hover {
+    opacity: 0.9;
+}
+
+/* column widths (helps keep it "bill-table" feeling) */
+.member-page .votes-table th:nth-child(1),
+.member-page .votes-table td:nth-child(1) {
+    width: 108px;
+}
+
+/* Date */
+.member-page .votes-table th:nth-child(2),
+.member-page .votes-table td:nth-child(2) {
+    width: 110px;
+}
+
+/* Bill */
+.member-page .votes-table th:nth-child(3),
+.member-page .votes-table td:nth-child(3) {
+    width: 92px;
+}
+
+/* Roll */
+.member-page .votes-table th:nth-child(5),
+.member-page .votes-table td:nth-child(5) {
+    width: 110px;
+}
+
+/* Your Vote */
+.member-page .votes-table th:nth-child(6),
+.member-page .votes-table td:nth-child(6) {
+    width: 120px;
+}
+
+/* Result */
+
+/* Question column: allow wrap */
+.member-page .votes-table th:nth-child(4),
+.member-page .votes-table td:nth-child(4) {
+    white-space: normal;
+    min-width: 260px;
+}
+
+/* mobile: shrink + allow more wrapping */
+@media (max-width: 640px) {
+    .member-page .votes-table {
+        min-width: 620px;
+    }
+
+    .member-page .votes-table thead th,
+    .member-page .votes-table tbody td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
