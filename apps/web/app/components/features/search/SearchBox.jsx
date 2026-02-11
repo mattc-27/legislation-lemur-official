@@ -6,8 +6,8 @@ import Link from "next/link";
 
 // const SEARCH_INDEX_URL = "../../data/search_index.json"
 //const STATES_GROUPED_URL = "../../data/states_grouped.json";
-const SEARCH_INDEX_URL = "/data/search_index.json";
-const STATES_GROUPED_URL = "/data/states_grouped.json";
+const SEARCH_INDEX_URL = "@/apps/web/public/data/search_index.json";
+const STATES_GROUPED_URL = "@/apps/web/public/data/states_grouped.json";
 
 // import '../../../../app/modules/stylesheets/home-styles.css';
 

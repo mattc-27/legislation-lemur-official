@@ -1,5 +1,5 @@
 //"use client";
-import { getHomeSnapshot } from "../../../lib/server/congress";
+import { getHomeSnapshot } from "@/lib/server/routes/congress";
 
 export const revalidate = 900; // cache snapshot for 15 min
 

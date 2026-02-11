@@ -3,8 +3,9 @@
 
 import { useState, useMemo } from "react";
 import SubjectsStackedArea from "./SubjectsStackedArea";
-import "../../../lib/stylesheets/refactored/subject-trend.refactored.css";
-import "../../../lib/stylesheets/refactored/ui-controls.css";
+// import "../../../lib/stylesheets/refactored/subject-trend.refactored.css";
+// import "../../../lib/stylesheets/refactored/ui-controls.css";
+import '@/app/styles/active/subject-trend.ll3.css';
 
 const WINDOW_OPTIONS = [
     { id: "session", label: "Session 1" },

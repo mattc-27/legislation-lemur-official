@@ -1,37 +1,45 @@
 // components/member/SenateVotes.jsx
+import { ExternalLink, Landmark } from "lucide-react";
+
+
 export default function SenateVotes({ groups = [] }) {
     if (!groups || groups.length === 0) {
         return <p className="muted">No Senate votes found.</p>;
     }
 
     return (
-        <div className="table-scroll">
+        <div className="llmp3-stack-16">
             {groups.map((g) => (
-                <div
+                <section
                     key={`${g.base_measure}-${g.congress}`}
-                    className="card card--p-16 senate-vote-card"
+                    className="llmp3-card llmp3-card--soft llmp3-senvote"
                 >
-                    <header className="flex items-center justify-between mb-8">
-                        <div>
-                            <div className="text-sm text-slate-500">119th Congress</div>
-                            <h3 className="text-lg font-semibold">
-                                {g.title || g.base_measure}
-                            </h3>
+                    <header className="llmp3-senvote__head">
+                        <div className="llmp3-senvote__title">
+                            <div className="llmp3-senvote__meta">
+                                <span className="llmp3-chip">
+                                    <Landmark size={14} aria-hidden="true" />
+                                    {g.congress ? `${g.congress}th Congress` : "Congress"}
+                                </span>
+                            </div>
+                            <h3 className="llmp3-h3">{g.title || g.base_measure}</h3>
                         </div>
+
                         {g.link && (
                             <a
-                                className="btn btn--ghost"
+                                className="llmp3-linkbtn"
                                 href={g.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
                                 View on Senate.gov
+                                <ExternalLink size={14} aria-hidden="true" />
                             </a>
                         )}
                     </header>
 
-                    <div className="senate-vote-table-wrap">
-                        <table className="table table--sm senate-vote-table">
+                    <div className="llmp3-tablewrap">
+                        <table className="llmp3-table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -48,7 +56,7 @@ export default function SenateVotes({ groups = [] }) {
                                     <tr key={s.vote_id || s.roll + s.datetime}>
                                         <td>{fmtDate(s.datetime)}</td>
                                         <td><StagePill label={s.label} /></td>
-                                        <td>{s.question}</td>
+                                        <td className="llmp3-tdwrap">{s.question}</td>
                                         <td>
                                             <span className={`badge ${badgeForVote(s.choice)}`}>
                                                 {prettyVote(s.choice)}
@@ -62,13 +70,11 @@ export default function SenateVotes({ groups = [] }) {
                             </tbody>
                         </table>
                     </div>
-                </div>
-
+                </section>
             ))}
         </div>
     );
 }
-
 function StagePill({ label }) {
     const map = {
         cloture: "Cloture",

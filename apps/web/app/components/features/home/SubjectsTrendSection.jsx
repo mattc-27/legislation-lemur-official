@@ -1,7 +1,8 @@
 // components/home/SubjectsTrendSection.jsx
-import { getSubjectsTrend } from "@/lib/server/views";
+import { getSubjectsTrend } from "@/lib/server/routes/views";
 import SubjectsTrendPanel from "./SubjectsTrendPanel";
-import "../../../lib/stylesheets/refactored/subject-trend.refactored.css";
+//import "../../../lib/stylesheets/refactored/subject-trend.refactored.css";
+import '@/app/styles/active/subject-trend.ll3.css';
 
 export default async function SubjectsTrendSection({
   congress,

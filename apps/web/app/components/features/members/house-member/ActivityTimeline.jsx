@@ -2,9 +2,23 @@
 "use client";
 import { useState, useMemo } from "react";
 
-export default function ActivityTimeline({ data = [], filterTopic }) {
-  const [mode, setMode] = useState("all"); // "all" | "sponsored" | "cosponsored"
+function fmtAsOf(asOf) {
+  if (!asOf) return null;
+  const d = new Date(asOf);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
 
+
+export default function ActivityTimeline({ data = [], filterTopic, freshnessAsOf = null }) {
+  const [mode, setMode] = useState("all"); // "all" | "sponsored" | "cosponsored"
+  const asOfLabel = fmtAsOf(freshnessAsOf);
   // optional topic filter (kept)
   const filtered = filterTopic ? data.filter(m => m.subjects?.includes?.(filterTopic)) : data;
 
@@ -43,9 +57,12 @@ export default function ActivityTimeline({ data = [], filterTopic }) {
   }, [months, max, mode]);
 
   return (
-    <div className="viz viz--timeline" role="group" aria-label="Legislative activity">
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-        <div><div className="viz__title">Legislative activity (last 12 mo)</div></div>
+    <div className="viz viz--timeline llmp3-timeline" role="group" aria-label="Legislative activity">
+      <div className="llmp3-timeline__head">
+        <div>
+          <div className="viz__title">Legislative activity (last 12 mo)</div>
+          {asOfLabel ? <div className="llmp3-muted" style={{ fontSize: 12, marginTop: 2 }}>Updated {asOfLabel}</div> : null}
+        </div>
         <div style={{ flex: 1 }} />
         <div className="segmented" role="tablist" aria-label="Activity view">
           <button

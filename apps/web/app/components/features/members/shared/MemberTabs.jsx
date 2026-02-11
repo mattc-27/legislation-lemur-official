@@ -15,6 +15,20 @@ const labelFromSubject = (subj) =>
             ? String(subj.name || subj.title)
             : "Uncategorized";
 
+function fmtFreshness(ts) {
+    if (!ts) return null;
+    const d = new Date(ts);
+    if (Number.isNaN(d.getTime())) return null;
+    return new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Denver",
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "numeric",
+        minute: "2-digit",
+    }).format(d);
+}
+
 export default function MemberTabs({
     title = "Recent bills by topic",
     groups,
@@ -22,6 +36,12 @@ export default function MemberTabs({
     groupsCosponsored,
     monthly = [],
     sourceLabel = "Includes sponsored + co-sponsored bills",
+
+    // NEW: pass freshness in from the server (recommended)
+    freshnessAsOf = null,          // e.g. min(last_success_at) across the views used by this section
+    freshnessPerView = null,       // optional: { member_legislation_v1: "...", member_monthly_activity_v1: "..." }
+    showPerViewFreshness = false,  // optional UI toggle
+
 }) {
     const [selectedTopic, setSelectedTopic] = useState(null);
     const [subjectKind, setSubjectKind] = useState("policy_area"); // ← toggle state
@@ -89,6 +109,8 @@ export default function MemberTabs({
 
     if (!mergedGroups.length && !(Array.isArray(monthly) && monthly.length)) return null;
 
+    const freshnessLine = fmtFreshness(freshnessAsOf);
+
     return (
         <section className="card card--p-24">
             <h3 className="section-title" style={{ marginBottom: 4 }}>
@@ -96,7 +118,23 @@ export default function MemberTabs({
             </h3>
             <div className="muted" style={{ fontSize: 12, marginBottom: 16 }}>
                 {sourceLabel}
+                {freshnessLine ? (
+                    <>
+                        {" "}
+                        • Updated {freshnessLine}
+                    </>
+                ) : null}
             </div>
+
+            {showPerViewFreshness && freshnessPerView && (
+                <div className="muted" style={{ fontSize: 11, marginBottom: 16 }}>
+                    {Object.entries(freshnessPerView).map(([name, ts]) => (
+                        <div key={name}>
+                            {name}: {fmtFreshness(ts) ?? "—"}
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* subject-kind toggle */}
             <div className="segmented" role="tablist" aria-label="Topic mode">

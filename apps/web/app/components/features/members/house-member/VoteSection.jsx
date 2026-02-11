@@ -3,9 +3,24 @@ import { useMemo, useState, useEffect } from "react";
 import VotesHeatmap from "./VotesHeatmap";
 import VotesTable from "./VotesTable";
 
+function fmtAsOf(asOf) {
+  if (!asOf) return null;
+  const d = new Date(asOf);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+
 export default function VotesSection({
   votes = [],
   tableInitialLimit = 20,   // sensible default
+  freshnessAsOf = null,
 }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [tableLimit, setTableLimit] = useState(tableInitialLimit);
@@ -51,13 +66,16 @@ export default function VotesSection({
   const canShowMore =
     !selectedDate && baseTable.length > (tableLimit || tableInitialLimit || 20);
 
+  const asOfLabel = fmtAsOf(freshnessAsOf);
+
   return (
-    <section className="card card--p-24">
-      <h3 className="section-title" style={{ marginBottom: 4 }}>
-        Recent votes
-      </h3>
-      <div className="muted" style={{ fontSize: 12, marginBottom: 16 }}>
-        Includes floor votes for the last year
+    <section className="llmp3-card">
+      <div className="llmp3-card__head">
+        <h3 className="llmp3-h2" style={{ margin: 0 }}>Recent votes</h3>
+        <div className="llmp3-asof">
+          Includes floor votes for the last year
+          {asOfLabel ? ` • Updated ${asOfLabel}` : ""}
+        </div>
       </div>
 
       <div className="member_votes-row">
@@ -85,11 +103,9 @@ export default function VotesSection({
 
           {canShowMore && (
             <button
-              className="btn btn--ghost btn--pill"
+              className="llmp3-linkbtn"
               type="button"
-              onClick={() =>
-                setTableLimit((n) => (n || tableInitialLimit || 20) + (tableInitialLimit || 20))
-              }
+              onClick={() => setTableLimit((n) => (n || tableInitialLimit || 20) + (tableInitialLimit || 20))}
             >
               Show more votes
             </button>

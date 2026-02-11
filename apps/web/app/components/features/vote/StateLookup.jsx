@@ -1,5 +1,5 @@
 "use client";
-import '../../../lib/stylesheets/vote-styles.css'
+import '@/app/styles/legacy_retired/vote-styles.css'
 import React, { useMemo, useState } from "react";
 
 const states = [

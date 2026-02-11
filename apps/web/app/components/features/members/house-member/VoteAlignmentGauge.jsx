@@ -1,6 +1,6 @@
 // components/member/VoteAlignmentPanel.jsx
 import React from "react";
-import '../../../../lib/stylesheets/refactored/vote-ui.refactored.css';
+// import '../../../../lib/stylesheets/refactored/vote-ui.refactored.css';
 
 export default function VoteAlignmentPanel({
   value,
@@ -32,11 +32,8 @@ export default function VoteAlignmentPanel({
       <div className="vote-panel__head">
         <h3 className="vote-panel__title">Party vote alignment</h3>
         {Number.isFinite(attendance) && (
-          <span
-            className="badge"
-            title="Share of this member’s cast votes out of all roll calls in their active window"
-          >
-            Attendance <strong className="badge__strong">{Math.round(attendance)}%</strong>
+          <span className="vote-badge" title="Share of this member’s cast votes out of all roll calls in their active window">
+            Attendance <strong className="vote-badge__strong">{Math.round(attendance)}%</strong>
           </span>
         )}
       </div>
