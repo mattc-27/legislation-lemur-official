@@ -1,6 +1,11 @@
-import '../lib/stylesheets/refactored/error-pages.refactored.css';
+// import '../lib/stylesheets/updated/error-pages.ll3.css';
 
 export default function NotFound() {
+    const images = [
+        "https://storage.googleapis.com/legislation-lemur-images/not-found-lemur.png",
+        "https://storage.googleapis.com/legislation-lemur-images/not-found-lemur-2.png",
+    ];
+
     return (
         <div className="error-page">
             <div className="error-page__inner">
@@ -12,12 +17,8 @@ export default function NotFound() {
                         moved, been renamed, or never existed.
                     </p>
                     <div className="error-actions">
-                        <a className="btn" href="/">
-                            Go home
-                        </a>
-                        <a className="btn btn--ghost" href="/members">
-                            Browse members of Congress
-                        </a>
+                        <a className="btn" href="/">Go home</a>
+                        <a className="btn btn--ghost" href="/members">Browse members of Congress</a>
                     </div>
                 </header>
 
@@ -25,15 +26,9 @@ export default function NotFound() {
                     <div className="error-copy-secondary">
                         <h2 className="error-secondary-title">Where to next?</h2>
                         <ul className="error-links">
-                            <li>
-                                <a href="/members">Search members by name or state</a>
-                            </li>
-                            <li>
-                                <a href="/committees">Browse Congressional committees</a>
-                            </li>
-                            <li>
-                                <a href="/bills">Explore recent bills and activity</a>
-                            </li>
+                            <li><a href="/members">Search members by name or state</a></li>
+                            <li><a href="/committees">Browse Congressional committees</a></li>
+                            <li><a href="/bills">Explore recent bills and activity</a></li>
                         </ul>
                         <p className="error-hint">
                             If you believe this is a broken link, feel free to try again
@@ -41,11 +36,7 @@ export default function NotFound() {
                         </p>
                     </div>
 
-                    <figure
-                        className="error-figure"
-                        data-anim="fade-up"
-                        style={{ "--i": 1 }}
-                    >
+                    <figure className="error-figure" data-anim="fade-up" style={{ "--i": 1 }}>
                         <img
                             //src="/lemur-images/lemur-found.png"
                             src="https://storage.googleapis.com/legislation-lemur-images/not-found-lemur.png"
@@ -59,3 +50,4 @@ export default function NotFound() {
         </div>
     );
 }
+
