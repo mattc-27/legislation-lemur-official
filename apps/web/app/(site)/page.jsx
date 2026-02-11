@@ -1,3 +1,4 @@
+//export const dynamic = "force-dynamic"
 import HomeHero from "../components/features/home/HomeHero";
 import FeaturesGrid from "@/app/components/features/home/FeaturesGrid";
 import RecentActivity from "@/app/components/features/home/RecentActivity";
