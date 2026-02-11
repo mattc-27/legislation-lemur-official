@@ -10,7 +10,7 @@
     align-items: end;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 960px) { 
     .filters__grid {
         grid-template-columns: 1fr 1fr;
     }
