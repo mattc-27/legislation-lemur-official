@@ -1,0 +1,223 @@
+/* =========================================================
+   subject-trend.ll3.css
+   Replacement for subject-trend.refactored.css
+   Keeps existing classnames; aligns with ll3 look
+   ========================================================= */
+
+:root {
+    --st-font: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+
+    --st-ink: #111827;
+    --st-body: #4b5563;
+    --st-muted: #6b7280;
+
+    --st-border: rgba(17, 24, 39, 0.10);
+    --st-border2: rgba(17, 24, 39, 0.08);
+
+    --st-card: rgba(255, 255, 255, 0.82);
+    --st-card-strong: rgba(255, 255, 255, 0.92);
+
+    --st-shadow: 0 12px 28px rgba(2, 8, 23, 0.06);
+    --st-radius: 16px;
+
+    /* accent tints */
+    --st-primary: rgba(180, 201, 232, 0.40);
+    --st-primary-2: rgba(232, 180, 184, 0.28);
+
+    /* axes */
+    --st-axis: rgba(17, 24, 39, 0.12);
+    --st-grid: rgba(17, 24, 39, 0.08);
+}
+
+.section-subjects-trend {
+    position: relative;
+    max-width: 1040px;
+    margin: 0 auto;
+
+    font-family: var(--st-font);
+    color: var(--st-body);
+
+    border-radius: var(--st-radius);
+    border: 1px solid var(--st-border);
+    background:
+        radial-gradient(900px 520px at 14% 0%, var(--st-primary), transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, var(--st-primary-2), transparent 62%),
+        var(--st-card);
+    box-shadow: var(--st-shadow);
+
+    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+    backdrop-filter: saturate(1.1) blur(10px);
+
+    padding: 16px;
+}
+
+.section-subjects-trend__header {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.section-subjects-trend__title {
+    margin: 0;
+    color: var(--st-ink);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    font-size: 14px;
+}
+
+.section-subjects-trend__subtitle {
+    margin: 0;
+    color: var(--st-body);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.55;
+    max-width: 70ch;
+}
+
+.section-subjects-trend__body {
+    margin-top: 6px;
+}
+
+/* Wrapper used by your panel */
+.subjects-trend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* You already use .segmented from ui-controls.css.
+   This just makes sure it sits nicely on the card. */
+.subjects-trend__filters.segmented {
+    align-self: flex-start;
+}
+
+/* Chart container */
+.subjects-chart__container {
+    width: 100%;
+    position: relative;
+    background: var(--st-card-strong);
+    border: 1px solid var(--st-border2);
+    border-radius: 14px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.subjects-chart__svg {
+    display: block;
+    width: 100%;
+}
+
+/* Axes / grid */
+.subjects-chart__axis--x .subjects-chart__tick-line {
+    stroke: var(--st-axis);
+    stroke-width: 1;
+}
+
+.subjects-chart__axis--y .subjects-chart__grid-line {
+    stroke: var(--st-grid);
+    stroke-width: 1;
+    opacity: 0.9;
+}
+
+.subjects-chart__tick-label {
+    font-family: var(--st-font);
+    font-size: 11px;
+    fill: rgba(17, 24, 39, 0.70);
+    text-anchor: middle;
+    font-weight: 700;
+}
+
+.subjects-chart__tick-label--y {
+    text-anchor: end;
+}
+
+/* Legend */
+.subjects-chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 10px;
+}
+
+.subjects-chart__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--st-body);
+    font-weight: 700;
+}
+
+.subjects-chart__legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .section-subjects-trend {
+        padding: 14px;
+    }
+
+    .subjects-chart__container {
+        padding: 8px;
+    }
+
+    .subjects-chart__tick-label {
+        font-size: 10px;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   Segmented controls (time window pills)
+   You can delete this if you guarantee ui-controls.css is loaded globally.
+   --------------------------------------------------------- */
+
+.subjects-trend__filters.segmented {
+    align-self: flex-start;
+    display: inline-flex;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--st-border2);
+}
+
+.segmented__btn {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+
+    padding: 6px 12px;
+    border-radius: 999px;
+
+    font-family: var(--st-font);
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.72);
+
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.segmented__btn:hover {
+    background: rgba(255, 255, 255, 0.65);
+    border-color: rgba(17, 24, 39, 0.10);
+    color: rgba(17, 24, 39, 0.88);
+}
+
+.segmented__btn--active,
+.segmented__btn[aria-selected="true"] {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(17, 24, 39, 0.14);
+    color: rgba(17, 24, 39, 0.92);
+    box-shadow: 0 6px 16px rgba(2, 8, 23, 0.06);
+}

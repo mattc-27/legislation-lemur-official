@@ -1,10 +1,14 @@
-import HomeHero from "../components/home/HomeHero";
-import FeaturesGrid from "../components/home/FeaturesGrid";
-import SearchBox from "../components/search/SearchBox";
-import RecentActivity from "../components/home/RecentActivity";
-// import EmailUpdatesCTA from "./components/EmailUpdatesCTA";
-import SubjectsTrendSection from "../components/home/SubjectsTrendSection";
+//export const dynamic = "force-dynamic"
+import HomeHero from "../components/features/home/HomeHero";
+import FeaturesGrid from "@/app/components/features/home/FeaturesGrid";
+import RecentActivity from "@/app/components/features/home/RecentActivity";
 
+
+import SubjectsTrendSection from "@/app/components/features/home/SubjectsTrendSection";
+import StatsBand from '@/app/components/features/home/StatsBand';
+
+// import EmailUpdatesCTA from "./components/EmailUpdatesCTA";
+// import SearchBox from "../components/search/SearchBox";
 
 export const revalidate = 1800;
 
@@ -12,12 +16,12 @@ export default async function HomePage() {
   const CURRENT_CONGRESS = 119;
 
   return (
-    <div className="container stack-48">
+    <div className="ll3 home">
       <HomeHero>
         <div className="stack-16 hero__search-wrap">
           {/* Primary: simple, focused search */}
-          <SearchBox />
-          {/* 
+
+          {/*  <SearchBox />
           <div className="hero__actions">
             <a href="/states" className="btn btn--ghost">Browse states</a>
             <a href="/compare" className="btn btn--ghost">Compare members</a>
@@ -26,6 +30,7 @@ export default async function HomePage() {
         </div>
         {/* Key previews */}
       </HomeHero>
+      <StatsBand />
       <FeaturesGrid />
       {/* Key previews */}
       <RecentActivity maxItems={4} />
