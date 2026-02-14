@@ -27,10 +27,10 @@ import {
  */export default function BillCard({ bill }) {
     const r = bill;
 
-    const slug = `${r.type}-${r.number}-${r.congress}`.toLowerCase();
+    const slug = `${r.bill_type}-${r.bill_number}-${r.congress}`.toLowerCase();
     const href = `/bills/${slug}`;
 
-    const billCode = `${String(r.type || "").toUpperCase()}. ${r.number}`;
+    const billCode = `${String(r.bill_type || "").toUpperCase()}. ${r.bill_number}`;
     const chamber = r.origin_chamber || "—";
 
     const statusKey = normalizeStatusKey(r.status_code);
@@ -104,13 +104,13 @@ import {
                 </div>
 
                 <div className="ll3-card__actions">
-                    <Link className="ll3-btn ll3-btn--primary ll3-btn--sm" href={href}>
+                    <Link className="ll3-btn ll3-btn--primary ll3-btn--sm ll3-btn--open" href={href}>
                         <ArrowUpRight size={16} aria-hidden="true" />
                         Open
                     </Link>
 
                     <SaveBillButtonClient
-                        billId={r.bill_id}
+                        billId={r.billCode}
                         href={href}
                         label={`${r.type?.toUpperCase()}. ${r.number} (${r.congress})`}
                         meta={{

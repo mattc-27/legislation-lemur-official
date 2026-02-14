@@ -39,9 +39,9 @@ export default function SiteHeader() {
                 </Link>
 
                 <nav className="site-header__nav site-header__nav--desktop" aria-label="Main navigation">
-                    <Link href="/search" className="site-header__link">Search | Members</Link>
+                    <Link href="/search" className="site-header__link">Search Members of U.S. Congress</Link>
                     <Link href="/bills" className="site-header__link">Bills</Link>
-                    <Link href="/vote" className="site-header__link">Voting Resources</Link>
+                    <Link href="/references" className="site-header__link">Wiki & Resources</Link>
                     <Link href="/about" className="site-header__link">About</Link>
                 </nav>
 
@@ -62,9 +62,9 @@ export default function SiteHeader() {
                 className={`site-header__nav site-header__nav--mobile ${open ? "is-open" : ""}`}
                 aria-label="Mobile navigation"
             >
-                <Link href="/search" className="site-header__link" onClick={() => setOpen(false)}>Search</Link>
+                <Link href="/search" className="site-header__link" onClick={() => setOpen(false)}>Search Members of U.S. Congress</Link>
                 <Link href="/bills" className="site-header__link" onClick={() => setOpen(false)}>Bills</Link>
-                <Link href="/vote" className="site-header__link" onClick={() => setOpen(false)}>Voting Resources</Link>
+                <Link href="/references" className="site-header__link" onClick={() => setOpen(false)}>Wiki & Resources</Link>
                 <Link href="/about" className="site-header__link" onClick={() => setOpen(false)}>About</Link>
             </nav>
         </header>

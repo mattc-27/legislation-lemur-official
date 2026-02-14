@@ -34,8 +34,8 @@ export default async function HomePage() {
       <FeaturesGrid />
       {/* Key previews */}
       <RecentActivity maxItems={4} />
-      {/* */}
-      <SubjectsTrendSection congress={CURRENT_CONGRESS} />
+      {/*    <SubjectsTrendSection congress={CURRENT_CONGRESS} />*/}
+
     </div >
   );
 }

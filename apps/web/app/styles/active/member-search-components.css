@@ -658,110 +658,203 @@
     padding: 0;
     margin: 0;
 }
+
 /* =========================================================
    ChamberCard — minimal list style
    ========================================================= */
 
 .ll3-members .comp-card--list {
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(17, 24, 39, 0.10);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 6px 14px rgba(17, 24, 39, 0.05);
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 6px 14px rgba(17, 24, 39, 0.05);
 }
 
 /* top row: title left, total right */
 .ll3-members .comp-card__toprow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .ll3-members .comp-card__title {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--ll3-title);
-  letter-spacing: -0.01em;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ll3-title);
+    letter-spacing: -0.01em;
 }
 
 .ll3-members .comp-card__total {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: rgba(75, 85, 99, 0.75);
-  white-space: nowrap;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: rgba(75, 85, 99, 0.75);
+    white-space: nowrap;
 }
 
 /* stacked bar */
 .ll3-members .comp-bar2 {
-  height: 10px;
-  border-radius: 999px;
-  overflow: hidden;
-  border: 1px solid rgba(17, 24, 39, 0.10);
-  background: rgba(17, 24, 39, 0.06);
-  display: flex;
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(17, 24, 39, 0.06);
+    display: flex;
 }
 
 .ll3-members .comp-bar2__seg {
-  height: 100%;
-  display: block;
+    height: 100%;
+    display: block;
 }
 
-.ll3-members .comp-bar2__seg.is-d { background: var(--ll3-primary); }
-.ll3-members .comp-bar2__seg.is-r { background: var(--ll3-primary-2); }
-.ll3-members .comp-bar2__seg.is-i { background: rgba(17, 24, 39, 0.14); }
+.ll3-members .comp-bar2__seg.is-d {
+    background: var(--ll3-primary);
+}
+
+.ll3-members .comp-bar2__seg.is-r {
+    background: var(--ll3-primary-2);
+}
+
+.ll3-members .comp-bar2__seg.is-i {
+    background: rgba(17, 24, 39, 0.14);
+}
 
 /* list rows */
 .ll3-members .comp-lines {
-  margin-top: 10px;
-  display: grid;
-  gap: 8px;
+    margin-top: 10px;
+    display: grid;
+    gap: 8px;
 }
 
 .ll3-members .comp-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 12px;
-  background: rgba(17, 24, 39, 0.02);
-  border: 1px solid rgba(17, 24, 39, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 12px;
+    background: rgba(17, 24, 39, 0.02);
+    border: 1px solid rgba(17, 24, 39, 0.08);
 }
 
 .ll3-members .comp-line__left {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 .ll3-members .comp-line__label {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: rgba(75, 85, 99, 0.9);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: rgba(75, 85, 99, 0.9);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ll3-members .comp-line__value {
-  font-variant-numeric: tabular-nums;
-  font-size: 14px;
-  font-weight: 900;
-  color: var(--ll3-title);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--ll3-title);
 }
 
 /* tiny dots */
 .ll3-members .comp-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(17, 24, 39, 0.10);
-  flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    flex: 0 0 auto;
 }
 
-.ll3-members .comp-dot.is-d { background: var(--ll3-primary); }
-.ll3-members .comp-dot.is-r { background: var(--ll3-primary-2); }
-.ll3-members .comp-dot.is-i { background: rgba(17, 24, 39, 0.14); }
+.ll3-members .comp-dot.is-d {
+    background: var(--ll3-primary);
+}
+
+.ll3-members .comp-dot.is-r {
+    background: var(--ll3-primary-2);
+}
+
+.ll3-members .comp-dot.is-i {
+    background: rgba(17, 24, 39, 0.14);
+}
+
+
+/* =========================================
+   Bill card buttons + chip readability
+   Add to your LL3 UI layer (or ll3.bills.css)
+   Later rules win.
+========================================= */
+
+/* ---------- OPEN (primary CTA): purple + white ---------- */
+.ll3-btn--open {
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.96), rgba(99, 102, 241, 0.78));
+    border: 1px solid rgba(99, 102, 241, 0.38);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.10);
+}
+
+.ll3-btn--open:hover {
+    color: #fff;
+    transform: translateY(-1px);
+    filter: brightness(0.98);
+    box-shadow: 0 12px 28px rgba(2, 8, 23, 0.14);
+    border-color: rgba(99, 102, 241, 0.55);
+}
+
+.ll3-btn--open:active {
+    color: #fff;
+    transform: translateY(0);
+    filter: brightness(0.94);
+}
+
+.ll3-btn--open:focus-visible {
+    outline: 3px solid rgba(99, 102, 241, 0.35);
+    outline-offset: 2px;
+}
+
+/* Make sure icons inherit the white */
+.ll3-btn--open svg {
+    color: currentColor;
+}
+
+/* ---------- SAVE (keep ghost, but slightly clearer) ---------- */
+.ll3-btn--ghost.ll3-btn--sm {
+    border-color: rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.86);
+    color: rgba(17, 24, 39, 0.82);
+}
+
+.ll3-btn--ghost.ll3-btn--sm:hover {
+    background: #fff;
+    border-color: rgba(17, 24, 39, 0.16);
+}
+
+/* Optional: saved state pop a bit without screaming */
+.ll3-btn--saved {
+    border-color: rgba(99, 102, 241, 0.28);
+    background: rgba(99, 102, 241, 0.08);
+    color: rgba(55, 65, 81, 0.92);
+}
+
+/* ---------- Card actions spacing (optional polish) ---------- */
+.ll3-card__actions {
+    gap: 10px;
+    /* a touch more breathing room */
+}
+
+/* Strong, unambiguous: Open CTA is always white */
+.ll3-btn.ll3-btn--open,
+.ll3-card__actions .ll3-btn.ll3-btn--open {
+    color: #fff !important;
+}
+
+/* Ensure any children (span, svg) inherit white */
+.ll3-btn.ll3-btn--open *,
+.ll3-card__actions .ll3-btn.ll3-btn--open * {
+    color: inherit !important;
+}

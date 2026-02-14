@@ -1,82 +1,106 @@
-# Legislation Lemur (v2)
-
-**Legislation Lemur** is a neutral, data-driven platform for exploring U.S. Congressional data — including members, bills, votes, and session-level composition — through a clean, structured interface.
-
-This repository is built on a Turborepo monorepo foundation, with significant enhancements across:
-
-* UI / layout system
-* Search & filtering logic
-* Error handling & observability
-* ETL orchestration + control schema alignment
+Here’s a tightened, more structured README with a clean **Recent Updates** section (dated), plus a PR title + description you can paste into GitHub.
 
 ---
 
-## 🚀 What’s New in ll-v2
+# Legislation Lemur (ll-v2)
 
-### Frontend Enhancements
+**Legislation Lemur** is a neutral, data-driven platform for exploring U.S. Congressional data — including members, bills, votes, and session-level composition — through a structured, stable interface.
 
-ll-v2 focuses heavily on UX polish, rendering stability, and filtering improvements.
-
-**Major Improvements:**
-
-* Enhanced page layouts (full-width header, refined content spacing)
-* Improved filtering & search behavior (desktop + mobile stability)
-* Refactored error boundaries and error rendering system
-* Structured error logging + reporting helpers
-* Randomized not-found imagery support
-* Refactored CSS (ll3 layout + styling tokens)
-* Better component isolation with scoped boundaries
-* Improved search panel rendering consistency across devices
-* More resilient client/server rendering patterns
-
-The overall goal:
-**Cleaner UI. More stable state handling. Better filtering clarity.**
+This repository is built on a Turborepo monorepo foundation and includes significant frontend polish and backend orchestration alignment.
 
 ---
 
-## 🧠 ETL & Orchestration Updates
+# 📌 Recent Updates
 
-⚠️ This repository originated from the Turborepo starter template. The monorepo structure remains stable, but the ETL/control layer has evolved significantly.
+### **2026-02-12 — Bills Search & Filtering Enhancements**
 
-### Key Backend / Pipeline Updates
+* Added autocomplete support to bill search (subject-aware)
+* Improved filter state handling (desktop + mobile)
+* Stabilized mobile filter sheet behavior
+* Query parameter synchronization improvements
+* Rendering consistency fixes across breakpoints
+* Refined UI tokens and layout spacing for search panels
 
-* Migration to updated Postgres schemas:
+**Impact:**
+Cleaner filtering UX. More deterministic search behavior. Better mobile parity.
+
+---
+
+### **2026-02-11 — UI Stabilization & Error System Refactor**
+
+* Refactored error boundaries (page-scoped + section-scoped)
+* Centralized error reporting helpers
+* Structured error metadata extraction utilities
+* Improved not-found rendering logic (randomized imagery support)
+* Refined header layout (full-width system)
+* CSS token cleanup (`ll3` layout system)
+
+**Impact:**
+Improved observability. More resilient rendering. Clearer fallback UX.
+
+---
+
+### **2026-02-10 — ETL Schema & Control Plane Alignment**
+
+* Updated Postgres schema references:
 
   * `sandbox_ops_control_v1`
   * `sandbox_ops_sched_v1`
-  * Updated materialized view contracts
-* Alignment with Cloud Run Jobs + Workflows orchestration model
-* Updated enum usage for:
+* Materialized view contract alignment (v3 safe worker)
+* Enum updates for:
 
   * Run execution statuses
   * Endpoint work tracking
   * Refresh lifecycle states
-* Refresh queue logic now tied to control-plane run groups
-* Materialized view refresh process updated to match pipeline contracts
-* Improved refresh worker schema safety (V3 schema-safe worker)
+* Refresh queue tied explicitly to run groups
+* Cloud Run Jobs + Workflows orchestration alignment
 
-Most structural changes are internal to:
+**Impact:**
+Deterministic refresh lifecycle handling. Safer execution tracking. Schema-version consistency.
+
+---
+
+# 🚀 ll-v2 Overview
+
+ll-v2 focuses on:
+
+* UI stabilization
+* Filtering/search robustness
+* Error system refactoring
+* Schema alignment for orchestration
+* Refresh queue reliability
+* Observability improvements
+
+It does **not** introduce major Turborepo restructuring.
+
+---
+
+# 🧠 Backend & Orchestration
+
+Although the monorepo structure remains stable, the ETL/control layer has evolved significantly.
+
+### Key Backend Improvements
+
+* Control-plane schema alignment
+* Safer refresh worker (schema-safe V3)
+* Enum-driven run status tracking
+* Explicit run-group lifecycle management
+* Improved materialized view refresh sequencing
+* Workflow orchestration stability improvements
+
+Most changes are internal to:
 
 * `ops_refresh_worker`
 * Orchestrator jobs
 * Workflow definitions
-* Database functions + migrations
+* Database functions & migrations
 * Environment configuration
 
-There are **no major structural changes** to Turborepo itself.
-
-If reviewing this repo primarily for frontend structure, you will not see large architectural shifts — the significant changes are in:
-
-* Control-plane logic
-* Schema references
-* Execution tracking
-* Refresh orchestration handling
+Frontend structure remains stable; the orchestration logic is where most architectural evolution occurred.
 
 ---
 
-## 🏗 Monorepo Structure
-
-This Turborepo includes:
+# 🏗 Monorepo Structure
 
 ### Apps
 
@@ -86,14 +110,14 @@ This Turborepo includes:
 ### Shared Packages
 
 * `@repo/ui` – Shared React components
-* `@repo/eslint-config` – ESLint configuration
-* `@repo/typescript-config` – Shared TypeScript config
+* `@repo/eslint-config`
+* `@repo/typescript-config`
 
 All packages are fully TypeScript.
 
 ---
 
-## 🛠 Development
+# 🛠 Development
 
 ### Install
 
@@ -101,19 +125,13 @@ All packages are fully TypeScript.
 npm install
 ```
 
-### Develop All Apps
+### Run All Apps
 
 ```bash
 turbo dev
 ```
 
-Or:
-
-```bash
-npx turbo dev
-```
-
-### Develop Specific App
+### Run Specific App
 
 ```bash
 turbo dev --filter=web
@@ -121,15 +139,15 @@ turbo dev --filter=web
 
 ---
 
-## 🏗 Build
+# 🏗 Build
 
-Build entire monorepo:
+### Build All
 
 ```bash
 turbo build
 ```
 
-Build specific app:
+### Build Specific App
 
 ```bash
 turbo build --filter=web
@@ -137,78 +155,55 @@ turbo build --filter=web
 
 ---
 
-## ☁️ Remote Caching (Optional)
-
-Turborepo supports Remote Caching via Vercel.
+# ☁️ Remote Caching (Optional)
 
 ```bash
 turbo login
 turbo link
 ```
 
-Remote caching allows shared build artifacts across machines and CI.
+Enables shared build artifacts across CI and local machines.
 
 ---
 
-## 🧩 Architectural Philosophy
+# 🧩 Architectural Philosophy
 
-Legislation Lemur is designed around:
+Legislation Lemur prioritizes:
 
 * Data neutrality
 * Structured legislative visibility
-* Clear status + refresh observability
 * Deterministic ETL orchestration
 * Explicit control-plane state tracking
-* Frontend clarity over visual noise
-
-The project prioritizes:
-
 * Traceable refresh lifecycles
-* Explicit run-group orchestration
 * Strong error boundaries
 * Schema-version alignment
-* Clear UI hierarchy
+* Clear UI hierarchy over visual noise
 
 ---
 
-## 🔍 Scope of ll-v2
+# 📌 Notes for Reviewers
 
-ll-v2 focuses on:
+### Frontend Review Focus
 
-* UI stabilization
-* Filtering/search robustness
-* Error system refactoring
-* Schema alignment for orchestration
-* Refresh queue reliability
+* Layout refinements
+* Search & filter stability
+* Error boundaries & fallback UX
+* Mobile rendering consistency
 
-It does **not** introduce major monorepo restructuring.
+### Backend Review Focus
 
----
-
-## 📌 Notes for Reviewers
-
-If reviewing:
-
-**Frontend reviewers**
-
-* Focus on layout refinements
-* Filtering/search improvements
-* Error boundaries + page fallback system
-* Rendering consistency improvements
-
-**Backend / ETL reviewers**
-
-* Review control schema references
+* Control schema references
 * Refresh queue behavior
-* Orchestrator alignment with Cloud Workflows
-* Updated enum and run status handling
-* V3 schema-safe refresh worker logic
+* Orchestrator alignment
+* Enum & run status handling
+* Schema-safe refresh worker logic
 
 ---
 
-## 📖 Useful Turborepo Links
+# 📖 Turborepo References
 
 * [https://turborepo.com/docs/crafting-your-repository/running-tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
 * [https://turborepo.com/docs/crafting-your-repository/caching](https://turborepo.com/docs/crafting-your-repository/caching)
 * [https://turborepo.com/docs/reference/configuration](https://turborepo.com/docs/reference/configuration)
 * [https://turborepo.com/docs/reference/command-line-reference](https://turborepo.com/docs/reference/command-line-reference)
+
