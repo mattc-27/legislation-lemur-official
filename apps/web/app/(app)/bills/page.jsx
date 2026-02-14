@@ -18,9 +18,14 @@ import SubjectsTrendSection from "@/app/components/features/home/SubjectsTrendSe
 
 import '@/app/styles/legacy_refactor/home-styles.refactored.css'
 
+import PolicyAreaBreakdownPanel from "@/app/components/features/bills/PolicyAreaBreakdownPanel";
 
 
 import BillsFilterForm from "@/app/components/features/forms/BillsFilterForm";
+
+import BillsFilterFormToastsClient from "@/app/components/features/bills/BillsFilterFormToastsClient";
+
+
 
 import '@/app/styles/active/bills/ll3.bills.tokens.css';
 import '@/app/styles/active/bills/ll3.bills.ui.css';
@@ -77,7 +82,8 @@ export default async function BillsPage({ searchParams }) {
     const sp = await searchParams;
 
     const { filters } = parseBillsFiltersV2(sp);
-    const { withOffset } = buildBillsPagination(sp, { limit: filters.limit });
+    const { withOffset, baseParams } = buildBillsPagination(sp, { limit: filters.limit });
+
     // congress is needed for facets (your facet helper expects it)
     // getBillsDirectoryV2 will default to current congress if null; we’ll reuse returned congress.
     const [dirRes, freshness, filterOptions] = await Promise.all([
@@ -192,6 +198,7 @@ export default async function BillsPage({ searchParams }) {
 
                     {/* DESKTOP FILTERS */}
                     <BillsFilterForm
+                        formId="bills-filters-desktop"
                         variant="desktop"
                         filters={filters}
                         types={types}
@@ -199,11 +206,20 @@ export default async function BillsPage({ searchParams }) {
                         statuses={statuses}
                         committees={committees}
                     />
-
+                    <BillsFilterFormToastsClient formId="bills-filters-desktop" total={total} variant="desktop" />
                 </div>
 
                 <div className="ll3-control__panel ll3-control__panel--chart">
-                    <SubjectsTrendSection congress={CURRENT_CONGRESS} activityAsOfText={activityAsOfText} />
+                    <PolicyAreaBreakdownPanel
+                        title={filters.q ? `Policy areas for “${filters.q}”` : "Policy area overview"}
+                        subtitle={filters.q ? "Breakdown of results for your current search/filter set" : "Top policy areas in this Congress (with current filters)"}
+                        counts={facets?.policyAreas || []}
+                        dict={filterOptions?.policyAreas || []}
+                        total={total}
+                        limit={8}
+                        currentPolicyAreaId={filters.policyAreaId}
+                        baseParams={baseParams}
+                    />
                 </div>
             </section>
 
@@ -222,6 +238,7 @@ export default async function BillsPage({ searchParams }) {
                 <RefineResultsBarClient label="Bills" hint="Tap to refine results" activeCount={activeCount}>
                     <div className="ll3-control__panel">
                         <BillsFilterForm
+                            formId="bills-filters-sheet"
                             variant="sheet"
                             filters={filters}
                             types={types}
@@ -229,6 +246,8 @@ export default async function BillsPage({ searchParams }) {
                             statuses={statuses}
                             committees={committees}
                         />
+                        <BillsFilterFormToastsClient formId="bills-filters-sheet" total={total} variant="sheet" />
+
                     </div>
                 </RefineResultsBarClient>
 

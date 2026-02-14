@@ -3,11 +3,21 @@
 
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import toast from "react-hot-toast";
+import { startNavLoadingToast } from "@/lib/navLoadingToast";
 import Link from "next/link";
 import { STATES } from "@/lib/shared/constants/constants";
 import DensityToggleClient from "../bills/DensityToggleClient";
+
+/* 
 const SEARCH_INDEX_URL = "@/apps/web/public/data/search_index.json";
 const STATES_GROUPED_URL = "@/apps/web/public/data/states_grouped.json";
+*/
+
+const SEARCH_INDEX_URL = "/data/search_index.json";
+const STATES_GROUPED_URL = "/data/states_grouped.json";
+
+
 import { X } from "lucide-react";
 
 const norm = (s) => (s || "").toLowerCase().trim();
@@ -74,6 +84,7 @@ export default function SearchFilters({ initial = {} }) {
       if (value == null || value === "") next.delete(key);
       else next.set(key, value);
       next.delete("page");
+      startNavLoadingToast("Searching members…");
       router.replace(`${pathname}?${next.toString()}`, { scroll: false });
     },
     [params, pathname, router]
@@ -103,11 +114,14 @@ export default function SearchFilters({ initial = {} }) {
   const clearFilters = useCallback(() => {
     const next = new URLSearchParams(params.toString());
     ["q", "chamber", "party", "state", "page"].forEach((k) => next.delete(k));
+    startNavLoadingToast("Clearing filters…");
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
   }, [params, pathname, router]);
 
   const onSubmit = (e) => {
     e.preventDefault();
+
+    // startNavLoadingToast("Searching members…");
     setParam("q", qLocal.trim());
   };
 
@@ -320,7 +334,7 @@ export default function SearchFilters({ initial = {} }) {
               <button type="button" className="ll3-btn ll3-btn--ghost ll3-btn--full" onClick={clearFilters}>
                 Clear
               </button>
-              <button type="submit" className="ll3-btn ll3-btn--primary ll3-btn--full">
+              <button type="button" className="ll3-btn ll3-btn--primary ll3-btn--full" onClick={() => setParam("q", qLocal.trim())}>
                 Apply filters
               </button>
             </div>

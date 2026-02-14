@@ -1,53 +1,27 @@
-/* app/(wiki)/reference/reference.css */
+/* app/styles/active/reference.ll3.css
+   Goal: bring back the visual “hero + cards” styling from your original wk-page,
+   while still aligning to LL3 tokens (font, border, shadow, radii, buttons, inputs).
 
-:root {
-    --wk-bg: #ffffff;
-    --wk-panel: #f4f8ff;
-    --wk-card: #ffffff;
-    --wk-border: #e6ebf2;
-    --wk-text: #0f172a;
-    --wk-muted: #475569;
-    --wk-link: #1d4ed8;
-    --wk-linkHover: #1e40af;
-    --wk-btn: #163a8a;
-    --wk-btnHover: #0f2d73;
-    --wk-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 30px rgba(15, 23, 42, 0.06);
-    --wk-radius: 14px;
+   This file assumes ll3 tokens + primitives are already loaded globally.
+*/
+
+.ll3-wk {
+    /* make sure our page doesn't get "flatter" than the original */
+    color: var(--ll3-text);
 }
 
-* {
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-}
-
-body {
-    margin: 0;
-    background: var(--wk-bg);
-    color: var(--wk-text);
-}
-
-.wk-page {
-    padding: 28px 16px 60px;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-}
-
-.wk-wrap {
-    max-width: 980px;
-    margin: 0 auto;
-}
-
-.wk-hero {
-    background: var(--wk-panel);
-    border: 1px solid var(--wk-border);
-    border-radius: var(--wk-radius);
+/* ---------- HERO (restore wk-hero look) ---------- */
+.ll3-wk__hero {
+    background: rgba(244, 248, 255, 0.92);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--ll3-radius);
     padding: 22px 22px 18px;
-    box-shadow: var(--wk-shadow);
+    box-shadow: var(--ll3-shadow);
+    backdrop-filter: blur(10px);
+    margin-top: 6px;
 }
 
-.wk-hero__pill {
+.ll3-wk__heroTop {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -56,7 +30,7 @@ body {
     margin-bottom: 10px;
 }
 
-.wk-pill {
+.ll3-wk__pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -65,67 +39,65 @@ body {
     background: #0b1220;
     color: #fff;
     font-size: 12px;
-    letter-spacing: .02em;
-    font-weight: 700;
+    letter-spacing: 0.02em;
+    font-weight: 800;
 }
 
-.wk-hero__checked {
+.ll3-wk__checked {
     font-size: 12px;
-    color: var(--wk-muted);
+    color: rgba(17, 24, 39, 0.55);
 }
 
-.wk-title {
+.ll3-wk__title {
     margin: 0;
     font-size: 40px;
     line-height: 1.1;
     letter-spacing: -0.02em;
+    color: var(--ll3-ink);
+    font-weight: 900;
 }
 
-.wk-subtitle {
+.ll3-wk__subtitle {
     margin: 10px 0 10px;
-    color: var(--wk-muted);
+    color: rgba(17, 24, 39, 0.62);
     line-height: 1.55;
     max-width: 68ch;
 }
 
-.wk-link {
-    color: var(--wk-link);
+.ll3-wk__link {
+    color: rgba(29, 78, 216, 0.95);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 800;
 }
 
-.wk-link:hover {
-    color: var(--wk-linkHover);
+.ll3-wk__link:hover {
     text-decoration: underline;
+    color: rgba(30, 64, 175, 0.95);
 }
 
-.wk-bullets {
+.ll3-wk__bullets {
     margin: 0;
     padding-left: 18px;
-    color: var(--wk-muted);
+    color: rgba(17, 24, 39, 0.60);
     line-height: 1.55;
 }
 
-.wk-bullets li {
+.ll3-wk__bullets li {
     margin: 4px 0;
 }
 
-/* Cards row */
-.wk-grid3 {
+/* ---------- Steps row (restore “cards row” look) ---------- */
+.ll3-wk__steps {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
     margin-top: 16px;
 }
 
-.wk-grid3--tight {
-    margin-top: 10px;
-}
-
-.wk-card {
-    background: var(--wk-card);
-    border: 1px solid var(--wk-border);
-    border-radius: var(--wk-radius);
+.ll3-wk__card {
+    background: var(--ll3-card);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--ll3-radius);
     padding: 18px;
     box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
     min-height: 160px;
@@ -134,306 +106,292 @@ body {
     gap: 8px;
 }
 
-.wk-card__eyebrow {
-    color: var(--wk-link);
+.ll3-wk__eyebrow {
+    color: rgba(29, 78, 216, 0.95);
     font-size: 11px;
-    font-weight: 800;
-    letter-spacing: .08em;
+    font-weight: 900;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
-.wk-card__title {
+.ll3-wk__cardTitle {
     margin: 0;
     font-size: 18px;
     letter-spacing: -0.01em;
+    color: var(--ll3-ink);
+    font-weight: 900;
 }
 
-.wk-card__desc {
+.ll3-wk__cardDesc {
     margin: 0;
-    color: var(--wk-muted);
+    color: rgba(17, 24, 39, 0.60);
     line-height: 1.45;
     flex: 1;
 }
 
-.wk-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: var(--wk-btn);
-    color: #fff;
-    text-decoration: none;
-    border: none;
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    user-select: none;
+.ll3-wk__cta.ll3-btn--open {
+    /* keep your open gradient behavior */
 }
 
-.wk-btn:hover {
-    background: var(--wk-btnHover);
-}
-
-.wk-btn--ghost {
-    background: transparent;
-    color: var(--wk-btn);
-    border: 1px solid var(--wk-border);
-}
-
-.wk-btn--ghost:hover {
-    background: #f1f5ff;
-}
-
-.wk-btn--muted {
-    background: #7c8dbd;
-    cursor: not-allowed;
-}
-
-.wk-btn--muted:hover {
-    background: #7c8dbd;
-}
-
-/* Panel */
-.wk-panel {
+/* ---------- Panel (restore dashed outline vibe) ---------- */
+.ll3-wk__panel {
     margin-top: 16px;
-    border: 1px dashed #cbd5e1;
-    border-radius: var(--wk-radius);
+    border: 1px dashed rgba(203, 213, 225, 0.95);
+    border-radius: var(--ll3-radius);
     padding: 16px;
-    background: #fbfdff;
+    background: rgba(251, 253, 255, 0.92);
 }
 
-.wk-panel__head {
+/* Panel head */
+.ll3-wk__panelHead {
     margin-bottom: 12px;
 }
 
-.wk-h2 {
+.ll3-wk__h2 {
     margin: 0 0 6px;
     font-size: 16px;
     letter-spacing: -0.01em;
+    font-weight: 900;
+    color: var(--ll3-ink);
 }
 
-.wk-muted {
-    color: var(--wk-muted);
+.ll3-wk__muted {
+    color: rgba(17, 24, 39, 0.62);
+    line-height: 1.55;
+    font-size: 13.5px;
 }
 
-.wk-lookup {
+/* Lookup block */
+.ll3-wk__lookup {
     display: grid;
     gap: 12px;
 }
 
-.wk-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    color: #334155;
-}
-
-.wk-select {
-    width: 240px;
-    max-width: 100%;
-    padding: 10px 10px;
-    border-radius: 10px;
-    border: 1px solid var(--wk-border);
-    background: #fff;
-    color: var(--wk-text);
-}
-
-.wk-lookup__cards {
+.ll3-wk__lookupCards {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
     gap: 14px;
 }
 
-.wk-mini {
-    background: #fff;
-    border: 1px solid var(--wk-border);
-    border-radius: var(--wk-radius);
+.ll3-wk__mini {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--ll3-radius);
     padding: 14px;
 }
 
-.wk-mini__title {
+.ll3-wk__miniTitle {
     margin: 0 0 6px;
     font-size: 13px;
     letter-spacing: -0.01em;
+    color: var(--ll3-ink);
+    font-weight: 900;
 }
 
-.wk-mini__desc {
+.ll3-wk__miniDesc {
     margin: 0 0 10px;
-    color: var(--wk-muted);
+    color: rgba(17, 24, 39, 0.62);
     line-height: 1.45;
     font-size: 13px;
 }
 
+.ll3-wk__btnMuted[disabled] {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
 /* Divider */
-.wk-hr {
+.ll3-wk__hr {
     border: none;
-    border-top: 1px solid var(--wk-border);
+    border-top: 1px solid rgba(17, 24, 39, 0.08);
     margin: 20px 0 18px;
 }
 
 /* About */
-.wk-h3 {
+.ll3-wk__about {
+    margin-top: 0;
+}
+
+.ll3-wk__aboutGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.ll3-wk__h3 {
     margin: 0 0 6px;
     font-size: 13px;
     letter-spacing: -0.01em;
+    color: var(--ll3-ink);
+    font-weight: 900;
 }
 
-.wk-faq {
+.ll3-wk__faq {
     padding: 8px 4px;
 }
 
 /* Wiki */
-.wk-wiki {
+.ll3-wk__wiki {
     margin-top: 18px;
 }
 
-.wk-wiki__head {
+.ll3-wk__wikiHead {
     margin-bottom: 10px;
 }
 
-.wk-wiki__layout {
+.ll3-wk__wikiLayout {
     display: grid;
     grid-template-columns: 240px 1fr;
     gap: 18px;
     align-items: start;
 }
 
-.wk-toc {
+/* TOC restored to original look */
+.ll3-wk__toc {
     position: sticky;
     top: 14px;
-    border: 1px solid var(--wk-border);
-    border-radius: var(--wk-radius);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--ll3-radius);
     padding: 12px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.92);
 }
 
-.wk-toc__title {
+.ll3-wk__tocTitle {
     font-size: 12px;
-    font-weight: 800;
-    color: #334155;
+    font-weight: 900;
+    color: rgba(51, 65, 85, 0.95);
     margin-bottom: 8px;
 }
 
-.wk-toc__link {
+.ll3-wk__tocLink {
     display: block;
     padding: 8px 10px;
     border-radius: 10px;
     text-decoration: none;
-    color: #1f2937;
+    color: rgba(31, 41, 55, 0.95);
     border: 1px solid transparent;
     font-size: 13px;
+    font-weight: 800;
 }
 
-.wk-toc__link:hover {
-    border-color: var(--wk-border);
-    background: #f8fafc;
+.ll3-wk__tocLink:hover {
+    border-color: rgba(17, 24, 39, 0.10);
+    background: rgba(248, 250, 252, 0.9);
 }
 
-.wk-anchor {
+.ll3-wk__anchor {
     scroll-margin-top: 18px;
     padding-top: 6px;
 }
 
-.wk-wiki__content p {
-    line-height: 1.6;
-}
-
-.wk-list {
-    margin: 10px 0 0;
-    padding-left: 18px;
-    color: var(--wk-text);
-}
-
-.wk-list li {
-    margin: 8px 0;
-}
-
-.wk-mono {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+/* Content stack */
+.ll3-wk__content {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
 }
 
 /* Table */
-.wk-tableWrap {
+.ll3-wk__tableWrap {
     overflow: auto;
-    border: 1px solid var(--wk-border);
-    border-radius: var(--wk-radius);
-    background: #fff;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--ll3-radius);
+    background: rgba(255, 255, 255, 0.92);
     margin-top: 10px;
 }
 
-.wk-table {
+.ll3-wk__table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
 }
 
-.wk-table th, .wk-table td {
+.ll3-wk__table th,
+.ll3-wk__table td {
     text-align: left;
     padding: 10px 12px;
-    border-bottom: 1px solid var(--wk-border);
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
     vertical-align: top;
 }
 
-.wk-table th {
+.ll3-wk__table th {
     font-size: 12px;
-    letter-spacing: .02em;
-    color: #334155;
-    background: #f8fafc;
+    letter-spacing: 0.02em;
+    color: rgba(51, 65, 85, 0.95);
+    background: rgba(248, 250, 252, 0.9);
+    font-weight: 900;
+}
+
+.ll3-wk__mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 900;
 }
 
 /* Callouts */
-.wk-callout {
+.ll3-wk__callout {
     margin-top: 12px;
-    border: 1px solid var(--wk-border);
-    border-radius: var(--wk-radius);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--ll3-radius);
     padding: 12px 12px 10px;
-    background: #f8fafc;
+    background: rgba(248, 250, 252, 0.95);
 }
 
-.wk-callout__title {
-    font-weight: 800;
+.ll3-wk__calloutTitle {
+    font-weight: 900;
     font-size: 12px;
     margin-bottom: 4px;
+    color: rgba(17, 24, 39, 0.85);
 }
 
-.wk-callout--subtle {
-    background: #fbfdff;
+.ll3-wk__callout--subtle {
+    background: rgba(251, 253, 255, 0.95);
 }
 
-.wk-callout--warn {
-    background: #fff7ed;
-    border-color: #fed7aa;
+.ll3-wk__callout--warn {
+    background: rgba(255, 247, 237, 0.95);
+    border-color: rgba(254, 215, 170, 0.95);
+}
+
+/* Lists */
+.ll3-wk__list {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    color: rgba(17, 24, 39, 0.90);
+}
+
+.ll3-wk__list li {
+    margin: 8px 0;
+    line-height: 1.55;
 }
 
 /* Footer */
-.wk-footer {
+.ll3-wk__footer {
     margin-top: 26px;
     padding-top: 14px;
-    border-top: 1px solid var(--wk-border);
+    border-top: 1px solid rgba(17, 24, 39, 0.10);
 }
 
 /* Responsive */
 @media (max-width: 860px) {
-    .wk-grid3 {
+    .ll3-wk__steps {
         grid-template-columns: 1fr;
     }
 
-    .wk-lookup__cards {
+    .ll3-wk__lookupCards {
         grid-template-columns: 1fr;
     }
 
-    .wk-wiki__layout {
+    .ll3-wk__wikiLayout {
         grid-template-columns: 1fr;
     }
 
-    .wk-toc {
+    .ll3-wk__toc {
         position: relative;
         top: 0;
     }
 
-    .wk-title {
+    .ll3-wk__title {
         font-size: 32px;
     }
 }
