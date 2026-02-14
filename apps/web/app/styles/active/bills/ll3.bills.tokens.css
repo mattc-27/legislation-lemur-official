@@ -1,0 +1,117 @@
+/* app/(app)/styles/bills/ll3.bills.tokens.css
+   ======================================================================
+   Bills UI Tokens (LL3 + Bill Detail alignment)
+   - Consolidated from your 3 sheets
+   - “Later rules win” applied (e.g., primary = #8fb1de, primary text = white)
+   ====================================================================== */
+
+:root {
+    /* Font */
+    --ll3-font: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+
+    /* Core text */
+    --ll3-ink: #111827;
+    /* headings / strong */
+    --ll3-text: #4b5563;
+    /* body */
+    --ll3-muted: #6b7280;
+    /* helper */
+
+    /* Surfaces */
+    --ll3-bg: #ffffff;
+    --ll3-card: #ffffff;
+    --ll3-surface: rgba(255, 255, 255, 0.82);
+    --ll3-surface-strong: rgba(255, 255, 255, 0.92);
+
+    /* Borders */
+    --ll3-border: rgba(17, 24, 39, 0.12);
+    --ll3-border2: rgba(17, 24, 39, 0.08);
+    --ll3-border-strong: rgba(17, 24, 39, 0.18);
+
+    /* Shadows */
+    --ll3-shadow: 0 12px 28px rgba(2, 8, 23, 0.06);
+    --ll3-shadow2: 0 10px 22px rgba(2, 8, 23, 0.05);
+    --ll3-shadow-sm: 0 8px 16px rgba(17, 24, 39, 0.06);
+
+    /* Radius */
+    --ll3-radius: 16px;
+    --ll3-radius-sm: 12px;
+
+    /* Brand / actions (later rule wins) */
+    --ll3-primary: #8fb1de;
+    /* final override */
+    --ll3-primaryText: rgba(255, 255, 255, 0.94);
+
+    /* Accent option you referenced (kept for future) */
+    --ll3-primary-2: #e8b4b8;
+
+    /* Focus ring (matches your later “primary focus ring vibe”) */
+    --ll3-focus-ring: rgba(143, 177, 222, 0.35);
+
+    /* Buttons */
+    --ll3-btn-h: 40px;
+    /* later override */
+    --ll3-btn-h-sm: 36px;
+    --ll3-btn-r: 10px;
+    --ll3-btn-r-sm: 10px;
+    --ll3-btn-pad-x: 14px;
+    --ll3-btn-font: 13px;
+    --ll3-btn-weight: 700;
+    --ll3-btn-shadow: 0 6px 16px rgba(2, 8, 23, 0.06);
+
+    /* Inputs */
+    --ll3-input-h: 44px;
+    --ll3-input-r: 12px;
+    --ll3-input-pad-x: 12px;
+
+    /* Pills / chips */
+    --ll3-pill-h: 32px;
+    --ll3-pill-r: 999px;
+    --ll3-pill-border: rgba(17, 24, 39, 0.12);
+    --ll3-pill-bg: rgba(255, 255, 255, 0.78);
+
+    /* Status tones */
+    --ll3-status-introduced: #3b82f6;
+    --ll3-status-committee: #a78bfa;
+    --ll3-status-reported: #f59e0b;
+    --ll3-status-passed: #10b981;
+    --ll3-status-final: #0ea5e9;
+    --ll3-status-law: #22c55e;
+    --ll3-status-veto: #ef4444;
+
+    /* Chart tones */
+    --ll3-chart-intro: #2563eb;
+    --ll3-chart-acts: #059669;
+}
+
+/* Density knobs (kept from your sheet) */
+html[data-ll3-density="compact"] {
+    --ll3-card-pad: 14px;
+    --ll3-title-size: 16px;
+    --ll3-hero-size: 14px;
+    --ll3-gap: 10px;
+}
+
+html:not([data-ll3-density="compact"]) {
+    --ll3-card-pad: 18px;
+    --ll3-title-size: 18px;
+    --ll3-hero-size: 15px;
+    --ll3-gap: 12px;
+}
+
+/* Optional: Bill detail page can keep its own gradient, but align tokens */
+:root {
+    --llbd3-ink: var(--ll3-ink);
+    --llbd3-body: var(--ll3-text);
+    --llbd3-muted: var(--ll3-muted);
+    --llbd3-border: var(--ll3-border);
+    --llbd3-border2: var(--ll3-border2);
+    --llbd3-card: var(--ll3-card);
+    --llbd3-cardSoft: rgba(255, 255, 255, 0.72);
+    --llbd3-shadow: var(--ll3-shadow);
+    --llbd3-shadow2: var(--ll3-shadow2);
+    --llbd3-radius: var(--ll3-radius);
+    --llbd3-radius-sm: var(--ll3-radius-sm);
+    --llbd3-primary: var(--ll3-primary);
+    --llbd3-primaryText: var(--ll3-primaryText);
+}

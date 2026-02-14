@@ -1,0 +1,274 @@
+/* app/(app)/styles/bills/ll3.bills.directory.cards.css
+   ======================================================================
+   Bills Directory — BillCard + card internals + details popover
+   Matches your JSX class usage.
+   ====================================================================== */
+
+/* Card shell */
+.ll3-card {
+    border: 1px solid var(--ll3-border);
+    background: var(--ll3-card);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow-sm);
+    overflow: hidden;
+}
+
+/* Tier A/B padding */
+.ll3-card__a,
+.ll3-card__b {
+    padding: var(--ll3-card-pad);
+}
+
+.ll3-card__a {
+    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+/* Top row: chip + status */
+.ll3-card__toprow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Title link */
+.ll3-titlelink {
+    text-decoration: none;
+    color: inherit;
+}
+
+.ll3-title {
+    margin: 10px 0 0;
+    font-size: var(--ll3-title-size);
+    line-height: 1.25;
+    color: var(--ll3-ink);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Tier B layout */
+.ll3-card__b {
+    display: grid;
+    gap: var(--ll3-gap);
+}
+
+/* “Latest action” hero block inside card */
+.ll3-hero__label {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--ll3-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ll3-hero__date {
+    margin-top: 4px;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--ll3-muted);
+}
+
+.ll3-hero__text {
+    margin-top: 6px;
+    font-size: var(--ll3-hero-size);
+    line-height: 1.45;
+    color: var(--ll3-ink);
+    font-weight: 750;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Meta grid */
+.ll3-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 10px;
+    align-items: start;
+}
+
+.ll3-meta__k {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--ll3-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ll3-meta__v {
+    margin-top: 4px;
+    font-size: 13.5px;
+    color: var(--ll3-ink);
+    font-weight: 750;
+}
+
+/* Subjects row */
+.ll3-subjects {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ll3-subject {
+    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(17, 24, 39, 0.02);
+    color: var(--ll3-ink);
+    font-size: 12.5px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ll3-subject--more {
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--ll3-muted);
+}
+
+/* Actions row */
+.ll3-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 12px;
+
+    flex-wrap: nowrap;
+}
+
+/* Ensure action buttons hug content on desktop */
+.ll3-card__actions .ll3-btn {
+    width: auto;
+    min-width: 0;
+}
+
+/* Details pushed right */
+.ll3-details {
+    margin-left: auto;
+}
+
+/* Details control */
+.ll3-details__summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--ll3-ink);
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.8);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ll3-details__summary::-webkit-details-marker {
+    display: none;
+}
+
+.ll3-details__chev {
+    margin-left: 6px;
+    opacity: 0.7;
+    transition: transform 0.16s ease;
+}
+
+.ll3-details[open] .ll3-details__chev {
+    transform: rotate(180deg);
+}
+
+.ll3-details[open] .ll3-details__summary {
+    border-color: rgba(17, 24, 39, 0.18);
+    background: rgba(17, 24, 39, 0.03);
+}
+
+/* Details body */
+.ll3-details__body {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(17, 24, 39, 0.02);
+
+    min-width: 280px;
+}
+
+.ll3-details__row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px;
+    padding: 6px 0;
+}
+
+.ll3-details__k {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--ll3-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.ll3-details__v {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--ll3-ink);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 720px) {
+    .ll3-card__actions {
+        flex-wrap: wrap;
+    }
+
+    .ll3-details {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .ll3-details__body {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .ll3-details__row {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-meta {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ll3-meta__subjects {
+        grid-column: span 2;
+    }
+
+    /* Optional: action buttons full-width on mobile */
+    .ll3-card__actions .ll3-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

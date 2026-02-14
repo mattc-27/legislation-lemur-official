@@ -1,5 +1,7 @@
 // components/search/SearchResultCard.jsx
 "use client";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 export default function SearchResultCard({ m }) {
 
@@ -24,9 +26,13 @@ export default function SearchResultCard({ m }) {
             </div>
 
             <div className="membercard__actions">
-                <a className="btn btn--accent" href={href} aria-label={`View ${m.name} profile`}>
+                {/* <a className="btn btn--accent" href={href} aria-label={`View ${m.name} profile`}>
                     View profile
-                </a>
+                </a> */}
+                <Link className="ll3-btn ll3-btn--primary ll3-btn--sm ll3-btn--open" href={href}>
+                    <ArrowUpRight size={16} aria-hidden="true" />
+                    View profile
+                </Link>
             </div>
         </article>
     );

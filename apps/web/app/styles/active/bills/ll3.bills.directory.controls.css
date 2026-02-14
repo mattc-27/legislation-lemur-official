@@ -1,0 +1,244 @@
+/* app/(app)/styles/bills/ll3.bills.directory.controls.css
+   ======================================================================
+   Bills Directory — Filters + Autocomplete + Resizable select + Seg/Chips
+   Matches your JSX class usage.
+   ====================================================================== */
+
+/* Filters grid */
+.ll3-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 720px) {
+    .ll3-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-field--span2 {
+        grid-column: auto;
+    }
+}
+
+/* Actions row inside filter form */
+.ll3-actions {
+    grid-column: span 2;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+    margin-top: 2px;
+}
+
+@media (max-width: 820px) {
+    .ll3-actions {
+        grid-column: auto;
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ----------------------------------------------------------------------
+   Autocomplete (AutocompleteInputClient.jsx)
+   ---------------------------------------------------------------------- */
+
+.ll3-auto {
+    position: relative;
+    width: 100%;
+}
+
+.ll3-auto__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+
+    z-index: 60;
+    max-height: 360px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(17, 24, 39, 0.96);
+
+    box-shadow:
+        0 10px 24px rgba(2, 6, 23, 0.18),
+        0 2px 8px rgba(2, 6, 23, 0.10);
+
+    padding: 6px;
+
+    transform: translateZ(0);
+}
+
+.ll3-auto__item {
+    width: 100%;
+    text-align: left;
+
+    display: block;
+    border: 0;
+    background: transparent;
+
+    padding: 10px 10px;
+    border-radius: 10px;
+
+    font-size: 14px;
+    line-height: 1.25;
+
+    color: rgba(255, 255, 255, 0.92);
+    cursor: pointer;
+
+    white-space: normal;
+    word-break: break-word;
+}
+
+.ll3-auto__item:hover,
+.ll3-auto__item:active {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.ll3-auto__item:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.14);
+}
+
+.ll3-auto__item+.ll3-auto__item {
+    margin-top: 2px;
+}
+
+.ll3-auto__menu::-webkit-scrollbar {
+    width: 10px;
+}
+
+.ll3-auto__menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ll3-auto__menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    border: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+}
+
+.ll3-auto__menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.26);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ll3-auto__menu {
+        scroll-behavior: auto;
+    }
+}
+
+/* ----------------------------------------------------------------------
+   Resizable multi-select (ResizableSelectClient.jsx)
+   ---------------------------------------------------------------------- */
+
+.ll3-resize {
+    width: 100%;
+}
+
+.ll3-resize__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 6px 0 8px;
+}
+
+.ll3-resize__hint {
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.62);
+}
+
+.ll3-resize__controls {
+    display: inline-flex;
+    gap: 6px;
+}
+
+.ll3-resize__btn {
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.9);
+    color: rgba(15, 23, 42, 0.85);
+    border-radius: 10px;
+    height: 28px;
+    min-width: 34px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.ll3-resize__btn:hover {
+    background: rgba(255, 255, 255, 1);
+}
+
+.ll3-resize__btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+.ll3-resize__select {
+    resize: vertical;
+    overflow: auto;
+    min-height: 44px;
+    max-height: 360px;
+}
+
+/* Option padding */
+.ll3-resize__select option {
+    padding: 6px 8px;
+}
+
+/* ----------------------------------------------------------------------
+   Chamber toggle (Segmented) — ChamberToggleClient.jsx
+   ---------------------------------------------------------------------- */
+
+.ll3-seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.ll3-seg__item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 40px;
+    border-radius: 12px;
+
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.85);
+    cursor: pointer;
+    user-select: none;
+}
+
+.ll3-seg__item.is-active {
+    background: rgba(180, 201, 232, 0.55);
+    border-color: rgba(15, 23, 42, 0.14);
+}
+
+/* ----------------------------------------------------------------------
+   Type pills — TypePillsClient.jsx
+   (note: uses .ll3-chip from UI sheet + adds layout spacing here)
+   ---------------------------------------------------------------------- */
+
+.ll3-chipset {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 6px 0 8px;
+}
+
+/* For type chips (labels), make “active” state obvious */
+.ll3-chip.is-active {
+    background: rgba(180, 201, 232, 0.55);
+    border-color: rgba(17, 24, 39, 0.14);
+}
