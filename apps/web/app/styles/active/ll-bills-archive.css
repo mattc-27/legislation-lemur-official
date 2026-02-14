@@ -314,6 +314,61 @@ html:not([data-ll3-density="compact"]) {
     box-shadow: 0 6px 14px rgba(17, 24, 39, 0.07);
 }
 
+
+/* Secondary external link button */
+.llbd3-btn--external {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(17, 24, 39, 0.14);
+    box-shadow: none;
+    font-weight: 750;
+}
+
+.llbd3-btn--external:hover {
+    transform: translateY(-1px);
+    background: #fff;
+    border-color: rgba(17, 24, 39, 0.20);
+    box-shadow: var(--llbd3-shadow2);
+}
+
+.llbd3-btn--external:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Base simple variant (works everywhere) */
+.llbd3-back--simple {
+    border-radius: 999px;
+    box-shadow: none;
+    /* reduce weight */
+    background: transparent;
+    /* reduce weight */
+    border: 1px solid rgba(17, 24, 39, 0.14);
+}
+
+/* Mobile: smaller, quieter, consistent placement */
+@media (max-width: 640px) {
+    .llbd3-back--simple {
+        height: 36px;
+        padding: 0 10px;
+        gap: 6px;
+        font-weight: 700;
+        border-color: rgba(17, 24, 39, 0.12);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(6px);
+    }
+
+    /* optional: make it feel like a header control */
+    .llbd3-back--simple svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.llbd3-back--simple:hover {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+
 .ll3-only-desktop {
     display: inline-flex;
 }
@@ -1186,6 +1241,25 @@ html:not([data-ll3-density="compact"]) {
     color: rgba(255, 255, 255, 0.94);
 }
 
+/* Open button: ensure readable white text and stable hover/active */
+.ll3-btn--open {
+    color: #fff;
+}
+
+.ll3-btn--open:hover,
+.ll3-btn--open:active,
+.ll3-btn--open:focus-visible {
+    color: #fff;
+}
+
+/* if your primary button hover changes bg, keep it from “inverting” text */
+.ll3-btn--open:hover {
+    filter: brightness(0.95);
+}
+
+.ll3-btn--open:active {
+    filter: brightness(0.90);
+}
 
 /* --- Header top row: keep title + meta aligned nicely --- */
 

@@ -1,38 +1,25 @@
-/* app/(app)/styles/ll-bill-detail.v3.css */
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800;900&display=swap");
+/* app/(app)/styles/ll3.bill.details.css
+   ======================================================================
+   LL3 — Bill Details (page-scoped only)
+   - Uses global tokens/ui for typography, buttons, links, inputs where possible.
+   - Keeps llbd3-* namespace isolated to this route.
+   - Later rules override earlier (per your note).
+   ====================================================================== */
 
-:root {
-    --llbd3-ink: #111827;
-    /* headings */
-    --llbd3-body: #4b5563;
-    /* paragraphs/content */
-    --llbd3-muted: #6b7280;
-    --llbd3-border: rgba(17, 24, 39, 0.12);
-    --llbd3-border2: rgba(17, 24, 39, 0.08);
-    --llbd3-card: #ffffff;
-    --llbd3-cardSoft: rgba(255, 255, 255, 0.72);
-    --llbd3-shadow: 0 12px 28px rgba(2, 8, 23, 0.06);
-    --llbd3-shadow2: 0 10px 22px rgba(2, 8, 23, 0.05);
-    --llbd3-radius: 16px;
-    --llbd3-radius-sm: 12px;
-
-    /* primary action tint (soft, modern) */
-    --llbd3-primary: #b4c9e8;
-    --llbd3-primaryText: #111827;
-}
-
+/* ----------------------------------------------------------------------
+   Page shell + background (scoped)
+   ---------------------------------------------------------------------- */
 .llbd3-page,
 .llbd3-page * {
     box-sizing: border-box;
 }
 
 .llbd3-page {
-    font-family: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    color: var(--ll3-text);
     background:
         radial-gradient(1000px 520px at 14% 0%, rgba(180, 201, 232, 0.35), transparent 60%),
         radial-gradient(900px 520px at 90% 10%, rgba(232, 180, 184, 0.20), transparent 62%),
         linear-gradient(#ffffff, #ffffff);
-    color: var(--llbd3-body);
 }
 
 .llbd3-wrap {
@@ -41,7 +28,9 @@
     padding: 22px 16px 34px;
 }
 
-/* Top */
+/* ----------------------------------------------------------------------
+   Top header area
+   ---------------------------------------------------------------------- */
 .llbd3-top {
     display: grid;
     gap: 12px;
@@ -52,48 +41,60 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
-}
-
-.llbd3-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    height: 40px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--llbd3-border);
-    background: rgba(255, 255, 255, 0.7);
-    color: var(--llbd3-ink);
-    font-weight: 700;
-    text-decoration: none;
-    box-shadow: var(--llbd3-shadow2);
-}
-
-.llbd3-back:hover {
-    background: #fff;
 }
 
 .llbd3-head {
     max-width: 86ch;
 }
 
+/* Back link (page-specific variant, not a global .ll3-btn) */
+.llbd3-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.70);
+    color: rgba(17, 24, 39, 0.92);
+
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: var(--ll3-shadow2);
+}
+
+.llbd3-back:hover {
+    background: rgba(255, 255, 255, 1);
+}
+
+.llbd3-back:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.35);
+    outline-offset: 2px;
+}
+
+/* Eyebrow */
 .llbd3-eyebrow {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+
     font-size: 0.78rem;
     letter-spacing: 0.10em;
     text-transform: uppercase;
-    color: var(--llbd3-muted);
+    color: rgba(17, 24, 39, 0.55);
 }
 
 .llbd3-eyebrow__sep {
     opacity: 0.6;
 }
 
+/* Title row + h1 */
 .llbd3-titleRow {
     display: flex;
     align-items: baseline;
@@ -105,68 +106,66 @@
 
 .llbd3-h1 {
     margin: 0;
-    color: var(--llbd3-ink);
+    color: var(--ll3-ink);
     font-weight: 900;
     letter-spacing: -0.02em;
     font-size: clamp(1.6rem, 1.2vw + 1.3rem, 2.2rem);
     line-height: 1.22;
-    /* cleaner readability */
 }
 
 .llbd3-subtitle {
     margin: 10px 0 0;
-    color: var(--llbd3-body);
+    color: var(--ll3-text);
     font-size: 1rem;
     line-height: 1.6;
 }
 
-/* Buttons */
-.llbd3-btn {
+/* Header external link: subtle, not a “button” */
+.llbd3-extlink {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1px solid var(--llbd3-border);
-    background: #fff;
-    color: var(--llbd3-ink);
+    gap: 8px;
+
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 999px;
+
     text-decoration: none;
-    font-weight: 800;
-    box-shadow: var(--llbd3-shadow2);
-    transition: transform 0.06s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    font-weight: 750;
+
+    color: rgba(17, 24, 39, 0.78);
+    background: transparent;
+    border: 1px solid rgba(17, 24, 39, 0.14);
+
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
 }
 
-.llbd3-btn:hover {
+.llbd3-extlink:hover {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(17, 24, 39, 0.20);
     transform: translateY(-1px);
-    border-color: rgba(17, 24, 39, 0.16);
-    box-shadow: var(--llbd3-shadow);
 }
 
-.llbd3-btn:active {
-    transform: translateY(0px);
+.llbd3-extlink:active {
+    transform: translateY(0);
 }
 
-.llbd3-btn--primary {
-    border: none;
-    background: linear-gradient(180deg, rgba(180, 201, 232, 0.95), rgba(180, 201, 232, 0.70));
-    color: var(--llbd3-primaryText);
+.llbd3-extlink:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.35);
+    outline-offset: 2px;
 }
 
-
-
-/* Status (dot + label) */
+/* Status (dot + label) - page-scoped */
 .llbd3-status {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 10px;
     border-radius: 999px;
-    border: 1px solid var(--llbd3-border);
+    border: 1px solid rgba(17, 24, 39, 0.12);
     background: rgba(255, 255, 255, 0.85);
-    color: var(--llbd3-ink);
-    font-weight: 800;
+    color: rgba(17, 24, 39, 0.92);
+    font-weight: 850;
     font-size: 0.82rem;
     white-space: nowrap;
 }
@@ -206,13 +205,15 @@
     background: #ef4444;
 }
 
-/* Hero */
+/* ----------------------------------------------------------------------
+   Hero
+   ---------------------------------------------------------------------- */
 .llbd3-hero {
     margin-top: 14px;
     background: rgba(255, 255, 255, 0.78);
-    border: 1px solid var(--llbd3-border);
-    border-radius: var(--llbd3-radius);
-    box-shadow: var(--llbd3-shadow);
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow);
     -webkit-backdrop-filter: saturate(1.1) blur(10px);
     backdrop-filter: saturate(1.1) blur(10px);
     overflow: hidden;
@@ -232,10 +233,10 @@
 }
 
 .llbd3-hero__primary {
-    border: 1px solid var(--llbd3-border2);
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: var(--llbd3-radius-sm);
-    padding: 14px 14px;
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(255, 255, 255, 0.80);
+    border-radius: 12px;
+    padding: 14px;
     min-width: 0;
 }
 
@@ -243,28 +244,30 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: var(--llbd3-muted);
+
+    color: rgba(17, 24, 39, 0.58);
     text-transform: uppercase;
     letter-spacing: 0.10em;
-    font-weight: 800;
+    font-weight: 850;
     font-size: 0.74rem;
 }
 
 .llbd3-hero__date {
     margin-top: 8px;
-    color: var(--llbd3-ink);
+    color: var(--ll3-ink);
     font-weight: 900;
     font-size: 0.95rem;
 }
 
 .llbd3-hero__text {
     margin-top: 8px;
-    color: var(--llbd3-body);
+    color: var(--ll3-text);
     line-height: 1.6;
     font-size: 0.98rem;
     word-break: break-word;
 }
 
+/* Meta KV grid */
 .llbd3-hero__meta {
     display: grid;
     gap: 10px;
@@ -272,10 +275,10 @@
 }
 
 .llbd3-kv {
-    border: 1px solid var(--llbd3-border2);
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: var(--llbd3-radius-sm);
-    padding: 12px 12px;
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(255, 255, 255, 0.80);
+    border-radius: 12px;
+    padding: 12px;
     min-width: 0;
 }
 
@@ -283,25 +286,22 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: var(--llbd3-muted);
+
+    color: rgba(17, 24, 39, 0.58);
     font-size: 0.78rem;
-    font-weight: 800;
+    font-weight: 850;
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
 
 .llbd3-kv__v {
     margin-top: 8px;
-    color: var(--llbd3-ink);
-    font-weight: 800;
+    color: var(--ll3-ink);
+    font-weight: 850;
     line-height: 1.35;
 }
 
-.llbd3-kv--subjects .llbd3-kv__v {
-    font-weight: 600;
-}
-
-/* Subjects as icon chips */
+/* Subjects row in hero */
 .llbd3-subjectRow {
     display: flex;
     flex-wrap: wrap;
@@ -313,14 +313,17 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+
     height: 30px;
     padding: 0 10px;
     border-radius: 999px;
-    border: 1px solid var(--llbd3-border);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--llbd3-ink);
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--ll3-ink);
+
     font-size: 0.86rem;
-    font-weight: 700;
+    font-weight: 800;
     min-width: 0;
 }
 
@@ -335,7 +338,9 @@
     background: rgba(17, 24, 39, 0.03);
 }
 
-/* Body grid */
+/* ----------------------------------------------------------------------
+   Body grid + columns
+   ---------------------------------------------------------------------- */
 .llbd3-body {
     margin-top: 16px;
     display: grid;
@@ -356,12 +361,14 @@
     gap: 14px;
 }
 
-/* Cards */
+/* ----------------------------------------------------------------------
+   Cards (page-specific wrapper; not global ll3-card)
+   ---------------------------------------------------------------------- */
 .llbd3-card {
-    background: var(--llbd3-card);
-    border: 1px solid var(--llbd3-border);
-    border-radius: var(--llbd3-radius);
-    box-shadow: var(--llbd3-shadow2);
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow2);
     padding: 16px;
 }
 
@@ -384,50 +391,21 @@
     align-items: center;
     gap: 10px;
     margin: 0;
-    color: var(--llbd3-ink);
+
+    color: var(--ll3-ink);
     font-weight: 900;
     letter-spacing: -0.01em;
     font-size: 1rem;
 }
 
 .llbd3-count {
-    color: var(--llbd3-muted);
-    font-weight: 800;
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 850;
 }
 
-/* Links */
-.llbd3-link {
-    color: var(--llbd3-ink);
-    font-weight: 800;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-}
-
-.llbd3-link:hover {
-    opacity: 0.9;
-}
-
-/* Sponsor chip link */
-.llbd3-chipLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    height: 40px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--llbd3-border);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--llbd3-ink);
-    text-decoration: none;
-    font-weight: 800;
-    max-width: 100%;
-}
-
-.llbd3-chipLink:hover {
-    background: #fff;
-}
-
-/* Timeline (clean rail, no overlap) */
+/* ----------------------------------------------------------------------
+   Timeline
+   ---------------------------------------------------------------------- */
 .llbd3-timeline {
     list-style: none;
     margin: 0;
@@ -487,9 +465,9 @@
 }
 
 .llbd3-timeline__date {
-    color: var(--llbd3-muted);
+    color: rgba(17, 24, 39, 0.58);
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 850;
 }
 
 .llbd3-timeline__type {
@@ -497,11 +475,13 @@
     text-transform: uppercase;
     letter-spacing: 0.10em;
     font-weight: 900;
+
     padding: 3px 9px;
     border-radius: 999px;
     border: 1px solid rgba(17, 24, 39, 0.10);
     background: rgba(17, 24, 39, 0.03);
-    color: var(--llbd3-ink);
+    color: var(--ll3-ink);
+
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -509,13 +489,15 @@
 }
 
 .llbd3-timeline__text {
-    color: var(--llbd3-body);
+    color: var(--ll3-text);
     font-size: 0.98rem;
     line-height: 1.65;
     word-break: break-word;
 }
 
-/* Docs */
+/* ----------------------------------------------------------------------
+   Docs list
+   ---------------------------------------------------------------------- */
 .llbd3-docs {
     list-style: none;
     margin: 0;
@@ -529,12 +511,16 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 12px 12px;
+
+    padding: 12px;
     border-radius: 14px;
+
     border: 1px solid rgba(17, 24, 39, 0.10);
     background: rgba(255, 255, 255, 0.85);
+
     text-decoration: none;
-    color: var(--llbd3-ink);
+    color: var(--ll3-ink);
+
     transition: transform 0.06s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
@@ -547,17 +533,19 @@
 .llbd3-doc__title {
     font-weight: 900;
     letter-spacing: -0.01em;
-    color: var(--llbd3-ink);
+    color: var(--ll3-ink);
 }
 
 .llbd3-doc__sub {
     margin-top: 4px;
-    color: var(--llbd3-muted);
+    color: rgba(17, 24, 39, 0.58);
     font-size: 0.84rem;
-    font-weight: 700;
+    font-weight: 750;
 }
 
-/* Related + side lists */
+/* ----------------------------------------------------------------------
+   Related + side lists
+   ---------------------------------------------------------------------- */
 .llbd3-list,
 .llbd3-sideList {
     list-style: none;
@@ -569,13 +557,35 @@
 
 .llbd3-list__item,
 .llbd3-sideList__item {
-    padding: 12px 12px;
+    padding: 12px;
     border-radius: 14px;
     border: 1px solid rgba(17, 24, 39, 0.08);
     background: rgba(255, 255, 255, 0.85);
 }
 
-/* Committees pill */
+/* Sponsor chip link */
+.llbd3-chipLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--ll3-ink);
+
+    text-decoration: none;
+    font-weight: 850;
+    max-width: 100%;
+}
+
+.llbd3-chipLink:hover {
+    background: #fff;
+}
+
 .llbd3-pillRow {
     display: flex;
     flex-wrap: wrap;
@@ -585,23 +595,29 @@
 .llbd3-pill {
     display: inline-flex;
     align-items: center;
+
     height: 30px;
     padding: 0 10px;
     border-radius: 999px;
-    border: 1px solid var(--llbd3-border);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--llbd3-ink);
-    font-weight: 800;
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--ll3-ink);
+
+    font-weight: 850;
     font-size: 0.86rem;
+
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Helpers */
+/* ----------------------------------------------------------------------
+   Helpers (page-scoped)
+   ---------------------------------------------------------------------- */
 .llbd3-muted {
-    color: var(--llbd3-muted);
+    color: rgba(17, 24, 39, 0.58);
 }
 
 .llbd3-small {
@@ -616,87 +632,27 @@
     margin-top: 10px;
 }
 
-
-
-
-/* Open button: ensure readable white text and stable hover/active */
-.ll3-btn--open {
-    color: #fff;
-}
-
-.ll3-btn--open:hover,
-.ll3-btn--open:active,
-.ll3-btn--open:focus-visible {
-    color: #fff;
-}
-
-/* if your primary button hover changes bg, keep it from “inverting” text */
-.ll3-btn--open:hover {
-    filter: brightness(0.95);
-}
-
-.ll3-btn--open:active {
-    filter: brightness(0.90);
-}
-
-
-/* Header external link: subtle, not a “button” */
-.llbd3-extlink {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    height: 36px;
-    padding: 0 10px;
-    border-radius: 999px;
-
-    text-decoration: none;
-    font-weight: 750;
-
-    color: rgba(17, 24, 39, 0.78);
-    background: transparent;
-    border: 1px solid rgba(17, 24, 39, 0.14);
-
-    transition: background 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
-}
-
-.llbd3-extlink:hover {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(17, 24, 39, 0.20);
-    transform: translateY(-1px);
-}
-
-.llbd3-extlink:active {
-    transform: translateY(0);
-}
-
-.llbd3-extlink:focus-visible {
-    outline: 3px solid rgba(59, 130, 246, 0.35);
-    outline-offset: 2px;
-}
-
-/* Mobile: reduce visual weight further */
+/* ----------------------------------------------------------------------
+   Mobile tweaks (later = more relevant)
+   ---------------------------------------------------------------------- */
 @media (max-width: 640px) {
+    .llbd3-wrap {
+        padding-top: 18px;
+    }
+
     .llbd3-extlink {
         height: 34px;
         padding: 0 9px;
-        font-weight: 700;
+        font-weight: 750;
         color: rgba(17, 24, 39, 0.72);
         border-color: rgba(17, 24, 39, 0.12);
         background: rgba(255, 255, 255, 0.55);
+        -webkit-backdrop-filter: blur(6px);
         backdrop-filter: blur(6px);
-    }
-
-    /* Optional: shorten label on very narrow screens */
-    .llbd3-extlink {
         white-space: nowrap;
     }
-}
 
-
-.llbd3-top__row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    .llbd3-card {
+        padding: 14px;
+    }
 }

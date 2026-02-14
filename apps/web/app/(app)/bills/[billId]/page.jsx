@@ -34,7 +34,9 @@ import {
   Link2,
 } from "lucide-react";
 
-import '@/app/styles/active/ll-bill-detail.css';
+/* import '@/app/styles/active/ll-bill-detail.css';*/
+
+import '@/app/styles/active/bills/ll3.bills.detail.page.css';
 
 // ---------- helpers ----------
 const fmtDate = (v) => {
@@ -138,21 +140,36 @@ export default async function BillPage({ params }) {
 
   const subjects = Array.isArray(bill.subjects) ? bill.subjects : [];
 
+  console.log(
+    bill,
+    actions,
+    texts,
+    cosponsors,
+    committees,
+    related
+  )
+
+
   return (
     <div className="llbd3-page">
       <div className="llbd3-wrap">
         {/* Top */}
         <header className="llbd3-top">
           <div className="llbd3-top__row">
-            <Link className="llbd3-back" href="/bills">
+            <Link className="llbd3-back llbd3-back--simple" href="/bills">
               <ArrowLeft size={16} aria-hidden="true" />
               Back
             </Link>
 
             {bill.url ? (
-              <a className="llbd3-btn llbd3-btn--primary" href={bill.url} target="_blank" rel="noreferrer">
+              <a
+                className="llbd3-extlink"
+                href={bill.url}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <ExternalLink size={16} aria-hidden="true" />
-                Congress.gov
+                View on Congress.gov
               </a>
             ) : (
               <span className="llbd3-muted">No external link</span>
@@ -346,7 +363,7 @@ export default async function BillPage({ params }) {
               </div>
 
               {bill.sponsor_bioguide_id ? (
-                <Link href={`/members/${bill.sponsor_bioguide_id}`} className="llbd3-chipLink">
+                <Link href={`/member/${bill.sponsor_bioguide_id}`} className="llbd3-chipLink">
                   <User size={16} aria-hidden="true" />
                   {bill.sponsor_name || bill.sponsor_bioguide_id}
                 </Link>
@@ -367,7 +384,7 @@ export default async function BillPage({ params }) {
               <ul className="llbd3-sideList">
                 {cosponsorObj.rows.map((c) => (
                   <li key={`${c.member_id}-${c.joined_at}`} className="llbd3-sideList__item">
-                    <Link href={`/members/${c.member_id}`} className="llbd3-link">
+                    <Link href={`/member/${c.member_id}`} className="llbd3-link">
                       {c.name || c.member_id}
                     </Link>
                     <div className="llbd3-muted llbd3-small llbd3-mt-6">

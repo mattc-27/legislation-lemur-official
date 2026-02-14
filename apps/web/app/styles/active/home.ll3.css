@@ -98,7 +98,7 @@
         radial-gradient(900px 520px at 90% 10%, rgba(232, 180, 184, 0.28), transparent 62%),
         radial-gradient(900px 520px at 50% 100%, rgba(180, 201, 232, 0.22), transparent 62%),
         linear-gradient(#ffffff, #ffffff);
-        
+
     filter: blur(18px);
     pointer-events: none;
     z-index: 0;
@@ -1207,5 +1207,27 @@
     .home-stats__cell {
         min-height: 92px;
         padding: 16px 18px;
+    }
+}
+
+
+/* ======================================
+   HOME HERO: left align title/sub on desktop
+====================================== */
+@media (min-width: 721px) {
+    .hero__brand {
+        text-align: left;
+    }
+
+    .hero__title,
+    .hero__sub {
+        text-align: left;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* optional: keep the copy from feeling too wide */
+    .hero__sub {
+        max-width: 720px;
     }
 }
