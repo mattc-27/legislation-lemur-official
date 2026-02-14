@@ -1,7 +1,7 @@
 import Script from "next/script";
 import { Roboto, Roboto_Slab } from "next/font/google";
 import GAListener from "@/app/components/ui/system/GAListener";
-
+import { Toaster } from "react-hot-toast";
 // import '../lib/stylesheets/layout.css';
 // import '../lib/stylesheets/home-styles.css';
 // import '../lib/stylesheets/refactored/ui-tokens.css';
@@ -16,9 +16,10 @@ import '@/app/styles/active/home.ll3.css';
 import SiteHeader from "@/app/components/layouts/SiteHeader";
 import SiteFooter from "@/app/components/layouts/SiteFooter";
 import QuoteLogger from "@/app/components/ui/system/QuoteLogger";
+import RouteLoadingToastClient from "@/app/components/ui/system/RouteLoadingToastClient";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
-
+import RouteToastClient from "@/app/components/ui/system/RouteToastClient";
 
 const sans = Roboto({
   subsets: ["latin"],
@@ -61,14 +62,28 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
       <body>
-        <QuoteLogger /> {/* Logs once on client load */}
+        <QuoteLogger />
+
         <SiteHeader />
-        <main className="site-main">
-          {children}
-        </main>
+        <main className="site-main">{children}</main>
         <SiteFooter />
-        {/* Listener for route changes */}
-        <GAListener gaId={GA_MEASUREMENT_ID} />
+
+        {/* Route helpers */}
+        <RouteLoadingToastClient />
+        {/* Optional: generic “Navigating…” toasts (I’d usually leave this off once loading-toasts exist) */}
+        {/* <RouteToastClient /> */}
+        <RouteToastClient />
+        <Toaster
+          position="bottom-center"
+          gutter={10}
+          toastOptions={{
+            duration: 2800,
+            style: { background: "transparent", boxShadow: "none", padding: 0 },
+          }}
+        />
+
+        {/* GA route change listener */}
+        {GA_MEASUREMENT_ID ? <GAListener gaId={GA_MEASUREMENT_ID} /> : null}
       </body>
     </html>
   );

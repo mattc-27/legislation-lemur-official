@@ -6,6 +6,7 @@ import ResizableSelectClient from "@/app/components/features/forms/ResizableSele
 import ChamberToggleClient from "@/app/components/features/forms/ChamberToggleClient";
 
 import TypePillsClient from "./TypePillsClient";
+import { llToast } from "@/lib/llToast";
 
 export default function BillsFilterForm({
   variant = "desktop", // "desktop" | "sheet"
@@ -15,6 +16,7 @@ export default function BillsFilterForm({
   statuses = [],
   committees = [],
   action = null, // optional; defaults to current route when null
+  formId, // ✅ add
 }) {
   const isDesktop = variant === "desktop";
   const suffix = isDesktop ? "desktop" : "sheet";
@@ -34,7 +36,7 @@ export default function BillsFilterForm({
   };
 
   return (
-    <form className="ll3-filters" method="get" action={action || undefined}>
+    <form id={formId} className="ll3-filters" method="get" action={action || undefined}>
       {/* Search */}
       <div className="ll3-field ll3-field--span2">
         <label className="ll3-label" htmlFor={ids.q}>
@@ -44,10 +46,14 @@ export default function BillsFilterForm({
           id={ids.q}
           name="q"
           defaultValue={filters.q || ""}
-          placeholder="Search title, actions, or bill (e.g., HR 1531)"
+          placeholder="Search title, actions, or bill (e.g., Taiwan)"
           endpoint="/api/bills/autocomplete/q"
           mode="q"
+          autoSubmitOnType
+          autoSubmitOnSelect
         />
+
+
       </div>
 
       {/* Chamber (auto-submit) */}

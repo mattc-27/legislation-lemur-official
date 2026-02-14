@@ -1,7 +1,3 @@
-Here’s a tightened, more structured README with a clean **Recent Updates** section (dated), plus a PR title + description you can paste into GitHub.
-
----
-
 # Legislation Lemur (ll-v2)
 
 **Legislation Lemur** is a neutral, data-driven platform for exploring U.S. Congressional data — including members, bills, votes, and session-level composition — through a structured, stable interface.

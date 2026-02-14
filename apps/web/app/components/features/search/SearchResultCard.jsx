@@ -2,7 +2,7 @@
 "use client";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-
+import { startNavLoadingToast } from "@/lib/navLoadingToast";
 export default function SearchResultCard({ m }) {
 
     const href = `/member/${m.bioguideId || m.id}`;
@@ -29,7 +29,7 @@ export default function SearchResultCard({ m }) {
                 {/* <a className="btn btn--accent" href={href} aria-label={`View ${m.name} profile`}>
                     View profile
                 </a> */}
-                <Link className="ll3-btn ll3-btn--primary ll3-btn--sm ll3-btn--open" href={href}>
+                <Link className="ll3-btn ll3-btn--primary ll3-btn--sm ll3-btn--open" href={href} onClick={() => startNavLoadingToast("Opening profile…")}>
                     <ArrowUpRight size={16} aria-hidden="true" />
                     View profile
                 </Link>

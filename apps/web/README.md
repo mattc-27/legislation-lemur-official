@@ -1,10 +1,3 @@
-Keep it. Think of it like this:
-
-* **Root README** = “what is this repo + how everything fits together”
-* **`apps/web/README`** = “how to run/build/deploy the frontend app + app-specific conventions”
-
-That separation pays off the moment you (or a reviewer) only cares about the UI, or you add a second frontend later.
-
 ## What to put in `apps/web/README.md`
 
 ### 1) Purpose (1–3 sentences)

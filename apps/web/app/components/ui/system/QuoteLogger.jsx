@@ -15,20 +15,18 @@ export default function QuoteLogger() {
 
         const q = quotes[Math.floor(Math.random() * quotes.length)];
 
-        // Firebase-ish “banner” lines
+        // ✅ expose for other UI (toasts, etc.)
+        window.__LL_QUOTE__ = q;
+
+        // (your existing console banner)
         console.log(
             "%c   LEGISLATION LEMUR   %c\n%cExplore your Congress, one nerdy console log at a time.%c",
-            // Line 1 style
             "font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 11px; letter-spacing: 0.18em; padding: 4px 10px; background: #020617; color: #7dd3fc; border-radius: 6px 6px 0 0; border: 1px solid #1e293b; border-bottom: none;",
-            // Spacer (keeps border symmetric)
             "font-size: 0;",
-            // Line 2 style
             "font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 11px; padding: 4px 10px; background: #020617; color: #e5e7eb; border-radius: 0 0 6px 6px; border: 1px solid #1e293b; border-top: none;",
-            // Reset
             ""
         );
 
-        // Then the random quote in “nerd mode”
         console.log(
             "%c📜 Capitol Factoid:%c " + q,
             "font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; color: #7dd3fc; font-size: 11px;",
