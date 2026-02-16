@@ -272,3 +272,280 @@
         justify-content: center;
     }
 }
+
+/* ======================================================================
+   BillCard — Signals strip (Impact / Trending)
+   One source of truth (remove older duplicate Signals rules)
+   ====================================================================== */
+
+.ll3-signals {
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(17, 24, 39, 0.02);
+    border-radius: 14px;
+    padding: 10px;
+}
+
+.ll3-signals__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.ll3-signals__title {
+    font-size: 12px;
+    font-weight: 950;
+    color: rgba(17, 24, 39, 0.70);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ll3-signals__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.ll3-signal {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 6px 10px;
+    align-items: center;
+
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.70);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+}
+
+.ll3-signal__k {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.72);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.ll3-signal__v {
+    font-size: 13px;
+    font-weight: 950;
+    color: rgba(17, 24, 39, 0.86);
+}
+
+/* Subtle tone accents */
+.ll3-signal[data-tone="impact"] {
+    border-color: rgba(37, 99, 235, 0.22);
+}
+
+.ll3-signal[data-tone="impact"] .ll3-signal__k svg {
+    color: rgba(37, 99, 235, 0.95);
+}
+
+.ll3-signal[data-tone="trending"] {
+    border-color: rgba(99, 102, 241, 0.22);
+}
+
+.ll3-signal[data-tone="trending"] .ll3-signal__k svg {
+    color: rgba(99, 102, 241, 0.95);
+}
+
+/* Meter */
+.ll3-meter {
+    grid-column: 1 / -1;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.10);
+    overflow: hidden;
+    position: relative;
+}
+
+.ll3-meter::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(90deg,
+            rgba(255, 255, 255, 0.0) 0,
+            rgba(255, 255, 255, 0.0) calc(20% - 2px),
+            rgba(255, 255, 255, 0.45) calc(20% - 2px),
+            rgba(255, 255, 255, 0.45) 20%);
+    opacity: 0.75;
+    pointer-events: none;
+}
+
+/* fill steps */
+.ll3-meter[data-level="1"] {
+    background: linear-gradient(90deg, rgba(99, 102, 241, .75) 0 20%, rgba(17, 24, 39, .10) 20% 100%);
+}
+
+.ll3-meter[data-level="2"] {
+    background: linear-gradient(90deg, rgba(99, 102, 241, .75) 0 40%, rgba(17, 24, 39, .10) 40% 100%);
+}
+
+.ll3-meter[data-level="3"] {
+    background: linear-gradient(90deg, rgba(99, 102, 241, .75) 0 60%, rgba(17, 24, 39, .10) 60% 100%);
+}
+
+.ll3-meter[data-level="4"] {
+    background: linear-gradient(90deg, rgba(99, 102, 241, .75) 0 80%, rgba(17, 24, 39, .10) 80% 100%);
+}
+
+.ll3-meter[data-level="5"] {
+    background: linear-gradient(90deg, rgba(99, 102, 241, .75) 0 100%, rgba(17, 24, 39, .10) 100% 100%);
+}
+
+.ll3-meter--empty {
+    background: rgba(17, 24, 39, 0.06);
+}
+
+/* Info link */
+.ll3-signalInfo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 850;
+    color: rgba(17, 24, 39, 0.70);
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+
+    transition: transform 0.08s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.ll3-signalInfo:hover {
+    background: #fff;
+    border-color: rgba(17, 24, 39, 0.18);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 720px) {
+    .ll3-signalInfo__txt {
+        display: none;
+        /* icon-only */
+    }
+}
+
+.ll3-signalInfo::after {
+    content: attr(data-tip);
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+
+    width: min(320px, 80vw);
+    padding: 10px 12px;
+    border-radius: 12px;
+
+    background: rgba(17, 24, 39, 0.96);
+    color: rgba(255, 255, 255, 0.92);
+
+    font-size: 12.5px;
+    font-weight: 650;
+    line-height: 1.35;
+
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ll3-signalInfo:hover::after,
+.ll3-signalInfo:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 720px) {
+
+    /* tighten overall vertical rhythm */
+    .ll3-card__b {
+        gap: 10px;
+    }
+
+    /* Signals: more compact + always 2-up */
+    .ll3-signals {
+        padding: 8px;
+        border-radius: 12px;
+    }
+
+    .ll3-signals__head {
+        margin-bottom: 6px;
+    }
+
+    .ll3-signals__title {
+        font-size: 11px;
+        letter-spacing: 0.10em;
+    }
+
+    .ll3-signals__grid {
+        grid-template-columns: 1fr 1fr;
+        /* keep 2-up */
+        gap: 8px;
+    }
+
+    .ll3-signal {
+        padding: 8px;
+        border-radius: 10px;
+        gap: 4px 8px;
+    }
+
+    .ll3-signal__k {
+        font-size: 11px;
+        gap: 6px;
+    }
+
+    .ll3-signal__v {
+        font-size: 12.5px;
+    }
+
+    .ll3-meter {
+        height: 7px;
+    }
+
+    /* Actions: Open full-width, then Save + Details side-by-side */
+    .ll3-card__actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding-top: 10px;
+    }
+
+    .ll3-card__actions>a.ll3-btn--open {
+        grid-column: 1 / -1;
+    }
+
+    /* Save button should be normal width again */
+    .ll3-card__actions .ll3-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .ll3-details {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .ll3-details__summary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Details body still full-width when opened */
+    .ll3-details__body {
+        grid-column: 1 / -1;
+    }
+}

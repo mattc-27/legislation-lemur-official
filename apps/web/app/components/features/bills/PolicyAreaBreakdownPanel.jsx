@@ -6,8 +6,8 @@ function pct(part, total) {
 }
 
 export default function PolicyAreaBreakdownPanel({
-    counts = [],        // [{ policy_area_id, bill_count }]
-    dict = [],          // [{ policy_area_id, policy_area_name, policy_area_slug }]
+    counts = [],
+    dict = [],
     total = 0,
     limit = 8,
     currentPolicyAreaId = null,
@@ -46,7 +46,6 @@ export default function PolicyAreaBreakdownPanel({
         <section className="ll3-lemurPanel ll3-lemurPanel--policy" aria-label="Policy area breakdown">
             <header className="ll3-lemurPanel__head">
                 <div className="ll3-lemurPanel__badge" aria-hidden="true">
-                    {/* simple lemur-ish mark (no external deps) */}
                     <span className="ll3-lemurMark">
                         <span className="ll3-lemurMark__ear" />
                         <span className="ll3-lemurMark__face" />
@@ -66,9 +65,7 @@ export default function PolicyAreaBreakdownPanel({
             </header>
 
             {rows.length === 0 ? (
-                <div className="ll3-lemurPanel__empty">
-                    No policy area breakdown available for this filter set.
-                </div>
+                <div className="ll3-lemurPanel__empty">No policy area breakdown available for this filter set.</div>
             ) : (
                 <div className="ll3-lemurBars" role="list">
                     {rows.map((r) => {
@@ -77,26 +74,17 @@ export default function PolicyAreaBreakdownPanel({
                         const p = pct(r.count, total);
                         const href = hrefFor(r.id);
 
-                        const content = (
+                        const inner = (
                             <>
-                                <div className="ll3-pa__top">
-                                    <div className="ll3-pa__name">{r.name}</div>
-                                    <div className="ll3-pa__meta">
-                                        <span className="ll3-pa__count">{r.count.toLocaleString()}</span>
-                                        <span className="ll3-pa__pct">{p}%</span>
+                                <div className="ll3-lemurBars__row">
+                                    <div className="ll3-lemurBars__name" title={r.name}>
+                                        {r.name}
+                                    </div>
+                                    <div className="ll3-lemurBars__nums" aria-label={`${r.count} bills (${p} percent)`}>
+                                        <span className="ll3-lemurBars__count">{r.count.toLocaleString()}</span>
+                                        <span className="ll3-lemurBars__pct">{p}%</span>
                                     </div>
                                 </div>
-
-                                <div className="ll3-pa__bar" aria-hidden="true">
-                                    <div className="ll3-pa__fill" style={{ width: `${w}%` }} />
-                                </div>
-
-                                {r.slug ? <div className="ll3-pa__slug">#{r.slug}</div> : null}
-                                <div className="ll3-lemurBars__meta">
-                                    <span className="ll3-strong">{r.count.toLocaleString()}</span>
-                                    <span className="ll3-muted"> · {p}%</span>
-                                </div>
-
 
                                 <div className="ll3-lemurBars__track" aria-hidden="true">
                                     <div
@@ -105,13 +93,7 @@ export default function PolicyAreaBreakdownPanel({
                                     />
                                 </div>
 
-                                {
-                                    r.slug ? (
-                                        <div className="ll3-lemurBars__hint ll3-muted">
-                                            #{r.slug}
-                                        </div>
-                                    ) : null
-                                }
+                                {r.slug ? <div className="ll3-lemurBars__hint ll3-muted">#{r.slug}</div> : null}
                             </>
                         );
 
@@ -122,17 +104,16 @@ export default function PolicyAreaBreakdownPanel({
                                 href={href}
                                 prefetch={false}
                             >
-                                {content}
+                                {inner}
                             </Link>
                         ) : (
                             <div key={r.id} className={`ll3-lemurBars__item ${active ? "is-active" : ""}`}>
-                                {content}
+                                {inner}
                             </div>
                         );
                     })}
                 </div>
-            )
-            }
-        </section >
+            )}
+        </section>
     );
 }

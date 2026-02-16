@@ -1,4 +1,4 @@
-// app/components/features/bills/BillsFilterForm.jsx
+// app/components/features/forms/BillsFilterForm.jsx
 import Link from "next/link";
 
 import AutocompleteInputClient from "@/app/components/features/forms/AutoCompleteInputClient";
@@ -6,20 +6,24 @@ import ResizableSelectClient from "@/app/components/features/forms/ResizableSele
 import ChamberToggleClient from "@/app/components/features/forms/ChamberToggleClient";
 
 import TypePillsClient from "./TypePillsClient";
-import { llToast } from "@/lib/llToast";
 
 export default function BillsFilterForm({
-  variant = "desktop", // "desktop" | "sheet"
+  variant = "desktop", // "desktop" | "sheet" | "top" | "sidebar"
   filters,
   types = [],
   policyAreas = [],
   statuses = [],
   committees = [],
-  action = null, // optional; defaults to current route when null
-  formId, // ✅ add
+  action = null,
+  formId,
+
+  // NEW: section toggles
+  showSearch = true,
+  showFilters = true,
+  showActions = true,
 }) {
-  const isDesktop = variant === "desktop";
-  const suffix = isDesktop ? "desktop" : "sheet";
+  const isMobile = variant === "sheet";
+  const suffix = variant; // keep ids unique per placement
 
   const ids = {
     q: `q_${suffix}`,
@@ -36,189 +40,196 @@ export default function BillsFilterForm({
   };
 
   return (
-    <form id={formId} className="ll3-filters" method="get" action={action || undefined}>
-      {/* Search */}
-      <div className="ll3-field ll3-field--span2">
-        <label className="ll3-label" htmlFor={ids.q}>
-          Search
-        </label>
-        <AutocompleteInputClient
-          id={ids.q}
-          name="q"
-          defaultValue={filters.q || ""}
-          placeholder="Search title, actions, or bill (e.g., Taiwan)"
-          endpoint="/api/bills/autocomplete/q"
-          mode="q"
-          autoSubmitOnType
-          autoSubmitOnSelect
-        />
+    <form
+      id={formId}
+      className="ll3-filters"
+      method="get"
+      action={action || "/bills"}
+    >
+      {/* SEARCH (TOP ROW USES THIS ALONE) */}
+      {showSearch ? (
+        <div className="ll3-field ll3-field--span2">
+          <label className="ll3-label" htmlFor={ids.q}>
+            Search
+          </label>
 
+          <AutocompleteInputClient
+            id={ids.q}
+            name="q"
+            defaultValue={filters.q || ""}
+            placeholder="Search by bill number, topic, action, sponsor…"
+            endpoint="/api/bills/autocomplete/q"
+            mode="q"
+            autoSubmitOnType={!isMobile}
+            autoSubmitOnSelect={!isMobile}
+          />
+        </div>
+      ) : null}
 
-      </div>
+      {/* FILTERS (SIDEBAR + SHEET) */}
+      {showFilters ? (
+        <>
+          <div className="ll3-field">
+            <label className="ll3-label">Chamber</label>
+            <ChamberToggleClient
+              id={ids.chamber}
+              name="chamber"
+              defaultValue={filters.chamber || ""}
+              autoSubmit={!isMobile}
+            />
+          </div>
 
-      {/* Chamber (auto-submit) */}
-      <div className="ll3-field">
-        <label className="ll3-label">Chamber</label>
-        <ChamberToggleClient
-          id={ids.chamber}
-          name="chamber"
-          defaultValue={filters.chamber || ""}
-          autoSubmit
-        />
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label">Type</label>
+            <TypePillsClient
+              name="type"
+              value={filters.type || null}
+              types={types}
+              autoSubmit={!isMobile}
+            />
+          </div>
 
-      {/* Type (auto-submit) */}
-      <div className="ll3-field">
-        <label className="ll3-label">Type</label>
-        <TypePillsClient
-          name="type"
-          value={filters.type || ""}
-          types={types}
-        />
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label" htmlFor={ids.policyAreaId}>
+              Policy area
+            </label>
+            <select
+              id={ids.policyAreaId}
+              name="policyAreaId"
+              defaultValue={filters.policyAreaId ?? ""}
+              className="ll3-input"
+            >
+              <option value="">All policy areas</option>
+              {policyAreas.map((p) => (
+                <option key={p.policy_area_id} value={p.policy_area_id}>
+                  {p.policy_area_name} ({p.bill_count})
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {/* Policy area */}
-      <div className="ll3-field">
-        <label className="ll3-label" htmlFor={ids.policyAreaId}>
-          Policy area
-        </label>
-        <select
-          id={ids.policyAreaId}
-          name="policyAreaId"
-          defaultValue={filters.policyAreaId ?? ""}
-          className="ll3-input"
-        >
-          <option value="">All policy areas</option>
-          {policyAreas.map((p) => (
-            <option key={p.policy_area_id} value={p.policy_area_id}>
-              {p.policy_area_name} ({p.bill_count})
-            </option>
-          ))}
-        </select>
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label" htmlFor={ids.subject}>
+              Subject
+            </label>
+            <AutocompleteInputClient
+              id={ids.subject}
+              name="subject"
+              defaultValue={filters.subject || ""}
+              placeholder="Energy, Health, Taxes…"
+              endpoint="/api/bills/autocomplete/subjects"
+              mode="subject"
+            />
+          </div>
 
-      {/* Subject */}
-      <div className="ll3-field">
-        <label className="ll3-label" htmlFor={ids.subject}>
-          Subject
-        </label>
-        <AutocompleteInputClient
-          id={ids.subject}
-          name="subject"
-          defaultValue={filters.subject || ""}
-          placeholder="Energy, Health, Taxes…"
-          endpoint="/api/bills/autocomplete/subjects"
-          mode="subject"
-        />
-      </div>
+          <div className="ll3-field ll3-field--span2">
+            <label className="ll3-label" htmlFor={ids.committeeCodes}>
+              Committees
+            </label>
+            <ResizableSelectClient
+              id={ids.committeeCodes}
+              name="committeeCodes"
+              options={committees}
+              defaultValue={filters.committeeCodes || []}
+              placeholder="No committees available"
+              minRows={2}
+              maxRows={12}
+            />
+          </div>
 
-      {/* Committees */}
-      <div className="ll3-field ll3-field--span2">
-        <label className="ll3-label" htmlFor={ids.committeeCodes}>
-          Committees
-        </label>
-        <ResizableSelectClient
-          id={ids.committeeCodes}
-          name="committeeCodes"
-          options={committees}
-          defaultValue={filters.committeeCodes || []}
-          placeholder="No committees available"
-          minRows={2}
-          maxRows={12}
-        />
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label" htmlFor={ids.statusId}>
+              Status <span className="ll3-label__hint">Where it is in the process</span>
+            </label>
+            <select
+              id={ids.statusId}
+              name="statusId"
+              defaultValue={filters.statusId ?? ""}
+              className="ll3-input"
+            >
+              <option value="">All statuses</option>
+              {statuses.map((s) => (
+                <option key={s.status_id} value={s.status_id}>
+                  {s.status_label} ({s.bill_count})
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {/* Status */}
-      <div className="ll3-field">
-        <label className="ll3-label" htmlFor={ids.statusId}>
-          Status <span className="ll3-label__hint">Where it is in the process</span>
-        </label>
-        <select
-          id={ids.statusId}
-          name="statusId"
-          defaultValue={filters.statusId ?? ""}
-          className="ll3-input"
-        >
-          <option value="">All statuses</option>
-          {statuses.map((s) => (
-            <option key={s.status_id} value={s.status_id}>
-              {s.status_label} ({s.bill_count})
-            </option>
-          ))}
-        </select>
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label" htmlFor={ids.from}>
+              Introduced from <span className="ll3-label__hint">Introduced date</span>
+            </label>
+            <input
+              id={ids.from}
+              type="date"
+              name="from"
+              defaultValue={filters.from || ""}
+              className="ll3-input"
+            />
+          </div>
 
-      {/* Dates */}
-      <div className="ll3-field">
-        <label className="ll3-label" htmlFor={ids.from}>
-          Introduced from <span className="ll3-label__hint">Introduced date</span>
-        </label>
-        <input
-          id={ids.from}
-          type="date"
-          name="from"
-          defaultValue={filters.from || ""}
-          className="ll3-input"
-        />
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label" htmlFor={ids.to}>
+              Introduced to <span className="ll3-label__hint">Introduced date</span>
+            </label>
+            <input
+              id={ids.to}
+              type="date"
+              name="to"
+              defaultValue={filters.to || ""}
+              className="ll3-input"
+            />
+          </div>
 
-      <div className="ll3-field">
-        <label className="ll3-label" htmlFor={ids.to}>
-          Introduced to <span className="ll3-label__hint">Introduced date</span>
-        </label>
-        <input
-          id={ids.to}
-          type="date"
-          name="to"
-          defaultValue={filters.to || ""}
-          className="ll3-input"
-        />
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label" htmlFor={ids.minCos}>
+              Min cosponsors
+            </label>
+            <input
+              id={ids.minCos}
+              type="number"
+              min="0"
+              name="minCos"
+              defaultValue={filters.minCos}
+              className="ll3-input"
+              placeholder="0"
+            />
+          </div>
 
-      {/* Min cosponsors */}
-      <div className="ll3-field">
-        <label className="ll3-label" htmlFor={ids.minCos}>
-          Min cosponsors
-        </label>
-        <input
-          id={ids.minCos}
-          type="number"
-          min="0"
-          name="minCos"
-          defaultValue={filters.minCos}
-          className="ll3-input"
-          placeholder="0"
-        />
-      </div>
+          <div className="ll3-field">
+            <label className="ll3-label" htmlFor={ids.sort}>
+              Sort
+            </label>
+            <select id={ids.sort} name="sort" defaultValue={filters.sort} className="ll3-input">
+              <option value="latest_action">Latest action</option>
+              <option value="introduced">Introduced</option>
+              <option value="cosponsors">Cosponsors</option>
+              <option value="impact">Impact</option>
+              <option value="trending">Trending</option>
+            </select>
+          </div>
+        </>
+      ) : null}
 
-      {/* Sort */}
-      <div className="ll3-field">
-        <label className="ll3-label" htmlFor={ids.sort}>
-          Sort
-        </label>
-        <select id={ids.sort} name="sort" defaultValue={filters.sort} className="ll3-input">
-          <option value="latest_action">Latest action</option>
-          <option value="introduced">Introduced</option>
-          <option value="cosponsors">Cosponsors</option>
-        </select>
-      </div>
+      {/* ACTIONS (SIDEBAR + SHEET, NOT TOP BAR) */}
+      {showActions ? (
+        <div className="ll3-actions">
+          <button
+            id="ll3-apply-filters"
+            name="applyFilters"
+            data-apply="true"
+            type="submit"
+            className="ll3-btn ll3-btn--primary ll3-btn--full"
+          >
+            Apply filters
+          </button>
 
-      {/* Actions */}
-      <div className="ll3-actions">
-        <button className="ll3-btn ll3-btn--primary ll3-btn--full" type="submit">
-          Apply filters
-        </button>
-
-        {isDesktop ? (
-          <Link className="ll3-btn ll3-btn--ghost ll3-btn--full ll3-only-desktop" href="/bills">
-            Reset
-          </Link>
-        ) : (
           <Link className="ll3-btn ll3-btn--ghost ll3-btn--full" href="/bills">
             Reset
           </Link>
-        )}
-      </div>
+        </div>
+      ) : null}
     </form>
   );
 }

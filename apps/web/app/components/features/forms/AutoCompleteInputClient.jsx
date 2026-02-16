@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation"; // ✅ add
 
 function useDebounced(value, ms = 180) {
   const [v, setV] = useState(value);
@@ -12,27 +11,44 @@ function useDebounced(value, ms = 180) {
   return v;
 }
 
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/**
+ * Bold the suggested portion (everything AFTER what user typed),
+ * only when suggestion begins with typed text (case-insensitive).
+ */
+function renderCompletionHtml(fullLabel, typed) {
+  const L = String(fullLabel || "");
+  const Q = String(typed || "").trim();
+  if (!Q) return escapeHtml(L);
+
+  const lLow = L.toLowerCase();
+  const qLow = Q.toLowerCase();
+
+  if (lLow.startsWith(qLow)) {
+    const head = L.slice(0, Q.length);
+    const tail = L.slice(Q.length);
+    return tail
+      ? `${escapeHtml(head)}<strong class="ll3-auto__suggested">${escapeHtml(tail)}</strong>`
+      : escapeHtml(L);
+  }
+
+  // no bolding if not a prefix match (keeps it predictable)
+  return escapeHtml(L);
+}
+
 function submitClosestForm(el) {
   const form = el?.closest?.("form");
   if (!form) return;
   if (form.requestSubmit) form.requestSubmit();
   else form.submit();
-}
-
-function labelFor(mode, item) {
-  if (mode === "subject") return `${item.subject} (${item.bill_count})`;
-  if (mode === "committee") return `${item.committee_name} (${item.bill_count})`;
-  const title = (item.display_title || "").trim();
-  const code = `${String(item.bill_type || "").toUpperCase()} ${item.bill_number}`;
-  const action = (item.latest_action_text || "").trim();
-  return action ? `${code} — ${title} · ${action}` : `${code} — ${title}`;
-}
-
-function valueFor(mode, item, fallbackTyped = "") {
-  if (mode === "subject") return item.subject || "";
-  if (mode === "committee") return item.committee_name || "";
-  // mode === "q" → prefer keyword-ish value
-  return (item.display_title || "").trim() || fallbackTyped;
 }
 
 export default function AutocompleteInputClient({
@@ -41,25 +57,19 @@ export default function AutocompleteInputClient({
   defaultValue = "",
   placeholder = "",
   endpoint,
-  mode = "q",
   minChars = 2,
-
-  autoSubmitOnSelect = true,
+  limit = 12,
   autoSubmitOnType = false,
-  submitDebounceMs = 250,
+  autoSubmitOnSelect = false,
+  onSelect,
 }) {
-  const searchParams = useSearchParams(); // ✅ add
-
   const [val, setVal] = useState(defaultValue || "");
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const debounced = useDebounced(val, 180);
-  const submitDebounced = useDebounced(val, submitDebounceMs);
-
   const boxRef = useRef(null);
-  const inputRef = useRef(null);
-  const lastSubmittedRef = useRef("");
 
   // fetch suggestions
   useEffect(() => {
@@ -73,23 +83,22 @@ export default function AutocompleteInputClient({
         return;
       }
 
-      const res = await fetch(`${endpoint}?q=${encodeURIComponent(q)}`, {
-        cache: "no-store",
-      });
-
+      const res = await fetch(
+        `${endpoint}?q=${encodeURIComponent(q)}&limit=${limit}`,
+        { cache: "no-store" }
+      );
       const json = await res.json();
       if (cancelled) return;
 
-      setItems(json.items || []);
-      setOpen(true);
+      const next = json.items || [];
+      setItems(next);
+      setOpen(focused && next.length > 0); // keep visible while focused
     })();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [debounced, endpoint, minChars]);
+    return () => { cancelled = true; };
+  }, [debounced, endpoint, minChars, limit, focused]);
 
-  // click outside closes menu
+  // close only on outside click (NOT on re-fetch)
   useEffect(() => {
     const onDoc = (e) => {
       if (!boxRef.current) return;
@@ -99,36 +108,35 @@ export default function AutocompleteInputClient({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  // ✅ auto-submit while typing (debounced) — with URL equality guard
-  useEffect(() => {
-    if (!autoSubmitOnType) return;
-
-    const q = (submitDebounced || "").trim();
-    if (!q || q.length < minChars) return;
-
-    // ✅ STOP LOOP: if URL already has this exact value, do nothing
-    const current = (searchParams?.get(name) || "").trim();
-    if (current === q) return;
-
-    // optional spam guard (still useful if user types back/forth quickly)
-    if (q === lastSubmittedRef.current) return;
-    lastSubmittedRef.current = q;
-
-    submitClosestForm(inputRef.current);
-  }, [autoSubmitOnType, submitDebounced, minChars, name, searchParams]);
-
-  const list = useMemo(() => (items || []).slice(0, 12), [items]);
+  const list = useMemo(() => (items || []).slice(0, limit), [items, limit]);
 
   return (
     <div ref={boxRef} className="ll3-auto">
       <input
-        ref={inputRef}
         id={id}
         name={name}
         value={val}
+        onFocus={() => {
+          setFocused(true);
+          if (list.length) setOpen(true);
+        }}
+        onBlur={() => {
+          setFocused(false); // menu will close via outside click or selection
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setOpen(false);
+          // Optional: allow Enter to submit only if autoSubmitOnType is enabled
+          if (e.key === "Enter" && !autoSubmitOnType) {
+            e.preventDefault();
+          }
+        }}
         onChange={(e) => {
-          setVal(e.target.value);
-          lastSubmittedRef.current = "";
+          const next = e.target.value;
+          setVal(next);
+          if (autoSubmitOnType) {
+            // debounce already happening; submit on change is too aggressive.
+            // If you truly want it, do it after debounce; otherwise remove this.
+          }
         }}
         className="ll3-input"
         placeholder={placeholder}
@@ -137,30 +145,45 @@ export default function AutocompleteInputClient({
 
       {open && list.length ? (
         <div className="ll3-auto__menu" role="listbox" aria-label="Suggestions">
-          {list.map((item, idx) => (
-            <button
-              key={idx}
-              type="button"
-              className="ll3-auto__item"
-              onClick={() => {
-                const nextVal = valueFor(mode, item, val).trim();
+          {list.map((item, idx) => {
+            const code = item?.bill_type && item?.bill_number
+              ? `${String(item.bill_type).toUpperCase()} ${item.bill_number}`
+              : "";
 
-                setVal(nextVal);
-                setOpen(false);
+            const title = (item?.display_title || item?.subject || item?.committee_name || "").trim();
+            const html = renderCompletionHtml(title, val);
 
-                if (autoSubmitOnSelect) {
-                  // avoid submitting if already at that value in URL
-                  const current = (searchParams?.get(name) || "").trim();
-                  if (current === nextVal) return;
+            return (
+              <button
+                key={item?.bill_id || `${code}-${idx}`}
+                type="button"
+                className="ll3-auto__item"
+                onMouseDown={(e) => e.preventDefault()} // prevents blur before click
+                onClick={(e) => {
+                  // what goes into the input:
+                  // - for bills query: you might want just the typed term, not full title.
+                  // for now set to title:
+                  setVal(title);
+                  setOpen(false);
 
-                  lastSubmittedRef.current = nextVal;
-                  requestAnimationFrame(() => submitClosestForm(inputRef.current));
-                }
-              }}
-            >
-              {labelFor(mode, item)}
-            </button>
-          ))}
+                  if (autoSubmitOnSelect) {
+                    // submit *after* val updates
+                    requestAnimationFrame(() => submitClosestForm(e.currentTarget));
+                  }
+
+                  if (onSelect) onSelect(item, title);
+                }}
+              >
+                <div className="ll3-auto__row">
+                  {code ? <span className="ll3-auto__code">{code}</span> : null}
+                  <span
+                    className="ll3-auto__title"
+                    dangerouslySetInnerHTML={{ __html: html }}
+                  />
+                </div>
+              </button>
+            );
+          })}
         </div>
       ) : null}
     </div>

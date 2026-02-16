@@ -205,6 +205,8 @@ export default function ReferencePage() {
             <a className="ll3-wk__tocLink" href="#resolution">What is a resolution?</a>
             <a className="ll3-wk__tocLink" href="#laid-on-table">What does “laid on the table” mean?</a>
             <a className="ll3-wk__tocLink" href="#reconciliation">What is reconciliation?</a>
+
+            <a className="ll3-wk__tocLink" href="#bill-signals">Impact & Trending signals</a>
           </nav>
 
           <div className="ll3-wk__content">
@@ -334,6 +336,32 @@ export default function ReferencePage() {
                 <p className="ll3-wk__muted">
                   In practice, reconciliation is often used for major tax and spending packages—when the changes have clear budget impacts.
                 </p>
+              </Anchor>
+            </article>
+            <article className="ll3-wk__panel">
+              <Anchor id="bill-signals">
+                <h3 className="ll3-wk__h3Big">Impact & Trending (Bill signals)</h3>
+                <p className="ll3-wk__muted">
+                  Bills can be “important” for different reasons. These two signals help you scan results faster without
+                  making a value judgment.
+                </p>
+
+                <div className="ll3-wk__callout">
+                  <div className="ll3-wk__calloutTitle">How to read them</div>
+                  <ul className="ll3-wk__list">
+                    <li><span className="ll3-strong">Impact</span>: a heuristic estimate of potential significance (0–100).</li>
+                    <li><span className="ll3-strong">Trending</span>: a heuristic estimate of current momentum/attention (0–100).</li>
+                    <li>Higher scores mean “more signal,” not “good” or “bad.”</li>
+                  </ul>
+                </div>
+
+                <div className="ll3-wk__callout ll3-wk__callout--subtle">
+                  <div className="ll3-wk__calloutTitle">Important</div>
+                  <p className="ll3-wk__muted">
+                    These are experimental indicators used for sorting and exploration. Always read the bill details and
+                    latest actions for the real story.
+                  </p>
+                </div>
               </Anchor>
             </article>
           </div>

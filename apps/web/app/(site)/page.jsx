@@ -3,15 +3,10 @@ import HomeHero from "../components/features/home/HomeHero";
 import FeaturesGrid from "@/app/components/features/home/FeaturesGrid";
 import RecentActivity from "@/app/components/features/home/RecentActivity";
 
-
-import SubjectsTrendSection from "@/app/components/features/home/SubjectsTrendSection";
 import StatsBand from '@/app/components/features/home/StatsBand';
-
 
 import '@/app/styles/active/home.ll3.css';
 
-// import EmailUpdatesCTA from "./components/EmailUpdatesCTA";
-// import SearchBox from "../components/search/SearchBox";
 
 export const revalidate = 1800;
 
@@ -19,7 +14,7 @@ export default async function HomePage() {
   const CURRENT_CONGRESS = 119;
 
   return (
-    <div className="ll3 home">
+    <div className="home">
       <HomeHero>
         <div className="stack-16 hero__search-wrap">
           {/* Primary: simple, focused search */}

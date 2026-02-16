@@ -1,60 +1,74 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 function submitClosestForm(el) {
     const form = el?.closest?.("form");
     if (!form) return;
-    // requestSubmit is best; fallback to submit()
     if (form.requestSubmit) form.requestSubmit();
     else form.submit();
 }
 
 export default function TypePillsClient({
     name = "type",
-    value = "",
-    types = [], // [{ bill_type, bill_count }]
-    includeAll = true,
+    value = null,      // array|string|null
+    types = [],        // [{ bill_type, bill_count }]
+    autoSubmit = false,
 }) {
-    const list = useMemo(() => {
-        // normalize: ensure bill_type is lowercase-ish for value matching
-        return (types || [])
-            .filter((t) => t?.bill_type)
-            .map((t) => ({
-                bill_type: String(t.bill_type).toLowerCase(),
-                bill_count: Number(t.bill_count ?? 0),
-            }));
-    }, [types]);
+    const initial = useMemo(() => {
+        if (!value) return [];
+        if (Array.isArray(value)) return value.map(v => String(v).toLowerCase());
+        return [String(value).toLowerCase()];
+    }, [value]);
 
-    const current = String(value || "").toLowerCase();
+    const [selected, setSelected] = useState(initial);
+    useEffect(() => setSelected(initial), [initial]);
+
+    const toggle = (t, el) => {
+        const key = String(t).toLowerCase();
+        setSelected((prev) => {
+            const next = prev.includes(key) ? prev.filter(x => x !== key) : [...prev, key];
+            if (autoSubmit) requestAnimationFrame(() => submitClosestForm(el));
+            return next;
+        });
+    };
+
+    const clear = (el) => {
+        setSelected([]);
+        if (autoSubmit) requestAnimationFrame(() => submitClosestForm(el));
+    };
 
     return (
-        <div className="ll3-chipset" role="radiogroup" aria-label="Bill type">
-            {includeAll ? (
-                <label className={`ll3-chip ${!current ? "is-active" : ""}`}>
-                    <input
-                        type="radio"
-                        name={name}
-                        value=""
-                        defaultChecked={!current}
-                        onChange={(e) => submitClosestForm(e.currentTarget)}
-                    />
-                    All
-                </label>
+        <div className="ll3-pills" role="group" aria-label="Type">
+            {/* ✅ robust GET param: single field, comma-separated */}
+            {selected.length ? (
+                <input type="hidden" name={name} value={selected.join(",")} />
             ) : null}
 
-            {list.map((t) => (
-                <label key={t.bill_type} className={`ll3-chip ${current === t.bill_type ? "is-active" : ""}`}>
-                    <input
-                        type="radio"
-                        name={name}
-                        value={t.bill_type}
-                        defaultChecked={current === t.bill_type}
-                        onChange={(e) => submitClosestForm(e.currentTarget)}
-                    />
-                    {t.bill_type.toUpperCase()}
-                </label>
-            ))}
+            <button
+                type="button"
+                className={`ll3-pill ${selected.length === 0 ? "is-active" : ""}`}
+                onClick={(e) => clear(e.currentTarget)}
+            >
+                All
+            </button>
+
+            {types.map((t) => {
+                const key = String(t.bill_type || "").toLowerCase();
+                const on = selected.includes(key);
+                return (
+                    <button
+                        key={key}
+                        type="button"
+                        className={`ll3-pill ${on ? "is-active" : ""}`}
+                        onClick={(e) => toggle(key, e.currentTarget)}
+                        aria-pressed={on ? "true" : "false"}
+                        title={`${key.toUpperCase()} (${t.bill_count ?? 0})`}
+                    >
+                        {key.toUpperCase()}
+                    </button>
+                );
+            })}
         </div>
     );
 }
