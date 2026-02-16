@@ -1,16 +1,25 @@
 /* app/(app)/styles/bills/ll3.bills.directory.controls.css
    ======================================================================
-   Bills Directory — Filters + Autocomplete + Resizable select + Seg/Chips
-   Matches your JSX class usage.
+   Bills Directory — Filters + Autocomplete + Select + Pills
+   Updates for: top search row + sidebar layout + consistency
    ====================================================================== */
 
-/* Filters grid */
+/* Filters grid (default: two columns inside sidebar/sheet) */
 .ll3-filters {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     width: 100%;
     min-width: 0;
+}
+
+/* Sidebar feels nicer if fields are single-column (more readable) */
+.ll3-sidebar .ll3-filters {
+    grid-template-columns: 1fr;
+}
+
+.ll3-sidebar .ll3-field--span2 {
+    grid-column: auto;
 }
 
 @media (max-width: 720px) {
@@ -33,6 +42,12 @@
     margin-top: 2px;
 }
 
+/* In sidebar (single-column), make actions stack */
+.ll3-sidebar .ll3-actions {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+}
+
 @media (max-width: 820px) {
     .ll3-actions {
         grid-column: auto;
@@ -41,7 +56,34 @@
 }
 
 /* ----------------------------------------------------------------------
-   Autocomplete (AutocompleteInputClient.jsx)
+   Chamber toggle — uses .ll3-pill buttons (NOT .ll3-seg__item)
+   ---------------------------------------------------------------------- */
+
+.ll3-seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+/* Make segmented pills uniform width */
+.ll3-seg .ll3-pill {
+    justify-content: center;
+    width: 100%;
+}
+
+/* ----------------------------------------------------------------------
+   Type pills — wrapper
+   ---------------------------------------------------------------------- */
+
+.ll3-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ----------------------------------------------------------------------
+   Autocomplete menu: fix conflicting hover styles
+   (Your file had both dark menu + light hover; keep it consistent.)
    ---------------------------------------------------------------------- */
 
 .ll3-auto {
@@ -56,11 +98,11 @@
     right: 0;
 
     z-index: 60;
-    max-height: 360px;
+    max-height: 320px;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 
-    border-radius: 14px;
+    border-radius: 16px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(17, 24, 39, 0.96);
 
@@ -69,7 +111,6 @@
         0 2px 8px rgba(2, 6, 23, 0.10);
 
     padding: 6px;
-
     transform: translateZ(0);
 }
 
@@ -81,8 +122,8 @@
     border: 0;
     background: transparent;
 
-    padding: 10px 10px;
-    border-radius: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
 
     font-size: 14px;
     line-height: 1.25;
@@ -105,140 +146,165 @@
     box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.14);
 }
 
-.ll3-auto__item+.ll3-auto__item {
-    margin-top: 2px;
-}
-
-.ll3-auto__menu::-webkit-scrollbar {
-    width: 10px;
-}
-
-.ll3-auto__menu::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.ll3-auto__menu::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    border: 3px solid rgba(0, 0, 0, 0);
-    background-clip: padding-box;
-}
-
-.ll3-auto__menu::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.26);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .ll3-auto__menu {
-        scroll-behavior: auto;
-    }
-}
-
-/* ----------------------------------------------------------------------
-   Resizable multi-select (ResizableSelectClient.jsx)
-   ---------------------------------------------------------------------- */
-
-.ll3-resize {
-    width: 100%;
-}
-
-.ll3-resize__top {
+.ll3-auto__row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: baseline;
     gap: 10px;
-    margin: 6px 0 8px;
 }
 
-.ll3-resize__hint {
-    font-size: 12px;
-    color: rgba(15, 23, 42, 0.62);
+.ll3-auto__code {
+    font-weight: 700;
+    opacity: 0.75;
+    white-space: nowrap;
 }
 
-.ll3-resize__controls {
-    display: inline-flex;
-    gap: 6px;
+.ll3-auto__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.ll3-resize__btn {
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(255, 255, 255, 0.9);
-    color: rgba(15, 23, 42, 0.85);
-    border-radius: 10px;
-    height: 28px;
-    min-width: 34px;
-    padding: 0 10px;
-    cursor: pointer;
-}
-
-.ll3-resize__btn:hover {
-    background: rgba(255, 255, 255, 1);
-}
-
-.ll3-resize__btn:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
-}
-
-.ll3-resize__select {
-    resize: vertical;
-    overflow: auto;
-    min-height: 44px;
-    max-height: 360px;
-}
-
-/* Option padding */
-.ll3-resize__select option {
-    padding: 6px 8px;
+.ll3-auto__suggested {
+    font-weight: 800;
+    opacity: 0.95;
 }
 
 /* ----------------------------------------------------------------------
-   Chamber toggle (Segmented) — ChamberToggleClient.jsx
+   Resizable multi-select (unchanged; keep yours)
    ---------------------------------------------------------------------- */
 
+/* =========================================================
+   Filter pills (Chamber + Type): rectangular + slight radius
+   - Unselected: blue text + blue border
+   - Selected: blue background + white text, no border
+   Scoped to filters / refine areas so we don't affect other UI
+========================================================= */
+
+:root {
+    /* If you want a darker blue than --ll3-primary, define one */
+    --ll3-pill-blue: #1e40af;
+    /* dark-ish blue */
+    --ll3-pill-blueBg: #2563eb;
+    /* selected fill */
+}
+
+/* Where these pills appear */
+.ll3-sidebar .ll3-pill,
+.ll3-refineSheet__panel .ll3-pill,
+.ll3-searchTop .ll3-pill {
+    border-radius: 10px;
+    /* slightly rounded rectangle */
+    height: 36px;
+    padding: 0 12px;
+
+    border: 1px solid rgba(30, 64, 175, 0.45);
+    background: rgba(37, 99, 235, 0.02);
+    color: rgba(30, 64, 175, 0.95);
+
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    box-shadow: none;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+}
+
+.ll3-sidebar .ll3-pill:hover,
+.ll3-refineSheet__panel .ll3-pill:hover,
+.ll3-searchTop .ll3-pill:hover {
+    background: rgba(37, 99, 235, 0.06);
+    border-color: rgba(30, 64, 175, 0.65);
+    transform: translateY(-1px);
+}
+
+.ll3-sidebar .ll3-pill.is-active,
+.ll3-refineSheet__panel .ll3-pill.is-active,
+.ll3-searchTop .ll3-pill.is-active {
+    background: var(--ll3-pill-blueBg);
+    color: #fff;
+    border-color: transparent;
+}
+
+/* Ensure icon/text stays white when active */
+.ll3-sidebar .ll3-pill.is-active *,
+.ll3-refineSheet__panel .ll3-pill.is-active *,
+.ll3-searchTop .ll3-pill.is-active * {
+    color: inherit;
+}
+
+/* Chamber segmented row: keep equal widths */
 .ll3-seg {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
 }
 
-.ll3-seg__item {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
+.ll3-seg .ll3-pill {
+    width: 100%;
     justify-content: center;
+}
 
-    height: 40px;
-    border-radius: 12px;
 
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(255, 255, 255, 0.92);
+/* Collapsible filter groups (prep for <details>) */
+.ll3-fgroup {
+    border-top: 1px solid rgba(17, 24, 39, 0.08);
+    padding-top: 12px;
+    margin-top: 10px;
+}
 
-    font-weight: 800;
-    color: rgba(15, 23, 42, 0.85);
+.ll3-fgroup>summary {
+    list-style: none;
     cursor: pointer;
     user-select: none;
-}
 
-.ll3-seg__item.is-active {
-    background: rgba(180, 201, 232, 0.55);
-    border-color: rgba(15, 23, 42, 0.14);
-}
-
-/* ----------------------------------------------------------------------
-   Type pills — TypePillsClient.jsx
-   (note: uses .ll3-chip from UI sheet + adds layout spacing here)
-   ---------------------------------------------------------------------- */
-
-.ll3-chipset {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 6px 0 8px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.86);
+    padding: 8px 10px;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.60);
+    border: 1px solid rgba(17, 24, 39, 0.10);
 }
 
-/* For type chips (labels), make “active” state obvious */
-.ll3-chip.is-active {
-    background: rgba(180, 201, 232, 0.55);
+.ll3-fgroup>summary::-webkit-details-marker {
+    display: none;
+}
+
+.ll3-fgroup[open]>summary {
+    background: rgba(17, 24, 39, 0.03);
     border-color: rgba(17, 24, 39, 0.14);
+}
+
+.ll3-fgroup__body {
+    padding: 10px 2px 2px;
+}
+
+/* Committees multi-select: tighten hint, make it clearly secondary */
+.ll3-resize__top {
+    margin: 0 0 6px;
+}
+
+.ll3-resize__hint {
+    font-size: 11px;
+    line-height: 1.25;
+    color: rgba(15, 23, 42, 0.52);
+}
+
+/* Remove the whole controls row spacing if controls removed */
+.ll3-resize__controls {
+    display: none;
+}
+
+/* Make the select feel “list-like” and show more by default */
+.ll3-resize__select {
+    min-height: 140px;
+    /* ensures it doesn’t collapse too small */
+    resize: vertical;
+    /* keep drag resize */
+    overflow: auto;
 }

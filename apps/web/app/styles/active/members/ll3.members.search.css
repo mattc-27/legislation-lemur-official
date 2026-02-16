@@ -1,0 +1,190 @@
+/* app/(app)/styles/active/members/ll3.members.search.css
+   ======================================================================
+   LL3 — Members Search (page-scoped)
+   Aligns Search page visuals with Bills Directory: surfaces, borders, cards.
+   ====================================================================== */
+
+.ll3-members {
+    /* subtle background like bills pages */
+    background:
+        radial-gradient(1000px 520px at 14% 0%, rgba(180, 201, 232, 0.28), transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, rgba(232, 180, 184, 0.18), transparent 62%),
+        linear-gradient(#ffffff, #ffffff);
+}
+
+/* Make the members refine/control section feel identical to bills */
+.ll3-membersControl .ll3-control__panel {
+    background: var(--ll3-surface);
+    border: 1px solid var(--ll3-border);
+    box-shadow: var(--ll3-shadow-sm);
+}
+
+/* Refine header row */
+.ll3-membersFilters .ll3-control__header {
+    padding-bottom: 10px;
+}
+
+/* Stronger "Apply filters" for members (more noticeable) */
+.ll3-membersFilters .ll3-btn--primary,
+.ll3-membersFilters .ll3-btn--primary.ll3-btn--full {
+    background: rgba(17, 24, 39, 0.92);
+    border-color: rgba(17, 24, 39, 0.92);
+    color: #fff;
+    box-shadow: 0 12px 26px rgba(17, 24, 39, 0.20);
+}
+
+.ll3-membersFilters .ll3-btn--primary:hover {
+    background: rgba(17, 24, 39, 1);
+    border-color: rgba(17, 24, 39, 1);
+    transform: translateY(-1px);
+}
+
+.ll3-membersFilters .ll3-btn--primary:active {
+    transform: translateY(0);
+}
+
+.ll3-membersFilters .ll3-btn--primary:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.32);
+    outline-offset: 2px;
+}
+
+/* Ghost button matches bills */
+.ll3-membersFilters .ll3-btn--ghost {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(17, 24, 39, 0.12);
+}
+
+/* ===== Results layout helpers (your JSX uses .grid-2, .stack-*) ===== */
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 820px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stack-24 {
+    display: grid;
+    gap: 24px;
+}
+
+.stack-12 {
+    display: grid;
+    gap: 12px;
+}
+
+/* ===== Member cards (SearchResultCard.jsx uses .membercard*) ===== */
+
+.membercard {
+    border: 1px solid var(--ll3-border);
+    background: var(--ll3-card);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow-sm);
+    overflow: hidden;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+
+.membercard__body {
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.membercard__title {
+    margin: 0;
+    color: var(--ll3-ink);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    font-size: 16px;
+    line-height: 1.25;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.membercard__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* Chips: reuse your existing .chip classes but bring them into LL3 look */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(17, 24, 39, 0.02);
+    color: rgba(17, 24, 39, 0.86);
+    font-size: 12.5px;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+.chip--muted {
+    background: rgba(255, 255, 255, 0.85);
+    color: rgba(17, 24, 39, 0.70);
+}
+
+.chip--blue {
+    background: rgba(59, 130, 246, 0.10);
+    border-color: rgba(59, 130, 246, 0.22);
+    color: rgba(30, 64, 175, 0.95);
+}
+
+.chip--red {
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.22);
+    color: rgba(153, 27, 27, 0.95);
+}
+
+.chip--purple {
+    background: rgba(167, 139, 250, 0.14);
+    border-color: rgba(167, 139, 250, 0.24);
+    color: rgba(91, 33, 182, 0.95);
+}
+
+/* Actions column */
+.membercard__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* Make your "View profile" button match bills buttons */
+.ll3-btn--open {
+    white-space: nowrap;
+}
+
+/* Mobile: stack action */
+@media (max-width: 520px) {
+    .membercard {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .membercard__actions {
+        width: 100%;
+    }
+
+    .membercard__actions .ll3-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

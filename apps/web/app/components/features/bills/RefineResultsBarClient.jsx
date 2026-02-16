@@ -1,4 +1,3 @@
-// app/components/bills/RefineResultsBarClient.jsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -11,10 +10,7 @@ export default function RefineResultsBarClient({
 }) {
     const [open, setOpen] = useState(false);
 
-    const badge = useMemo(() => {
-        if (!activeCount) return null;
-        return String(activeCount);
-    }, [activeCount]);
+    const badge = useMemo(() => (activeCount ? String(activeCount) : null), [activeCount]);
 
     // Close on Escape
     useEffect(() => {
@@ -36,14 +32,13 @@ export default function RefineResultsBarClient({
         };
     }, [open]);
 
-    // ✅ Auto-close when leaving mobile breakpoint
+    // Auto-close when leaving mobile breakpoint
     useEffect(() => {
         const mq = window.matchMedia("(max-width: 900px)");
         const onChange = (e) => {
-            if (!e.matches) setOpen(false); // moving to desktop -> close
+            if (!e.matches) setOpen(false);
         };
 
-        // initial check
         if (!mq.matches) setOpen(false);
 
         if (mq.addEventListener) mq.addEventListener("change", onChange);
@@ -55,8 +50,20 @@ export default function RefineResultsBarClient({
         };
     }, []);
 
+    const openSheet = () => setOpen(true);
+
     return (
         <>
+            {/* Hidden external trigger for top “Modify” button */}
+            <button
+                id="ll3-open-refine"
+                type="button"
+                onClick={openSheet}
+                style={{ display: "none" }}
+                aria-hidden="true"
+                tabIndex={-1}
+            />
+
             {/* Sticky bar (mobile only via CSS) */}
             <div className="ll3-refineBar">
                 <div className="ll3-refineBar__inner">
@@ -68,7 +75,7 @@ export default function RefineResultsBarClient({
                     <button
                         type="button"
                         className="ll3-refineBar__btn"
-                        onClick={() => setOpen(true)}
+                        onClick={openSheet}
                         aria-haspopup="dialog"
                         aria-expanded={open ? "true" : "false"}
                     >

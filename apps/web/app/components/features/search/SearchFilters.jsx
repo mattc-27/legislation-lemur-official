@@ -3,8 +3,9 @@
 
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import toast from "react-hot-toast";
-import { startNavLoadingToast } from "@/lib/navLoadingToast";
+// import toast from "react-hot-toast";
+// import { startNavLoadingToast } from "@/lib/navLoadingToast";
+
 import Link from "next/link";
 import { STATES } from "@/lib/shared/constants/constants";
 import DensityToggleClient from "../bills/DensityToggleClient";
@@ -84,7 +85,7 @@ export default function SearchFilters({ initial = {} }) {
       if (value == null || value === "") next.delete(key);
       else next.set(key, value);
       next.delete("page");
-      startNavLoadingToast("Searching members…");
+      //   startNavLoadingToast("Searching members…");
       router.replace(`${pathname}?${next.toString()}`, { scroll: false });
     },
     [params, pathname, router]
@@ -114,7 +115,7 @@ export default function SearchFilters({ initial = {} }) {
   const clearFilters = useCallback(() => {
     const next = new URLSearchParams(params.toString());
     ["q", "chamber", "party", "state", "page"].forEach((k) => next.delete(k));
-    startNavLoadingToast("Clearing filters…");
+    //     startNavLoadingToast("Clearing filters…");
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
   }, [params, pathname, router]);
 

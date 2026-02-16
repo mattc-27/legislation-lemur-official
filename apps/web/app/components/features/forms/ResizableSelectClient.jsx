@@ -23,7 +23,8 @@ export default function ResizableSelectClient({
         return [String(defaultValue)];
     }, [defaultValue]);
 
-    const [rows, setRows] = useState(() => Math.min(Math.max(minRows, 4), maxRows));
+    const [rows] = useState(() => Math.min(Math.max(minRows, 7), maxRows));
+
     const [value, setValue] = useState(normalizeDefault);
 
     // Keep internal state in sync if defaultValue changes (rare, but safe)
@@ -52,6 +53,8 @@ export default function ResizableSelectClient({
             <div className="ll3-resize__top">
                 <div className="ll3-resize__hint">{hint}</div>
 
+                {/* 
+              
                 <div className="ll3-resize__controls" aria-label="Resize controls">
                     <button
                         type="button"
@@ -70,6 +73,8 @@ export default function ResizableSelectClient({
                         +
                     </button>
                 </div>
+                
+                */}
             </div>
 
             <select

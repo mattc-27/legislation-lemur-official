@@ -1231,3 +1231,26 @@
         max-width: 720px;
     }
 }
+
+/* ======================================
+   HOME HERO: force left alignment on desktop
+   (guards against CSS order issues on client nav)
+====================================== */
+@media (min-width: 900px) {
+    .ll3 .hero--home .hero__content {
+        text-align: left !important;
+    }
+
+    .ll3 .hero--home .hero__title,
+    .ll3 .hero--home .hero__sub,
+    .ll3 .hero--home .hero__kicker,
+    .ll3 .hero--home .hero__para {
+        text-align: left !important;
+    }
+
+    /* Kill "center the block" behavior for the sub copy on desktop */
+    .ll3 .hero--home .hero__sub {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
