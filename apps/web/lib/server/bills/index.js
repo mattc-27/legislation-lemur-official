@@ -4,16 +4,52 @@ import { pool } from "@/lib/server/db/db";
 import { q } from "@/lib/server/db/instrumented-query";
 import { ACTIVE_VIEW_SCHEMA, ACTIVE_DATA_SCHEMA, REF_SCHEMA } from "@/lib/server/db/schemas";
 
+/**
+ * Normalize helpers
+ */
+function normalizeText(v) {
+  if (v == null) return null;
+  const s = String(v).trim();
+  return s ? s : null;
+}
+
+function normalizeNum(v) {
+  if (v === "" || v == null) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function normalizeTextArray(v, { lower = false } = {}) {
+  if (v == null) return null;
+
+  let arr = [];
+  if (Array.isArray(v)) arr = v;
+  else if (typeof v === "string" && v.includes(",")) arr = v.split(",").map((s) => s.trim());
+  else arr = [v];
+
+  const cleaned = arr
+    .map((x) => String(x).trim())
+    .filter(Boolean)
+    .map((x) => (lower ? x.toLowerCase() : x));
+
+  return cleaned.length ? cleaned : null; // IMPORTANT: null, not []
+}
+
 /** congress */
 export async function getCurrentCongress() {
   const { rows } = await pool.query(
     `SELECT MAX(congress)::int AS c FROM ${ACTIVE_DATA_SCHEMA}.bills_meta;`
   );
-  return rows[0]?.c || null;
+  return rows[0]?.c ?? null;
 }
 
-/** directory */
-
+async function resolveCongress(congress) {
+  const c = normalizeNum(congress);
+  return c ?? (await getCurrentCongress());
+}
+/**
+ * Bills directory
+ */
 export async function getBillsDirectoryV2(
   congress,
   {
@@ -27,62 +63,83 @@ export async function getBillsDirectoryV2(
     limit = 25,
     offset = 0,
 
-    // ✅ new
     policyAreaId = null,
     statusId = null,
-    type = null,
-    committeeCodes = null, // array of codes
+    type = null, // array
+    committeeCodes = null, // array
   } = {}
 ) {
-  if (!congress) congress = await getCurrentCongress();
+  const c = await resolveCongress(congress);
+
+  const chamberNorm = normalizeText(chamber);
+  const queryNorm = normalizeText(query);
+  const subjectNorm = normalizeText(subject);
+
+  const policyAreaIdNum = normalizeNum(policyAreaId);
+  const statusIdNum = normalizeNum(statusId);
+
+  const typeArr = normalizeTextArray(type, { lower: true });
+  const committeeArr = normalizeTextArray(committeeCodes, { lower: false });
+
+  // ✅ sort allowlist (safety + predictable)
+  const sortNorm = normalizeText(sort) || "latest_action";
+  const allowedSort = new Set(["latest_action", "introduced", "cosponsors", "impact", "trending"]);
+  const safeSort = allowedSort.has(sortNorm) ? sortNorm : "latest_action";
 
   const order =
-    sort === "introduced"
+    safeSort === "introduced"
       ? `introduced_date DESC NULLS LAST, bill_id`
-      : sort === "cosponsors"
+      : safeSort === "cosponsors"
         ? `cosponsors_total DESC NULLS LAST, bill_id`
-        : `latest_action_date DESC NULLS LAST, bill_id`;
+        : safeSort === "impact"
+          ? `impact_score DESC NULLS LAST, bill_id`
+          : safeSort === "trending"
+            ? `trending_score DESC NULLS LAST, bill_id`
+            : `latest_action_date DESC NULLS LAST, bill_id`;
 
   const sql = `
     WITH base AS (
-      SELECT *
-      FROM ${ACTIVE_VIEW_SCHEMA}.bill_search_index
+      SELECT
+        b.*,
+        m.impact_score,
+        m.trending_score
+      FROM ${ACTIVE_VIEW_SCHEMA}.bill_search_index b
+      LEFT JOIN ${ACTIVE_VIEW_SCHEMA}.mv_bill_metrics_v1 m
+        USING (bill_id)
       WHERE
-        congress = $1
+        b.congress = $1
+        AND ($2::text   IS NULL OR b.origin_chamber = $2)
+        AND ($3::date   IS NULL OR b.introduced_date >= $3::date)
+        AND ($4::date   IS NULL OR b.introduced_date <= $4::date)
+        AND (COALESCE(b.cosponsors_total, 0) >= $5::int)
 
-        AND ($2::text IS NULL OR origin_chamber = $2)
-        AND ($3::date IS NULL OR introduced_date >= $3::date)
-        AND ($4::date IS NULL OR introduced_date <= $4::date)
+        AND ($6::bigint IS NULL OR b.policy_area_id = $6::bigint)
+        AND ($7::bigint IS NULL OR b.status_id     = $7::bigint)
 
-        -- ✅ choose your meaning of "minCos"
-        AND (COALESCE(cosponsors_total, 0) >= $5::int)
-
-        AND ($6::bigint IS NULL OR policy_area_id = $6::bigint)
-        AND ($7::bigint IS NULL OR status_id = $7::bigint)
-        AND ($8::text   IS NULL OR bill_type = lower($8::text))
-
-        AND ($9::text[] IS NULL OR committee_codes && $9::text[])
+        -- arrays must be NULL when empty
+        AND ($8::text[] IS NULL OR b.bill_type = ANY($8::text[]))
+        AND ($9::text[] IS NULL OR b.committee_codes && $9::text[])
 
         AND (
           $10::text IS NULL
-          OR tsv @@ websearch_to_tsquery('simple', $10)
-          OR title ILIKE '%' || $10 || '%'
-          OR latest_action_text ILIKE '%' || $10 || '%'
-          OR display_title ILIKE '%' || $10 || '%'
+          OR b.tsv @@ websearch_to_tsquery('simple', $10)
+          OR b.title ILIKE '%' || $10 || '%'
+          OR b.latest_action_text ILIKE '%' || $10 || '%'
+          OR b.display_title ILIKE '%' || $10 || '%'
         )
 
         AND (
           $11::text IS NULL
           OR EXISTS (
             SELECT 1
-            FROM unnest(subjects) s(subject_name)
+            FROM unnest(b.subjects) s(subject_name)
             WHERE s.subject_name ILIKE '%' || $11 || '%'
           )
         )
     )
     SELECT
       base.*,
-      base.cosponsors_total AS cosponsor_count,   -- ✅ UI expects r.cosponsor_count
+      base.cosponsors_total AS cosponsor_count,
       COUNT(*) OVER() AS total_count
     FROM base
     ORDER BY ${order}
@@ -90,19 +147,19 @@ export async function getBillsDirectoryV2(
   `;
 
   const params = [
-    congress,
-    chamber,
+    c,
+    chamberNorm,
     from,
     to,
-    minCos,
+    Number(minCos) || 0,
 
-    policyAreaId,
-    statusId,
-    type,
-    committeeCodes,
+    policyAreaIdNum,
+    statusIdNum,
+    typeArr,
+    committeeArr,
 
-    query,
-    subject,
+    queryNorm,
+    subjectNorm,
 
     limit,
     offset,
@@ -111,11 +168,15 @@ export async function getBillsDirectoryV2(
   const { rows } = await q("bills:directory:v2", sql, params);
   const total = rows.length ? Number(rows[0].total_count) : 0;
 
-  return { rows, total, congress };
+  return { rows, total, congress: c };
 }
 
-/** filter dictionaries */
-export async function getBillsFilterOptionsV2() {
+/**
+ * Filter dictionaries (optionally scoped to congress for accurate counts)
+ */
+export async function getBillsFilterOptionsV2(congress = null) {
+  const c = await resolveCongress(congress);
+
   const [policyAreas, statuses, types, committees] = await Promise.all([
     q("bills:filters:policyAreas", `
       SELECT policy_area_id, policy_area_name, policy_area_slug
@@ -131,13 +192,16 @@ export async function getBillsFilterOptionsV2() {
       ORDER BY sort_order, status_label;
     `),
 
+    // scoped to congress (easy future-proofing; still fine for 119)
     q("bills:filters:types", `
       SELECT bill_type, COUNT(*)::int AS bill_count
       FROM ${ACTIVE_VIEW_SCHEMA}.bill_search_index
+      WHERE congress = $1
       GROUP BY 1
       ORDER BY bill_count DESC, bill_type;
-    `),
+    `, [c]),
 
+    // committees are global right now; can be scoped later if you add congress to bill_committees
     q("bills:filters:committees", `
       SELECT committee_system_code, committee_name, COUNT(DISTINCT bill_id)::int AS bill_count
       FROM ${ACTIVE_DATA_SCHEMA}.bill_committees
@@ -147,6 +211,7 @@ export async function getBillsFilterOptionsV2() {
   ]);
 
   return {
+    congress: c,
     policyAreas: policyAreas.rows ?? [],
     statuses: statuses.rows ?? [],
     types: types.rows ?? [],
@@ -154,7 +219,10 @@ export async function getBillsFilterOptionsV2() {
   };
 }
 
-/** facet counts */
+/**
+ * Facet counts (for policy/status/committee panels)
+ * IMPORTANT: pass the same filters used for the directory, but each facet query excludes its own filter.
+ */
 export async function getBillsFacetCountsV2({
   congress,
   chamber = null,
@@ -169,8 +237,17 @@ export async function getBillsFacetCountsV2({
   type = null,
   committeeCodes = null,
 } = {}) {
-  // IMPORTANT: congress should be required for consistent UX
-  // If you want, default it like you do elsewhere.
+  const c = await resolveCongress(congress);
+
+  const chamberNorm = normalizeText(chamber);
+  const queryNorm = normalizeText(query);
+  const subjectNorm = normalizeText(subject);
+
+  const policyAreaIdNum = normalizeNum(policyAreaId);
+  const statusIdNum = normalizeNum(statusId);
+
+  const typeArr = normalizeTextArray(type, { lower: true });
+  const committeeArr = normalizeTextArray(committeeCodes, { lower: false });
 
   const baseWhere = `
     congress = $1
@@ -195,16 +272,16 @@ export async function getBillsFacetCountsV2({
     )
   `;
 
-  const commonParams = [congress, chamber, from, to, minCos, query, subject];
+  const commonParams = [c, chamberNorm, from, to, Number(minCos) || 0, queryNorm, subjectNorm];
 
-  // Policy area counts (exclude policyAreaId filter)
+  // Policy facet (exclude policyAreaId)
   const policySql = `
     WITH base AS (
       SELECT policy_area_id
       FROM ${ACTIVE_VIEW_SCHEMA}.bill_search_index
       WHERE ${baseWhere}
         AND ($8::bigint IS NULL OR status_id = $8::bigint)
-        AND ($9::text   IS NULL OR bill_type = lower($9::text))
+        AND ($9::text[] IS NULL OR bill_type = ANY($9::text[]))
         AND ($10::text[] IS NULL OR committee_codes && $10::text[])
     )
     SELECT policy_area_id, COUNT(*)::int AS bill_count
@@ -213,14 +290,14 @@ export async function getBillsFacetCountsV2({
     ORDER BY bill_count DESC;
   `;
 
-  // Status counts (exclude statusId filter)
+  // Status facet (exclude statusId)
   const statusSql = `
     WITH base AS (
       SELECT status_id
       FROM ${ACTIVE_VIEW_SCHEMA}.bill_search_index
       WHERE ${baseWhere}
         AND ($8::bigint IS NULL OR policy_area_id = $8::bigint)
-        AND ($9::text   IS NULL OR bill_type = lower($9::text))
+        AND ($9::text[] IS NULL OR bill_type = ANY($9::text[]))
         AND ($10::text[] IS NULL OR committee_codes && $10::text[])
     )
     SELECT status_id, COUNT(*)::int AS bill_count
@@ -229,7 +306,7 @@ export async function getBillsFacetCountsV2({
     ORDER BY bill_count DESC;
   `;
 
-  // Committee counts (exclude committeeCodes filter)
+  // Committee facet (exclude committeeCodes)
   const committeeSql = `
     WITH base AS (
       SELECT committee_codes
@@ -237,7 +314,7 @@ export async function getBillsFacetCountsV2({
       WHERE ${baseWhere}
         AND ($8::bigint IS NULL OR policy_area_id = $8::bigint)
         AND ($9::bigint IS NULL OR status_id = $9::bigint)
-        AND ($10::text   IS NULL OR bill_type = lower($10::text))
+        AND ($10::text[] IS NULL OR bill_type = ANY($10::text[]))
     ),
     flat AS (
       SELECT unnest(committee_codes) AS committee_system_code
@@ -250,21 +327,25 @@ export async function getBillsFacetCountsV2({
   `;
 
   const [policyRes, statusRes, committeeRes] = await Promise.all([
-    q("bills:facets:policy", policySql, [...commonParams, statusId, type, committeeCodes]),
-    q("bills:facets:status", statusSql, [...commonParams, policyAreaId, type, committeeCodes]),
-    q("bills:facets:committee", committeeSql, [...commonParams, policyAreaId, statusId, type]),
+    q("bills:facets:policy", policySql, [...commonParams, statusIdNum, typeArr, committeeArr]),
+    q("bills:facets:status", statusSql, [...commonParams, policyAreaIdNum, typeArr, committeeArr]),
+    q("bills:facets:committee", committeeSql, [...commonParams, policyAreaIdNum, statusIdNum, typeArr]),
   ]);
 
   return {
+    congress: c,
     policyAreas: policyRes.rows ?? [],
     statuses: statusRes.rows ?? [],
     committees: committeeRes.rows ?? [],
   };
 }
 
-/** autocomplete */
-
+/**
+ * Autocomplete
+ * (Optional: you can add congress scoping later, but not required right now.)
+ */
 export async function autocompleteCommittees(prefix) {
+  const p = normalizeText(prefix) || "";
   const sql = `
     SELECT committee_system_code, committee_name, COUNT(DISTINCT bill_id)::int AS bill_count
     FROM ${ACTIVE_DATA_SCHEMA}.bill_committees
@@ -273,11 +354,12 @@ export async function autocompleteCommittees(prefix) {
     ORDER BY bill_count DESC, committee_name
     LIMIT 20;
   `;
-  const { rows } = await q("bills:auto:committees", sql, [prefix || ""]);
+  const { rows } = await q("bills:auto:committees", sql, [p]);
   return rows ?? [];
 }
 
 export async function autocompleteSubjects(prefix) {
+  const p = normalizeText(prefix) || "";
   const sql = `
     WITH flat AS (
       SELECT unnest(subjects) AS subject
@@ -294,16 +376,14 @@ export async function autocompleteSubjects(prefix) {
     ORDER BY bill_count DESC, subject
     LIMIT 20;
   `;
-  const { rows } = await q("bills:auto:subjects", sql, [prefix || ""]);
+  const { rows } = await q("bills:auto:subjects", sql, [p]);
   return rows ?? [];
 }
 
-
 export async function autocompleteBillsQuery(prefix, { limit = 12 } = {}) {
-  const qraw = (prefix || "").trim();
+  const qraw = normalizeText(prefix);
   if (!qraw) return [];
 
-  // bill code recognition: "hr 1531", "H.R.1531", "s42"
   const cleaned = qraw.toLowerCase().replace(/\./g, "").trim();
   const m = cleaned.match(/^(hr|hres|hconres|hjres|s|sres|sconres|sjres)\s*(\d+)$/i);
 

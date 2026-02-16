@@ -20,9 +20,11 @@ import SenateVotes from '@/app/components/features/members/senate-member/SenateV
 import VotesSection from '@/app/components/features/members/house-member/VoteSection';
 import VoteAlignmentPanel from '@/app/components/features/members/house-member/VoteAlignmentGauge';
 
-import '@/app/styles/legacy_refactor/member-styles.refactored.css'
-import '@/app/styles/active/ll-members-styles.css';
+// import '@/app/styles/legacy_refactor/member-styles.refactored.css'
+// import '@/app/styles/active/ll-members-styles.css';
 
+import "@/app/styles/active/members/ll3.members.search.css";
+import "@/app/styles/active/members/ll3.members.details.css";
 
 // import '../../../../lib/stylesheets/refactored/member-styles.refactored.css';
 // import '../../../../lib/stylesheets/refactored/vote-ui.refactored.css';

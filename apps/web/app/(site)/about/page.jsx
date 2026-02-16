@@ -1,4 +1,5 @@
 // app/(site)/about/page.jsx
+
 import { Search, BarChart2, ScrollText } from "lucide-react";
 // import "../../../lib/stylesheets/legacy_refactor/home-styles.refactored.css";
 

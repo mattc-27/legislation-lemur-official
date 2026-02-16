@@ -60,7 +60,7 @@ export default function ChamberToggleClient({
 
             <button
                 type="button"
-                className={`ll3-seg__item ${computed === "" ? "is-active" : ""}`}
+                className={`ll3-pill ${computed === "" ? "is-active" : ""}`}
                 onClick={(e) => setAll(e.currentTarget)}
             >
                 All
@@ -68,7 +68,7 @@ export default function ChamberToggleClient({
 
             <button
                 type="button"
-                className={`ll3-seg__item ${house ? "is-active" : ""}`}
+                className={`ll3-pill ${house ? "is-active" : ""}`}
                 aria-pressed={house ? "true" : "false"}
                 onClick={(e) => toggle("house", e.currentTarget)}
             >
@@ -77,7 +77,7 @@ export default function ChamberToggleClient({
 
             <button
                 type="button"
-                className={`ll3-seg__item ${senate ? "is-active" : ""}`}
+                className={`ll3-pill ${senate ? "is-active" : ""}`}
                 aria-pressed={senate ? "true" : "false"}
                 onClick={(e) => toggle("senate", e.currentTarget)}
             >

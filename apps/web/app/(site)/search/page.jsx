@@ -11,13 +11,13 @@ import SearchResultCard from "@/app/components/features/search/SearchResultCard"
 import CompositionPanel from "@/app/components/features/search/CompositionPanel";
 
 import '@/app/styles/active/ll-bills-archive.css';
-import '@/app/styles/active/member-search-base.css';
-import '@/app/styles/active/member-search-components.css';
+//import '@/app/styles/active/member-search-base.css';
+//import '@/app/styles/active/member-search-components.css';
 
 import CongressPicker from "@/app/components/features/search/CongressPicker";
 
 import { Landmark, Gavel, Users2 } from "lucide-react"; // ⟵ NEW
-
+import '@/app/styles/active/members/ll3.members.search.css';
 /*
 // import FiltersPanelClient from "@/app/components/search/FiltersPanelClient";
 // import "../../../lib/stylesheets/refactored/home-styles.refactored.css";   // reuse hero/searchbox visuals

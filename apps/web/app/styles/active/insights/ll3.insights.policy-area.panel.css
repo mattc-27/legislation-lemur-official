@@ -1,0 +1,425 @@
+/* app/(app)/styles/insights/ll3.insights.policy-area.panel.css
+   ======================================================================
+   Insights — PolicyAreaBreakdownPanel
+   Styles:
+   - ll3-lemurPanel / ll3-lemurMark
+   - ll3-lemurBars list + bar tracks
+   Notes:
+   - Your component currently renders TWO bar UIs (ll3-pa__* and ll3-lemurBars__*).
+     This sheet hides the redundant one so it doesn't look duplicated.
+   ====================================================================== */
+
+/* Panel shell */
+.ll3-lemurPanel {
+    background: var(--ll3-surface);
+    border: 1px solid var(--ll3-border);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow-sm);
+    padding: 14px;
+    backdrop-filter: blur(10px);
+    min-width: 0;
+}
+
+/* Header */
+.ll3-lemurPanel__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 2px 10px;
+}
+
+.ll3-lemurPanel__badge {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.70);
+    display: grid;
+    place-items: center;
+}
+
+.ll3-lemurPanel__titles {
+    min-width: 0;
+    flex: 1;
+}
+
+.ll3-lemurPanel__title {
+    margin: 0;
+}
+
+.ll3-lemurPanel__sub {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.ll3-lemurPanel__kpi {
+    flex: 0 0 auto;
+    text-align: right;
+    padding-top: 2px;
+}
+
+.ll3-lemurPanel__kpiLabel {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ll3-muted);
+    font-weight: 800;
+}
+
+.ll3-lemurPanel__kpiValue {
+    margin-top: 4px;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--ll3-ink);
+    line-height: 1.05;
+}
+
+/* Empty state */
+.ll3-lemurPanel__empty {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px dashed rgba(17, 24, 39, 0.16);
+    background: rgba(255, 255, 255, 0.55);
+    color: rgba(15, 23, 42, 0.70);
+    font-weight: 700;
+    font-size: 13px;
+}
+
+/* Lemur mark (simple) */
+.ll3-lemurMark {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+}
+
+.ll3-lemurMark__face {
+    position: absolute;
+    inset: 3px;
+    border-radius: 8px;
+    background: rgba(143, 177, 222, 0.55);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+}
+
+.ll3-lemurMark__ear {
+    position: absolute;
+    top: 1px;
+    left: -1px;
+    width: 8px;
+    height: 8px;
+    border-radius: 6px;
+    background: rgba(143, 177, 222, 0.55);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+}
+
+.ll3-lemurMark__ear--r {
+    left: auto;
+    right: -1px;
+}
+
+/* List */
+.ll3-lemurBars {
+    display: grid;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+/* Make rows feel clickable when <Link> */
+.ll3-lemurBars__item {
+    text-decoration: none;
+    color: inherit;
+
+    border-radius: 14px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.72);
+    padding: 10px 10px;
+
+    transition: transform 0.06s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.ll3-lemurBars__item:hover {
+    transform: translateY(-1px);
+    border-color: rgba(17, 24, 39, 0.16);
+    background: rgba(255, 255, 255, 0.90);
+    box-shadow: 0 10px 18px rgba(17, 24, 39, 0.08);
+}
+
+.ll3-lemurBars__item.is-active {
+    border-color: rgba(143, 177, 222, 0.45);
+    box-shadow: 0 12px 24px rgba(143, 177, 222, 0.14);
+}
+
+/* -------------------------
+   Use the ll3-pa__* block as the “single” UI
+   Hide the duplicate ll3-lemurBars__* block in your current JSX.
+   ------------------------- */
+.ll3-lemurBars__meta,
+.ll3-lemurBars__track,
+.ll3-lemurBars__hint {
+    display: none;
+}
+
+/* Row top line */
+.ll3-pa__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.ll3-pa__name {
+    font-size: 13.5px;
+    font-weight: 900;
+    color: var(--ll3-ink);
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ll3-pa__meta {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ll3-pa__count {
+    font-size: 13px;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.78);
+}
+
+.ll3-pa__pct {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.55);
+}
+
+/* Bar */
+.ll3-pa__bar {
+    margin-top: 8px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.06);
+    overflow: hidden;
+}
+
+.ll3-pa__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: rgba(143, 177, 222, 0.92);
+}
+
+/* Slug */
+.ll3-pa__slug {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.55);
+}
+
+/* Responsive header */
+@media (max-width: 720px) {
+    .ll3-lemurPanel__head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ll3-lemurPanel__kpi {
+        text-align: left;
+    }
+}
+
+
+/* ======================================================================
+   Insights — Policy Area Breakdown Panel
+   ====================================================================== */
+
+.ll3-lemurPanel {
+    background: var(--ll3-surface);
+    border: 1px solid var(--ll3-border);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow-sm);
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    min-width: 0;
+}
+
+.ll3-lemurPanel__head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.ll3-lemurPanel__title {
+    margin: 0;
+}
+
+.ll3-lemurPanel__sub {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: rgba(15, 23, 42, 0.62);
+}
+
+.ll3-lemurPanel__kpi {
+    text-align: right;
+    line-height: 1.1;
+}
+
+.ll3-lemurPanel__kpiLabel {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.55);
+}
+
+.ll3-lemurPanel__kpiValue {
+    margin-top: 4px;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--ll3-ink);
+}
+
+.ll3-lemurPanel__empty {
+    padding: 12px 0 2px;
+    color: rgba(15, 23, 42, 0.62);
+    font-size: 13px;
+}
+
+/* Lemur mark */
+.ll3-lemurMark {
+    display: inline-grid;
+    grid-template-columns: 10px 18px 10px;
+    align-items: center;
+    gap: 2px;
+}
+
+.ll3-lemurMark__ear {
+    width: 10px;
+    height: 10px;
+    border-radius: 4px 4px 10px 10px;
+    background: rgba(99, 102, 241, 0.35);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.ll3-lemurMark__face {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.20);
+}
+
+.ll3-lemurMark__ear--r {
+    background: rgba(143, 177, 222, 0.40);
+    border-color: rgba(143, 177, 222, 0.30);
+}
+
+/* Bars list */
+.ll3-lemurBars {
+    display: grid;
+    gap: 10px;
+    padding-top: 6px;
+}
+
+.ll3-lemurBars__item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+
+    padding: 10px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.72);
+
+    transition: transform 0.08s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.ll3-lemurBars__item:hover {
+    transform: translateY(-1px);
+    background: #fff;
+    border-color: rgba(17, 24, 39, 0.14);
+}
+
+.ll3-lemurBars__item.is-active {
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(99, 102, 241, 0.06);
+}
+
+.ll3-lemurBars__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.ll3-lemurBars__name {
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.86);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.ll3-lemurBars__nums {
+    display: inline-flex;
+    gap: 10px;
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+}
+
+.ll3-lemurBars__count {
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.78);
+}
+
+.ll3-lemurBars__pct {
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.55);
+}
+
+.ll3-lemurBars__track {
+    margin-top: 8px;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.ll3-lemurBars__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: rgba(143, 177, 222, 0.75);
+}
+
+.ll3-lemurBars__fill.is-active {
+    background: rgba(99, 102, 241, 0.85);
+}
+
+.ll3-lemurBars__hint {
+    margin-top: 6px;
+    font-size: 12px;
+    opacity: 0.95;
+}
+
+@media (max-width: 720px) {
+    .ll3-lemurPanel__head {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .ll3-lemurPanel__kpi {
+        grid-column: 1 / -1;
+        text-align: left;
+        margin-top: 2px;
+    }
+}

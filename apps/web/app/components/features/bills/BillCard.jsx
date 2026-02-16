@@ -13,18 +13,12 @@ import {
     Tags,
     Users,
     ChevronDown,
+    Info,
+    Zap,
+    TrendingUp,
 } from "lucide-react";
 
-/**
- * Server component (safe): receives a bill row and renders card.
- * Uses SaveBillButtonClient for the client-only save UI.
- */
-
-
-/**
- * Bill chip like your screenshot: "HCONRES. 61 • House • 119"
- * Kept as a compact pill with dot separators.
- */export default function BillCard({ bill }) {
+export default function BillCard({ bill }) {
     const r = bill;
 
     const slug = `${r.bill_type}-${r.bill_number}-${r.congress}`.toLowerCase();
@@ -38,6 +32,11 @@ import {
 
     const subjects = (r.subjects || []).slice(0, 3).map(subjectToGroup);
     const extraSubjects = Math.max(0, (r.subjects || []).length - subjects.length);
+
+    const impact = Number.isFinite(r.impact_score) ? r.impact_score : null;
+    const trending = Number.isFinite(r.trending_score) ? r.trending_score : null;
+
+    const level = (v) => Math.min(5, Math.max(1, Math.ceil(v / 20)));
 
     return (
         <article className="ll3-card" role="listitem">
@@ -69,6 +68,54 @@ import {
                     </div>
                     <div className="ll3-hero__date">{fmtDate(r.latest_action_date)}</div>
                     <div className="ll3-hero__text">{r.latest_action_text || "—"}</div>
+                </div>
+
+                {/* ✅ Signals strip (Impact + Trending + info tooltip/link) */}
+                <div className="ll3-signals" aria-label="Bill signals">
+                    <div className="ll3-signals__head">
+                        <span className="ll3-signals__title">Signals</span>
+
+                        {/* Tooltip + link */}
+                        <a
+                            className="ll3-signalInfo"
+                            href="/references#bill-signals"
+                            aria-label="What are Impact and Trending? Open reference."
+                            data-tip="What are these? Impact & Trending are heuristic signals (0–100)."
+                        >
+                            <Info size={16} aria-hidden="true" />
+                            <span className="ll3-signalInfo__txt">What is this?</span>
+                        </a>
+                    </div>
+
+                    <div className="ll3-signals__grid">
+                        <span className="ll3-signal" data-tone="impact" title="Heuristic Impact Score (0–100)">
+                            <span className="ll3-signal__k">
+                                <Zap size={14} aria-hidden="true" />
+                                Impact
+                            </span>
+                            <span className="ll3-signal__v">{impact ?? "—"}</span>
+
+                            {impact != null ? (
+                                <span className="ll3-meter" aria-hidden="true" data-level={level(impact)} />
+                            ) : (
+                                <span className="ll3-meter ll3-meter--empty" aria-hidden="true" />
+                            )}
+                        </span>
+
+                        <span className="ll3-signal" data-tone="trending" title="Heuristic Trending Score (0–100)">
+                            <span className="ll3-signal__k">
+                                <TrendingUp size={14} aria-hidden="true" />
+                                Trending
+                            </span>
+                            <span className="ll3-signal__v">{trending ?? "—"}</span>
+
+                            {trending != null ? (
+                                <span className="ll3-meter" aria-hidden="true" data-level={level(trending)} />
+                            ) : (
+                                <span className="ll3-meter ll3-meter--empty" aria-hidden="true" />
+                            )}
+                        </span>
+                    </div>
                 </div>
 
                 <div className="ll3-meta">
@@ -115,8 +162,8 @@ import {
                         label={`${r.type?.toUpperCase()}. ${r.number} (${r.congress})`}
                         meta={{
                             congress: r.congress,
-                            type: r.type,
-                            number: r.number,
+                            type: r.bill_type,
+                            number: r.bill_number,
                             introduced: r.introduced_date,
                             latest_action_date: r.latest_action_date,
                             latest_action_text: r.latest_action_text,
