@@ -69,11 +69,20 @@ export default function MemberTerms({ terms = [], compact = false }) {
                   const label = `${t.startYear} – ${t.endYear ?? "present"}`;
                   const current = t.isCurrent;
                   return (
-                    <li key={`${chamber}-${i}`} className={`llmp3-terms__item ${current ? "is-current" : ""}`}>
-                      <span className={`llmp3-terms__badge ${current ? "is-current" : ""}`}>
-                        <span>{label}</span>
-                        {current && <span className="llmp3-terms__meta">current</span>}
+                    <li
+                      key={`${chamber}-${i}`}
+                      className={`llmp3-terms__item ${current ? "is-current" : ""}`}
+                    >
+                      <span className="llmp3-terms__rail" aria-hidden="true">
+                        <span className={`llmp3-terms__dot ${current ? "is-current" : ""}`} />
                       </span>
+
+                      <div className="llmp3-terms__content">
+                        <div className="llmp3-terms__meta">
+                          <span className="llmp3-terms__date">{label}</span>
+                          {current && <span className="llmp3-terms__type">Current</span>}
+                        </div>
+                      </div>
                     </li>
                   );
                 })}

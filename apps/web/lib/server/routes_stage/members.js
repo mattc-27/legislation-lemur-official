@@ -363,3 +363,111 @@ export async function getMemberKpis(bioguideId) {
     const { rows } = await q("member:getKpis:mv", sql, [bioguideId]);
     return rows[0] ?? null;
 }
+
+
+
+
+
+/* UPDATED VOTES */
+export async function getHouseMemberAlignmentPanelOverall(bioguideId) {
+    const sql = `
+    SELECT
+      b.bioguide_id,
+      b.alignment_pct,
+      b.attendance_pct,
+      round((b.alignment_pct - b.house_alignment_median)::numeric, 1)  AS alignment_vs_house_median,
+      round((b.attendance_pct - b.house_attendance_median)::numeric, 1) AS attendance_vs_house_median,
+      round((b.alignment_cume_dist * 100.0)::numeric, 1)              AS alignment_percentile,
+      round((b.attendance_cume_dist * 100.0)::numeric, 1)             AS attendance_percentile,
+      va.votes_total::int                                             AS votes_total,
+      va.votes_missed::int                                            AS votes_missed,
+      vs.last_success_at                                              AS data_fresh_as_of
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_house_alignment_benchmarks_v1 b
+    LEFT JOIN ${ACTIVE_VIEW_SCHEMA}.mv_member_vote_agg_v1 va
+      ON va.bioguide_id = b.bioguide_id
+    LEFT JOIN sandbox_ops_control_v1.view_status vs
+      ON vs.schema_name = '${ACTIVE_VIEW_SCHEMA}'
+     AND vs.view_name   = 'mv_house_alignment_benchmarks_v1'
+    WHERE b.bioguide_id = $1;
+  `;
+    const { rows } = await q("member:getAlignPanel:overall", sql, [bioguideId]);
+    return rows[0] ?? null;
+}
+
+
+export async function getHouseMemberAlignmentByPolicy(
+    bioguideId,
+    { minVotes = 10, sort = "votes", limit = 60 } = {}
+) {
+    const sortSql =
+        sort === "lowest_alignment"
+            ? `p.alignment_pct ASC NULLS LAST, p.considered_count DESC`
+            : sort === "highest_alignment"
+                ? `p.alignment_pct DESC NULLS LAST, p.considered_count DESC`
+                : sort === "biggest_delta"
+                    ? `abs(p.alignment_pct - o.overall_alignment_pct) DESC, p.considered_count DESC`
+                    : `p.considered_count DESC`; // default "votes"
+
+    const sql = `
+    WITH overall AS (
+      SELECT k.alignment_pct AS overall_alignment_pct
+      FROM ${ACTIVE_VIEW_SCHEMA}.member_kpis_v1 k
+      WHERE k.bioguide_id = $1
+    )
+    SELECT
+      p.policy_area_id,
+      p.policy_area_slug,
+      p.policy_area_name,
+      p.alignment_pct,
+      p.attendance_pct,
+      p.considered_count::int,
+      p.aligned_count::int,
+      (p.considered_count - p.aligned_count)::int AS misaligned_count,
+      round((p.alignment_pct - o.overall_alignment_pct)::numeric, 1) AS alignment_delta
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_alignment_house_by_policy_area_v1 p
+    CROSS JOIN overall o
+    WHERE p.bioguide_id = $1
+      AND p.considered_count >= $2
+    ORDER BY ${sortSql}
+    LIMIT $3;
+  `;
+
+    const { rows } = await q("member:getAlignPanel:policy", sql, [
+        bioguideId,
+        minVotes,
+        limit,
+    ]);
+    return rows;
+}
+
+
+export async function getHouseMemberAlignmentTopDeviations(
+    bioguideId,
+    { minVotes = 10, limit = 3 } = {}
+) {
+    const sql = `
+    WITH overall AS (
+      SELECT k.alignment_pct AS overall_alignment_pct
+      FROM ${ACTIVE_VIEW_SCHEMA}.member_kpis_v1 k
+      WHERE k.bioguide_id = $1
+    )
+    SELECT
+      p.policy_area_id,
+      p.policy_area_slug,
+      p.policy_area_name,
+      p.considered_count::int,
+      round((p.alignment_pct - o.overall_alignment_pct)::numeric, 1) AS alignment_delta
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_alignment_house_by_policy_area_v1 p
+    CROSS JOIN overall o
+    WHERE p.bioguide_id = $1
+      AND p.considered_count >= $2
+    ORDER BY abs(p.alignment_pct - o.overall_alignment_pct) DESC, p.considered_count DESC
+    LIMIT $3;
+  `;
+    const { rows } = await q("member:getAlignPanel:deviations", sql, [
+        bioguideId,
+        minVotes,
+        limit,
+    ]);
+    return rows;
+}

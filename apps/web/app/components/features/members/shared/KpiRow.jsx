@@ -7,27 +7,30 @@ export default function KpiRow({ kpis = {} }) {
     { label: "Attendance", value: fmtPct(kpis.attendancePct) },
     { label: "Party alignment", value: fmtPct(kpis.alignmentPct) },
   ];
-  const items = itemsRaw.filter(k => k.value != null);
+  const items = itemsRaw.filter((k) => k.value != null);
 
   const freshness = fmtFreshness(kpis.data_fresh_as_of);
 
   return (
-    <section className="llmp3-card">
-      <div className="llmp3-card__head">
-        <h2 className="llmp3-h2">Overview</h2>
-        {freshness && <span className="llmp3-asof">Updated {freshness}</span>}
+    <section className="llmp3-card llm3-kpiCard">
+      <div className="llmp3-card__head llm3-cardHead">
+        <h2 className="llm3-h2">Overview</h2>
+        {freshness && <span className="llm3-asof">Updated {freshness}</span>}
       </div>
 
-      <ul className="llmp3-kpis">
+      <ul className="llm3-kpis" role="list">
         {items.map((k) => {
-          const Icon = k.icon;
+          const Icon = k.icon; // may be undefined — that's OK now
           return (
-            <li key={k.label} className="llmp3-kpi">
-              <div className="llmp3-kpi__icon" aria-hidden="true">
-                <Icon size={16} />
-              </div>
-              <div className="llmp3-kpi__value">{k.value}</div>
-              <div className="llmp3-kpi__label">{k.label}</div>
+            <li key={k.label} className="llm3-kpi" role="listitem">
+              {Icon ? (
+                <div className="llm3-kpi__icon" aria-hidden="true">
+                  <Icon size={16} />
+                </div>
+              ) : null}
+
+              <div className="llm3-kpi__value">{k.value}</div>
+              <div className="llm3-kpi__label">{k.label}</div>
             </li>
           );
         })}
@@ -36,8 +39,12 @@ export default function KpiRow({ kpis = {} }) {
   );
 }
 
-function fmtNum(n) { return (n ?? n === 0) ? String(n) : null; }
-function fmtPct(n) { return (typeof n === "number") ? `${n.toFixed(1)}%` : null; }
+function fmtNum(n) {
+  return n ?? n === 0 ? String(n) : null;
+}
+function fmtPct(n) {
+  return typeof n === "number" ? `${n.toFixed(1)}%` : null;
+}
 
 function fmtFreshness(ts) {
   if (!ts) return null;

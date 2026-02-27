@@ -72,7 +72,7 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
         <section className="billtable">
             {/* Controls */}
             <div className="billtable__controls" role="toolbar" aria-label="Bill table filters">
-                <select className="field field--sm" value={subject} onChange={(e) => setSubject(e.target.value)} aria-label="Topic">
+                <select className="field" value={subject} onChange={(e) => setSubject(e.target.value)} aria-label="Topic">
                     {allSubjects.map((s) => (
                         <option key={s} value={s}>
                             {s}
@@ -82,18 +82,18 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
 
                 <div className="dategroup">
                     <label className="sr-only" htmlFor="from">From</label>
-                    <input id="from" className="field field--sm" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+                    <input id="from" className="field" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
                     <span className="dash">–</span>
                     <label className="sr-only" htmlFor="to">To</label>
-                    <input id="to" className="field field--sm" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+                    <input id="to" className="field" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
                 </div>
 
                 <div className="sortgroup">
-                    <select className="field field--sm" value={sortKey} onChange={(e) => setSortKey(e.target.value)} aria-label="Sort by">
+                    <select className="field" value={sortKey} onChange={(e) => setSortKey(e.target.value)} aria-label="Sort by">
                         <option value="date">Date</option>
                         <option value="subject">Topic</option>
                     </select>
-                    <button className="btn btn--ghost btn--sm" type="button" onClick={flipDir} aria-label="Toggle sort direction">
+                    <button className="btn" type="button" onClick={flipDir} aria-label="Toggle sort direction">
                         {sortDir === "asc" ? "↑" : "↓"}
                     </button>
                 </div>
@@ -151,7 +151,7 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                 </table>
             </div>
 
-            <style jsx>{`
+            {/*    <style jsx>{`
   .billtable { display: flex; flex-direction: column; gap: 8px; }
   .billtable__controls {
     display: grid;
@@ -232,7 +232,6 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
     border: 0;
   }
 
-  /* ---------- mobile tweaks ---------- */
   @media (max-width: 640px) {
     .billtable__controls {
       grid-auto-flow: row;
@@ -267,6 +266,7 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
     }
   }
 `}</style>
+*/}
 
         </section>
     );

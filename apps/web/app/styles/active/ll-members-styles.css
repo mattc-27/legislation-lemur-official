@@ -317,65 +317,6 @@
     color: #0f172a;
 }
 
-.llmp3-terms__list {
-    position: relative;
-    margin: 0;
-    padding: 0 0 0 22px;
-    list-style: none;
-}
-
-.llmp3-terms__list::before {
-    content: "";
-    position: absolute;
-    left: 7px;
-    top: 4px;
-    bottom: 4px;
-    width: 2px;
-    background: #e5e7eb;
-}
-
-.llmp3-terms__item {
-    position: relative;
-    padding-left: 14px;
-    margin-bottom: 10px;
-}
-
-.llmp3-terms__item::before {
-    content: "";
-    position: absolute;
-    left: -1px;
-    top: 6px;
-    width: 14px;
-    height: 14px;
-    border-radius: 999px;
-    background: #fff;
-    border: 2px solid #e5e7eb;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, .10);
-}
-
-.llmp3-terms__item.is-current::before {
-    border-color: #10b981;
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, .12);
-}
-
-.llmp3-terms__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    font-size: 0.82rem;
-    font-weight: 800;
-}
-
-.llmp3-terms__badge.is-current {
-    background: #ecfdf5;
-    border-color: #a7f3d0;
-    color: #065f46;
-}
-
 .llmp3-terms__meta {
     font-size: 0.72rem;
     font-weight: 900;

@@ -19,12 +19,26 @@ import KpiRow from '@/app/components/features/members/shared/KpiRow';
 import SenateVotes from '@/app/components/features/members/senate-member/SenateVotes';
 import VotesSection from '@/app/components/features/members/house-member/VoteSection';
 import VoteAlignmentPanel from '@/app/components/features/members/house-member/VoteAlignmentGauge';
-
+import VotesSplitSection from "@/app/components/features/members/shared/VoteSplitSection";
 // import '@/app/styles/legacy_refactor/member-styles.refactored.css'
-// import '@/app/styles/active/ll-members-styles.css';
+
+import {
+    ArrowLeft
+} from "lucide-react";
+
+import "@/app/styles/active/members/ll3.members.tokens.css";
+import "@/app/styles/active/members/ll3.members.ui.css";
 
 import "@/app/styles/active/members/ll3.members.search.css";
+import '@/app/styles/active/ll-members-styles.css';
 import "@/app/styles/active/members/ll3.members.details.css";
+
+import "@/app/styles/active/members/ll3.members.badges.css";
+import "@/app/styles/active/members/ll3.members.tabs.css";
+import "@/app/styles/active/members/ll3.members.heatmap.css";
+import "@/app/styles/active/members/ll3.members.gauge.css";
+import "@/app/styles/active/members/ll3.members.viz.css";
+import "@/app/styles/active/members/ll3.vote-alignment.css";
 
 // import '../../../../lib/stylesheets/refactored/member-styles.refactored.css';
 // import '../../../../lib/stylesheets/refactored/vote-ui.refactored.css';
@@ -42,9 +56,9 @@ export default async function MemberPage({ params }) {
         sponsoredRes,
         cosponsoredRes,
         //recentVotes,
-        alignment,
+        // alignment,
         kpis,
-
+        alignmentPanel,
         monthlyActivity,
         subjects,
         bills,
@@ -83,8 +97,8 @@ export default async function MemberPage({ params }) {
     });
 
     const votesFreshness = await getSectionFreshness({
-        schemaName: "sandbox_lemur_views_v1",
-        viewNames: ["member_votes_v1", "member_vote_agg_v1"], // ✅ from your view_status
+        schemaName: "sandbox_lemur_app_views_v1",
+        viewNames: ["mv_member_votes_v2", "mv_member_vote_agg_v1"],
         cacheKey: `member:${bioguideId}:votesFreshness`,
     });
 
@@ -122,9 +136,9 @@ export default async function MemberPage({ params }) {
                 <div className="llmp3-back">
                     <Link
                         href={`/search?state=${encodeURIComponent(profile.stateCode || "")}`}
-                        className="llmp3-back__btn"
+                        className="llmp3-back__members llmp3-back--member"
                     >
-                        <span className="llmp3-back__icon" aria-hidden="true">←</span>
+                        <ArrowLeft size={16} aria-hidden="true" />
                         <span>Back to {stateLabel} results</span>
                     </Link>
                 </div>
@@ -164,23 +178,14 @@ export default async function MemberPage({ params }) {
                             <SenateVotes groups={allVotes} />
                         ) : (
                             <>
-                                <div className="llmp3-grid-2">
-                                    <VoteAlignmentPanel value={alignment} />
-                                    <div className="llmp3-card">
-                                        <VotesSection
-                                            votes={allVotes}
-                                            tableInitialLimit={20}
-                                            freshnessAsOf={votesFreshness.asOf}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="llmp3-card llmp3-card--soft">
-                                    <ActivityTimeline
-                                        data={monthly}
-                                        freshnessAsOf={freshness.perView?.member_monthly_activity_v1 ?? freshness.asOf}
-                                    />
-                                </div>
+                                <VotesSplitSection
+                                    alignmentPanel={alignmentPanel}
+                                    votes={allVotes}
+                                    tableInitialLimit={20}
+                                    votesFreshnessAsOf={votesFreshness.asOf}
+                                    chamberLabel={isSenate ? "Senate" : "House"}
+                                    heatmapWeeks={52}
+                                />
                             </>
                         )}
                     </div>
