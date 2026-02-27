@@ -71,14 +71,16 @@ export default function SiteHeader() {
     const ROUTES = {
         members: "/search", // you can switch to /members later
         bills: "/bills",
-        insights: "/insights",
+        committees: "/committees",
+        // insights: "/insights",
         wiki: "/references",
         about: "/about",
     };
 
     const membersActive = isActive(pathname, ROUTES.members);
     const billsActive = isActive(pathname, ROUTES.bills);
-    const insightsActive = isActive(pathname, ROUTES.insights);
+    const committeesActive = isActive(pathname, ROUTES.committees);
+    //   const insightsActive = isActive(pathname, ROUTES.insights);
     const wikiActive = isActive(pathname, ROUTES.wiki);
     const aboutActive = isActive(pathname, ROUTES.about);
 
@@ -151,15 +153,21 @@ export default function SiteHeader() {
                             </Link>
                         </div>
                     </div>
-
-
                     <Link
+                        href={ROUTES.committees}
+                        className={cx("site-header__link", committeesActive && "is-active")}
+                        aria-current={committeesActive ? "page" : undefined}
+                    >
+                        Committees
+                    </Link>
+
+                    {/*                     <Link
                         href={ROUTES.insights}
                         className={cx("site-header__link", insightsActive && "is-active")}
                         aria-current={insightsActive ? "page" : undefined}
                     >
                         Insights
-                    </Link>
+                    </Link>*/}
 
                     <Link
                         href={ROUTES.wiki}
@@ -214,15 +222,22 @@ export default function SiteHeader() {
                 >
                     Members
                 </Link>
-
                 <Link
+                    href={ROUTES.committees}
+                    className={cx("site-header__link", committeesActive && "is-active")}
+                    aria-current={committeesActive ? "page" : undefined}
+                >
+                    Committees
+                </Link>
+
+                {/*               <Link
                     href={ROUTES.insights}
                     className={cx("site-header__link", insightsActive && "is-active")}
                     aria-current={insightsActive ? "page" : undefined}
                     onClick={() => setOpen(false)}
                 >
                     Insights
-                </Link>
+                </Link>*/}
 
                 <Link
                     href={ROUTES.wiki}

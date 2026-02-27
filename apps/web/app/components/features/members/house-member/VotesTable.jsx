@@ -1,6 +1,8 @@
+"use client";
+
 export default function VotesTable({ votes = [] }) {
   if (!votes || votes.length === 0) {
-    return <p className="muted">No votes found.</p>;
+    return <p className="llm3-muted" style={{ padding: "12px 0" }}>No votes found.</p>;
   }
 
   return (
@@ -17,35 +19,36 @@ export default function VotesTable({ votes = [] }) {
       </thead>
       <tbody>
         {votes.map((v) => {
-          const date = fmtDate(v.voted_at || v.date);
+          const date = fmtDate(
+            v?.voted_at ?? v?.date ?? v?.votedAt ?? v?.vote_date ?? v?.voteDate
+          );
 
-          const bill = v.bill_display
-            ? v.bill_url
+          const billDisplay = v?.bill_display ?? v?.billDisplay ?? v?.bill ?? null;
+          const billUrl = v?.bill_url ?? v?.billUrl ?? null;
+
+          const bill = billDisplay
+            ? billUrl
               ? (
-                <a
-                  href={v.bill_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {v.bill_display}
+                <a href={billUrl} target="_blank" rel="noopener noreferrer">
+                  {billDisplay}
                 </a>
               )
-              : v.bill_display
+              : billDisplay
             : "—";
 
           const roll =
-            v.rollcall_number != null && v.session != null
+            v?.rollcall_number != null && v?.session != null
               ? `${v.session}-${v.rollcall_number}`
-              : v.roll || v.rollcall_number || "—";
+              : v?.roll ?? v?.rollcall_number ?? "—";
 
-          const question = v.question || v.bill || "—";
-          const choice = v.choice || v.position || "—";
-          const result = v.result || "—";
+          const question = v?.question ?? "—";
+          const choice = v?.choice ?? v?.position ?? "—";
+          const result = v?.result ?? "—";
 
           const key =
-            v.vote_id ??
-            `${v.congress ?? ""}-${v.session ?? ""}-${v.rollcall_number ?? ""
-            }-${v.voted_at ?? v.date ?? Math.random()}`;
+            v?.vote_id ??
+            v?.voteId ??
+            `${v?.congress ?? ""}-${v?.session ?? ""}-${v?.rollcall_number ?? ""}-${v?.voted_at ?? v?.date ?? ""}`;
 
           return (
             <tr key={key}>
@@ -67,14 +70,12 @@ export default function VotesTable({ votes = [] }) {
   );
 }
 
-
 /* ----- Helpers */
-
 
 function fmtDate(s) {
   if (!s) return "—";
   const d = new Date(s);
-  return isNaN(d.getTime()) ? s : d.toLocaleDateString();
+  return Number.isNaN(d.getTime()) ? String(s) : d.toLocaleDateString();
 }
 
 function prettyVote(pos) {
@@ -84,7 +85,7 @@ function prettyVote(pos) {
   if (p === "nay" || p === "no") return "Nay";
   if (p.includes("present")) return "Present";
   if (p.includes("not voting")) return "Not Voting";
-  return pos;
+  return String(pos);
 }
 
 function badgeForVote(pos) {

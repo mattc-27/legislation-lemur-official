@@ -1,3 +1,4 @@
+// components/member/VotesSection.jsx
 "use client";
 import { useMemo, useState, useEffect } from "react";
 import VotesHeatmap from "./VotesHeatmap";
@@ -16,23 +17,20 @@ function fmtAsOf(asOf) {
   });
 }
 
-
 export default function VotesSection({
   votes = [],
-  tableInitialLimit = 20,   // sensible default
+  tableInitialLimit = 20,
   freshnessAsOf = null,
 }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [tableLimit, setTableLimit] = useState(tableInitialLimit);
 
-  // keep tableLimit in sync if the prop changes
   useEffect(() => {
     setTableLimit(tableInitialLimit || 20);
   }, [tableInitialLimit]);
 
   const vizVotes = votes ?? [];
 
-  // 1) Base set of votes for the table (depends on selected date)
   const baseTable = useMemo(() => {
     if (!selectedDate) return vizVotes;
 
@@ -52,60 +50,72 @@ export default function VotesSection({
     });
   }, [vizVotes, selectedDate]);
 
-  // 2) Actually displayed rows
   const tableVotes = useMemo(() => {
-    if (selectedDate) {
-      // when you click a day, show ALL votes for that day
-      return baseTable;
-    }
+    if (selectedDate) return baseTable;
     const limit = tableLimit || tableInitialLimit || 20;
     return baseTable.slice(0, limit);
   }, [baseTable, selectedDate, tableLimit, tableInitialLimit]);
 
-  // 3) Whether to show the button
   const canShowMore =
     !selectedDate && baseTable.length > (tableLimit || tableInitialLimit || 20);
 
   const asOfLabel = fmtAsOf(freshnessAsOf);
 
   return (
-    <section className="llmp3-card">
-      <div className="llmp3-card__head">
-        <h3 className="llmp3-h2" style={{ margin: 0 }}>Recent votes</h3>
-        <div className="llmp3-asof">
+    <section className="llmp3-card llm3-votes">
+      <div className="llmp3-card__head llm3-cardHead">
+        <h3 className="llm3-h2" style={{ margin: 0 }}>
+          Recent votes
+        </h3>
+        <div className="llm3-asof">
           Includes floor votes for the last year
           {asOfLabel ? ` • Updated ${asOfLabel}` : ""}
         </div>
       </div>
 
-      <div className="member_votes-row">
-        <div className="votes-viz">
-          <VotesHeatmap
-            votes={vizVotes}
-            weeks={52}
-            height={320}
-            heatmapRatio={0.7}
-            onSelectDay={setSelectedDate}
-            selectedDate={selectedDate}
-          />
+      <div className="llm3-votesRow">
+        {/* Viz */}
+        <div className="llm3-votesViz">
+          <div className="llm3-votesViz__frame" aria-label="Voting activity heatmap">
+            <VotesHeatmap
+              votes={vizVotes}
+              weeks={52}
+              height={320}
+              heatmapRatio={0.7}
+              onSelectDay={setSelectedDate}
+              selectedDate={selectedDate}
+            />
+          </div>
         </div>
 
-        <div className="votes-list">
+        {/* Table */}
+        <div className="llm3-votesTable">
           {selectedDate && (
-            <div className="chip" onClick={() => setSelectedDate(null)}>
-              {new Date(selectedDate).toLocaleDateString()} • Clear
-            </div>
+            <button
+              type="button"
+              className="llm3-chipBtn"
+              onClick={() => setSelectedDate(null)}
+              title="Clear date filter"
+            >
+              <span className="llm3-chipBtn__label">
+                {new Date(selectedDate).toLocaleDateString()}
+              </span>
+              <span className="llm3-chipBtn__sep" aria-hidden="true" />
+              <span className="llm3-chipBtn__action">Clear</span>
+            </button>
           )}
 
-          <div className="votes-table-wrap">
+          <div className="llm3-tableFrame">
             <VotesTable votes={tableVotes} />
           </div>
 
           {canShowMore && (
             <button
-              className="llmp3-linkbtn"
+              className="ll3-linkbtn llm3-moreBtn"
               type="button"
-              onClick={() => setTableLimit((n) => (n || tableInitialLimit || 20) + (tableInitialLimit || 20))}
+              onClick={() =>
+                setTableLimit((n) => (n || tableInitialLimit || 20) + (tableInitialLimit || 20))
+              }
             >
               Show more votes
             </button>
