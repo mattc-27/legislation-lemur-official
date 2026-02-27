@@ -11,9 +11,10 @@ import {
     getMemberSubjects,
     getMemberBills,
     getMemberVoteAlignment,
+    getHouseMemberAlignmentPanelOverall,
+    getHouseMemberAlignmentByPolicy,
+    getHouseMemberAlignmentTopDeviations
 } from "../server/routes_stage/members";
-
-
 
 
 export async function fetchMemberData(bioguideId) {
@@ -23,7 +24,11 @@ export async function fetchMemberData(bioguideId) {
             monthly,
             sponsoredRes,
             cosponsoredRes,
-            alignment,
+
+            alignOverall,
+            alignByPolicy,
+            alignDeviations,
+
             kpis,
             monthlyActivity,
             subjects,
@@ -33,8 +38,11 @@ export async function fetchMemberData(bioguideId) {
             getMemberMonthlyStats(bioguideId),
             getMemberSponsoredLegislation(bioguideId, { max: 250 }),
             getMemberCosponsoredLegislation(bioguideId, { max: 250 }),
-            getHouseMemberVoteAlignment(bioguideId),
-            getMemberVoteAlignment(bioguideId),
+
+            getHouseMemberAlignmentPanelOverall(bioguideId),
+            getHouseMemberAlignmentByPolicy(bioguideId, { minVotes: 10, sort: "votes" }),
+            getHouseMemberAlignmentTopDeviations(bioguideId, { minVotes: 10 }),
+
             getMemberKpis(bioguideId),
             getMemberMonthlyActivity(bioguideId),
             getMemberSubjects(bioguideId, { limit: 12 }),
@@ -51,25 +59,31 @@ export async function fetchMemberData(bioguideId) {
             monthly,
             sponsoredRes,
             cosponsoredRes,
-            alignment,
+
+            alignmentPanel: {
+                overall: alignOverall,
+                byPolicy: alignByPolicy,
+                topDeviations: alignDeviations,
+                minVotes: 10,
+                sortDefault: "votes",
+            },
+
             kpis,
             monthlyActivity,
             subjects,
             bills,
         };
     } catch (err) {
-        // Cloud Logging-friendly structured error
         console.error("[fetchMemberData]", {
             message: err?.message,
             name: err?.name,
-            code: err?.code,           // pg code like 42P01, etc.
+            code: err?.code,
             severity: err?.severity,
             routine: err?.routine,
             bioguideId,
             service: process.env.K_SERVICE || null,
             revision: process.env.K_REVISION || null,
         });
-
-        throw err; // let Next error boundary handle UI
+        throw err;
     }
 }

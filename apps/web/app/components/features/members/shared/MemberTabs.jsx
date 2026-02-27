@@ -3,10 +3,11 @@
 import { useMemo, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
-// const BillList = dynamic(() => import("./BillList"), { ssr: false, loading: () => <div className="muted">Loading bills…</div> });
 const TopicDonut = dynamic(() => import("./TopicDonut"), { ssr: false });
-// const ActivityTimeline = dynamic(() => import("./ActivityTimeline"), { ssr: false });
-const BillTable = dynamic(() => import("./BillTable"), { ssr: false, loading: () => <div className="muted">Loading bills…</div> });
+const BillTable = dynamic(() => import("./BillTable"), {
+    ssr: false,
+    loading: () => <div className="llm3-muted">Loading bills…</div>,
+});
 
 const labelFromSubject = (subj) =>
     typeof subj === "string"
@@ -38,10 +39,9 @@ export default function MemberTabs({
     sourceLabel = "Includes sponsored + co-sponsored bills",
 
     // NEW: pass freshness in from the server (recommended)
-    freshnessAsOf = null,          // e.g. min(last_success_at) across the views used by this section
-    freshnessPerView = null,       // optional: { member_legislation_v1: "...", member_monthly_activity_v1: "..." }
-    showPerViewFreshness = false,  // optional UI toggle
-
+    freshnessAsOf = null,
+    freshnessPerView = null,
+    showPerViewFreshness = false,
 }) {
     const [selectedTopic, setSelectedTopic] = useState(null);
     const [subjectKind, setSubjectKind] = useState("policy_area"); // ← toggle state
@@ -56,7 +56,6 @@ export default function MemberTabs({
     useEffect(() => {
         setSelectedTopic(null);
     }, [subjectKind]);
-
 
     // merge & dedupe by subject, preserve kinds for badges
     const mergedGroups = useMemo(() => {
@@ -93,7 +92,9 @@ export default function MemberTabs({
                     if (!dedup.has(id)) dedup.set(id, { ...it });
                     else {
                         const cur = dedup.get(id);
-                        const union = Array.from(new Set([...(cur?.kinds || []), ...(it?.kinds || [])]));
+                        const union = Array.from(
+                            new Set([...(cur?.kinds || []), ...(it?.kinds || [])])
+                        );
                         dedup.set(id, { ...cur, kinds: union });
                     }
                 }
@@ -105,29 +106,27 @@ export default function MemberTabs({
             ...g,
             count: g.items.length,
         }));
-    }, [sponsoredGroups, cosponsoredGroups]); // <-- use derived arrays, not parent objects
+    }, [sponsoredGroups, cosponsoredGroups]);
 
     if (!mergedGroups.length && !(Array.isArray(monthly) && monthly.length)) return null;
 
     const freshnessLine = fmtFreshness(freshnessAsOf);
 
     return (
-        <section className="card card--p-24">
-            <h3 className="section-title" style={{ marginBottom: 4 }}>
-                {title}
-            </h3>
-            <div className="muted" style={{ fontSize: 12, marginBottom: 16 }}>
-                {sourceLabel}
-                {freshnessLine ? (
-                    <>
-                        {" "}
-                        • Updated {freshnessLine}
-                    </>
-                ) : null}
+        <section className="llmp3-card llm3-tabs">
+            {/* Header */}
+            <div className="llm3-tabs__head">
+                <div className="llm3-tabs__titleBlock">
+                    <h2 className="llm3-h2 llm3-tabs__title">{title}</h2>
+                    <div className="llm3-muted llm3-tabs__sub">
+                        <span>{sourceLabel}</span>
+                        {freshnessLine ? <span> • Updated {freshnessLine}</span> : null}
+                    </div>
+                </div>
             </div>
 
             {showPerViewFreshness && freshnessPerView && (
-                <div className="muted" style={{ fontSize: 11, marginBottom: 16 }}>
+                <div className="llm3-muted llm3-tabs__perView">
                     {Object.entries(freshnessPerView).map(([name, ts]) => (
                         <div key={name}>
                             {name}: {fmtFreshness(ts) ?? "—"}
@@ -136,30 +135,25 @@ export default function MemberTabs({
                 </div>
             )}
 
-            {/* subject-kind toggle */}
-            <div className="segmented" role="tablist" aria-label="Topic mode">
+            {/* subject-kind toggle (Bills-style filter pills) */}
+            <div className="ll3-filterPills llm3-tabs__toggle" role="tablist" aria-label="Topic mode">
                 <button
                     type="button"
                     role="tab"
                     aria-pressed={subjectKind === "policy_area"}
                     aria-selected={subjectKind === "policy_area"}
-                    className={
-                        "segmented__btn" +
-                        (subjectKind === "policy_area" ? " segmented__btn--active" : "")
-                    }
+                    className={"ll3-filterPill" + (subjectKind === "policy_area" ? " is-active" : "")}
                     onClick={() => setSubjectKind("policy_area")}
                 >
                     Policy Areas
                 </button>
+
                 <button
                     type="button"
                     role="tab"
                     aria-pressed={subjectKind === "legislative"}
                     aria-selected={subjectKind === "legislative"}
-                    className={
-                        "segmented__btn" +
-                        (subjectKind === "legislative" ? " segmented__btn--active" : "")
-                    }
+                    className={"ll3-filterPill" + (subjectKind === "legislative" ? " is-active" : "")}
                     onClick={() => setSubjectKind("legislative")}
                 >
                     Legislative Topics
@@ -167,14 +161,20 @@ export default function MemberTabs({
             </div>
 
             {/* donut + table */}
-            <div className="member_tabs-row">
-                <div className="tabs-topviz__donut">
-                    <TopicDonut groups={mergedGroups} onSelectTopic={setSelectedTopic} />
+            <div className="llm3-tabsRow">
+                <div className="llm3-tabsViz">
+                    <div className="llm3-tabsViz__frame">
+                        <TopicDonut groups={mergedGroups} onSelectTopic={setSelectedTopic} />
+                    </div>
                 </div>
 
                 {mergedGroups.length > 0 && (
-                    <div className="stack-16 tabs-topviz__list">
-                        <BillTable groups={mergedGroups} maxHeight={420} selectedTopic={selectedTopic} />
+                    <div className="llm3-tabsTable">
+                        <BillTable
+                            groups={mergedGroups}
+                            maxHeight={420}
+                            selectedTopic={selectedTopic}
+                        />
                     </div>
                 )}
             </div>

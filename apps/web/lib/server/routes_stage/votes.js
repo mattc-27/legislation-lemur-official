@@ -65,8 +65,9 @@ export async function getHouseMemberVotes(
       rollcall_number,
       bill_id,
       bill_display,
-      bill_url
-    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_votes_v1
+      bill_url,
+      party_alignment
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_votes_v2
     WHERE bioguide_id = $1
       AND chamber = 'House of Representatives'
     ORDER BY voted_at DESC NULLS LAST
@@ -105,8 +106,9 @@ export async function getHouseMemberVotes(
 export async function getMemberVoteAlignment(bioguideId) {
     return await getHouseMemberVoteAlignment(bioguideId);
 }
-*/
+
 
 export async function getMemberVoteAlignment(bioguideId) {
     await getHouseMemberVoteAlignment(bioguideId);
 }
+*/

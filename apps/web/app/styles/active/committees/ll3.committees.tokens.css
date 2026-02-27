@@ -1,0 +1,60 @@
+/* app/(app)/styles/committees/ll3.committees.tokens.css
+   ======================================================================
+   Committees UI Tokens (LL3-aligned)
+   ====================================================================== */
+
+:root {
+    --ll3c-font: var(--ll3-font, "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif);
+
+    --ll3c-ink: var(--ll3-ink, #111827);
+    --ll3c-text: var(--ll3-text, #4b5563);
+    --ll3c-muted: var(--ll3-muted, #6b7280);
+
+    --ll3c-bg: var(--ll3-bg, #ffffff);
+    --ll3c-card: var(--ll3-card, #ffffff);
+    --ll3c-surface: var(--ll3-surface, rgba(255, 255, 255, 0.82));
+    --ll3c-surface-strong: var(--ll3-surface-strong, rgba(255, 255, 255, 0.92));
+
+    --ll3c-border: var(--ll3-border, rgba(17, 24, 39, 0.12));
+    --ll3c-border2: var(--ll3-border2, rgba(17, 24, 39, 0.08));
+    --ll3c-border-strong: var(--ll3-border-strong, rgba(17, 24, 39, 0.18));
+
+    --ll3c-shadow: var(--ll3-shadow, 0 12px 28px rgba(2, 8, 23, 0.06));
+    --ll3c-shadow-sm: var(--ll3-shadow-sm, 0 8px 16px rgba(17, 24, 39, 0.06));
+
+    --ll3c-radius: var(--ll3-radius, 16px);
+    --ll3c-radius-sm: var(--ll3-radius-sm, 12px);
+
+    --ll3c-primary: var(--ll3-primary, #8fb1de);
+    --ll3c-primaryText: var(--ll3-primaryText, rgba(255, 255, 255, 0.94));
+    --ll3c-focus-ring: var(--ll3-focus-ring, rgba(143, 177, 222, 0.35));
+
+    --ll3c-btn-h: 40px;
+    --ll3c-btn-h-sm: 36px;
+    --ll3c-btn-r: 10px;
+    --ll3c-btn-pad-x: 14px;
+
+    --ll3c-input-h: 44px;
+    --ll3c-input-r: 12px;
+    --ll3c-input-pad-x: 12px;
+
+    --ll3c-pill-h: 32px;
+    --ll3c-pill-r: 999px;
+
+    /* Chamber tones (subtle) */
+    --ll3c-house: rgba(59, 130, 246, 0.22);
+    --ll3c-senate: rgba(99, 102, 241, 0.22);
+    --ll3c-joint: rgba(16, 185, 129, 0.22);
+}
+
+html[data-ll3-density="compact"] {
+    --ll3c-card-pad: 14px;
+    --ll3c-gap: 10px;
+    --ll3c-title: 18px;
+}
+
+html:not([data-ll3-density="compact"]) {
+    --ll3c-card-pad: 18px;
+    --ll3c-gap: 12px;
+    --ll3c-title: 20px;
+}

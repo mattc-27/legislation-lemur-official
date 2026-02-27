@@ -35,6 +35,7 @@
     justify-content: flex-start;
 }
 
+/*
 .llmp3-back__btn {
     display: inline-flex;
     align-items: center;
@@ -66,7 +67,7 @@
     font-weight: 900;
     opacity: 0.85;
 }
-
+*/
 /* Panels & cards (same feel as bill detail cards) */
 .llmp3-panel {
     background: rgba(255, 255, 255, 0.78);
@@ -158,5 +159,34 @@
     .llmp3-panel,
     .llmp3-card {
         padding: 14px;
+    }
+}
+
+
+/* ---- Votes split layout ---- */
+.llm3-votesSplit {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.llm3-votesSplit__top {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+}
+
+.llm3-votesSplit__heatCard {
+    min-width: 0;
+}
+
+.llm3-votesSplit__tableCard {
+    width: 100%;
+}
+
+@media (max-width: 980px) {
+    .llm3-votesSplit__top {
+        grid-template-columns: 1fr;
     }
 }
