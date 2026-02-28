@@ -1,7 +1,7 @@
 // lib/congress.js
 import "server-only";
-import { pool } from "../db/db";
-import { q } from "../db/instrumented-query";
+import { pool } from "../../db/db";
+import { q } from "../../db/instrumented-query";
 
 const ACTIVE_VIEW_SCHEMA = 'sandbox_lemur_app_views_v1'
 const ACTIVE_DATA_SCHEMA = 'sandbox_public_v2'

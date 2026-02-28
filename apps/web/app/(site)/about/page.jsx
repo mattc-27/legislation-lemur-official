@@ -1,9 +1,9 @@
 // app/(site)/about/page.jsx
 
-import { Search, BarChart2, ScrollText } from "lucide-react";
+import { Search, BarChart2, ScrollText, LayoutGrid, Mail, Sparkles } from "lucide-react";
 // import "../../../lib/stylesheets/legacy_refactor/home-styles.refactored.css";
 
-import "@/app/styles/active/about.ll3.css";
+import "@/app/styles/active/site/ll3.about.css";
 
 import {
     ABOUT_TITLE,
@@ -13,6 +13,10 @@ import {
     ABOUT_FEATURES_TITLE,
     ABOUT_FEATURES_ITEMS,
     ABOUT_FEATURES_NOTE,
+    ABOUT_RECENT_TITLE,
+    ABOUT_RECENT_SUB,
+    ABOUT_RECENT_BADGE,
+    ABOUT_RECENT_ITEMS,
     ABOUT_HOW_TITLE,
     ABOUT_HOW_ITEMS,
     ABOUT_STACK_NOTE,
@@ -21,6 +25,7 @@ import {
     ABOUT_ROADMAP_ITEMS,
     ABOUT_LAST_UPDATED,
 } from "../../../lib/content/aboutContent"; // adjust path if needed
+
 
 export const metadata = {
     title: "About • Legislation Lemur",
@@ -43,7 +48,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Media block A: Current features + library lemur image */}
+            {/* Media block A: Current features + image */}
             <section className="section about__media about__media--a">
                 <div className="panel about__media-inner">
                     <div className="about__media-text" data-anim="fade-up" style={{ "--i": 0 }}>
@@ -55,7 +60,7 @@ export default function AboutPage() {
                                 <span>{ABOUT_FEATURES_ITEMS[0]}</span>
                             </li>
                             <li className="icon-list__item">
-                                <BarChart2 className="icon-list__icon" size={20} />
+                                <LayoutGrid className="icon-list__icon" size={20} />
                                 <span>{ABOUT_FEATURES_ITEMS[1]}</span>
                             </li>
                             <li className="icon-list__item">
@@ -77,6 +82,36 @@ export default function AboutPage() {
                             loading="lazy"
                         />
                     </figure>
+                </div>
+            </section>
+
+            {/* Recently added */}
+            <section className="section">
+                <div className="panel card--p-24" data-anim="fade-up" style={{ "--i": 0 }}>
+                    <div className="about__recent-head">
+                        <span className="badge badge--new">{ABOUT_RECENT_BADGE}</span>
+                        <h2 className="section__title">{ABOUT_RECENT_TITLE}</h2>
+                    </div>
+
+                    {ABOUT_RECENT_SUB ? (
+                        <p className="about__lede reg" style={{ maxWidth: "98%" }}>
+                            {ABOUT_RECENT_SUB}
+                        </p>
+                    ) : null}
+
+                    <ul className="checklist about__lede" style={{ maxWidth: "98%" }}>
+                        {ABOUT_RECENT_ITEMS.map((item) => (
+                            <li key={item.label}>
+                                {item.href ? (
+                                    <a className="about-inline-link" href={item.href}>
+                                        {item.label}
+                                    </a>
+                                ) : (
+                                    item.label
+                                )}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             </section>
 
@@ -112,7 +147,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Roadmap */}
+            {/* Roadmap (aligned w/ Home) */}
             <section className="section">
                 <div className="panel card--p-24" data-anim="fade-up" style={{ "--i": 0 }}>
                     <h2 className="section__title">{ABOUT_ROADMAP_TITLE}</h2>
@@ -127,10 +162,10 @@ export default function AboutPage() {
                         <div className="roadmap__col">
                             <div className="roadmap__head">
                                 <div className="roadmap__kicker">Now</div>
-                                <div className="roadmap__hint">Core pages + stability</div>
+                                <div className="roadmap__hint">Core pages + clarity</div>
                             </div>
                             <ul className="roadmap__list">
-                                {ABOUT_ROADMAP_ITEMS.slice(0, 3).map((item) => (
+                                {ABOUT_ROADMAP_ITEMS.slice(0, 2).map((item) => (
                                     <li key={item} className="roadmap__item">
                                         {item}
                                     </li>
@@ -141,10 +176,10 @@ export default function AboutPage() {
                         <div className="roadmap__col">
                             <div className="roadmap__head">
                                 <div className="roadmap__kicker">Next</div>
-                                <div className="roadmap__hint">Comparison + personalization</div>
+                                <div className="roadmap__hint">Comparisons + dashboards</div>
                             </div>
                             <ul className="roadmap__list">
-                                {ABOUT_ROADMAP_ITEMS.slice(3, 6).map((item) => (
+                                {ABOUT_ROADMAP_ITEMS.slice(2, 4).map((item) => (
                                     <li key={item} className="roadmap__item">
                                         {item}
                                     </li>
@@ -155,16 +190,22 @@ export default function AboutPage() {
                         <div className="roadmap__col">
                             <div className="roadmap__head">
                                 <div className="roadmap__kicker">Later</div>
-                                <div className="roadmap__hint">Broader coverage</div>
+                                <div className="roadmap__hint">Personalization + elections</div>
                             </div>
                             <ul className="roadmap__list">
-                                {ABOUT_ROADMAP_ITEMS.slice(6).map((item) => (
+                                {ABOUT_ROADMAP_ITEMS.slice(4).map((item) => (
                                     <li key={item} className="roadmap__item">
                                         {item}
                                     </li>
                                 ))}
                             </ul>
                         </div>
+                    </div>
+
+                    {/* Tiny “what’s coming” cue icons (subtle) */}
+                    <div className="about__roadmap-icons" aria-hidden="true">
+                        <span className="about__roadmap-icon"><Mail size={16} /></span>
+                        <span className="about__roadmap-icon"><Sparkles size={16} /></span>
                     </div>
                 </div>
             </section>

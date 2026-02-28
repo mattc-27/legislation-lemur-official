@@ -9,13 +9,11 @@ export default function StatsBand({
         <section className="home-stats">
             <div className="container">
                 <div className="home-stats__band">
-                    {/* Bills */}
                     <div className="home-stats__cell">
                         <div className="home-stats__label">Bills (this Congress)</div>
                         <div className="home-stats__value">{billsTotal}</div>
                     </div>
 
-                    {/* House */}
                     <div className="home-stats__cell">
                         <div className="home-stats__label">House</div>
                         <div className="home-stats__counts">
@@ -25,7 +23,6 @@ export default function StatsBand({
                         </div>
                     </div>
 
-                    {/* Senate */}
                     <div className="home-stats__cell">
                         <div className="home-stats__label">Senate</div>
                         <div className="home-stats__counts">
@@ -39,4 +36,3 @@ export default function StatsBand({
         </section>
     );
 }
-

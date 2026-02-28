@@ -73,13 +73,31 @@ export async function getCongressComposition() {
 
 export async function getCongressSummary(congress = 119) {
   // Change schema below if you created the view in a different schema (e.g., ref.*)
+  // 0) Log what schema you're actually querying
+  console.log("[congressSummary]");
+
+  // 1) DB identity probe (same connection via q())
+  try {
+    const identSql = `
+      select
+        current_user,
+        session_user,
+        current_database() as db,
+        inet_server_addr() as server_ip
+    `;
+    const ident = await q("debug:identity", identSql, []);
+    console.log("[db identity]", ident.rows?.[0]);
+  } catch (e) {
+    console.log("[db identity] probe failed", e);
+  }
+
   const sql = `
      SELECT
       congress,
       house_total, house_d, house_r, house_i,
       senate_total, senate_d, senate_r, senate_i,
       updated_at
-    FROM sandbox_lemur_views_v2.congress_summary_50_v1
+    FROM sandbox_lemur_app_views_v1.v_congress_summary_50_v1
     WHERE congress = $1
     LIMIT 1;
   `;
@@ -101,6 +119,24 @@ export async function getCongressCompositionByState(congress = 119, state = "") 
   const st = String(state || "").toUpperCase().trim();
   if (!st) return null;
 
+  console.log("[congressCompositionByState]");
+
+  // 1) DB identity probe (same connection via q())
+  try {
+    const identSql = `
+      select
+        current_user,
+        session_user,
+        current_database() as db,
+        inet_server_addr() as server_ip
+    `;
+    const ident = await q("debug:identity", identSql, []);
+    console.log("[db identity]", ident.rows?.[0]);
+  } catch (e) {
+    console.log("[db identity] probe failed", e);
+  }
+
+
   const sql = `
     SELECT
       congress,
@@ -110,7 +146,7 @@ export async function getCongressCompositionByState(congress = 119, state = "") 
       house_counts,
       senate_counts,
       updated_at
-    FROM mv.congress_composition_json
+    FROM sandbox_lemur_app_views_v1.v_congress_composition_json
     WHERE congress = $1
       AND state = $2
     LIMIT 1;
@@ -129,6 +165,24 @@ export async function getCongressCompositionForState(congress = 119, state = "")
   const st = (state || "").toUpperCase().trim();
   if (!st) return null;
 
+  console.log("[congressCompositionForState]");
+
+  // 1) DB identity probe (same connection via q())
+  try {
+    const identSql = `
+      select
+        current_user,
+        session_user,
+        current_database() as db,
+        inet_server_addr() as server_ip
+    `;
+    const ident = await q("debug:identity", identSql, []);
+    console.log("[db identity]", ident.rows?.[0]);
+  } catch (e) {
+    console.log("[db identity] probe failed", e);
+  }
+
+
   const sql = `
     SELECT
       congress,
@@ -137,7 +191,7 @@ export async function getCongressCompositionForState(congress = 119, state = "")
       senate_total, senate_d, senate_r, senate_i,
       house_counts, senate_counts,
       updated_at
-    FROM mv.congress_composition_json
+    FROM sandbox_lemur_app_views_v1.v_congress_composition_json
     WHERE congress = $1 AND state = $2
     LIMIT 1;
   `;
@@ -158,7 +212,7 @@ export async function getCongressCompositionForState(congress = 119, state = "")
  */
 export async function getCommitteesDirectory(
   congress,
-  { chamber = null, search = null } = {}
+  { chamber = null, search = null, type = null } = {}
 ) {
   const sql = `
     SELECT
@@ -188,27 +242,54 @@ export async function getCommitteesDirectory(
         OR c.name ILIKE '%' || $3 || '%'
         OR c.system_code ILIKE '%' || $3 || '%'
       )
+      AND (
+        $4::text IS NULL
+        OR (
+          -- normalize committee_type_code to buckets:
+          -- standing | select | special | joint
+          CASE
+            WHEN lower(c.committee_type_code) LIKE '%standing%' THEN 'standing'
+            WHEN lower(c.committee_type_code) LIKE '%joint%' THEN 'joint'
+            WHEN lower(c.committee_type_code) LIKE '%select%' THEN 'select'
+            WHEN lower(c.committee_type_code) LIKE '%special%' THEN 'select'
+            ELSE lower(c.committee_type_code)
+          END
+        ) = $4
+      )
     ORDER BY c.chamber, c.committee_type_code, c.name;
   `;
-  const { rows } = await pool.query(sql, [congress, chamber, search]);
+
+  const { rows } = await pool.query(sql, [congress, chamber, search, type]);
   return rows;
 }
 
 /**
  * Quick counts for header chips.
  */
-export async function getCommitteeCounts(congress) {
+export async function getCommitteeCounts(congress, { type = null } = {}) {
   const sql = `
     WITH parents AS (
       SELECT congress, chamber, COUNT(*)::int AS committees
-      FROM sandbox_public_v2.committees
-      WHERE congress = $1
+      FROM sandbox_public_v2.committees c
+      WHERE c.congress = $1
+        AND (
+          $2::text IS NULL
+          OR (
+            CASE
+              WHEN lower(c.committee_type_code) LIKE '%standing%' THEN 'standing'
+              WHEN lower(c.committee_type_code) LIKE '%joint%' THEN 'joint'
+              WHEN lower(c.committee_type_code) LIKE '%select%' THEN 'select'
+              WHEN lower(c.committee_type_code) LIKE '%special%' THEN 'select'
+              ELSE lower(c.committee_type_code)
+            END
+          ) = $2
+        )
       GROUP BY 1,2
     ),
     subs AS (
       SELECT congress, chamber, COUNT(*)::int AS subcommittees
-      FROM sandbox_public_v2.committee_subcommittees
-      WHERE congress = $1
+      FROM sandbox_public_v2.committee_subcommittees s
+      WHERE s.congress = $1
       GROUP BY 1,2
     )
     SELECT
@@ -220,7 +301,9 @@ export async function getCommitteeCounts(congress) {
       ON p.congress = s.congress AND p.chamber = s.chamber
     ORDER BY chamber;
   `;
-  const { rows } = await pool.query(sql, [congress]);
+
+  const { rows } = await pool.query(sql, [congress, type]);
+
   const totals = rows.reduce(
     (acc, r) => {
       acc.committees += r.committees;
@@ -229,6 +312,7 @@ export async function getCommitteeCounts(congress) {
     },
     { committees: 0, subcommittees: 0 }
   );
+
   return { byChamber: rows, totals };
 }
 

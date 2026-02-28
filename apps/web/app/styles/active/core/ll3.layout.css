@@ -1,0 +1,34 @@
+/* core/ll3.layout.css
+   Containers, generic spacing, and shell spacing.
+*/
+
+.ll3 .container {
+    width: 100%;
+    max-width: var(--ll3-container);
+    margin: 0 auto;
+    padding-left: var(--ll3-pad-x);
+    padding-right: var(--ll3-pad-x);
+}
+
+/* Header container can be wider */
+.ll3 .site-header .container {
+    max-width: var(--ll3-container-header);
+}
+
+/* Optional: edge-to-edge header inner */
+.ll3 .site-header .container.site-header__inner {
+    max-width: none;
+    width: 100%;
+    padding-left: var(--ll3-pad-x);
+    padding-right: var(--ll3-pad-x);
+}
+
+/* Generic section spacing helper */
+.ll3 .section {
+    padding: clamp(20px, 3.2vw, 40px) 0;
+}
+
+/* Sticky header clearance (single canonical rule) */
+.ll3 .site-main {
+    padding-top: var(--ll3-main-top);
+}

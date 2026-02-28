@@ -1,0 +1,32 @@
+/* core/ll3.base.css
+   Base element rules + typography defaults.
+*/
+
+.ll3,
+.ll3 * {
+    box-sizing: border-box;
+}
+
+/* Use either <body class="ll3"> OR wrap your app with .ll3 */
+body.ll3,
+.ll3 body {
+    margin: 0;
+    padding: 0;
+
+    background: var(--ll3-bg);
+    color: var(--ll3-text);
+    font-family: var(--ll3-font-sans);
+    text-rendering: optimizeLegibility;
+}
+
+.ll3 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Form font baseline */
+.ll3 input,
+.ll3 select,
+.ll3 button {
+    font-family: var(--ll3-font-sans);
+}

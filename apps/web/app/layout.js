@@ -2,21 +2,30 @@ import { Suspense } from "react";
 import Script from "next/script";
 import { Roboto, Roboto_Slab } from "next/font/google";
 import GAListener from "@/app/components/ui/system/GAListener";
-import { Toaster } from "react-hot-toast";
+// import { Toaster } from "react-hot-toast";
 // import '../lib/stylesheets/layout.css';
 // import '../lib/stylesheets/home-styles.css';
 // import '../lib/stylesheets/refactored/ui-tokens.css';
 // import '../lib/stylesheets/refactored/layout.refactored.css';
 // import '../lib/stylesheets/refactored/home-styles.refactored.css';
 
-import '@/app/styles/active/error-pages.ll3.css';
-import '@/app/styles/active/layout.ll3.css';
-import '@/app/styles/active/home.ll3.css';
-
-
 import SiteHeader from "@/app/components/layouts/SiteHeader";
 import SiteFooter from "@/app/components/layouts/SiteFooter";
 import QuoteLogger from "@/app/components/ui/system/QuoteLogger";
+
+
+import '@/app/styles/active/core/ll3.tokens.css';
+import '@/app/styles/active/core/ll3.base.css';
+import '@/app/styles/active/core/ll3.layout.css';
+import '@/app/styles/active/core/ll3.primitives.css';
+import '@/app/styles/active/core/ll3.utilities.css';
+import '@/app/styles/active/core/ll3.shell.css';
+
+import '@/app/styles/active/error-pages.ll3.css';
+
+
+
+
 // import RouteLoadingToastClient from "@/app/components/ui/system/RouteLoadingToastClient";
 // import RouteToastClient from "@/app/components/ui/system/RouteToastClient";
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
