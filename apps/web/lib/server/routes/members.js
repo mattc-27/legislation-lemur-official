@@ -3,6 +3,25 @@ import "server-only";
 import { pool } from "../db/db";
 import { q } from "../db/instrumented-query";
 
+const ACTIVE_VIEW_SCHEMA = 'sandbox_lemur_app_views_v1'
+const ACTIVE_DATA_SCHEMA = 'sandbox_public_v2'
+
+/*
+const freshness = await getSectionFreshness({
+    schemaName: "sandbox_lemur_app_views_v1",
+    viewNames: ["mv_member_legislation_v1", "member_monthly_activity_v1"],
+    cacheKey: `member:${bioguideId}:tabsFreshness`,
+});
+
+const votesFreshness = await getSectionFreshness({
+    schemaName: "sandbox_lemur_app_views_v1",
+    viewNames: ["mv_member_votes_v1", "mv_member_vote_agg_v1"],
+    cacheKey: `member:${bioguideId}:votesFreshness`,
+});
+ */
+
+
+
 /* ------------------------------------------
 Set to public schema, 11/25/2025
 ----
@@ -72,32 +91,31 @@ function toItem(r, kind) {
 
 
 // ---------- PROFILE (+ terms + about) ----------
+
 export async function getMemberProfile(bioguideId) {
     const sql = `
-  SELECT
-    m.bioguide_id        AS "bioguideId",
-    m.name,
-    m.party_code::text   AS party,
-    m.party_name::text   AS "partyName",
-    m.state,
-    m.state_code         AS "stateCode",
-    m.district,
-    m.chamber::text      AS "chamber",
-    m.image_url          AS "imageUrl",
-    m.url,
-    cs.serving_since     AS "servingSince"
-  FROM sandbox_public_v2.members m
-  LEFT JOIN sandbox_lemur_views_v2.current_chamber_since_v1 cs
-    ON cs.bioguide_id = m.bioguide_id
-   AND cs.chamber::text = m.chamber::text   -- <- fix
-  WHERE m.bioguide_id = $1
-    AND m.is_current IS TRUE
-  LIMIT 1;
-`;
+    SELECT
+      m.bioguide_id        AS "bioguideId",
+      m.name,
+      m.party_code::text   AS party,
+      m.party_name::text   AS "partyName",
+      m.state,
+      m.state_code         AS "stateCode",
+      m.district,
+      m.chamber::text      AS "chamber",
+      m.image_url          AS "imageUrl",
+      m.url,
+      cs.serving_since     AS "servingSince"
+    FROM ${ACTIVE_DATA_SCHEMA}.members m
+    LEFT JOIN ${ACTIVE_VIEW_SCHEMA}.mv_current_chamber_since_v1 cs
+      ON cs.bioguide_id = m.bioguide_id
+     AND cs.chamber::text = m.chamber::text
+    WHERE m.bioguide_id = $1
+      AND m.is_current IS TRUE
+    LIMIT 1;
+  `;
 
-    const { rows } = await q("member:getProfile", sql, [bioguideId], {
-        bioguideId,
-    });
+    const { rows } = await q("member:getProfile", sql, [bioguideId], { bioguideId });
 
     const profile = rows?.[0] ?? null;
     if (!profile) return null;
@@ -107,6 +125,8 @@ export async function getMemberProfile(bioguideId) {
 
     return { ...profile, terms, about };
 }
+
+
 
 // ---------- TERMS (timeline source)  ----------
 export async function getMemberTerms(bioguideId) {
@@ -118,7 +138,7 @@ export async function getMemberTerms(bioguideId) {
       t.end_year                   AS "endYear",
       (t.end_year IS NULL)         AS "isCurrent",
       t.year_range                 AS "yearRange"
-    FROM sandbox_public_v2.member_terms t
+    FROM ${ACTIVE_DATA_SCHEMA}.member_terms t
     WHERE t.member_id = $1
     ORDER BY t.start_year ASC NULLS LAST, t.end_year ASC NULLS LAST;
   `;
@@ -182,22 +202,22 @@ function ordinal(n) {
 // stage.senate_member_id_ref
 //  ----------
 export async function getMemberChamber(bioguideId) {
-    const sql = `SELECT chamber FROM sandbox_public_v2.members WHERE bioguide_id = $1 LIMIT 1`;
+    const sql = `SELECT chamber FROM ${ACTIVE_DATA_SCHEMA}.members WHERE bioguide_id = $1 LIMIT 1`;
     let r = await q("member:getChamber", sql, [bioguideId]);
     if (r.rows.length) return r.rows[0].chamber;
 
-    const fallback = `SELECT 1 FROM sandbox_public_v2.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
+    const fallback = `SELECT 1 FROM ${ACTIVE_DATA_SCHEMA}.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
     r = await q("member:getChamberFallback", fallback, [bioguideId]);
     return r.rows.length ? "Senate" : "House";
 }
 
 
-/// FROM sandbox_lemur_views_v2.member_subject_counts
+
 export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
     const sql = `
     SELECT subject_name, total_count AS count,
            sponsored_count, cosponsored_count
-    FROM sandbox_lemur_views_v2.member_subject_counts_v1
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_subject_counts_v1
     WHERE bioguide_id = $1
     ORDER BY total_count DESC, subject_name ASC
     LIMIT $2;
@@ -207,11 +227,11 @@ export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
 }
 
 
-// ---------- MEMBER MONTHLY STATS FROM sandbox_lemur_views_v2.member_monthly_activity ----------
+
 export async function getMemberMonthlyStats(bioguideId) {
     const sql = `
     SELECT month, sponsored_count AS sponsored, cosponsored_count AS cosponsored
-    FROM sandbox_lemur_views_v2.member_monthly_activity_v1
+    FROM ${ACTIVE_VIEW_SCHEMA}.member_monthly_activity_v1
     WHERE bioguide_id = $1
     ORDER BY month DESC;
   `;
@@ -219,33 +239,10 @@ export async function getMemberMonthlyStats(bioguideId) {
     return rows;
 }
 
-export async function getMemberKpis(bioguideId) {
-    const sql = `
-        SELECT
-        k.votes_total,
-        k.votes_missed,
-        k.attendance_pct,
-        k.alignment_pct,
-        k.sponsored_bills,
-        k.cosponsored_bills,
-        vs.last_success_at AS data_fresh_as_of
-        FROM sandbox_lemur_views_v2.member_kpis_v1 k
-        LEFT JOIN sandbox_ops_v2.view_status vs
-        ON vs.schema_name = 'sandbox_lemur_views_v2'
-        AND vs.view_name   = 'member_kpis_v1'
-        WHERE k.bioguide_id = $1;
-  `;
-    const { rows } = await q("member:getKpis:mv", sql, [bioguideId]);
-    return rows[0] ?? null;
-}
-
-
-
-/** Monthly bill activity for charts (timeline) */
 export async function getMemberMonthlyActivity(bioguideId) {
     const sql = `
     SELECT month, sponsored_count, cosponsored_count, total_count
-    FROM sandbox_lemur_views_v2.member_monthly_activity_v1
+    FROM ${ACTIVE_VIEW_SCHEMA}.member_monthly_activity_v1
     WHERE bioguide_id = $1
     ORDER BY month ASC;
   `;
@@ -253,11 +250,13 @@ export async function getMemberMonthlyActivity(bioguideId) {
     return rows;
 }
 
+
+
 export async function getMemberBills(bioguideId, { limit = 50, offset = 0, congress = 119 } = {}) {
     const sql = `
     SELECT bill_id, type, number, title, latest_action_date, latest_action_text, url,
            my_role, cosponsor_count
-    FROM sandbox_lemur_views_v2.member_legislation_v1
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_legislation_v1
     WHERE bioguide_id = $1 AND congress = $2
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $3 OFFSET $4;
@@ -266,14 +265,11 @@ export async function getMemberBills(bioguideId, { limit = 50, offset = 0, congr
     return rows;
 }
 
-
-
-// ---------- MEMBER SPONSORED ----------
 export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = {}) {
     const sql = `
     SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
            policy_area, legislative_topic, legislative_topics, cosponsor_count
-    FROM sandbox_lemur_views_v2.member_legislation_v1
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_legislation_v1
     WHERE bioguide_id = $1 AND my_role = 's'
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
@@ -293,13 +289,11 @@ export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = 
     };
 }
 
-
-export async function getMemberCosponsoredLegislation(bioguideId, { max = 250, includeWithdrawn = false } = {}) {
-    // If you need withdrawn items, either reflect that in the MV or add a separate MV/column.
+export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } = {}) {
     const sql = `
     SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
            policy_area, legislative_topic, legislative_topics, cosponsor_count
-    FROM sandbox_lemur_views_v2.member_legislation_v1
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_legislation_v1
     WHERE bioguide_id = $1 AND my_role = 'c'
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
@@ -320,53 +314,11 @@ export async function getMemberCosponsoredLegislation(bioguideId, { max = 250, i
 }
 
 
-/**
- * Fetch a member’s votes from sandbox_lemur_views_v2.member_votes.
- * Supports pagination via cursor (voted_at, vote_id).
- */
-export async function getMemberVotes(bioguideId, { limit = 1000, cursor, chamber } = {}) {
-    const cursorClause = cursor
-        ? "AND (voted_at, vote_id) < ($2::timestamptz, $3::text)"
-        : "";
-    const chamberClause = chamber ? `AND chamber = $${cursor ? 4 : 3}` : "";
-
-    const sql = `
-    SELECT
-      chamber, bioguide_id, vote_id, voted_at, session, rollcall_number,
-      choice, question, result, bill_id, bill_display, bill_url,
-      base_measure_number, base_measure_name, question_group, question_raw, party_alignment
-    FROM sandbox_lemur_views_v2.member_votes_v1
-    WHERE bioguide_id = $1
-      ${cursorClause}
-      ${chamberClause}
-    ORDER BY voted_at DESC, vote_id DESC
-    LIMIT $${chamber ? (cursor ? 5 : 3) : (cursor ? 4 : 2)};
-  `;
-
-    const params = cursor
-        ? (chamber ? [bioguideId, cursor.voted_at, cursor.vote_id, chamber, limit]
-            : [bioguideId, cursor.voted_at, cursor.vote_id, limit])
-        : (chamber ? [bioguideId, limit, chamber]
-            : [bioguideId, limit]);
-
-    const { rows } = await q("member:getVotes:mv", sql, params);
-
-    const last = rows.at(-1);
-    const nextCursor = last
-        ? { voted_at: last.voted_at, vote_id: last.vote_id }
-        : null;
-
-    return { rows, nextCursor };
-}
-
-
-// --- Vote alignment: % of votes matching member’s party caucus ------------- */
-
 
 export async function getHouseMemberVoteAlignment(bioguideId) {
     const sql = `
     SELECT alignment_pct, attendance_pct
-    FROM sandbox_lemur_views_v2.member_alignment_house_v1
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_alignment_house_v1
     WHERE bioguide_id = $1;
   `;
     const { rows } = await q("member:getHouseVoteAlignment:mv", sql, [bioguideId]);
@@ -374,16 +326,167 @@ export async function getHouseMemberVoteAlignment(bioguideId) {
 }
 
 
+
+
 export async function getMemberVoteAgg(bioguideId) {
     const sql = `
-    SELECT total_count, earliest, latest
-    FROM sandbox_lemur_views_v2.member_vote_agg_v1
+    SELECT votes_total AS total_count, earliest, latest
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_vote_agg_v1
     WHERE bioguide_id = $1;
   `;
     const { rows } = await q("member:getVoteAgg", sql, [bioguideId]);
     return rows[0] ?? { total_count: 0, earliest: null, latest: null };
 }
 
+
+
 export async function getMemberVoteAlignment(bioguideId) {
     await getHouseMemberVoteAlignment(bioguideId);
+}
+
+export async function getMemberKpis(bioguideId) {
+    const sql = `
+    SELECT
+      k.votes_total,
+      k.votes_missed,
+      k.attendance_pct,
+      k.alignment_pct,
+      k.sponsored_bills,
+      k.cosponsored_bills,
+      vs.last_success_at AS data_fresh_as_of
+    FROM ${ACTIVE_VIEW_SCHEMA}.member_kpis_v1 k
+    LEFT JOIN sandbox_ops_control_v1.view_status vs
+      ON vs.schema_name = '${ACTIVE_VIEW_SCHEMA}'
+     AND vs.view_name   = 'member_kpis_v1'
+    WHERE k.bioguide_id = $1;
+  `;
+    const { rows } = await q("member:getKpis:mv", sql, [bioguideId]);
+    return rows[0] ?? null;
+}
+
+
+
+
+
+/* UPDATED VOTES */
+export async function getHouseMemberAlignmentPanelOverall(bioguideId) {
+
+    // 0) Log what schema you're actually querying
+    console.log("[getHouseMemberAlignmentPanelOverall] ACTIVE_VIEW_SCHEMA =", ACTIVE_VIEW_SCHEMA);
+
+    // 1) DB identity probe (same connection via q())
+    try {
+        const identSql = `
+      select
+        current_user,
+        session_user,
+        current_database() as db,
+        inet_server_addr() as server_ip
+    `;
+        const ident = await q("debug:identity", identSql, []);
+        console.log("[db identity]", ident.rows?.[0]);
+    } catch (e) {
+        console.log("[db identity] probe failed", e);
+    }
+
+    const sql = `
+    SELECT
+      b.bioguide_id,
+      b.alignment_pct,
+      b.attendance_pct,
+      round((b.alignment_pct - b.house_alignment_median)::numeric, 1)  AS alignment_vs_house_median,
+      round((b.attendance_pct - b.house_attendance_median)::numeric, 1) AS attendance_vs_house_median,
+      round((b.alignment_cume_dist * 100.0)::numeric, 1)              AS alignment_percentile,
+      round((b.attendance_cume_dist * 100.0)::numeric, 1)             AS attendance_percentile,
+      va.votes_total::int                                             AS votes_total,
+      va.votes_missed::int                                            AS votes_missed,
+      vs.last_success_at                                              AS data_fresh_as_of
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_house_alignment_benchmarks_v1 b
+    LEFT JOIN ${ACTIVE_VIEW_SCHEMA}.mv_member_vote_agg_v1 va
+      ON va.bioguide_id = b.bioguide_id
+    LEFT JOIN sandbox_ops_control_v1.view_status vs
+      ON vs.schema_name = '${ACTIVE_VIEW_SCHEMA}'
+     AND vs.view_name   = 'mv_house_alignment_benchmarks_v1'
+    WHERE b.bioguide_id = $1;
+  `;
+    const { rows } = await q("member:getAlignPanel:overall", sql, [bioguideId]);
+    return rows[0] ?? null;
+}
+
+
+export async function getHouseMemberAlignmentByPolicy(
+    bioguideId,
+    { minVotes = 10, sort = "votes", limit = 60 } = {}
+) {
+    const sortSql =
+        sort === "lowest_alignment"
+            ? `p.alignment_pct ASC NULLS LAST, p.considered_count DESC`
+            : sort === "highest_alignment"
+                ? `p.alignment_pct DESC NULLS LAST, p.considered_count DESC`
+                : sort === "biggest_delta"
+                    ? `abs(p.alignment_pct - o.overall_alignment_pct) DESC, p.considered_count DESC`
+                    : `p.considered_count DESC`; // default "votes"
+
+    const sql = `
+    WITH overall AS (
+      SELECT k.alignment_pct AS overall_alignment_pct
+      FROM ${ACTIVE_VIEW_SCHEMA}.member_kpis_v1 k
+      WHERE k.bioguide_id = $1
+    )
+    SELECT
+      p.policy_area_id,
+      p.policy_area_slug,
+      p.policy_area_name,
+      p.alignment_pct,
+      p.attendance_pct,
+      p.considered_count::int,
+      p.aligned_count::int,
+      (p.considered_count - p.aligned_count)::int AS misaligned_count,
+      round((p.alignment_pct - o.overall_alignment_pct)::numeric, 1) AS alignment_delta
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_alignment_house_by_policy_area_v1 p
+    CROSS JOIN overall o
+    WHERE p.bioguide_id = $1
+      AND p.considered_count >= $2
+    ORDER BY ${sortSql}
+    LIMIT $3;
+  `;
+
+    const { rows } = await q("member:getAlignPanel:policy", sql, [
+        bioguideId,
+        minVotes,
+        limit,
+    ]);
+    return rows;
+}
+
+
+export async function getHouseMemberAlignmentTopDeviations(
+    bioguideId,
+    { minVotes = 10, limit = 3 } = {}
+) {
+    const sql = `
+    WITH overall AS (
+      SELECT k.alignment_pct AS overall_alignment_pct
+      FROM ${ACTIVE_VIEW_SCHEMA}.member_kpis_v1 k
+      WHERE k.bioguide_id = $1
+    )
+    SELECT
+      p.policy_area_id,
+      p.policy_area_slug,
+      p.policy_area_name,
+      p.considered_count::int,
+      round((p.alignment_pct - o.overall_alignment_pct)::numeric, 1) AS alignment_delta
+    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_alignment_house_by_policy_area_v1 p
+    CROSS JOIN overall o
+    WHERE p.bioguide_id = $1
+      AND p.considered_count >= $2
+    ORDER BY abs(p.alignment_pct - o.overall_alignment_pct) DESC, p.considered_count DESC
+    LIMIT $3;
+  `;
+    const { rows } = await q("member:getAlignPanel:deviations", sql, [
+        bioguideId,
+        minVotes,
+        limit,
+    ]);
+    return rows;
 }

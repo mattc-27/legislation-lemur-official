@@ -16,3 +16,29 @@ export const HOME_COMING_SOON_ITEMS = [
     "Election tools: state proposition breakdowns, voter guides, and neutral AI summaries",
     "Session 2 of the 119th Congress begins January 7, 2026 — coverage will expand as the new session starts",
 ];
+
+export const HOME_RECENTLY_ADDED_BADGE = "Recently added";
+
+export const HOME_RECENTLY_ADDED_ITEMS = [
+    {
+        label: "Member vote alignment insights (issue-level patterns and context)",
+    },
+    {
+        label: "Committees directory + overview page (types, counts, and navigation)",
+        href: "/committees",
+    },
+    {
+        label: "Reference / Wiki pages for congressional concepts and sources",
+        href: "/references",
+    },
+    {
+        label: "Layout and readability improvements across core pages",
+    },
+];
+
+export const HOME_ROADMAP_ITEMS = [
+    "Email updates — weekly summaries by saved locations and tracked members, with activity highlights and “what changed” comparisons",
+    "Insights & Explore dashboards — Congress-wide views, filters, and change-over-time comparisons (bills, votes, committees)",
+    "Improved bill understanding — better summaries, topic extraction, and sentiment/stance signals with clear sourcing and confidence",
+    "Election tools — neutral voter guides and proposition breakdowns (where data is available)",
+];

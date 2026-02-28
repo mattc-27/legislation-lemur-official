@@ -10,9 +10,20 @@
     box-sizing: border-box;
 }
 
+
+
+
+
 .ll3-committees {
-    font-family: var(--ll3c-font);
+    font-family: var(--ll3c-font-body);
     color: var(--ll3c-text);
+}
+
+/* Page + section titles use slab */
+.ll3c-h1,
+.ll3c-h2,
+.ll3c-lane__title {
+    font-family: var(--ll3c-font-head);
 }
 
 .ll3c-strong {

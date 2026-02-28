@@ -1,11 +1,11 @@
 //export const dynamic = "force-dynamic"
 import HomeHero from "../components/features/home/HomeHero";
-import FeaturesGrid from "@/app/components/features/home/FeaturesGrid";
-import RecentActivity from "@/app/components/features/home/RecentActivity";
+// import FeaturesGrid from "@/app/components/features/home/FeaturesGrid";
+//import RecentActivity from "@/app/components/features/home/RecentActivity";
+import HomeSections from "../components/features/home/HomeSections";
+//import StatsBand from '@/app/components/features/home/StatsBand';
 
-import StatsBand from '@/app/components/features/home/StatsBand';
-
-import '@/app/styles/active/home.ll3.css';
+import '@/app/styles/active/site/ll3.home.css';
 
 
 export const revalidate = 1800;
@@ -28,10 +28,10 @@ export default async function HomePage() {
         </div>
         {/* Key previews */}
       </HomeHero>
-      <StatsBand />
-      <FeaturesGrid />
+      {/*      <StatsBand />*/}
+      <HomeSections />
       {/* Key previews */}
-      <RecentActivity maxItems={4} />
+      {/*   <RecentActivity maxItems={4} />*/}
       {/*    <SubjectsTrendSection congress={CURRENT_CONGRESS} />*/}
 
     </div >

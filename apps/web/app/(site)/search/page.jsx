@@ -10,11 +10,11 @@ import SearchFilters from "@/app/components/features/search/SearchFilters";
 import SearchResultCard from "@/app/components/features/search/SearchResultCard";
 import CompositionPanel from "@/app/components/features/search/CompositionPanel";
 
-import '@/app/styles/active/ll-bills-archive.css';
+import '@/app/styles/active/search/ll-bills-archive.css';
 //import '@/app/styles/active/member-search-base.css';
 //import '@/app/styles/active/member-search-components.css';
 
-import CongressPicker from "@/app/components/features/search/CongressPicker";
+// import CongressPicker from "@/app/components/features/search/CongressPicker";
 
 import { Landmark, Gavel, Users2 } from "lucide-react"; // ⟵ NEW
 import '@/app/styles/active/members/ll3.members.search.css';

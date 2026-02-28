@@ -1,59 +1,93 @@
 // src/content/aboutContent.ts
-// (or .js if you’re not using TS)
+// (or .js/.ts in your existing lib/content folder)
 
 export const ABOUT_TITLE = "About Legislation Lemur";
 
 export const ABOUT_INTRO_PARAS = [
     `Legislation Lemur is a civic data project built around clarity, trust, and restraint. It provides a clean, factual way to explore the U.S. Congress—without commentary, framing, or noise.`,
-    `Today, the platform focuses on a small set of core capabilities: looking up current members of Congress, opening concise profiles with essential details, exploring recently sponsored and co-sponsored bills, and viewing a neutral snapshot of how Congress is composed during the current session.`,
-    `The scope is intentionally focused. With reliable pipelines now in place for members, bills, and votes, new views and visualizations are added gradually—layered on top of the same fact-first foundation.`,
+    `The platform focuses on core navigation and “fact-first” views: member profiles, bill activity, votes, committees, and a readable snapshot of what’s changing this session.`,
+    `Coverage expands gradually. New dashboards and comparison views are layered on top of the same stable foundation—so the product stays fast, understandable, and neutral.`,
 ];
 
 export const ABOUT_WHY_TITLE = "Why it exists";
 
 export const ABOUT_WHY_PARAS = [
     `Legislation Lemur began as a way to practice real-world data engineering, interface design, and civic visualization—while producing something genuinely useful.`,
-    `The goal is simple: make it easier to understand how Congress works without requiring expertise, patience for dense tables, or exposure to opinion-driven cycles. No commentary. No outrage. Just accessible facts: who represents you, what they’ve sponsored, how they vote, and how the institution is structured in a given session.`,
+    `The goal is simple: make it easier to understand how Congress works without requiring expertise, patience for dense tables, or exposure to opinion-driven cycles. No commentary. No outrage. Just accessible facts: who represents you, what they sponsor, how they vote, and how the institution is structured.`,
     `The name “Lemur” reflects curiosity and persistence—traits shared by both the data work behind the scenes and the broader civic goal. Participation is easier when information is neutral, understandable, and well-designed.`,
 ];
 
 export const ABOUT_FEATURES_TITLE = "Current features";
 
 export const ABOUT_FEATURES_ITEMS = [
-    "Search current members of Congress by name or browse by state",
-    "View a high-level snapshot of Congress composition, demographics, and chamber structure",
-    "Open a member profile with core details, recent bills, and voting activity",
+    "Find members by name or state, and open clean factual profiles",
+    "Explore bills, sponsors, and recent actions in a readable format",
+    "See vote activity and alignment signals designed for clarity (not spin)",
 ];
 
-export const ABOUT_FEATURES_NOTE = "Data is updated on a regular weekly cadence.";
+export const ABOUT_FEATURES_NOTE =
+    "Core legislative data is refreshed on a regular weekly cadence.";
+
+export const ABOUT_RECENT_BADGE = "Recently added";
+
+export const ABOUT_RECENT_TITLE = "Recently added";
+
+export const ABOUT_RECENT_SUB =
+    "New tools and views now live across the site.";
+
+export const ABOUT_RECENT_ITEMS = [
+    {
+        label: "Member vote alignment insights (issue-level patterns and context)",
+    },
+    {
+        label: "Committees directory + overview page (types, counts, and navigation)",
+        href: "/committees",
+    },
+    {
+        label: "Reference / Wiki pages for congressional concepts and sources",
+        href: "/references",
+    },
+    {
+        label: "Layout and readability improvements across core pages",
+    },
+];
 
 export const ABOUT_HOW_TITLE = "How it works (high level)";
 
 export const ABOUT_HOW_ITEMS = [
     "Collect data from official congressional sources and structured public APIs",
-    "Normalize members, bills, votes, and session data into consistent, query-friendly models",
-    "Cache frequently accessed views for fast, stable performance",
+    "Normalize members, bills, votes, and session activity into consistent models",
+    "Cache and precompute common views for fast, stable performance",
     "Present minimal interfaces that prioritize comprehension over density",
 ];
 
 export const ABOUT_STACK_NOTE =
-    "Legislation Lemur is built with Next.js (App Router), server-rendered React, and a growing ingestion pipeline powered by mirrored databases, scheduled updates, and data validation.";
+    "Legislation Lemur is built with Next.js (App Router), server-rendered React, and an ingestion pipeline powered by scheduled updates and data validation.";
 
 export const ABOUT_ROADMAP_TITLE = "Roadmap";
 
 export const ABOUT_ROADMAP_PARAS = [
-    `This version keeps the feature set intentionally focused. As the foundation continues to solidify, Legislation Lemur will expand into a clearer and more complete view of the legislative landscape.`,
+    `Legislation Lemur expands through “change-first” views and comparisons—kept neutral, readable, and grounded in sourced data.`,
 ];
 
+/**
+ * Roadmap aligned with HOME_ROADMAP_ITEMS, grouped into:
+ * - Now (0..1)
+ * - Next (2..3)
+ * - Later (4..end)
+ */
 export const ABOUT_ROADMAP_ITEMS = [
-    "Richer member pages: committees, voting patterns, issue clusters, and timelines",
-    "Expanded Congress-wide views with deeper filters, demographic trends, and longitudinal comparisons",
-    "Interactive bill timelines showing committee progress and floor actions",
-    "Compare views for side-by-side member metrics, votes, and sponsorship patterns",
-    "Saved members and states for quick access",
-    "Opt-in email digests with weekly summaries, key votes, and new bills",
-    "Election resources for 2026, including proposition summaries and data-driven voter guides",
-    "Expanded coverage for Session 2 of the 119th Congress, beginning January 7, 2026",
+    // Now (core + clarity)
+    "Strengthen core Explore flows across members, bills, and committees",
+    "Expand “what changed” surfaces and session snapshots while keeping interfaces lightweight",
+
+    // Next (dashboards + interpretation aids)
+    "Insights & Explore dashboards — Congress-wide views, filters, and change-over-time comparisons (bills, votes, committees)",
+    "Improved bill understanding — better summaries, topic extraction, and sentiment/stance signals with clear sourcing and confidence",
+
+    // Later (personalization + elections)
+    "Email updates — weekly summaries by saved locations and tracked members, with activity highlights and “what changed” comparisons",
+    "Election tools — neutral voter guides and proposition breakdowns (where data is available)",
 ];
 
-export const ABOUT_LAST_UPDATED = "Last updated: February 8, 2026";
+export const ABOUT_LAST_UPDATED = "Last updated: February 27, 2026";

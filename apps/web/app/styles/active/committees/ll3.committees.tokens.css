@@ -45,6 +45,14 @@
     --ll3c-house: rgba(59, 130, 246, 0.22);
     --ll3c-senate: rgba(99, 102, 241, 0.22);
     --ll3c-joint: rgba(16, 185, 129, 0.22);
+    --ll3c-font-body: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    --ll3c-font-head: "Roboto Slab", ui-serif, Georgia, serif;
+
+    --ll3c-house: rgba(59, 130, 246, 0.14);
+    /* blue-500 @ low alpha */
+    --ll3c-senate: rgba(99, 102, 241, 0.14);
+    /* indigo-500 @ low alpha */
+    --ll3c-joint: rgba(17, 24, 39, 0.10);
 }
 
 html[data-ll3-density="compact"] {

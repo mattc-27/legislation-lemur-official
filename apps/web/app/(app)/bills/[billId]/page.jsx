@@ -7,7 +7,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import SectionBoundary from "@/app/components/ui/system/SectionBoundary";
+// import SectionBoundary from "@/app/components/ui/system/SectionBoundary";
 
 import {
   getBillDetail,
@@ -16,7 +16,7 @@ import {
   getBillCosponsors,
   getBillCommittees,
   getBillRelated,
-} from "@/lib/server/routes_stage/bills";
+} from "@/lib/server/routes/bills";
 
 import {
   ArrowLeft,
