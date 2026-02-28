@@ -1,141 +1,223 @@
-## What to put in `apps/web/README.md`
+# Legislation Lemur — Web App (apps/web)
 
-### 1) Purpose (1–3 sentences)
+This is the **Next.js (App Router)** frontend for Legislation Lemur (LL3).
 
-* What the web app is (Next.js UI for Legislation Lemur)
-* What it consumes (your API/DB views)
-* What key pages exist (Bills, Bill detail, Members, etc.)
+The web app provides a neutral, structured interface for exploring U.S. Congressional data — including bills, members, committees, and legislative session context. It consumes materialized-view–backed API contracts designed for deterministic rendering and stable filtering behavior.
 
-### 2) Local dev (web-only)
-
-* Commands for **just** the web app
-* Any env vars needed to boot it
-* Expected ports / URLs
-
-### 3) App architecture / conventions (short, practical)
-
-* Routing structure (App Router, key route groups)
-* Where UI components live
-* Styling system (your `ll3` tokens, globals)
-* Search/filter patterns (query params, debounce, autocomplete)
-
-### 4) “How to work on X”
-
-A few quick recipes:
-
-* Add a new filter
-* Add a new data field to bill cards
-* Add a new page panel
-
-### 5) Deployment notes (if relevant)
-
-* Firebase hosting targets/channels (dev/stage/prod) *at a high level*
-* Build command and output
-
-### 6) Recent updates (optional, app-only)
-
-If the root README has repo-wide “Recent Updates”, the web README can have a small “UI Changelog” that’s only UI.
+The UI emphasizes:
+- Data neutrality
+- Explicit state synchronization
+- Stable refresh-aware rendering
+- Clear visual hierarchy via the LL3 design system
 
 ---
 
-## Suggested `apps/web/README.md` (paste-ready)
+## High-Level Architecture
 
-````md
-# Legislation Lemur — Web App (apps/web)
+### Framework
+- Next.js 15+ (App Router)
+- TypeScript
+- Turborepo monorepo integration
 
-This is the **Next.js** frontend for Legislation Lemur (ll-v2). It provides a neutral, data-driven UI for exploring Congressional data such as bills, members, votes, and session-level composition.
+### Data Model
+The app consumes:
+- Materialized view–backed endpoints
+- Deterministic query-driven filtering
+- Explicit run-lifecycle–aligned payloads (backend-controlled)
 
-## Quick Start
+The frontend does **not** contain business logic about legislative interpretation — only structured presentation.
 
-From the repo root:
+---
 
-```bash
-npm install
-turbo dev --filter=web
-````
+## Key Route Groups
 
-Then open:
+```
+app/
+├── (app)/
+│   ├── bills/
+│   ├── members/
+│   ├── committees/
+│   └── insights/
+├── (wiki)/
+└── layout.jsx
+```
 
-* [http://localhost:3000](http://localhost:3000)
+Primary surface areas:
 
-## Environment Variables
+- **Bills**
+  - Search + filtering (URL-driven state)
+  - Bill detail pages
+- **Members**
+  - Directory
+  - Detail pages with service timelines
+- **Committees**
+  - Segmented directory (Standing / Select / Joint)
+- **Insights**
+  - Structured scrollytelling / editorial-style data exploration
 
-Create `apps/web/.env.local` (or use your preferred env workflow).
+---
 
-Common examples (adjust to your project):
+## UI & Styling System
 
-* `NEXT_PUBLIC_API_BASE_URL=...`
-* `NEXT_PUBLIC_ENV=development`
+The web app uses the **LL3 token system**.
 
-> Note: Keep secrets out of `NEXT_PUBLIC_*`.
+- Token files: `ll3.*.tokens.css`
+- Layout styles: `ll3.*.layout.css`
+- Feature-specific UI: `ll3.bills.*`, `ll3.members.*`, `ll3.committees.*`, etc.
 
-## Scripts
+Conventions:
+- Prefer token usage over inline styles
+- Maintain consistent typography hierarchy
+- Avoid one-off layout hacks
+- Favor predictable spacing + structural clarity
+
+The system is designed to scale without visual drift.
+
+---
+
+## Search & Filter Architecture
+
+Bills filtering is intentionally:
+
+- **URL-driven** (query params reflect full state)
+- **Breakpoint-stable** (desktop + mobile parity)
+- **Debounced and deterministic**
+- **Autocomplete-enhanced (subject-aware)**
+
+Pattern:
+
+1. UI control updates query param
+2. Query param drives fetch
+3. Render based on canonical URL state
+
+This prevents state desynchronization between mobile sheets and desktop panels.
+
+---
+
+## Common Development Patterns
+
+### Add a New Bill Filter
+
+1. Add control component (UI layer)
+2. Wire to query param state
+3. Extend request builder to include param
+4. Confirm mobile filter sheet parity
+5. Verify SSR + client transitions remain stable
+
+---
+
+### Add a New Data Field to Bill Cards
+
+1. Confirm field exists in API/view contract
+2. Add formatting helper (if needed) in `lib/`
+3. Render in card component
+4. Add null-safe fallback behavior
+
+Avoid rendering raw payload fields directly without formatting normalization.
+
+---
+
+### Add a New Page Panel / Section
+
+1. Create section component
+2. Use LL3 layout primitives
+3. Maintain typographic scale consistency
+4. Ensure error boundary compatibility
+5. Avoid introducing layout shifts during hydration
+
+---
+
+## Error Handling Strategy
+
+- Page-level error boundaries
+- Section-level isolation where appropriate
+- Structured error metadata extraction
+- Controlled not-found rendering
+
+The goal is partial resilience — not full-page collapse.
+
+---
+
+## Local Development (Web Only)
 
 From repo root:
 
 ```bash
-# dev
 turbo dev --filter=web
+```
 
-# build
+Default:
+```
+http://localhost:3000
+```
+
+Environment variables (example):
+
+```
+NEXT_PUBLIC_API_BASE_URL=...
+NEXT_PUBLIC_ENV=development
+```
+
+> Do not store secrets in `NEXT_PUBLIC_*`.
+
+---
+
+## Build
+
+From repo root:
+
+```bash
 turbo build --filter=web
-
-# start (if applicable)
-turbo start --filter=web
 ```
 
-## Project Structure (high level)
+The output is deployed via Firebase Hosting (environment-targeted channels).
 
-* `app/` — Next.js App Router routes + layouts
-* `app/components/` — UI components (including `ll3` layout + tokens)
-* `lib/` — data fetching, formatting helpers, shared utilities
-* `styles/` (or equivalent) — global styles + `ll3` tokens
+---
 
-## UI Conventions
+## Deployment Notes (High Level)
 
-### Styling / Tokens
+Environments:
+- dev
+- stage
+- production
 
-The UI uses the `ll3` token system for layout + component styling.
+Deployment:
+- Turborepo build
+- Firebase hosting target per environment
+- Backend orchestration handled separately via Cloud Run + Workflows
 
-* Prefer existing tokens over one-off styles
-* Keep layout changes within the `ll3` system when possible
+The web app assumes stable materialized-view contracts at runtime.
 
-### Search & Filters
+---
 
-Bills search/filtering is designed to be:
+## Recent UI Updates
 
-* URL-driven (query params reflect state)
-* Stable across breakpoints (desktop + mobile)
-* Deterministic (debounce + predictable updates)
+### 2026-02 — Committees Directory Layer
 
-Autocomplete:
+- Segmented directory (Standing / Select / Joint)
+- Card-based navigation
+- LL3 token integration
+- Routing foundation for committee metrics expansion
 
-* Subject-aware suggestions
-* Intended to reduce “dead-end” searches and speed up refinement
+---
 
-## Common Tasks
+### 2026-02 — Bills Search Stabilization
 
-### Add a new bill filter
+- Subject-aware autocomplete
+- Query synchronization improvements
+- Mobile filter sheet hardening
+- Rendering consistency fixes
 
-1. Add filter UI control
-2. Wire it to query param state
-3. Update fetch/request builder to include the param
-4. Confirm mobile sheet parity
+---
 
-### Add a new field to bill results
+## Design Philosophy
 
-1. Confirm the field exists in API/view payload
-2. Add mapping/formatting in `lib/`
-3. Render in list item / card component
-4. Add fallback behavior for null/unknown values
+This frontend prioritizes:
 
-## Recent Web Updates
+- Determinism over animation noise
+- Clarity over decoration
+- Neutrality over commentary
+- Explicit state over implicit behavior
+- Structural hierarchy over visual clutter
 
-### 2026-02-12 — Bills Search & Filtering Enhancements
-
-* Autocomplete support
-* Improved filter state + query sync
-* Mobile filter sheet stabilization
-* Rendering consistency fixes
-
-```
+The goal is to make legislative data understandable without narrative framing.
