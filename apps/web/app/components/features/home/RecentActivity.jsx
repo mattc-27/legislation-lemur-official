@@ -1,21 +1,14 @@
-//"use client";
 import { getHomeSnapshot } from "@/lib/server/routes/congress";
 
-export const revalidate = 900; // cache snapshot for 15 min
+export const revalidate = 900;
 
 // Normalize helpers (accepts a few shapes)
-const pick = (obj, ...keys) => keys.find((k) => obj?.[k] != null);
 const normBill = (b, i) => ({
     id: b?.id ?? b?.bill_id ?? `bill-${i}`,
-    title:
-        b?.title ??
-        b?.name ??
-        b?.label ??
-        b?.short_title ??
-        b?.number ??
-        "Untitled bill",
+    title: b?.title ?? b?.name ?? b?.label ?? b?.short_title ?? b?.number ?? "Untitled bill",
     url: b?.url ?? b?.href ?? b?.link ?? "#",
 });
+
 const normAction = (a, i) => ({
     id: a?.id ?? `act-${i}`,
     label: a?.label ?? a?.title ?? a?.name ?? "Action",
@@ -24,7 +17,7 @@ const normAction = (a, i) => ({
 });
 
 export default async function RecentActivity({
-    maxItems = 8,
+    maxItems = 6,
     showHeader = true,
     title = "What’s happening this session",
     sub = "A quick snapshot of new bills and major actions.",
@@ -54,26 +47,24 @@ export default async function RecentActivity({
             <div className="panel panel--activity">
                 <div className="activity-header">
                     <div>
-                        <span className="badge badge--soon">Live snapshot</span>
+                        <span className="badge badge--live">Live snapshot</span>
                         <p className="activity-meta text-dim">
                             Pulled from recent Congress activity and refreshed regularly.
                         </p>
                     </div>
+
                     <div className="activity-stats text-dim">
                         <span className="activity-pill">
                             <span className="activity-pill__label">Bills</span>
-                            <span className="activity-pill__value">
-                                {bills.length || 0}
-                            </span>
+                            <span className="activity-pill__value">{bills.length || 0}</span>
                         </span>
                         <span className="activity-pill">
                             <span className="activity-pill__label">Actions</span>
-                            <span className="activity-pill__value">
-                                {actions.length || 0}
-                            </span>
+                            <span className="activity-pill__value">{actions.length || 0}</span>
                         </span>
                     </div>
                 </div>
+
                 {hasAny ? (
                     <div className="split-2 activity-grid">
                         <div>
@@ -92,6 +83,7 @@ export default async function RecentActivity({
                                 )}
                             </ul>
                         </div>
+
                         <div>
                             <h3 className="eyebrow">Recent actions</h3>
                             <ul className="list list--bullets activity-list">
@@ -112,8 +104,7 @@ export default async function RecentActivity({
                     </div>
                 ) : (
                     <p className="text-dim activity-empty">
-                        Nothing to show just yet — data will appear here as soon as new bills
-                        and actions are ingested.
+                        Nothing to show just yet — data will appear here as soon as new bills and actions are ingested.
                     </p>
                 )}
             </div>

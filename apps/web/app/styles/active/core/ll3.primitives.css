@@ -1,0 +1,66 @@
+/* core/ll3.primitives.css
+   Reusable primitives (card, buttons, inputs).
+*/
+
+.ll3 .card {
+    background: var(--ll3-panel);
+    border: 1px solid var(--ll3-border);
+    border-radius: var(--ll3-r-lg);
+    box-shadow: var(--ll3-shadow);
+}
+
+.ll3 .card--flat {
+    box-shadow: none;
+}
+
+/* Buttons */
+.ll3 .btn {
+    appearance: none;
+    border: 1px solid var(--ll3-border);
+    background: var(--ll3-panel);
+    color: var(--ll3-text);
+
+    border-radius: var(--ll3-r-pill);
+    padding: 10px 14px;
+
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.ll3 .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--ll3-shadow-float);
+    border-color: var(--ll3-border-strong);
+}
+
+.ll3 .btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--ll3-focus);
+}
+
+/* Inputs */
+.ll3 .input {
+    width: 100%;
+    border: 1px solid var(--ll3-border);
+    background: #fff;
+
+    border-radius: var(--ll3-r-pill);
+    padding: 14px 16px;
+
+    font-size: 15px;
+    color: var(--ll3-text);
+}
+
+.ll3 .input::placeholder {
+    color: var(--ll3-muted2);
+}
+
+.ll3 .input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--ll3-focus);
+    border-color: rgba(59, 130, 246, 0.35);
+}

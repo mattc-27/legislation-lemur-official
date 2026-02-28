@@ -1,0 +1,525 @@
+/* =========================================================
+   home.ll3.css (drop-in)
+   Hero: centered + taller + background lemur
+   Tweaks: Roboto Slab title, lighter recent activity items
+   ========================================================= */
+
+:root {
+    --ll3-font: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    --ll3-font-title: "Roboto Slab", ui-serif, Georgia, "Times New Roman", Times, serif;
+
+    --ll3-title: #111827;
+    --ll3-text: #4b5563;
+    --ll3-muted: #6b7280;
+
+    --ll3-border: rgba(17, 24, 39, 0.10);
+    --ll3-border-strong: rgba(17, 24, 39, 0.16);
+
+    --ll3-shadow: 0 12px 28px rgba(2, 8, 23, 0.06);
+    --ll3-shadow-sm: 0 10px 22px rgba(2, 8, 23, 0.05);
+
+    --ll3-radius: 16px;
+    --ll3-radius-sm: 12px;
+}
+
+/* =============================
+   Baseline
+   ============================= */
+
+.home,
+.hero,
+.section,
+.panel {
+    font-family: var(--ll3-font);
+}
+
+.section__title,
+.hero__title,
+.hero__kicker,
+.eyebrow {
+    color: var(--ll3-title);
+    font-family: var(--ll3-font);
+}
+
+.section__sub,
+.hero__sub,
+.hero__para,
+.text-dim,
+.reg {
+    color: var(--ll3-text);
+    font-family: var(--ll3-font);
+}
+
+.text-dim {
+    color: var(--ll3-muted);
+}
+
+/* =============================
+   Hero (centered, taller, lemur behind)
+
+
+.hero--home {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(96px, 13vh, 150px) 0 clamp(56px, 10vh, 110px);
+}
+
+.hero__grid {
+    position: relative;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr;
+}
+
+.hero__grid--center {
+    justify-items: center;
+}
+
+.hero__content {
+    text-align: left;
+}
+
+.hero__content--center {
+    text-align: center;
+    max-width: 72ch;
+    position: relative;
+    z-index: 2;
+}
+
+.hero__pill {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--ll3-title);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.hero__title {
+    margin: 0 0 12px;
+    font-family: var(--ll3-font-title);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    font-size: clamp(2.2rem, 1.2rem + 3.2vw, 3.35rem);
+    line-height: 1.06;
+}
+
+.hero__sub {
+    margin: 0 auto;
+    font-weight: 650;
+    line-height: 1.65;
+    font-size: clamp(1rem, 0.35vw + 0.98rem, 1.12rem);
+    max-width: 56ch;
+}
+
+.hero__cta {
+    margin-top: clamp(16px, 2.8vh, 26px);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.hero__cta--center {
+    justify-content: center;
+}
+   ============================= */
+/* Background lemur 
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+}
+
+.hero__bgImg {
+    width: min(780px, 92vw);
+    height: auto;
+    opacity: 0.18;
+    filter: grayscale(0.08);
+    transform: translateX(26%) translateY(12%);
+
+}
+*/
+/* Keep it from overwhelming smaller screens 
+@media (max-width: 720px) {
+    .hero__bgImg {
+        width: min(720px, 120vw);
+        opacity: 0.16;
+        transform: translateX(20%) translateY(16%);
+    }
+}
+    */
+
+/* =============================
+   Sections + Panels
+   ============================= */
+
+.section {
+    margin: 0;
+}
+
+.section__header {
+    text-align: left;
+    margin: 0 0 12px;
+}
+
+.section__title {
+    margin: 0 0 6px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    font-size: clamp(1.15rem, 1rem + 1.2vw, 1.6rem);
+}
+
+.section__title--tight {
+    margin-top: 10px;
+}
+
+.section__sub {
+    margin: 0;
+    font-weight: 620;
+    line-height: 1.6;
+    font-size: clamp(0.98rem, 0.25vw + 0.95rem, 1.05rem);
+}
+
+.reg {
+    font-weight: 520;
+    line-height: 1.9;
+}
+
+/* Panel base */
+.panel {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--ll3-border);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow-sm);
+    padding: clamp(18px, 2.4vw, 26px);
+}
+
+/* =============================
+   RecentActivity block styling (existing, with lighter list items)
+   ============================= */
+
+.panel--activity {
+    display: grid;
+    gap: clamp(12px, 2vw, 18px);
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.activity-meta {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 720;
+    color: var(--ll3-muted);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--ll3-title);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.badge--live {
+    background: rgba(180, 201, 232, 0.22);
+    border-color: rgba(180, 201, 232, 0.45);
+}
+
+.activity-stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.activity-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.activity-pill__label {
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--ll3-muted);
+    font-size: 11px;
+}
+
+.activity-pill__value {
+    color: var(--ll3-title);
+    font-size: 12px;
+}
+
+.split-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(14px, 3vw, 24px);
+}
+
+@media (max-width: 860px) {
+    .split-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .activity-stats {
+        justify-content: flex-start;
+    }
+}
+
+.eyebrow {
+    margin: 2px 0 10px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--ll3-muted);
+}
+
+.list {
+    margin: 0;
+    padding: 0;
+}
+
+.list--bullets {
+    list-style: disc;
+    padding-left: 1.15rem;
+}
+
+/* ✅ Lighter bill items (your request) */
+.panel--activity .list--bullets li {
+    margin: 7px 0;
+    font-weight: 540;
+    /* was feeling too bold */
+    color: rgba(17, 24, 39, 0.72);
+    line-height: 1.55;
+}
+
+/* if you have links in those bullets, keep them clean */
+.panel--activity .list--bullets a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.18);
+}
+
+.panel--activity .list--bullets a:hover {
+    border-bottom-color: rgba(17, 24, 39, 0.45);
+}
+
+/* =============================
+   Home CTA buttons (clean, neutral)
+   ============================= */
+
+.home .btn {
+    border-radius: 999px;
+    font-weight: 800;
+    transition: transform 0.06s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.home .btn:active {
+    transform: translateY(1px);
+}
+
+/* Primary: ink (neutral) */
+.home .btn--primary {
+    background: #111827;
+    color: #ffffff;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.10);
+}
+
+.home .btn--primary:hover {
+    background: #0b1220;
+    box-shadow: 0 14px 28px rgba(2, 8, 23, 0.14);
+}
+
+/* Ghost: soft surface */
+.home .btn--ghost {
+    background: rgba(255, 255, 255, 0.85);
+    color: #111827;
+    border: 1px solid rgba(17, 24, 39, 0.14);
+}
+
+.home .btn--ghost:hover {
+    background: rgba(17, 24, 39, 0.03);
+    border-color: rgba(17, 24, 39, 0.22);
+}
+
+.home .btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(180, 201, 232, 0.45);
+}
+
+
+
+
+/* =============================
+   Hero (cleaned: more height, better typography, bg lemur not blocking)
+   ============================= */
+
+:root {
+    /* softer “charcoal” for big headline */
+    --ll3-hero-title: rgba(17, 24, 39, 0.92);
+    --ll3-hero-sub: rgba(17, 24, 39, 0.62);
+}
+
+.hero--home {
+    position: relative;
+    overflow: hidden;
+
+    /* the main fix: add a real “stage” so the next section doesn’t feel immediate */
+    padding: clamp(108px, 15vh, 180px) 0 clamp(92px, 13vh, 160px);
+
+    /* optional: ensures the hero still feels tall on big monitors */
+    min-height: clamp(620px, 78vh, 860px);
+}
+
+.hero__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+}
+
+.hero__grid--center {
+    justify-items: center;
+}
+
+.hero__content--center {
+    text-align: center;
+    max-width: 72ch;
+    position: relative;
+    z-index: 2;
+}
+
+/* pill stays the same, just slightly lighter weight */
+.hero__pill {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.86);
+    color: rgba(17, 24, 39, 0.80);
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+/* headline: charcoal + a touch more line-height */
+.hero__title,
+.hero__title--home {
+    margin: 0 0 14px;
+    font-family: var(--ll3-font-title);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    font-size: clamp(2.35rem, 1.25rem + 3.6vw, 3.65rem);
+    line-height: 1.10;
+    color: var(--ll3-hero-title);
+}
+
+/* subtitle: lighter + better rhythm */
+.hero__sub {
+    margin: 0 auto;
+    font-weight: 600;
+    line-height: 1.75;
+    font-size: clamp(1.02rem, 0.35vw + 1.02rem, 1.16rem);
+    max-width: 58ch;
+    color: var(--ll3-hero-sub);
+}
+
+.hero__cta {
+    margin-top: clamp(18px, 3vh, 30px);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.hero__cta--center {
+    justify-content: center;
+}
+
+/* --- Background lemur (move it away from text, show more of it) --- */
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+
+/* Background lemur — slightly smaller + moved down */
+.hero__bgImg {
+    position: absolute;
+    right: clamp(-120px, -10vw, -40px);
+
+    /* move it DOWN */
+    bottom: clamp(-170px, -16vh, -110px);
+
+    /* slightly smaller */
+    width: min(900px, 82vw);
+    height: auto;
+
+    opacity: 0.17;
+    filter: grayscale(0.10);
+    transform: none;
+}
+
+
+/* tighten on small screens: keep it visible but not overpowering */
+@media (max-width: 720px) {
+    .hero--home {
+        padding: 92px 0 96px;
+        min-height: 560px;
+    }
+
+    .hero__bgImg {
+        right: -180px;
+        bottom: -170px;
+        /* moved down */
+        width: min(750px, 92vw);
+        /* slightly smaller */
+        opacity: 0.14;
+    }
+}
+
+/* reduce motion / keep things clean */
+@media (prefers-reduced-motion: reduce) {
+    .hero__bgImg {
+        filter: grayscale(0.12);
+    }
+}

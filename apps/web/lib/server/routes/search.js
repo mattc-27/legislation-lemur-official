@@ -6,6 +6,25 @@ import { q } from "../db/instrumented-query";
 
 
 export async function getStateRoster(stateCode) {
+
+  console.log("[getStateRoster]");
+
+  // 1) DB identity probe (same connection via q())
+  try {
+    const identSql = `
+      select
+        current_user,
+        session_user,
+        current_database() as db,
+        inet_server_addr() as server_ip
+    `;
+    const ident = await q("debug:identity", identSql, []);
+    console.log("[db identity]", ident.rows?.[0]);
+  } catch (e) {
+    console.log("[db identity] probe failed", e);
+  }
+
+
   const sql = `
     SELECT
       bioguide_id        AS "bioguideId",
@@ -18,7 +37,7 @@ export async function getStateRoster(stateCode) {
       chamber            AS chamber,
       image_url          AS "imageUrl",
       url
-    FROM mv.member_core_v1
+    FROM sandbox_lemur_app_views_v1.mv_member_core_v1
     WHERE state_code = $1
     ORDER BY
       CASE WHEN chamber = 'Senate' THEN 0 ELSE 1 END,
@@ -82,7 +101,7 @@ export async function searchMembers({ q = "", state = "", chamber = "", party = 
       chamber       AS chamber,
       image_url     AS "imageUrl",
       url
-    FROM mv.member_core_v1
+    FROM sandbox_lemur_app_views_v1.member_core_v1
     ${where}
     ORDER BY
       CASE WHEN chamber = 'Senate' THEN 0 ELSE 1 END,

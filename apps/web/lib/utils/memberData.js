@@ -14,7 +14,7 @@ import {
     getHouseMemberAlignmentPanelOverall,
     getHouseMemberAlignmentByPolicy,
     getHouseMemberAlignmentTopDeviations
-} from "../server/routes_stage/members";
+} from "../server/routes/members";
 
 
 export async function fetchMemberData(bioguideId) {

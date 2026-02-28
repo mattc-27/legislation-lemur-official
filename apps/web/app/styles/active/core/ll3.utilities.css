@@ -1,0 +1,37 @@
+/* core/ll3.utilities.css
+   Small utilities only. Keep it tight.
+*/
+
+/* Stack utility (one base + size modifiers) */
+.ll3 .stack {
+    display: grid;
+    gap: var(--stack-gap, 16px);
+}
+
+.ll3 .stack-8 {
+    --stack-gap: 8px;
+}
+
+.ll3 .stack-12 {
+    --stack-gap: 12px;
+}
+
+.ll3 .stack-16 {
+    --stack-gap: 16px;
+}
+
+.ll3 .stack-20 {
+    --stack-gap: 20px;
+}
+
+.ll3 .stack-24 {
+    --stack-gap: 24px;
+}
+
+.ll3 .stack-32 {
+    --stack-gap: 32px;
+}
+
+.ll3 .stack-48 {
+    --stack-gap: 48px;
+}

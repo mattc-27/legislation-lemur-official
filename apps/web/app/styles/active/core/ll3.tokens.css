@@ -1,0 +1,88 @@
+/* core/ll3.tokens.css
+   Design tokens only. No layout, no components.
+   Scope to .ll3 so legacy pages remain untouched.
+*/
+
+.ll3 {
+    /* Fonts */
+    --ll3-font-sans: var(--font-roboto,
+            system-ui,
+            -apple-system,
+            "Segoe UI",
+            Roboto,
+            Helvetica,
+            Arial,
+            "Apple Color Emoji",
+            "Segoe UI Emoji"
+        );
+    --ll3-font-serif: var(--font-roboto-slab,
+            ui-serif,
+            Georgia,
+            Cambria,
+            "Times New Roman",
+            Times,
+            serif);
+
+    /* Core colors */
+    --ll3-bg: #f7f8fb;
+    --ll3-panel: #ffffff;
+    --ll3-text: #0f172a;
+    --ll3-muted: #475569;
+    --ll3-muted2: #64748b;
+
+    --ll3-border: rgba(15, 23, 42, 0.10);
+    --ll3-border-strong: rgba(15, 23, 42, 0.14);
+
+    /* Shadows */
+    --ll3-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    --ll3-shadow-float: 0 10px 25px rgba(15, 23, 42, 0.10);
+
+    /* A smaller, commonly used shadow (home/about used this) */
+    --ll3-shadow-sm: 0 10px 22px rgba(15, 23, 42, 0.06);
+
+    /* Radii */
+    --ll3-r-lg: 18px;
+    --ll3-r-md: 14px;
+    --ll3-r-sm: 10px;
+    --ll3-r-pill: 999px;
+
+    /* Layout tokens */
+    --ll3-container: 1160px;
+    --ll3-container-header: 1320px;
+    --ll3-pad-x: clamp(16px, 2.6vw, 34px);
+
+    /* Focus ring */
+    --ll3-focus: rgba(59, 130, 246, 0.35);
+
+    /* Header sizing */
+    --ll3-header-h: 66px;
+    --ll3-header-h-mobile: 56px;
+
+    /* Header visuals */
+    --ll3-header-bg: rgba(255, 255, 255, 0.82);
+    --ll3-header-bg-scrolled: rgba(255, 255, 255, 0.92);
+    --ll3-header-bg-open: rgba(255, 255, 255, 0.94);
+    --ll3-header-blur: blur(12px);
+    --ll3-header-sat: saturate(1.05);
+
+    /* Footer visuals */
+    --ll3-footer-bg: rgba(255, 255, 255, 0.86);
+    --ll3-footer-blur: blur(10px);
+    --ll3-footer-sat: saturate(1.05);
+
+    /* Page shell spacing (layout consumes this) */
+    --ll3-main-top: calc(var(--ll3-header-h) + 16px);
+
+    /* Compatibility aliases used by reference/home legacy */
+    --ll3-ink: var(--ll3-text);
+    --ll3-card: var(--ll3-panel);
+    --ll3-radius: var(--ll3-r-lg);
+    --ll3-radius-sm: var(--ll3-r-md);
+}
+
+@media (max-width: 860px) {
+    .ll3 {
+        --ll3-header-h: var(--ll3-header-h-mobile);
+        --ll3-main-top: calc(var(--ll3-header-h-mobile) + 16px);
+    }
+}
