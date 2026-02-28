@@ -1,0 +1,142 @@
+/* app/(app)/styles/committees/ll3.committees.ui.css
+   ======================================================================
+   Committees UI primitives (scoped)
+   ====================================================================== */
+
+.ll3-committees,
+.ll3-committees *,
+.ll3-committees *::before,
+.ll3-committees *::after {
+    box-sizing: border-box;
+}
+
+
+
+
+
+.ll3-committees {
+    font-family: var(--ll3c-font-body);
+    color: var(--ll3c-text);
+}
+
+/* Page + section titles use slab */
+.ll3c-h1,
+.ll3c-h2,
+.ll3c-lane__title {
+    font-family: var(--ll3c-font-head);
+}
+
+.ll3c-strong {
+    color: var(--ll3c-ink);
+}
+
+.ll3c-muted {
+    color: var(--ll3c-muted);
+}
+
+.ll3c-label {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--ll3c-ink);
+    letter-spacing: 0.02em;
+}
+
+.ll3c-input {
+    width: 100%;
+    height: var(--ll3c-input-h);
+    padding: 0 var(--ll3c-input-pad-x);
+
+    border-radius: var(--ll3c-input-r);
+    border: 1px solid var(--ll3c-border);
+    background: rgba(255, 255, 255, 0.85);
+
+    color: var(--ll3c-ink);
+    font-family: var(--ll3c-font);
+    font-size: 14px;
+
+    outline: none;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
+}
+
+.ll3c-input:focus {
+    border-color: rgba(17, 24, 39, 0.22);
+    box-shadow: 0 0 0 4px var(--ll3c-focus-ring);
+}
+
+.ll3c-select {
+    appearance: none;
+}
+
+.ll3c-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    height: var(--ll3c-btn-h);
+    padding: 0 var(--ll3c-btn-pad-x);
+    border-radius: var(--ll3c-btn-r);
+
+    font-size: 13px;
+    font-weight: 850;
+
+    background: var(--ll3c-surface-strong);
+    border: 1px solid var(--ll3c-border);
+    color: var(--ll3c-ink);
+    text-decoration: none;
+    cursor: pointer;
+
+    box-shadow: 0 6px 16px rgba(2, 8, 23, 0.06);
+    transition: transform 0.06s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.ll3c-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--ll3c-border-strong);
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.08);
+}
+
+.ll3c-btn:active {
+    transform: translateY(0);
+}
+
+.ll3c-btn--primary {
+    background: var(--ll3c-primary);
+    border-color: transparent;
+    color: var(--ll3c-primaryText);
+}
+
+.ll3c-btn--ghost {
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.ll3c-btn:focus-visible,
+.ll3c-input:focus-visible,
+.ll3c-ext:focus-visible,
+.ll3c-details__summary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--ll3c-focus-ring);
+}
+
+.ll3c-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--ll3c-pill-h);
+    padding: 0 10px;
+    border-radius: var(--ll3c-pill-r);
+
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--ll3c-ink);
+
+    font-size: 13px;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+.ll3c-code code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12.5px;
+    font-weight: 800;
+}

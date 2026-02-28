@@ -1,25 +1,50 @@
 // app/(app)/member/[bioguideId]/page.jsx
 import Link from "next/link";
-import { fetchMemberData } from '../../../../lib/utils/memberData';
-import { getMemberVotes } from '@/lib/server/votes';
 
-import ErrorBoundary from '@/app/components/ui/system/ErrorBoundary';
 
-import ActivityTimeline from '@/app/components/members/house-member/ActivityTimeline';
+import { getSectionFreshness } from "@/lib/domains/freshness/getSectionFreshness";
+import { fetchMemberData } from '@/lib/utils/memberData';
+import { getMemberVotes } from '@/lib/server/routes/votes';
 
-import MemberAbout from "@/app/components/members/chamber-agnostic/MemberAbout";
-import MemberTabs from '@/app/components/members/chamber-agnostic/MemberTabs';
-import MemberTerms from '@/app/components/members/chamber-agnostic/MemberTerms';
+import SectionBoundary from '@/app/components/ui/system/SectionBoundary';
 
-import KpiRow from '@/app/components/members/chamber-agnostic/KpiRow';
+import MemberAbout from "@/app/components/features/members/shared/MemberAbout";
+import MemberTabs from '@/app/components/features/members/shared/MemberTabs';
+import MemberTerms from '@/app/components/features/members/shared/MemberTerms';
 
-import SenateVotes from '@/app/components/members/senate-member/SenateVotes';
-import VotesSection from '@/app/components/members/house-member/VoteSection';
-import VoteAlignmentPanel from '@/app/components/members/house-member/VoteAlignmentGauge';
+import KpiRow from '@/app/components/features/members/shared/KpiRow';
 
-import '../../../../lib/stylesheets/refactored/member-styles.refactored.css';
-import '../../../../lib/stylesheets/refactored/vote-ui.refactored.css';
-import '../../../../lib/stylesheets/refactored/ui-controls.css';
+import SenateVotes from '@/app/components/features/members/senate-member/SenateVotes';
+
+import VotesSplitSection from "@/app/components/features/members/shared/VoteSplitSection";
+
+import {
+    ArrowLeft
+} from "lucide-react";
+
+import "@/app/styles/active/members/ll3.members.tokens.css";
+import "@/app/styles/active/members/ll3.members.ui.css";
+
+import "@/app/styles/active/members/ll3.members.search.css";
+import '@/app/styles/active/members/ll-members-styles.css';
+import "@/app/styles/active/members/ll3.members.details.css";
+
+import "@/app/styles/active/members/ll3.members.badges.css";
+import "@/app/styles/active/members/ll3.members.tabs.css";
+import "@/app/styles/active/members/ll3.members.heatmap.css";
+import "@/app/styles/active/members/ll3.members.gauge.css";
+import "@/app/styles/active/members/ll3.members.viz.css";
+import "@/app/styles/active/members/ll3.vote-alignment.css";
+
+// import VotesSection from '@/app/components/features/members/house-member/VoteSection';
+// import VoteAlignmentPanel from '@/app/components/features/members/house-member/VoteAlignmentGauge';
+// import ActivityTimeline from '@/app/components/features/members/house-member/ActivityTimeline';
+// import '@/app/styles/legacy_refactor/member-styles.refactored.css'
+// import '../../../../lib/stylesheets/refactored/member-styles.refactored.css';
+// import '../../../../lib/stylesheets/refactored/vote-ui.refactored.css';
+// import '../../../../lib/stylesheets/refactored/ui-controls.css';
+// import '../../../../lib/stylesheets/refactored/home-styles.refactored.css';
+
 
 export default async function MemberPage({ params }) {
     const { bioguideId } = await params; // no await
@@ -31,8 +56,9 @@ export default async function MemberPage({ params }) {
         sponsoredRes,
         cosponsoredRes,
         //recentVotes,
-        alignment,
+        // alignment,
         kpis,
+        alignmentPanel,
         monthlyActivity,
         subjects,
         bills,
@@ -53,10 +79,6 @@ export default async function MemberPage({ params }) {
         );
     }
 
-    //console.log(alignment)
-    //  console.log(profile)
-
-
     // Map helper return shapes to what the UI expects
     const sponsoredGroups = sponsoredRes?.groups ?? [];
     const cosponsoredGroups = cosponsoredRes?.groups ?? [];
@@ -66,6 +88,19 @@ export default async function MemberPage({ params }) {
     const cosponsoredYTD = (monthly || []).reduce((a, r) => a + (r.cosponsored || 0), 0);
     const totalYTD = sponsoredYTD + cosponsoredYTD;
     //const kpis = { totalYTD, sponsoredYTD, cosponsoredYTD };
+
+
+    const freshness = await getSectionFreshness({
+        schemaName: "sandbox_lemur_views_v1",
+        viewNames: ["member_legislation_v1", "member_monthly_activity_v1"],
+        cacheKey: `member:${bioguideId}:tabsFreshness`,
+    });
+
+    const votesFreshness = await getSectionFreshness({
+        schemaName: "sandbox_lemur_app_views_v1",
+        viewNames: ["mv_member_votes_v2", "mv_member_vote_agg_v1"],
+        cacheKey: `member:${bioguideId}:votesFreshness`,
+    });
 
     // --- Merge for the donut on this page (dedupe by id) ---
     const labelFromSubject = (subj) =>
@@ -95,50 +130,121 @@ export default async function MemberPage({ params }) {
 
 
     return (
-        <div className="member-page stack-24">
-            <div className="member-back">
-                <Link
-                    href={`/search?state=${encodeURIComponent(profile.stateCode || "")}`}
-                    className="btn btn--ghost btn--pill member-back__btn"
-                >
-                    <span className="member-back__icon">←</span>
-                    <span>Back to {stateLabel} results</span>
-                </Link>
-            </div>
-
-            <ErrorBoundary where="MemberHeader">
-                <MemberAbout profile={profile} />
-                <MemberTerms terms={profile.terms} />
-            </ErrorBoundary>
-            <ErrorBoundary where="KpiRow">
-                <KpiRow kpis={kpis} />
-            </ErrorBoundary>
-
-            <ErrorBoundary where="MemberTabs">
-                <MemberTabs
-                    title="Recent bills by topic"
-                    groupsSponsored={sponsoredRes}
-                    groupsCosponsored={cosponsoredRes}
-                    monthly={monthly}
-                    sourceLabel="Includes sponsored + co-sponsored bills"
-                />
-            </ErrorBoundary>
-            <ErrorBoundary where="MemberTabs">
-                {/* <VotesTable votes={recentVotes} />*/}
-                {isSenate ? (
-                    <SenateVotes groups={allVotes} />
-                ) : (
+        // page.jsx (fragment)
+        <div className="llmp3-page">
+            <div className="llmp3-wrap llmp3-stack-24">
+                <div className="llmp3-back">
+                    <Link
+                        href={`/search?state=${encodeURIComponent(profile.stateCode || "")}`}
+                        className="llmp3-back__members llmp3-back--member"
+                    >
+                        <ArrowLeft size={16} aria-hidden="true" />
+                        <span>Back to {stateLabel} results</span>
+                    </Link>
+                </div>
+                {/* Header */}
+                <SectionBoundary where="MemberHeader">
                     <>
-                        <VoteAlignmentPanel value={alignment} />
-                        <div className="tabs-topviz__item">
-                            <VotesSection votes={allVotes} tableInitialLimit={20} />
-                        </div>
-                        <div className="tabs-topviz__timeline">
-                            <ActivityTimeline data={monthly} />
-                        </div>
+                        <MemberAbout profile={profile} />
+                        <MemberTerms terms={profile.terms} />
                     </>
-                )}
-            </ErrorBoundary>
+                </SectionBoundary>
+
+                {/* KPIs */}
+                <SectionBoundary where="KpiRow">
+                    <KpiRow kpis={kpis} />
+                </SectionBoundary>
+
+                {/* Tabs                          <SectionBoundary where="MemberTabs">     </SectionBoundary> */}
+
+                <div className="llmp3-panel">
+                    <MemberTabs
+                        title="Recent bills by topic"
+                        groupsSponsored={sponsoredRes}
+                        groupsCosponsored={cosponsoredRes}
+                        monthly={monthly}
+                        sourceLabel="Includes sponsored + co-sponsored bills"
+                        freshnessAsOf={freshness.asOf}
+                        freshnessPerView={freshness.perView}
+                    />
+                </div>
+
+
+
+                {/* Votes + viz */}
+                <SectionBoundary where="MemberVotesAndViz">
+                    <div className="llmp3-panel">
+                        {isSenate ? (
+                            <SenateVotes groups={allVotes} />
+                        ) : (
+                            <>
+                                <VotesSplitSection
+                                    alignmentPanel={alignmentPanel}
+                                    votes={allVotes}
+                                    tableInitialLimit={20}
+                                    votesFreshnessAsOf={votesFreshness.asOf}
+                                    chamberLabel={isSenate ? "Senate" : "House"}
+                                    heatmapWeeks={52}
+                                />
+                            </>
+                        )}
+                    </div>
+                </SectionBoundary>
+            </div>
         </div>
+        /*         <MemberAbout profile={profile} />
+        <MemberTerms terms={profile.terms} />
+
+
+
+        <KpiRow kpis={kpis} />
+
+
+ <ErrorBoundary where="MemberTabs">
+         <ErrorBoundary where="KpiRow">
+                  <ErrorBoundary where="MemberHeader">
+        </ErrorBoundary>
+   
+
+        <div className="llmp3-panel">
+            <MemberTabs
+                title="Recent bills by topic"
+                groupsSponsored={sponsoredRes}
+                groupsCosponsored={cosponsoredRes}
+                monthly={monthly}
+                sourceLabel="Includes sponsored + co-sponsored bills"
+                freshnessAsOf={freshness.asOf}
+                freshnessPerView={freshness.perView}
+            />
+        </div>
+
+        {/*    <ErrorBoundary where="MemberVotesAndViz"> 
+        </ErrorBoundary>
+   
+        <div className="llmp3-panel">
+            {isSenate ? (
+                <SenateVotes groups={allVotes} />
+            ) : (
+                <>
+                    <div className="llmp3-grid-2">
+                        <VoteAlignmentPanel value={alignment} />
+                        <div className="llmp3-card">
+                            <VotesSection votes={allVotes} tableInitialLimit={20} freshnessAsOf={votesFreshness.asOf} />
+                        </div>
+                    </div>
+
+                    <div className="llmp3-card llmp3-card--soft">
+                        <ActivityTimeline
+                            data={monthly}
+                            freshnessAsOf={freshness.perView?.member_monthly_activity_v1 ?? freshness.asOf}
+                        />
+                    </div>
+                </>
+            )}
+        </div>
+
+    </div>
+</div>  */
+
     );
 }

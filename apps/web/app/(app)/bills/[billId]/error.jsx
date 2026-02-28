@@ -1,18 +1,30 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 import ErrorView from "@/app/components/ui/system/ErrorView";
-import { reportError, buildErrorViewProps } from "@/lib/utils/errors";
+import { reportError, buildErrorViewProps, extractErrorInfo } from "@/lib/shared/errors/errors";
 
-export default function MemberError({ error, reset }) {
-    const [props, setProps] = useState(null);
-
-    useEffect(() => {
-        (async () => {
-            const { errorId, info } = await reportError(error, { where: "member/segment" });
-            setProps(buildErrorViewProps({ errorId, info }));
-        })();
+export default function BillError({ error, reset }) {
+    const fallbackProps = useMemo(() => {
+        const info = extractErrorInfo(error);
+        return buildErrorViewProps({ errorId: null, info });
     }, [error]);
 
-    if (!props) return null;
-    return <ErrorView {...props} onRetry={() => reset()} />;
+    const [props, setProps] = useState(fallbackProps);
+
+    useEffect(() => {
+        if (!error) return; // ✅ guard
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const { errorId, info } = await reportError(error, { where: "bills/[billId]" });
+                if (!cancelled) setProps(buildErrorViewProps({ errorId, info }));
+            } catch { }
+        })();
+
+        return () => { cancelled = true; };
+    }, [error]); // ✅ deps tight
+
+    return <ErrorView {...props} onRetry={reset} />;
 }

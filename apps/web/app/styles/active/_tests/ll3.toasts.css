@@ -1,0 +1,93 @@
+/* LL3 Toasts (react-hot-toast) */
+.ll3-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 10px 12px;
+    border-radius: 14px;
+
+    background: var(--ll3-surface-strong);
+    border: 1px solid var(--ll3-border);
+    color: var(--ll3-ink);
+
+    box-shadow: var(--ll3-shadow2);
+    backdrop-filter: blur(10px);
+}
+
+.ll3-toast__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+    margin-top: 1px;
+    opacity: 0.9;
+}
+
+.ll3-toast__body {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.ll3-toast__title {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    color: var(--ll3-ink);
+}
+
+.ll3-toast__msg {
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.25;
+    color: rgba(75, 85, 99, 0.95);
+}
+
+.ll3-toast__actions {
+    margin-left: auto;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.ll3-toast__btn {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 10px;
+
+    border: 1px solid var(--ll3-border);
+    background: rgba(255, 255, 255, 0.65);
+    color: var(--ll3-ink);
+
+    font-size: 13px;
+    font-weight: 850;
+    cursor: pointer;
+
+    box-shadow: 0 6px 14px rgba(17, 24, 39, 0.06);
+    transition: transform 0.06s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.ll3-toast__btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--ll3-border-strong);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 18px rgba(17, 24, 39, 0.08);
+}
+
+.ll3-toast__btn:active {
+    transform: translateY(0);
+}
+
+/* Intent accents (subtle left rail) */
+.ll3-toast--success {
+    border-left: 4px solid rgba(16, 185, 129, 0.75);
+}
+
+.ll3-toast--error {
+    border-left: 4px solid rgba(239, 68, 68, 0.75);
+}
+
+.ll3-toast--info {
+    border-left: 4px solid rgba(143, 177, 222, 0.95);
+}

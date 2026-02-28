@@ -1,217 +1,284 @@
 // app/(app)/search/page.jsx
-{/* 
-import relevent functions from @/lib/congress.js containing pool.query logic  
-*/}
 import Link from "next/link";
-// import { getBillsDirectory, getBillsActivity } from '@/lib/server/legislation';
-import { getBillsActivity, getBillsDirectory } from '../../../lib/server/bills';
 
-import "../../../lib/stylesheets/refactored/home-styles.refactored.css";   // reuse hero/searchbox visuals
-import "../../../lib/stylesheets/refactored/search-styles.refactored.css"; // page-specific tweaks]
-import "../../../lib/stylesheets/refactored/ui-controls.css";
-import '../../../lib/stylesheets/bill-page.css';
+import { getViewsFreshness, formatAsOfMMDDYYYY } from "@/lib/server/routes/viewStatus";
 
-import BillActivityMini from "@/app/components/bills/BillActivityMini";
+import { getBillsDirectoryV2 } from "@/lib/server/bills";
+import { getBillsFilterOptionsV2, getBillsFacetCountsV2 } from "@/lib/server/bills";
+import { parseBillsFiltersV2, buildBillsPagination } from "@/lib/domains/bills/queryV2";
 
-// helpers
-const fmtDate = (d) => {
-    if (!d) return "";
-    const dt = typeof d === "string" ? new Date(d) : d;
-    if (Number.isNaN(dt.getTime())) return "";
-    return dt.toISOString().slice(0, 10); // YYYY-MM-DD
-};
+import BillCard from "@/app/components/features/bills/BillCard";
+import RefineResultsBarClient from "@/app/components/features/bills/RefineResultsBarClient";
+import ModifyRefineButtonClient from "@/app/components/features/bills/ModifyRefineButtonClient";
+import MobileDraftFormClient from "@/app/components/features/forms/MobileDraftFormClient";
+import BillsFilterForm from "@/app/components/features/forms/BillsFilterForm";
+
+import "@/app/styles/legacy_refactor/home-styles.refactored.css";
+
+import "@/app/styles/active/bills/ll3.bills.tokens.css";
+import "@/app/styles/active/bills/ll3.bills.ui.css";
+import "@/app/styles/active/bills/ll3.bills.directory.layout.css";
+import "@/app/styles/active/bills/ll3.bills.directory.controls.css";
+import "@/app/styles/active/bills/ll3.bills.directory.cards.css";
+import "@/app/styles/active/bills/ll3.bills.directory.refineSheet.css";
 
 export const revalidate = 600;
 
+function indexCountsById(rows, key = "id") {
+    const m = new Map();
+    for (const r of rows || []) {
+        const k = r?.[key];
+        if (k == null) continue;
+        m.set(String(k), Number(r.bill_count ?? 0));
+    }
+    return m;
+}
+
+function indexCountsByCode(rows, key = "committee_system_code") {
+    const m = new Map();
+    for (const r of rows || []) {
+        const k = r?.[key];
+        if (!k) continue;
+        m.set(String(k), Number(r.bill_count ?? 0));
+    }
+    return m;
+}
+
 export default async function BillsPage({ searchParams }) {
-    // ✅ Next 15: await first
     const sp = await searchParams;
 
-    const nz = (v) => (v === "" ? null : v);
-    const toNum = (v, d = 0) => {
-        const n = Number(v);
-        return Number.isFinite(n) ? n : d;
-    };
+    const { filters } = parseBillsFiltersV2(sp);
+    const { withOffset, baseParams } = buildBillsPagination(sp, { limit: filters.limit });
 
-    const filters = {
-        q: nz(sp?.q),
-        chamber: nz(sp?.chamber),
-        subject: nz(sp?.subject),
-        from: nz(sp?.from),
-        to: nz(sp?.to),
-        minCos: toNum(sp?.minCos, 0),
-        sort: nz(sp?.sort) || "latest_action",
-        limit: 25,
-        offset: toNum(sp?.offset, 0),
-    };
-
-    const [{ rows, total, congress }, activity] = await Promise.all([
-        getBillsDirectory(null, filters),
-        getBillsActivity(null),
+    const [dirRes, freshness, filterOptions] = await Promise.all([
+        getBillsDirectoryV2(null, filters),
+        getViewsFreshness([
+            "bill_search_index",
+            "mv_bill_activity_weekly_v1",
+        ]),
+        getBillsFilterOptionsV2(),
     ]);
 
-    // ---- Build JSON-clean pagination hrefs (strings) ----
-    // Start from awaited `sp`, not the raw `searchParams` prop.
-    const baseParams = new URLSearchParams();
-    for (const [k, v] of Object.entries(sp || {})) {
-        if (v != null && v !== "") baseParams.set(k, String(v));
-    }
-    // We control these explicitly
-    baseParams.delete("offset");
-    baseParams.delete("limit");
+    const { rows, total, congress } = dirRes;
 
-    const withOffset = (o) => {
-        const p = new URLSearchParams(baseParams.toString());
-        p.set("offset", String(Math.max(0, o)));
-        p.set("limit", String(filters.limit));
-        return `/bills?${p.toString()}`;
-    };
+    const facets = await getBillsFacetCountsV2({
+        congress,
+        ...filters,
+    });
+
+    const policyCounts = indexCountsById(
+        (facets?.policyAreas || []).map((r) => ({ id: r.policy_area_id, bill_count: r.bill_count })),
+        "id"
+    );
+    const statusCounts = indexCountsById(
+        (facets?.statuses || []).map((r) => ({ id: r.status_id, bill_count: r.bill_count })),
+        "id"
+    );
+    const committeeCounts = indexCountsByCode(facets?.committees || [], "committee_system_code");
+
+    const policyAreas = (filterOptions?.policyAreas || []).map((p) => ({
+        ...p,
+        bill_count: policyCounts.get(String(p.policy_area_id)) ?? 0,
+    }));
+
+    const statuses = (filterOptions?.statuses || []).map((s) => ({
+        ...s,
+        bill_count: statusCounts.get(String(s.status_id)) ?? 0,
+    }));
+
+    const committees = (filterOptions?.committees || []).map((c) => ({
+        ...c,
+        bill_count: committeeCounts.get(String(c.committee_system_code)) ?? Number(c.bill_count ?? 0),
+    }));
+
+    const types = filterOptions?.types || [];
+
+    const asOfText = formatAsOfMMDDYYYY(freshness.asOf);
+
+    const activeCount =
+        (filters.q ? 1 : 0) +
+        (filters.chamber ? 1 : 0) +
+        (filters.subject ? 1 : 0) +
+        (filters.from ? 1 : 0) +
+        (filters.to ? 1 : 0) +
+        (filters.minCos ? 1 : 0) +
+        (filters.sort && filters.sort !== "latest_action" ? 1 : 0) +
+        (filters.policyAreaId ? 1 : 0) +
+        (filters.statusId ? 1 : 0) +
+        (filters.type?.length ? 1 : 0) +
+        ((filters.committeeCodes && filters.committeeCodes.length) ? 1 : 0);
+
+    function buildFiltersSummary(filters, lookups) {
+        const parts = [];
+        if (filters.q) parts.push(`“${filters.q}”`);
+        if (filters.chamber) parts.push(filters.chamber);
+        if (filters.type?.length) parts.push(filters.type.map(t => t.toUpperCase()).join(", "));
+
+        if (filters.policyAreaId) {
+            const pa = lookups.policyAreas?.find(p => String(p.policy_area_id) === String(filters.policyAreaId));
+            if (pa) parts.push(pa.policy_area_name);
+        }
+
+        if (filters.statusId) {
+            const st = lookups.statuses?.find(s => String(s.status_id) === String(filters.statusId));
+            if (st) parts.push(st.status_label);
+        }
+
+        if (filters.subject) parts.push(`Subject: ${filters.subject}`);
+        if (filters.committeeCodes?.length) parts.push(`Committees: ${filters.committeeCodes.length}`);
+        if (filters.from || filters.to) parts.push(`Dates`);
+
+        return parts;
+    }
+
+    const summaryParts = buildFiltersSummary(filters, { policyAreas, statuses });
 
     return (
-        <div className="container stack-32 bills-page">
-            <header className="search-header">
-                <h1 className="section__title">Legislation Archive (Congress {congress})</h1>
-                <p className="section__sub">Browse bills by topic, chamber, and recent activity.</p>
+        <div className="ll3-bills">
+            {/* =============================
+          HEADER
+      ============================== */}
+            <header className="ll3-head">
+                <div className="ll3-head__top">
+                    <h1 className="ll3-h1">
+                        Legislation Archive <span className="ll3-h1__sep" aria-hidden="true">|</span>{" "}
+                        <span className="ll3-h1__meta">{congress}th Congress</span>
+                    </h1>
+
+                    {asOfText ? (
+                        <div className="ll3-head__fresh">
+                            Data current as of <strong className="ll3-strong">{asOfText}</strong>
+                        </div>
+                    ) : null}
+                </div>
+
+                <p className="ll3-sub">Browse bills by topic, chamber, and recent activity.</p>
             </header>
 
-            <section className="panel panel--frost">
-                <form className="filters filters__grid" method="get">
-                    <input
-                        name="q"
-                        defaultValue={filters.q || ""}
-                        className="field field--grow"
-                        placeholder="Search title, actions, or topic"
+            {/* =============================
+          TOP SEARCH ROW (NEW)
+          - Desktop: primary search lives here
+          - Mobile: can remain visible; refine sheet handles filters
+      ============================== */}
+            <section className="ll3-searchTop" aria-label="Search bills">
+                <div className="ll3-searchTop__inner">
+                    <BillsFilterForm
+                        formId="bills-search-top"
+                        variant="top"              // NEW variant
+                        filters={filters}
+                        types={types}
+                        policyAreas={policyAreas}
+                        statuses={statuses}
+                        committees={committees}
+                        showSearch={true}
+                        showFilters={false}
+                        showActions={false}
                     />
-
-                    <select
-                        name="chamber"
-                        defaultValue={filters.chamber || ""}
-                        className="field"
-                    >
-                        <option value="">All Chambers</option>
-                        <option value="House">House</option>
-                        <option value="Senate">Senate</option>
-                    </select>
-
-                    <input
-                        name="subject"
-                        defaultValue={filters.subject || ""}
-                        className="field"
-                        placeholder="Subject (e.g., Energy)"
-                    />
-
-                    <input
-                        type="date"
-                        name="from"
-                        defaultValue={filters.from || ""}
-                        className="field field--sm"
-                    />
-                    <input
-                        type="date"
-                        name="to"
-                        defaultValue={filters.to || ""}
-                        className="field field--sm"
-                    />
-
-                    <input
-                        type="number"
-                        min="0"
-                        name="minCos"
-                        defaultValue={filters.minCos}
-                        className="field field--sm"
-                        placeholder="Min cosponsors"
-                    />
-
-                    <select
-                        name="sort"
-                        defaultValue={filters.sort}
-                        className="field"
-                    >
-                        <option value="latest_action">Sort: Latest action</option>
-                        <option value="introduced">Sort: Introduced</option>
-                        <option value="cosponsors">Sort: Cosponsors</option>
-                    </select>
-
-                    <div className="filters__actions">
-                        <button className="btn btn--primary btn--full-sm" type="submit">
-                            Apply
-                        </button>
-                    </div>
-                </form>
+                </div>
             </section>
 
-            {/* Mini activity chart */}
-            <section className="panel">
-                <div className="panel__header">
-                    <h2 className="panel__title">Recent Activity (12 weeks)</h2>
-                </div>
-                <BillActivityMini data={activity} />
-            </section>
-
-            {/* Results table */}
-            <section className="panel">
-                <div className="panel__header">
-                    <h2 className="panel__title">Bills ({total})</h2>
-                </div>
-                <div className="table table--bills">
-                    <div className="table__head">
-                        <div>Bill</div>
-                        <div>Title</div>
-                        <div>Status</div>
-                        <div>Introduced</div>
-                        <div>Latest action</div>
-                        <div>Cosponsors</div>
-                        <div>Subjects</div>
+            {/* =============================
+          DIRECTORY LAYOUT (NEW)
+          - Left: sticky sidebar filters (desktop)
+          - Right: results
+      ============================== */}
+            <section className="ll3-directory">
+                {/* DESKTOP SIDEBAR */}
+                <aside id="ll3-filters-sidebar" className="ll3-sidebar" aria-label="Filters">
+                    <div className="ll3-sidebar__head">
+                        <h2 className="ll3-h2">Filters</h2>
+                        <p className="ll3-muted">Narrow results using the options below.</p>
                     </div>
-                    <div className="table__body">
+
+                    <BillsFilterForm
+                        formId="bills-filters-sidebar"
+                        variant="sidebar"          // NEW variant
+                        filters={filters}
+                        types={types}
+                        policyAreas={policyAreas}
+                        statuses={statuses}
+                        committees={committees}
+                        showSearch={false}
+                        showFilters={true}
+                        showActions={true}         // keep Apply/Reset for now
+                    />
+                </aside>
+
+                {/* RESULTS COLUMN */}
+                <div className="ll3-results">
+                    <div className="ll3-results__header">
+                        <div className="ll3-results__left">
+                            <h2 className="ll3-h2">Bills</h2>
+                            <div className="ll3-results__count">
+                                <span className="ll3-muted">
+                                    Showing <strong className="ll3-strong">{rows.length}</strong> of{" "}
+                                    <strong className="ll3-strong">{total}</strong>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="ll3-results__right">
+                            {summaryParts.length ? (
+                                <>
+                                    <div className="ll3-results__summary">
+                                        Showing results for:{" "}
+                                        <strong className="ll3-strong">{summaryParts.join(" • ")}</strong>
+                                    </div>
+
+                                    <ModifyRefineButtonClient
+                                        desktopTargetId="ll3-filters-sidebar"
+                                        mobileTargetId="ll3-open-refine"
+                                    >
+                                        Modify
+                                    </ModifyRefineButtonClient>
+                                </>
+                            ) : null}
+                        </div>
+                    </div>
+
+                    {/* MOBILE SHEET (UNCHANGED PATTERN) */}
+                    <RefineResultsBarClient label="Bills" hint="Tap to refine results" activeCount={activeCount}>
+                        <div className="ll3-control__panel">
+                            <MobileDraftFormClient debug>
+                                <BillsFilterForm
+                                    formId="bills-filters-sheet"
+                                    variant="sheet"
+                                    filters={filters}
+                                    types={types}
+                                    policyAreas={policyAreas}
+                                    statuses={statuses}
+                                    committees={committees}
+                                    showSearch={false}   // keep search in top row; set true if you want inside sheet too
+                                    showFilters={true}
+                                    showActions={true}
+                                />
+                            </MobileDraftFormClient>
+                        </div>
+                    </RefineResultsBarClient>
+
+                    {/* CARDS */}
+                    <div className="ll3-cards" role="list">
                         {rows.map((r) => {
-                            const slug = `${r.type}-${r.number}-${r.congress}`.toLowerCase();
-                            const statusLabel = (r.status_code || "").replace("_", " ");
-                            return (
-                                <div key={r.bill_id} className="table__row">
-                                    <div className="cell cell--bill">
-                                        <Link href={`/bills/${slug}`}>{`${r.type.toUpperCase()}. ${r.number} (${r.congress})`}</Link>
-                                        <div className={`pill pill--${(r.origin_chamber || "").toLowerCase()}`}>
-                                            {r.origin_chamber}
-                                        </div>
-                                    </div>
-                                    <div className="cell cell--title">{r.title}</div>
-                                    <div className="cell">
-                                        <span className={`status status--${r.status_code}`}>{statusLabel}</span>
-                                    </div>
-                                    <div className="cell">{fmtDate(r.introduced_date)}</div>
-                                    <div className="cell">
-                                        <div className="muted small">{fmtDate(r.latest_action_date)}</div>
-                                        <div className="truncate-2">{r.latest_action_text}</div>
-                                    </div>
-                                    <div className="cell">{r.cosponsor_count}</div>
-                                    <div className="cell">
-                                        {(r.subjects || []).slice(0, 3).map((s, i) => (
-                                            <span key={i} className="chip">
-                                                {typeof s === "string" ? s : s}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            );
+                            const billKey = r.bill_id || `${r.type}-${r.number}-${r.congress}`.toLowerCase();
+                            return <BillCard key={billKey} bill={r} />;
                         })}
                     </div>
+
+                    {/* PAGER */}
+                    <div className="ll3-pager">
+                        {filters.offset > 0 && (
+                            <Link className="ll3-btn ll3-btn--ghost" href={withOffset(filters.offset - filters.limit)}>
+                                Prev
+                            </Link>
+                        )}
+                        {filters.offset + rows.length < total && (
+                            <Link className="ll3-btn ll3-btn--ghost" href={withOffset(filters.offset + filters.limit)}>
+                                Next
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </section>
-
-            {/* Pagination — pass plain string hrefs */}
-            <div className="pager">
-                {filters.offset > 0 && (
-                    <Link className="btn btn--ghost" href={withOffset(filters.offset - filters.limit)}>
-                        Prev
-                    </Link>
-                )}
-                {filters.offset + rows.length < total && (
-                    <Link className="btn btn--ghost" href={withOffset(filters.offset + filters.limit)}>
-                        Next
-                    </Link>
-                )}
-            </div>
         </div>
     );
 }

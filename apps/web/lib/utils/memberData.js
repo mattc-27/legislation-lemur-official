@@ -1,28 +1,34 @@
 // lib/memberData.js
-import * as Sentry from "@sentry/nextjs";
+import { normalizeMemberImageUrl } from "./memberImage";
 import {
     getMemberProfile,
     getMemberMonthlyStats,
     getMemberSponsoredLegislation,
     getMemberCosponsoredLegislation,
-    // getMemberRecentVotes,
     getHouseMemberVoteAlignment,
     getMemberKpis,
     getMemberMonthlyActivity,
     getMemberSubjects,
     getMemberBills,
     getMemberVoteAlignment,
-} from "../server/members";
+    getHouseMemberAlignmentPanelOverall,
+    getHouseMemberAlignmentByPolicy,
+    getHouseMemberAlignmentTopDeviations
+} from "../server/routes/members";
+
 
 export async function fetchMemberData(bioguideId) {
     try {
         const [
-            profile,
+            profileRaw,
             monthly,
             sponsoredRes,
             cosponsoredRes,
-            // recentVotes,
-            alignment,
+
+            alignOverall,
+            alignByPolicy,
+            alignDeviations,
+
             kpis,
             monthlyActivity,
             subjects,
@@ -32,32 +38,52 @@ export async function fetchMemberData(bioguideId) {
             getMemberMonthlyStats(bioguideId),
             getMemberSponsoredLegislation(bioguideId, { max: 250 }),
             getMemberCosponsoredLegislation(bioguideId, { max: 250 }),
-            // getMemberRecentVotes(bioguideId, { limit: 25 }),
-            getHouseMemberVoteAlignment(bioguideId),
-            getMemberVoteAlignment(bioguideId),
+
+            getHouseMemberAlignmentPanelOverall(bioguideId),
+            getHouseMemberAlignmentByPolicy(bioguideId, { minVotes: 10, sort: "votes" }),
+            getHouseMemberAlignmentTopDeviations(bioguideId, { minVotes: 10 }),
+
             getMemberKpis(bioguideId),
             getMemberMonthlyActivity(bioguideId),
             getMemberSubjects(bioguideId, { limit: 12 }),
             getMemberBills(bioguideId, { limit: 50 }),
         ]);
 
+        const profile = {
+            ...profileRaw,
+            imageUrl: normalizeMemberImageUrl(profileRaw?.imageUrl),
+        };
+
         return {
             profile,
             monthly,
             sponsoredRes,
             cosponsoredRes,
-            // recentVotes,
-            alignment,
+
+            alignmentPanel: {
+                overall: alignOverall,
+                byPolicy: alignByPolicy,
+                topDeviations: alignDeviations,
+                minVotes: 10,
+                sortDefault: "votes",
+            },
+
             kpis,
             monthlyActivity,
             subjects,
             bills,
         };
     } catch (err) {
-        Sentry.captureException(err, {
-            tags: { helper: "fetchMemberData" },
-            extra: { bioguideId },
+        console.error("[fetchMemberData]", {
+            message: err?.message,
+            name: err?.name,
+            code: err?.code,
+            severity: err?.severity,
+            routine: err?.routine,
+            bioguideId,
+            service: process.env.K_SERVICE || null,
+            revision: process.env.K_REVISION || null,
         });
-        throw err; // still let the page error; Sentry now has the context
+        throw err;
     }
 }

@@ -1,135 +1,309 @@
-# Turborepo starter
+# Legislation Lemur (LL3)
 
-This Turborepo starter is maintained by the Turborepo core team.
+**Legislation Lemur** is a neutral, data-driven platform for exploring U.S. Congressional activity — including members, bills, votes, committees, composition trends, and legislative flow — through a structured, stable, and deterministic interface.
 
-## Using this example
+This repository is built on a Turborepo monorepo foundation and integrates:
 
-Run the following command:
+* A highly structured Next.js frontend (LL3 design system)
+* A schema-versioned Postgres control plane
+* Cloud Run Job + Workflow–orchestrated ETL
+* Materialized-view–driven search and metrics
+* Deterministic refresh lifecycle management
 
-```sh
-npx create-turbo@latest
+---
+
+# 🎯 Project Mission
+
+Legislation Lemur exists to:
+
+* Present legislative data without commentary or narrative framing
+* Surface structural and behavioral patterns
+* Provide deterministic, traceable data refresh lifecycles
+* Avoid opinion, sensationalism, and algorithmic bias
+
+This is not a news site.
+It is a structured civic data interface.
+
+---
+
+# 🆕 Recent Platform Updates
+
+## 2026-02 — Committees Directory & Navigation Layer
+
+* Built committees directory page with chamber + type segmentation:
+
+  * Standing
+  * Select / Special
+  * Joint
+* Introduced directory UI tokens (`ll3.committees.*`)
+* Structured card-based navigation
+* Committee card routing foundation established
+* Preparing metrics layer for committee-level analysis
+
+**Impact:**
+Committees are now first-class navigable entities in LL.
+
+---
+
+## 2026-02 — Bills Search & Filtering Enhancements
+
+* Subject-aware autocomplete
+* Filter state stabilization (desktop + mobile)
+* Mobile filter sheet behavior hardened
+* Deterministic query parameter synchronization
+* Rendering consistency fixes across breakpoints
+* Search panel spacing + UI token refinements
+
+**Impact:**
+Cleaner filtering UX. Reduced state drift. Stronger mobile parity.
+
+---
+
+## 2026-02 — Error System & Rendering Stabilization
+
+* Refactored page-level + section-level error boundaries
+* Centralized structured error helpers
+* Error metadata extraction utilities
+* Improved not-found handling
+* Header layout refinement (full-width system)
+* Continued LL3 CSS token cleanup
+
+**Impact:**
+Improved observability. Safer partial failures. More resilient UI rendering.
+
+---
+
+## 2026-02 — ETL & Control Plane Alignment
+
+* Postgres schema updates:
+
+  * `sandbox_ops_control_v1`
+  * `sandbox_ops_sched_v1`
+* Explicit run-group lifecycle tracking
+* Enum-driven execution status modeling
+* Refresh queue tied directly to run groups
+* Safe V3 refresh worker contract alignment
+* Cloud Run Jobs + Workflows orchestration stabilization
+
+**Impact:**
+Deterministic execution tracking. Explicit lifecycle management. Safer refresh sequencing.
+
+---
+
+# 🧠 Backend & Orchestration
+
+The orchestration layer is the most architecturally evolved component of LL.
+
+### Key Characteristics
+
+* Schema-versioned control plane
+* Enum-based run execution tracking
+* Explicit run-group lifecycle states
+* Refresh queue leasing model
+* Materialized view dependency sequencing
+* Safe worker contract (v3)
+* Workflow-based orchestration control
+
+Primary components:
+
+* `ops_refresh_worker`
+* Cloud Run Jobs
+* GCP Workflows
+* Database functions & migrations
+* Supabase Postgres schemas
+* Environment-based execution guards
+
+The frontend consumes stable, materialized-view-backed contracts.
+
+---
+
+# 🏛 Current Feature Surface
+
+## Members
+
+* Member directory
+* Detail pages
+* Term timeline visualization
+* Party & chamber context
+* Session-level metadata
+
+## Bills
+
+* Search (autocomplete + subject-aware)
+* Deterministic filtering
+* Responsive filter UI
+* Bill detail pages
+* Metrics-backed views
+
+## Committees
+
+* Directory segmented by type
+* Card-based navigation
+* Structured routing
+* Metrics expansion planned
+
+## Insights (Scrollytelling Layer)
+
+* Structured editorial-style analysis pages
+* Data-visual sections
+* LL3 layout system integration
+* Designed for neutral legislative pattern exploration
+
+---
+
+# 🗺 Upcoming / Planned Features
+
+## 🔎 District & Address Lookup
+
+* GIS boundary integration (Congressional districts)
+* Address-to-district resolution
+* Privacy-preserving client-side safeguards
+* Notification scaffolding foundation
+
+---
+
+## 📊 Committee Metrics Expansion
+
+* Bill referral counts
+* Throughput metrics
+* Session-level activity trends
+* Subcommittee breakdowns
+
+---
+
+## 📈 Insight Engine Evolution
+
+* Session trend comparisons
+* Cross-chamber flow visualization
+* Bill lifecycle analytics
+* Committee influence mapping
+
+---
+
+## 📬 Notification System (Planned)
+
+* User-defined tracking (member / committee / bill)
+* Weekly digest model
+* Deterministic event generation
+* Minimal PII storage
+
+---
+
+## 🧭 Observability Enhancements
+
+* Structured refresh logs
+* Run-group diagnostics
+* Control-plane admin visibility
+* Workflow state tracing improvements
+
+---
+
+# 🏗 Monorepo Structure
+
+## Apps
+
+* `web` — Main Legislation Lemur frontend (Next.js 15+)
+* `docs` — Documentation site (Next.js)
+
+## Shared Packages
+
+* `@repo/ui` — Shared LL3 UI primitives
+* `@repo/eslint-config`
+* `@repo/typescript-config`
+
+All packages are fully TypeScript.
+
+---
+
+# 🛠 Development
+
+## Install
+
+```bash
+npm install
 ```
 
-## What's inside?
+## Run All Apps
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+```bash
 turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## Run Specific App
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+```bash
 turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
 ```
 
-### Remote Caching
+---
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+# 🏗 Build
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## Build All
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
+```bash
+turbo build
 ```
-cd my-turborepo
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+## Build Specific App
+
+```bash
+turbo build --filter=web
+```
+
+---
+
+# ☁️ Remote Caching (Optional)
+
+```bash
 turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
 turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
 ```
 
-## Useful Links
+Enables shared build artifacts across CI and local machines.
 
-Learn more about the power of Turborepo:
+---
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+# 🧩 Architectural Principles
+
+Legislation Lemur prioritizes:
+
+* Data neutrality
+* Deterministic refresh lifecycles
+* Explicit control-plane state tracking
+* Schema-version alignment
+* Stable materialized-view contracts
+* Strong error boundaries
+* Structured UI hierarchy
+* Minimal algorithmic manipulation
+* Observability over opacity
+
+---
+
+# 🧪 Reviewer Guidance
+
+## Frontend Review Focus
+
+* LL3 layout consistency
+* Search & filter determinism
+* Error boundary behavior
+* Mobile rendering stability
+* Committees navigation structure
+
+## Backend Review Focus
+
+* Control schema alignment
+* Run-group lifecycle enforcement
+* Refresh queue leasing logic
+* Enum correctness
+* Workflow orchestration integrity
+* MV dependency sequencing
+
+---
+
+# 📚 Turborepo References
+
+* [https://turborepo.com/docs/crafting-your-repository/running-tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
+* [https://turborepo.com/docs/crafting-your-repository/caching](https://turborepo.com/docs/crafting-your-repository/caching)
+* [https://turborepo.com/docs/reference/configuration](https://turborepo.com/docs/reference/configuration)
+* [https://turborepo.com/docs/reference/command-line-reference](https://turborepo.com/docs/reference/command-line-reference)

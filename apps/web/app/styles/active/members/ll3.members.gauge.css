@@ -1,0 +1,263 @@
+/* app/styles/active/members/ll3.members.gauge.css
+   ======================================================================
+   Vote alignment gauge (donut) — isolated styling
+   Card structure: head → viz → footer
+   ====================================================================== */
+
+.llmp3-page .llm3-align {
+    --gauge-value-size: 12px;
+    --gauge-unit-size: 15px;
+    --gauge-cap-size: 11px;
+}
+
+.llmp3-page .llm3-align__viz {
+    padding: 6px 0 2px;
+    display: grid;
+    place-items: center;
+}
+
+/* Footer copy sits at the bottom like donut legend/text */
+.llmp3-page .llm3-align__footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.llmp3-page .llm3-align__blurb {
+    margin: 0;
+    color: rgba(17, 24, 39, 0.76);
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 650;
+}
+
+/* Gauge frame = positioning context for centered overlay */
+.llmp3-page .llm3-gauge__frame {
+    position: relative;
+    width: var(--gauge-size, 132px);
+    height: var(--gauge-size, 132px);
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+}
+
+/* SVG centered and stable */
+.llmp3-page .llm3-gauge__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Center overlay */
+.llmp3-page .llm3-gauge__center {
+    position: absolute;
+    inset: 0;
+    /*
+    display: grid;
+    place-items: center;
+    */
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    border: 0.5px solid red;
+    max-width: 98%;
+
+    text-align: center;
+    pointer-events: none;
+    gap: 6px;
+    padding-top: 1px;
+    /* optical */
+}
+
+.llmp3-page .llm3-gauge__valueRow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 1;
+    margin: 0;
+    border: 0.5px solid red;
+}
+
+.llmp3-page .llm3-gauge__value {
+    color: rgba(17, 24, 39, 0.92);
+    /* font-size: var(--gauge-value-size, 36px);*/
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-roboto-slab,
+            ui-serif,
+            Georgia,
+            Cambria,
+            "Times New Roman",
+            Times,
+            serif);
+    letter-spacing: 0.5px;
+    border: 0.5px solid red;
+    max-width: 98%;
+    align-self: center;
+    flex-grow: 2;
+    width: auto;
+    text-align: center;
+}
+
+.llmp3-page .llm3-gauge__unit {
+    color: rgba(17, 24, 39, 0.72);
+    /*   font-size: var(--gauge-unit-size, 15px); */
+    font-weight: 900;
+    line-height: 1;
+    transform: translateY(1px);
+}
+
+.llmp3-page .llm3-gauge__caption {
+    margin: 0;
+    color: rgba(17, 24, 39, 0.58);
+    /*  font-size: var(--gauge-cap-size, 11px);*/
+    font-weight: 850;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    font-family: var(--font-roboto,
+            system-ui,
+            -apple-system,
+            "Segoe UI",
+            Roboto,
+            Helvetica,
+            Arial,
+            "Apple Color Emoji",
+            "Segoe UI Emoji"
+        );
+}
+
+
+/* app/styles/active/members/ll3.members.gauge.css
+   ======================================================================
+   Vote alignment gauge (donut) — larger viz + proportional type
+   ====================================================================== */
+
+.llmp3-page .llm3-align {
+    /* give the card a responsive gauge size target */
+    --gauge-max: 220px;
+    /* hard cap so it doesn’t get absurd */
+    --gauge-min: 168px;
+    /* floor so it doesn’t shrink too much */
+    --gauge-size: clamp(var(--gauge-min), 66%, var(--gauge-max));
+    /* 66% of the card’s available inline size ~ “2/3 of the area” feel */
+
+    /* scale typography in proportion to gauge size */
+    --gauge-value-size: clamp(28px, calc(var(--gauge-size) * 0.30), 52px);
+    --gauge-unit-size: clamp(12px, calc(var(--gauge-size) * 0.12), 18px);
+    --gauge-cap-size: clamp(10px, calc(var(--gauge-size) * 0.085), 13px);
+}
+
+/* Center the viz and give it breathing room */
+.llmp3-page .llm3-align__viz {
+    padding: 10px 0 6px;
+    display: grid;
+    place-items: center;
+}
+
+/* The donut now takes the responsive size above */
+.llmp3-page .llm3-gauge__frame {
+    width: var(--gauge-size);
+    height: var(--gauge-size);
+    margin: 0 auto;
+}
+
+/* Center overlay stays stable */
+.llmp3-page .llm3-gauge__center {
+    gap: 6px;
+    padding-top: 1px;
+}
+
+/* Value row */
+.llmp3-page .llm3-gauge__valueRow {
+    gap: 6px;
+}
+
+/* Number */
+.llmp3-page .llm3-gauge__value {
+    /* font-size: var(--gauge-value-size); */
+    font-weight: 950;
+    line-height: 1;
+}
+
+/* % */
+.llmp3-page .llm3-gauge__unit {
+    /*   font-size: var(--gauge-unit-size);*/
+    font-weight: 900;
+    line-height: 1;
+    transform: translateY(1px);
+}
+
+/* Caption */
+.llmp3-page .llm3-gauge__caption {
+    font-size: var(--gauge-cap-size);
+    letter-spacing: 0.10em;
+}
+
+/* Footer stays readable but not massive */
+.llmp3-page .llm3-align__footer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.llmp3-page .llm3-align__blurb {
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+
+/* Minimal alignment badge panel */
+.llmp3-page .llm3-alignBadge__body {
+    display: grid;
+    gap: 12px;
+    padding-top: 4px;
+}
+
+.llmp3-page .llm3-alignBadge__metric {
+    display: grid;
+    gap: 4px;
+    padding: 12px 12px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.70);
+}
+
+.llmp3-page .llm3-alignBadge__value {
+    color: rgba(17, 24, 39, 0.92);
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-size: 44px;
+    font-variant-numeric: tabular-nums;
+}
+
+.llmp3-page .llm3-alignBadge__unit {
+    font-size: 18px;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.72);
+    margin-left: 6px;
+    position: relative;
+    top: -8px;
+    /* keeps it visually tucked */
+}
+
+.llmp3-page .llm3-alignBadge__sub {
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(17, 24, 39, 0.58);
+}
+
+.llmp3-page .llm3-alignBadge__blurb {
+    margin: 0;
+    color: rgba(17, 24, 39, 0.76);
+    line-height: 1.6;
+    font-weight: 650;
+    font-size: 14px;
+}

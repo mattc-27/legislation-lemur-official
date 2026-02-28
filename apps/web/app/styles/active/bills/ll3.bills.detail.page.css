@@ -1,0 +1,658 @@
+/* app/(app)/styles/ll3.bill.details.css
+   ======================================================================
+   LL3 — Bill Details (page-scoped only)
+   - Uses global tokens/ui for typography, buttons, links, inputs where possible.
+   - Keeps llbd3-* namespace isolated to this route.
+   - Later rules override earlier (per your note).
+   ====================================================================== */
+
+/* ----------------------------------------------------------------------
+   Page shell + background (scoped)
+   ---------------------------------------------------------------------- */
+.llbd3-page,
+.llbd3-page * {
+    box-sizing: border-box;
+}
+
+.llbd3-page {
+    color: var(--ll3-text);
+    background:
+        radial-gradient(1000px 520px at 14% 0%, rgba(180, 201, 232, 0.35), transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, rgba(232, 180, 184, 0.20), transparent 62%),
+        linear-gradient(#ffffff, #ffffff);
+}
+
+.llbd3-wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 22px 16px 34px;
+}
+
+/* ----------------------------------------------------------------------
+   Top header area
+   ---------------------------------------------------------------------- */
+.llbd3-top {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.llbd3-top__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.llbd3-head {
+    max-width: 86ch;
+}
+
+/* Back link (page-specific variant, not a global .ll3-btn) */
+.llbd3-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.70);
+    color: rgba(17, 24, 39, 0.92);
+
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: var(--ll3-shadow2);
+}
+
+.llbd3-back:hover {
+    background: rgba(255, 255, 255, 1);
+}
+
+.llbd3-back:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.35);
+    outline-offset: 2px;
+}
+
+/* Eyebrow */
+.llbd3-eyebrow {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+
+    font-size: 0.78rem;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(17, 24, 39, 0.55);
+}
+
+.llbd3-eyebrow__sep {
+    opacity: 0.6;
+}
+
+/* Title row + h1 */
+.llbd3-titleRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.llbd3-h1 {
+    margin: 0;
+    color: var(--ll3-ink);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.6rem, 1.2vw + 1.3rem, 2.2rem);
+    line-height: 1.22;
+}
+
+.llbd3-subtitle {
+    margin: 10px 0 0;
+    color: var(--ll3-text);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Header external link: subtle, not a “button” */
+.llbd3-extlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 999px;
+
+    text-decoration: none;
+    font-weight: 750;
+
+    color: rgba(17, 24, 39, 0.78);
+    background: transparent;
+    border: 1px solid rgba(17, 24, 39, 0.14);
+
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
+}
+
+.llbd3-extlink:hover {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(17, 24, 39, 0.20);
+    transform: translateY(-1px);
+}
+
+.llbd3-extlink:active {
+    transform: translateY(0);
+}
+
+.llbd3-extlink:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.35);
+    outline-offset: 2px;
+}
+
+/* Status (dot + label) - page-scoped */
+.llbd3-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.85);
+    color: rgba(17, 24, 39, 0.92);
+    font-weight: 850;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.llbd3-status__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #9ca3af;
+}
+
+.llbd3-status--introduced .llbd3-status__dot {
+    background: #60a5fa;
+}
+
+.llbd3-status--committee .llbd3-status__dot {
+    background: #a78bfa;
+}
+
+.llbd3-status--reported .llbd3-status__dot {
+    background: #f59e0b;
+}
+
+.llbd3-status--passed .llbd3-status__dot {
+    background: #6366f1;
+}
+
+.llbd3-status--final .llbd3-status__dot {
+    background: #14b8a6;
+}
+
+.llbd3-status--law .llbd3-status__dot {
+    background: #22c55e;
+}
+
+.llbd3-status--veto .llbd3-status__dot {
+    background: #ef4444;
+}
+
+/* ----------------------------------------------------------------------
+   Hero
+   ---------------------------------------------------------------------- */
+.llbd3-hero {
+    margin-top: 14px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow);
+    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+    backdrop-filter: saturate(1.1) blur(10px);
+    overflow: hidden;
+}
+
+.llbd3-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px;
+}
+
+@media (max-width: 920px) {
+    .llbd3-hero__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.llbd3-hero__primary {
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(255, 255, 255, 0.80);
+    border-radius: 12px;
+    padding: 14px;
+    min-width: 0;
+}
+
+.llbd3-hero__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: rgba(17, 24, 39, 0.58);
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    font-weight: 850;
+    font-size: 0.74rem;
+}
+
+.llbd3-hero__date {
+    margin-top: 8px;
+    color: var(--ll3-ink);
+    font-weight: 900;
+    font-size: 0.95rem;
+}
+
+.llbd3-hero__text {
+    margin-top: 8px;
+    color: var(--ll3-text);
+    line-height: 1.6;
+    font-size: 0.98rem;
+    word-break: break-word;
+}
+
+/* Meta KV grid */
+.llbd3-hero__meta {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+}
+
+.llbd3-kv {
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(255, 255, 255, 0.80);
+    border-radius: 12px;
+    padding: 12px;
+    min-width: 0;
+}
+
+.llbd3-kv__k {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 0.78rem;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.llbd3-kv__v {
+    margin-top: 8px;
+    color: var(--ll3-ink);
+    font-weight: 850;
+    line-height: 1.35;
+}
+
+/* Subjects row in hero */
+.llbd3-subjectRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.llbd3-subject {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--ll3-ink);
+
+    font-size: 0.86rem;
+    font-weight: 800;
+    min-width: 0;
+}
+
+.llbd3-subject__label {
+    max-width: 22ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.llbd3-subject--more {
+    background: rgba(17, 24, 39, 0.03);
+}
+
+/* ----------------------------------------------------------------------
+   Body grid + columns
+   ---------------------------------------------------------------------- */
+.llbd3-body {
+    margin-top: 16px;
+    display: grid;
+    gap: 18px;
+    align-items: start;
+}
+
+@media (min-width: 980px) {
+    .llbd3-body {
+        grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+    }
+}
+
+.llbd3-main,
+.llbd3-side {
+    min-width: 0;
+    display: grid;
+    gap: 14px;
+}
+
+/* ----------------------------------------------------------------------
+   Cards (page-specific wrapper; not global ll3-card)
+   ---------------------------------------------------------------------- */
+.llbd3-card {
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    border-radius: var(--ll3-radius);
+    box-shadow: var(--ll3-shadow2);
+    padding: 16px;
+}
+
+.llbd3-card--soft {
+    background: rgba(255, 255, 255, 0.75);
+    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+    backdrop-filter: saturate(1.1) blur(10px);
+}
+
+.llbd3-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.llbd3-h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+
+    color: var(--ll3-ink);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    font-size: 1rem;
+}
+
+.llbd3-count {
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 850;
+}
+
+/* ----------------------------------------------------------------------
+   Timeline
+   ---------------------------------------------------------------------- */
+.llbd3-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+}
+
+.llbd3-timeline__item {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.llbd3-timeline__rail {
+    position: relative;
+    display: grid;
+    justify-items: center;
+}
+
+.llbd3-timeline__rail::before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    bottom: -16px;
+    width: 2px;
+    background: rgba(17, 24, 39, 0.10);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.llbd3-timeline__item:last-child .llbd3-timeline__rail::before {
+    display: none;
+}
+
+.llbd3-timeline__dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid rgba(17, 24, 39, 0.12);
+    box-shadow: 0 0 0 4px rgba(180, 201, 232, 0.28);
+    margin-top: 2px;
+}
+
+.llbd3-timeline__content {
+    min-width: 0;
+}
+
+.llbd3-timeline__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.llbd3-timeline__date {
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 0.82rem;
+    font-weight: 850;
+}
+
+.llbd3-timeline__type {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    font-weight: 900;
+
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(17, 24, 39, 0.03);
+    color: var(--ll3-ink);
+
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.llbd3-timeline__text {
+    color: var(--ll3-text);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    word-break: break-word;
+}
+
+/* ----------------------------------------------------------------------
+   Docs list
+   ---------------------------------------------------------------------- */
+.llbd3-docs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.llbd3-doc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 12px;
+    border-radius: 14px;
+
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.85);
+
+    text-decoration: none;
+    color: var(--ll3-ink);
+
+    transition: transform 0.06s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.llbd3-doc:hover {
+    transform: translateY(-1px);
+    border-color: rgba(17, 24, 39, 0.16);
+    background: #fff;
+}
+
+.llbd3-doc__title {
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    color: var(--ll3-ink);
+}
+
+.llbd3-doc__sub {
+    margin-top: 4px;
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 0.84rem;
+    font-weight: 750;
+}
+
+/* ----------------------------------------------------------------------
+   Related + side lists
+   ---------------------------------------------------------------------- */
+.llbd3-list,
+.llbd3-sideList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.llbd3-list__item,
+.llbd3-sideList__item {
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(255, 255, 255, 0.85);
+}
+
+/* Sponsor chip link */
+.llbd3-chipLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--ll3-ink);
+
+    text-decoration: none;
+    font-weight: 850;
+    max-width: 100%;
+}
+
+.llbd3-chipLink:hover {
+    background: #fff;
+}
+
+.llbd3-pillRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.llbd3-pill {
+    display: inline-flex;
+    align-items: center;
+
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--ll3-ink);
+
+    font-weight: 850;
+    font-size: 0.86rem;
+
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------------
+   Helpers (page-scoped)
+   ---------------------------------------------------------------------- */
+.llbd3-muted {
+    color: rgba(17, 24, 39, 0.58);
+}
+
+.llbd3-small {
+    font-size: 0.86rem;
+}
+
+.llbd3-mt-6 {
+    margin-top: 6px;
+}
+
+.llbd3-mt-10 {
+    margin-top: 10px;
+}
+
+/* ----------------------------------------------------------------------
+   Mobile tweaks (later = more relevant)
+   ---------------------------------------------------------------------- */
+@media (max-width: 640px) {
+    .llbd3-wrap {
+        padding-top: 18px;
+    }
+
+    .llbd3-extlink {
+        height: 34px;
+        padding: 0 9px;
+        font-weight: 750;
+        color: rgba(17, 24, 39, 0.72);
+        border-color: rgba(17, 24, 39, 0.12);
+        background: rgba(255, 255, 255, 0.55);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        white-space: nowrap;
+    }
+
+    .llbd3-card {
+        padding: 14px;
+    }
+}

@@ -1,36 +1,223 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# Legislation Lemur — Web App (apps/web)
 
-## Getting Started
+This is the **Next.js (App Router)** frontend for Legislation Lemur (LL3).
 
-First, run the development server:
+The web app provides a neutral, structured interface for exploring U.S. Congressional data — including bills, members, committees, and legislative session context. It consumes materialized-view–backed API contracts designed for deterministic rendering and stable filtering behavior.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The UI emphasizes:
+- Data neutrality
+- Explicit state synchronization
+- Stable refresh-aware rendering
+- Clear visual hierarchy via the LL3 design system
+
+---
+
+## High-Level Architecture
+
+### Framework
+- Next.js 15+ (App Router)
+- TypeScript
+- Turborepo monorepo integration
+
+### Data Model
+The app consumes:
+- Materialized view–backed endpoints
+- Deterministic query-driven filtering
+- Explicit run-lifecycle–aligned payloads (backend-controlled)
+
+The frontend does **not** contain business logic about legislative interpretation — only structured presentation.
+
+---
+
+## Key Route Groups
+
+```
+app/
+├── (app)/
+│   ├── bills/
+│   ├── members/
+│   ├── committees/
+│   └── insights/
+├── (wiki)/
+└── layout.jsx
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Primary surface areas:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Bills**
+  - Search + filtering (URL-driven state)
+  - Bill detail pages
+- **Members**
+  - Directory
+  - Detail pages with service timelines
+- **Committees**
+  - Segmented directory (Standing / Select / Joint)
+- **Insights**
+  - Structured scrollytelling / editorial-style data exploration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+---
 
-## Learn More
+## UI & Styling System
 
-To learn more about Next.js, take a look at the following resources:
+The web app uses the **LL3 token system**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Token files: `ll3.*.tokens.css`
+- Layout styles: `ll3.*.layout.css`
+- Feature-specific UI: `ll3.bills.*`, `ll3.members.*`, `ll3.committees.*`, etc.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Conventions:
+- Prefer token usage over inline styles
+- Maintain consistent typography hierarchy
+- Avoid one-off layout hacks
+- Favor predictable spacing + structural clarity
 
-## Deploy on Vercel
+The system is designed to scale without visual drift.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Search & Filter Architecture
+
+Bills filtering is intentionally:
+
+- **URL-driven** (query params reflect full state)
+- **Breakpoint-stable** (desktop + mobile parity)
+- **Debounced and deterministic**
+- **Autocomplete-enhanced (subject-aware)**
+
+Pattern:
+
+1. UI control updates query param
+2. Query param drives fetch
+3. Render based on canonical URL state
+
+This prevents state desynchronization between mobile sheets and desktop panels.
+
+---
+
+## Common Development Patterns
+
+### Add a New Bill Filter
+
+1. Add control component (UI layer)
+2. Wire to query param state
+3. Extend request builder to include param
+4. Confirm mobile filter sheet parity
+5. Verify SSR + client transitions remain stable
+
+---
+
+### Add a New Data Field to Bill Cards
+
+1. Confirm field exists in API/view contract
+2. Add formatting helper (if needed) in `lib/`
+3. Render in card component
+4. Add null-safe fallback behavior
+
+Avoid rendering raw payload fields directly without formatting normalization.
+
+---
+
+### Add a New Page Panel / Section
+
+1. Create section component
+2. Use LL3 layout primitives
+3. Maintain typographic scale consistency
+4. Ensure error boundary compatibility
+5. Avoid introducing layout shifts during hydration
+
+---
+
+## Error Handling Strategy
+
+- Page-level error boundaries
+- Section-level isolation where appropriate
+- Structured error metadata extraction
+- Controlled not-found rendering
+
+The goal is partial resilience — not full-page collapse.
+
+---
+
+## Local Development (Web Only)
+
+From repo root:
+
+```bash
+turbo dev --filter=web
+```
+
+Default:
+```
+http://localhost:3000
+```
+
+Environment variables (example):
+
+```
+NEXT_PUBLIC_API_BASE_URL=...
+NEXT_PUBLIC_ENV=development
+```
+
+> Do not store secrets in `NEXT_PUBLIC_*`.
+
+---
+
+## Build
+
+From repo root:
+
+```bash
+turbo build --filter=web
+```
+
+The output is deployed via Firebase Hosting (environment-targeted channels).
+
+---
+
+## Deployment Notes (High Level)
+
+Environments:
+- dev
+- stage
+- production
+
+Deployment:
+- Turborepo build
+- Firebase hosting target per environment
+- Backend orchestration handled separately via Cloud Run + Workflows
+
+The web app assumes stable materialized-view contracts at runtime.
+
+---
+
+## Recent UI Updates
+
+### 2026-02 — Committees Directory Layer
+
+- Segmented directory (Standing / Select / Joint)
+- Card-based navigation
+- LL3 token integration
+- Routing foundation for committee metrics expansion
+
+---
+
+### 2026-02 — Bills Search Stabilization
+
+- Subject-aware autocomplete
+- Query synchronization improvements
+- Mobile filter sheet hardening
+- Rendering consistency fixes
+
+---
+
+## Design Philosophy
+
+This frontend prioritizes:
+
+- Determinism over animation noise
+- Clarity over decoration
+- Neutrality over commentary
+- Explicit state over implicit behavior
+- Structural hierarchy over visual clutter
+
+The goal is to make legislative data understandable without narrative framing.
