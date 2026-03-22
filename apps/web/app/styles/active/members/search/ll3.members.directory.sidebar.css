@@ -1,0 +1,87 @@
+.ll3-directorySidebar {
+    min-width: 0;
+    align-self: start;
+    position: sticky;
+    top: 16px;
+}
+
+.ll3-directorySidebar__inner {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+.ll3-directorySidebar__title {
+    margin: 0 0 10px;
+    padding: 0 0 8px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(17, 24, 39, 0.50);
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.ll3-directorySidebar__nav {
+    display: grid;
+    gap: 2px;
+}
+
+.ll3-stateJump {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 28px;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 0 8px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: rgba(17, 24, 39, 0.62);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.ll3-stateJump:hover {
+    background: rgba(17, 24, 39, 0.04);
+    color: rgba(17, 24, 39, 0.92);
+}
+
+.ll3-stateJump.is-active,
+.ll3-stateJump[aria-current="true"] {
+    background: rgba(17, 24, 39, 0.05);
+    color: #111827;
+}
+
+.ll3-stateJump__code {
+    font-size: 12px;
+    font-weight: 800;
+    color: inherit;
+}
+
+.ll3-stateJump__name {
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ll3-stateJump__count {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.48);
+    text-align: right;
+}
+
+@media (max-width: 980px) {
+    .ll3-directorySidebar {
+        display: none;
+    }
+}

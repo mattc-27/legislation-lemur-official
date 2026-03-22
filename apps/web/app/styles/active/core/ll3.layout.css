@@ -29,6 +29,19 @@
 }
 
 /* Sticky header clearance (single canonical rule) */
-.ll3 .site-main {
+/*.ll3 .site-main {
     padding-top: var(--ll3-main-top);
+}
+
+.ll3 .site-main {
+    --ll3-main-top: var(--ll3-header-h);
+    padding-top: var(--ll3-main-top);
+}
+*/
+
+@media (max-width: 860px) {
+    .ll3 .site-main {
+        --ll3-header-h: var(--ll3-header-h-mobile);
+        --ll3-main-top: var(--ll3-header-h-mobile);
+    }
 }

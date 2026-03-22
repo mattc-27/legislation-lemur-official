@@ -1,4 +1,3 @@
-// components/member/MemberTabs.jsx
 "use client";
 import { useMemo, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -37,27 +36,22 @@ export default function MemberTabs({
     groupsCosponsored,
     monthly = [],
     sourceLabel = "Includes sponsored + co-sponsored bills",
-
-    // NEW: pass freshness in from the server (recommended)
     freshnessAsOf = null,
     freshnessPerView = null,
     showPerViewFreshness = false,
 }) {
     const [selectedTopic, setSelectedTopic] = useState(null);
-    const [subjectKind, setSubjectKind] = useState("policy_area"); // ← toggle state
+    const [subjectKind, setSubjectKind] = useState("policy_area");
 
-    // pick the set for this kind
     const sponsoredGroups =
         groupsSponsored?.groups?.[subjectKind] ?? groupsSponsored?.legacy ?? [];
     const cosponsoredGroups =
         groupsCosponsored?.groups?.[subjectKind] ?? groupsCosponsored?.legacy ?? [];
 
-    // clear selection when switching kind (prevents empty table due to stale filter)
     useEffect(() => {
         setSelectedTopic(null);
     }, [subjectKind]);
 
-    // merge & dedupe by subject, preserve kinds for badges
     const mergedGroups = useMemo(() => {
         const sets = [
             { set: sponsoredGroups, kind: "sponsored" },
@@ -84,7 +78,6 @@ export default function MemberTabs({
                     return { ...it, kinds };
                 });
 
-                // dedupe by id/url/title
                 const next = [...prev.items, ...withKind];
                 const dedup = new Map();
                 for (const it of next) {
@@ -114,14 +107,46 @@ export default function MemberTabs({
 
     return (
         <section className="llmp3-card llm3-tabs">
-            {/* Header */}
-            <div className="llm3-tabs__head">
-                <div className="llm3-tabs__titleBlock">
-                    <h2 className="llm3-h2 llm3-tabs__title">{title}</h2>
-                    <div className="llm3-muted llm3-tabs__sub">
+            <div className="llm3-tabs__sectionHead">
+                <div className="llm3-tabs__sectionTitleBlock">
+                    <h2 className="llmp3-h2 llm3-tabs__sectionTitle">
+                        Sponsored and cosponsored legislation
+                    </h2>
+                    <div className="llm3-tabs__sectionDesc">
+                        Explore the policy areas and legislative topics that appear most often across this member’s sponsored and cosponsored bills.
+                    </div>
+                </div>
+
+                <div className="llm3-tabs__sectionMeta">
+                    <div className="llm3-tabs__subline">
                         <span>{sourceLabel}</span>
                         {freshnessLine ? <span> • Updated {freshnessLine}</span> : null}
                     </div>
+                </div>
+            </div>
+
+
+            <div className="llm3-tabs__topbar">
+                <div className="llm3-tabs__modeTabs" role="tablist" aria-label="Topic mode">
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={subjectKind === "policy_area"}
+                        className={`llm3-tabs__modeTab ${subjectKind === "policy_area" ? "is-active" : ""}`}
+                        onClick={() => setSubjectKind("policy_area")}
+                    >
+                        Policy Areas
+                    </button>
+
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={subjectKind === "legislative"}
+                        className={`llm3-tabs__modeTab ${subjectKind === "legislative" ? "is-active" : ""}`}
+                        onClick={() => setSubjectKind("legislative")}
+                    >
+                        Legislative Topics
+                    </button>
                 </div>
             </div>
 
@@ -135,36 +160,13 @@ export default function MemberTabs({
                 </div>
             )}
 
-            {/* subject-kind toggle (Bills-style filter pills) */}
-            <div className="ll3-filterPills llm3-tabs__toggle" role="tablist" aria-label="Topic mode">
-                <button
-                    type="button"
-                    role="tab"
-                    aria-pressed={subjectKind === "policy_area"}
-                    aria-selected={subjectKind === "policy_area"}
-                    className={"ll3-filterPill" + (subjectKind === "policy_area" ? " is-active" : "")}
-                    onClick={() => setSubjectKind("policy_area")}
-                >
-                    Policy Areas
-                </button>
-
-                <button
-                    type="button"
-                    role="tab"
-                    aria-pressed={subjectKind === "legislative"}
-                    aria-selected={subjectKind === "legislative"}
-                    className={"ll3-filterPill" + (subjectKind === "legislative" ? " is-active" : "")}
-                    onClick={() => setSubjectKind("legislative")}
-                >
-                    Legislative Topics
-                </button>
-            </div>
-
-            {/* donut + table */}
             <div className="llm3-tabsRow">
                 <div className="llm3-tabsViz">
                     <div className="llm3-tabsViz__frame">
-                        <TopicDonut groups={mergedGroups} onSelectTopic={setSelectedTopic} />
+                        <TopicDonut
+                            groups={mergedGroups}
+                            onSelectTopic={setSelectedTopic}
+                        />
                     </div>
                 </div>
 

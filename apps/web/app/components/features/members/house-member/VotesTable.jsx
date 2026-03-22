@@ -1,81 +1,110 @@
 "use client";
 
+import { CheckCircle2, XCircle, CircleSlash } from "lucide-react";
+
 export default function VotesTable({ votes = [] }) {
   if (!votes || votes.length === 0) {
-    return <p className="llm3-muted" style={{ padding: "12px 0" }}>No votes found.</p>;
+    return (
+      <p className="llm3-muted votes-table__empty" style={{ padding: "12px 0" }}>
+        No votes found.
+      </p>
+    );
   }
 
   return (
-    <table className="votes-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Bill</th>
-          <th>Roll</th>
-          <th>Question</th>
-          <th>Your Vote</th>
-          <th>Result</th>
-        </tr>
-      </thead>
-      <tbody>
-        {votes.map((v) => {
-          const date = fmtDate(
-            v?.voted_at ?? v?.date ?? v?.votedAt ?? v?.vote_date ?? v?.voteDate
-          );
+    <div className="votes-list">
+      {votes.map((v) => {
+        const row = normalizeVote(v);
 
-          const billDisplay = v?.bill_display ?? v?.billDisplay ?? v?.bill ?? null;
-          const billUrl = v?.bill_url ?? v?.billUrl ?? null;
+        return (
+          <article key={row.key} className="votes-list__item">
+            <div className="votes-list__top">
+              <time className="votes-list__date">{row.date}</time>
+              <span className={`votes-table__resultBadge ${row.resultMeta.className}`} title={row.resultMeta.label}>
+                <row.resultMeta.Icon size={14} aria-hidden="true" />
+                <span>{row.resultMeta.shortLabel}</span>
+              </span>
+            </div>
 
-          const bill = billDisplay
-            ? billUrl
-              ? (
-                <a href={billUrl} target="_blank" rel="noopener noreferrer">
-                  {billDisplay}
+            <div className="votes-list__measure" title={row.measureText}>
+              {row.billUrl && row.measureText !== "—" ? (
+                <a href={row.billUrl} target="_blank" rel="noopener noreferrer" className="votes-table__billLink">
+                  {row.measureText}
                 </a>
-              )
-              : billDisplay
-            : "—";
+              ) : (
+                <span className="votes-table__billText">{row.measureText}</span>
+              )}
+            </div>
 
-          const roll =
-            v?.rollcall_number != null && v?.session != null
-              ? `${v.session}-${v.rollcall_number}`
-              : v?.roll ?? v?.rollcall_number ?? "—";
+            <div className="votes-list__bottom">
+              <span className="votes-list__meta">
+                {row.roll !== "—" ? `Roll call ${row.roll}` : "Roll call unavailable"}
+              </span>
 
-          const question = v?.question ?? "—";
-          const choice = v?.choice ?? v?.position ?? "—";
-          const result = v?.result ?? "—";
-
-          const key =
-            v?.vote_id ??
-            v?.voteId ??
-            `${v?.congress ?? ""}-${v?.session ?? ""}-${v?.rollcall_number ?? ""}-${v?.voted_at ?? v?.date ?? ""}`;
-
-          return (
-            <tr key={key}>
-              <td>{date}</td>
-              <td>{bill}</td>
-              <td>{roll}</td>
-              <td>{question}</td>
-              <td>
-                <span className={`badge ${badgeForVote(choice)}`}>
-                  {prettyVote(choice)}
-                </span>
-              </td>
-              <td>{result}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+              <span className={`badge ${badgeForVote(row.choice)}`}>
+                {prettyVote(row.choice)}
+              </span>
+            </div>
+          </article>
+        );
+      })}
+    </div>
   );
 }
 
-/* ----- Helpers */
+/* ----- Helpers ----- */
 
-function fmtDate(s) {
+function normalizeVote(v) {
+  const date = fmtDateISO(
+    v?.voted_at ?? v?.date ?? v?.votedAt ?? v?.vote_date ?? v?.voteDate
+  );
+
+  const measureText =
+    v?.bill_title ??
+    v?.billTitle ??
+    v?.bill_display ??
+    v?.billDisplay ??
+    v?.short_title ??
+    v?.shortTitle ??
+    v?.bill ??
+    v?.question ??
+    "—";
+
+  const billUrl = v?.bill_url ?? v?.billUrl ?? null;
+
+  const roll =
+    v?.rollcall_number != null && v?.session != null
+      ? `${v.session}-${v.rollcall_number}`
+      : v?.roll ?? v?.rollcall_number ?? "—";
+
+  const choice = v?.choice ?? v?.position ?? "—";
+  const result = v?.result ?? "—";
+
+  const key =
+    v?.vote_id ??
+    v?.voteId ??
+    `${v?.congress ?? ""}-${v?.session ?? ""}-${v?.rollcall_number ?? ""}-${v?.voted_at ?? v?.date ?? ""}`;
+
+  return {
+    key,
+    date,
+    measureText,
+    billUrl,
+    roll,
+    choice,
+    resultMeta: resultDisplay(result),
+  };
+}
+
+function fmtDateISO(s) {
   if (!s) return "—";
   const d = new Date(s);
-  return Number.isNaN(d.getTime()) ? String(s) : d.toLocaleDateString();
+  if (Number.isNaN(d.getTime())) return String(s).slice(0, 10);
+
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 function prettyVote(pos) {
@@ -84,7 +113,7 @@ function prettyVote(pos) {
   if (p === "yea" || p === "yes" || p === "aye") return "Yea";
   if (p === "nay" || p === "no") return "Nay";
   if (p.includes("present")) return "Present";
-  if (p.includes("not voting")) return "Not Voting";
+  if (p.includes("not voting")) return "Not voting";
   return String(pos);
 }
 
@@ -96,4 +125,33 @@ function badgeForVote(pos) {
   if (p.includes("present")) return "badge--slate";
   if (p.includes("not voting")) return "badge--muted";
   return "badge--slate";
+}
+
+function resultDisplay(result) {
+  const r = String(result || "").toLowerCase();
+
+  if (r.includes("pass") || r.includes("agreed")) {
+    return {
+      label: "Passed",
+      shortLabel: "Passed",
+      className: "is-pass",
+      Icon: CheckCircle2,
+    };
+  }
+
+  if (r.includes("fail") || r.includes("rejected")) {
+    return {
+      label: "Failed",
+      shortLabel: "Failed",
+      className: "is-fail",
+      Icon: XCircle,
+    };
+  }
+
+  return {
+    label: result || "Other",
+    shortLabel: "Other",
+    className: "is-other",
+    Icon: CircleSlash,
+  };
 }

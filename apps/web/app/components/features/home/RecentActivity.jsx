@@ -3,19 +3,59 @@ import { getHomeSnapshot } from "@/lib/server/routes/congress";
 export const revalidate = 900;
 
 // Normalize helpers (accepts a few shapes)
-const normBill = (b, i) => ({
-    id: b?.id ?? b?.bill_id ?? `bill-${i}`,
-    title: b?.title ?? b?.name ?? b?.label ?? b?.short_title ?? b?.number ?? "Untitled bill",
-    url: b?.url ?? b?.href ?? b?.link ?? "#",
-});
+const normBill = (b, i) => {
+    const url = b?.url ?? b?.href ?? b?.link ?? "#";
+    const href = preferBillHref(b, url);
 
-const normAction = (a, i) => ({
-    id: a?.id ?? `act-${i}`,
-    label: a?.label ?? a?.title ?? a?.name ?? "Action",
-    date: a?.date ?? a?.when ?? a?.updated_at ?? "",
-    url: a?.url ?? a?.href ?? a?.link ?? "#",
-});
+    return {
+        id: b?.id ?? b?.bill_id ?? `bill-${i}`,
+        title: b?.title ?? b?.name ?? b?.label ?? b?.short_title ?? b?.number ?? "Untitled bill",
+        url,    // keep external / provided link as-is
+        href,   // new: preferred in-app link when possible
+    };
+};
 
+const normAction = (a, i) => {
+    const url = a?.url ?? a?.href ?? a?.link ?? "#";
+
+    // If actions have the bill fields directly, this works.
+    // If actions have a nested bill object, this also covers it.
+    const billLike = a?.bill ?? a?.bill_ref ?? a;
+    const href = preferBillHref(billLike, url);
+
+    return {
+        id: a?.id ?? `act-${i}`,
+        label: a?.label ?? a?.title ?? a?.name ?? "Action",
+        date: a?.date ?? a?.when ?? a?.updated_at ?? "",
+        url,   // keep
+        href,  // new preferred link
+    };
+};
+
+function billSlugFromRecord(r) {
+    const billType = r?.bill_type ?? r?.billType ?? r?.type;
+    const billNumber = r?.bill_number ?? r?.billNumber ?? r?.number;
+    const congress = r?.congress ?? r?.congress_num ?? r?.congressNumber;
+
+    if (!billType || !billNumber || !congress) return null;
+
+    return `${billType}-${billNumber}-${congress}`.toLowerCase();
+}
+
+function billHrefFromRecord(r) {
+    const slug = billSlugFromRecord(r);
+    return slug ? `/bills/${slug}` : null;
+}
+
+// tiny helper: prefer in-app href, fall back to existing url
+function preferBillHref(r, fallbackUrl = "#") {
+    return billHrefFromRecord(r) ?? fallbackUrl;
+}
+
+
+/*    const slug = `${r.bill_type}-${r.bill_number}-${r.congress}`.toLowerCase();
+    const href = `/bills/${slug}`;
+    */
 export default async function RecentActivity({
     maxItems = 6,
     showHeader = true,
@@ -73,7 +113,7 @@ export default async function RecentActivity({
                                 {bills.length ? (
                                     bills.map((b) => (
                                         <li key={b.id}>
-                                            <a className="link" href={b.url}>
+                                            <a className="link" href={b.href ?? b.url}>
                                                 {b.title}
                                             </a>
                                         </li>
@@ -90,7 +130,7 @@ export default async function RecentActivity({
                                 {actions.length ? (
                                     actions.map((a) => (
                                         <li key={a.id}>
-                                            <a className="link" href={a.url}>
+                                            <a className="link" href={a.href ?? a.url}>
                                                 {a.date ? `${a.date} — ` : ""}
                                                 {a.label}
                                             </a>

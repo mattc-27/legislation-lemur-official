@@ -1,0 +1,312 @@
+.ll3-stateSection {
+    scroll-margin-top: 18px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 0 34px;
+}
+
+.ll3-stateSection+.ll3-stateSection {
+    margin-top: 38px;
+}
+
+.ll3-stateSection__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.ll3-stateSection__heading {
+    min-width: 0;
+}
+
+.ll3-stateSection__title {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    color: #111827;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.ll3-stateSection__meta {
+    margin: 8px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(17, 24, 39, 0.72);
+    font-weight: 500;
+}
+
+.ll3-metaSep {
+    color: rgba(17, 24, 39, 0.34);
+}
+
+/* Chamber groups */
+.ll3-chamberBlock+.ll3-chamberBlock {
+    margin-top: 22px;
+    padding-top: 18px;
+}
+
+.ll3-chamberBlock__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 10px;
+    padding-bottom: 2px;
+}
+
+.ll3-chamberBlock__title {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: rgba(17, 24, 39, 0.94);
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.ll3-chamberBlock__meta {
+    color: rgba(17, 24, 39, 0.54);
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Table */
+.ll3-memberTable {
+    width: 100%;
+}
+
+.ll3-memberTable__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(120px, 0.55fr) minmax(140px, 0.6fr) minmax(130px, 0.55fr);
+    gap: 18px;
+    padding: 0 0 8px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.ll3-memberTable__body {
+    display: block;
+}
+
+.ll3-memberRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(120px, 0.55fr) minmax(140px, 0.6fr) minmax(130px, 0.55fr);
+    gap: 18px;
+    align-items: center;
+    min-height: 62px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.ll3-memberRow__nameCell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ll3-memberRow__nameLink {
+    color: #111827;
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ll3-memberRow__nameLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.ll3-memberRow__partyDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    flex: 0 0 auto;
+}
+
+.ll3-memberRow__partyDot.is-dem {
+    background: #3b82f6;
+}
+
+.ll3-memberRow__partyDot.is-rep {
+    background: #ef4444;
+}
+
+.ll3-memberRow__partyDot.is-ind {
+    background: rgba(17, 24, 39, 0.38);
+}
+
+.ll3-memberRow__party {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ll3-memberRow__party.is-dem {
+    color: #2b6cb0;
+}
+
+.ll3-memberRow__party.is-rep {
+    color: #b43a32;
+}
+
+.ll3-memberRow__party.is-ind {
+    color: rgba(17, 24, 39, 0.72);
+}
+
+.ll3-memberRow__district {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(17, 24, 39, 0.92);
+}
+
+.ll3-memberRow__actionCell {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.ll3-memberRow__action {
+    color: rgba(17, 24, 39, 0.76);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ll3-memberRow__action:hover {
+    color: #111827;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Expand control */
+.ll3-chamberExpand {
+    margin-top: 14px;
+}
+
+.ll3-chamberExpand__body {
+    margin-top: 0;
+}
+
+.ll3-chamberExpand__summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: rgba(17, 24, 39, 0.74);
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.18s ease;
+}
+
+.ll3-chamberExpand__summary::-webkit-details-marker {
+    display: none;
+}
+
+.ll3-chamberExpand__summary:hover {
+    color: #111827;
+}
+
+.ll3-chamberExpand__summary::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-right: 8px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.18s ease;
+    margin-top: -1px;
+}
+
+.ll3-chamberExpand[open] .ll3-chamberExpand__summary::before {
+    transform: rotate(45deg);
+}
+
+.ll3-chamberExpand__text--open {
+    display: none;
+}
+
+.ll3-chamberExpand[open] .ll3-chamberExpand__text--closed {
+    display: none;
+}
+
+.ll3-chamberExpand[open] .ll3-chamberExpand__text--open {
+    display: inline;
+}
+
+/* Mobile */
+@media (max-width: 960px) {
+
+    .ll3-memberTable__head,
+    .ll3-memberRow {
+        grid-template-columns: minmax(0, 1.5fr) minmax(110px, 0.65fr) minmax(120px, 0.7fr) minmax(110px, 0.7fr);
+        gap: 14px;
+    }
+}
+
+@media (max-width: 720px) {
+    .ll3-stateSection__title {
+        font-size: 24px;
+    }
+
+    .ll3-stateSection__meta {
+        font-size: 12.5px;
+    }
+
+    .ll3-chamberBlock__head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .ll3-memberTable__head {
+        display: none;
+    }
+
+    .ll3-memberRow {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        align-items: start;
+        padding: 12px 0;
+        min-height: 0;
+    }
+
+    .ll3-memberRow__party,
+    .ll3-memberRow__district,
+    .ll3-memberRow__actionCell {
+        padding-left: 0;
+    }
+
+    .ll3-memberRow__party,
+    .ll3-memberRow__district {
+        font-size: 13px;
+    }
+
+    .ll3-memberRow__action {
+        font-size: 13px;
+    }
+}

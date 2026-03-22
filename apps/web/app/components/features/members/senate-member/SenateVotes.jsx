@@ -8,8 +8,8 @@ export default function SenateVotes({ groups = [] }) {
 
     return (
         <div className="llmp3-stack-16 llm3-senVotes">
-            {groups.map((g) => {
-                const key = `${g.base_measure ?? "vote"}-${g.congress ?? "x"}`;
+            {groups.map((g, groupIndex) => {
+                const key = `${g.base_measure ?? "vote"}-${g.congress ?? "x"}-${groupIndex}`;
                 const title = g.title || g.base_measure || "Senate vote";
                 const congressLabel = g.congress ? `${g.congress}th Congress` : "Congress";
                 const rows = Array.isArray(g.stages) ? g.stages : [];
@@ -23,77 +23,87 @@ export default function SenateVotes({ groups = [] }) {
                         <header className="llm3-senVoteHead">
                             <div className="llm3-senVoteHead__left">
                                 <div className="llm3-senVoteHead__meta">
-                                    <span className="llm3-chip">
+                                    <span className="llm3-chip llm3-senVoteHead__congressChip">
                                         <Landmark size={14} aria-hidden="true" />
                                         <span>{congressLabel}</span>
                                     </span>
                                 </div>
 
                                 <h3 className="llm3-h3 llm3-senVoteHead__title">{title}</h3>
-                            </div>
 
-                            {g.link ? (
-                                <a
-                                    className="llm3-extlink"
-                                    href={g.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <span>View on Senate.gov</span>
-                                    <ExternalLink size={14} aria-hidden="true" />
-                                </a>
-                            ) : null}
+                                {g.link ? (
+                                    <a
+                                        className="llm3-senVoteHead__link"
+                                        href={g.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <span>View on Senate.gov</span>
+                                        <ExternalLink size={14} aria-hidden="true" />
+                                    </a>
+                                ) : null}
+                            </div>
                         </header>
 
-                        <div className="llm3-tableFrame llm3-tableFrame--tight">
-                            <div className="llm3-tableScroll" role="region" aria-label="Senate vote table">
-                                <table className="llm3-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Stage</th>
-                                            <th>Question</th>
-                                            <th>Your Vote</th>
-                                            <th>Party Align</th>
-                                            <th>Result</th>
-                                            <th>Roll</th>
-                                        </tr>
-                                    </thead>
+                        <div className="llm3-senVoteList" role="list" aria-label="Senate vote stages">
+                            {rows.length === 0 ? (
+                                <div className="llm3-senVoteEmpty">No vote stages found.</div>
+                            ) : (
+                                rows.map((s, idx) => {
+                                    const rowKey = s.vote_id || `${s.roll ?? ""}-${s.datetime ?? ""}-${idx}`;
+                                    const dateLabel = fmtDate(s.datetime);
+                                    const question = s.question || "—";
+                                    const result = s.result || "—";
+                                    const roll = s.roll || "—";
+                                    const stageLabel = stageLabelFor(s.label);
 
-                                    <tbody>
-                                        {rows.map((s) => {
-                                            const rowKey = s.vote_id || `${s.roll ?? ""}-${s.datetime ?? ""}`;
-                                            return (
-                                                <tr key={rowKey}>
-                                                    <td className="llm3-td--nowrap">{fmtDate(s.datetime)}</td>
-                                                    <td className="llm3-td--nowrap">
-                                                        <StagePill label={s.label} />
-                                                    </td>
-                                                    <td className="llm3-tdwrap">{s.question || "—"}</td>
-                                                    <td className="llm3-td--nowrap">
-                                                        <span className={`badge ${badgeForVote(s.choice)}`}>
-                                                            {prettyVote(s.choice)}
-                                                        </span>
-                                                    </td>
-                                                    <td className="llm3-td--nowrap">
-                                                        <AlignChip v={s.party_alignment} />
-                                                    </td>
-                                                    <td className="llm3-td--nowrap">{s.result || "—"}</td>
-                                                    <td className="llm3-td--nowrap">{s.roll || "—"}</td>
-                                                </tr>
-                                            );
-                                        })}
+                                    return (
+                                        <article
+                                            key={rowKey}
+                                            className="llm3-senVoteItem"
+                                            role="listitem"
+                                            aria-label={`${title} stage ${idx + 1}`}
+                                        >
+                                            <div className="llm3-senVoteItem__top">
+                                                <div className="llm3-senVoteItem__date">
+                                                    {dateLabel}
+                                                </div>
 
-                                        {rows.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={7} className="llm3-muted" style={{ padding: 14 }}>
-                                                    No vote stages found.
-                                                </td>
-                                            </tr>
-                                        ) : null}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                <div className="llm3-senVoteItem__topBadges">
+                                                    <ResultBadge result={result} />
+                                                </div>
+                                            </div>
+
+                                            <div className="llm3-senVoteItem__main">
+                                                <div className="llm3-senVoteItem__question">
+                                                    {question}
+                                                </div>
+
+                                                <div className="llm3-senVoteItem__submeta">
+                                                    <span className="llm3-senVoteItem__stage">
+                                                        {stageLabel}
+                                                    </span>
+                                                    <span className="llm3-senVoteItem__dot" aria-hidden="true">
+                                                        •
+                                                    </span>
+                                                    <span className="llm3-senVoteItem__roll">
+                                                        Roll {roll}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="llm3-senVoteItem__bottom">
+                                                <div className="llm3-senVoteItem__pills">
+                                                    <span className={`badge ${badgeForVote(s.choice)}`}>
+                                                        {prettyVote(s.choice)}
+                                                    </span>
+                                                    <AlignChip v={s.party_alignment} />
+                                                </div>
+                                            </div>
+                                        </article>
+                                    );
+                                })
+                            )}
                         </div>
                     </section>
                 );
@@ -102,28 +112,66 @@ export default function SenateVotes({ groups = [] }) {
     );
 }
 
-function StagePill({ label }) {
-    const map = {
-        cloture: "Cloture",
-        amendment: "Amendment",
-        final_passage: "Final Passage",
-        nomination: "Nomination",
-        procedural: "Procedural",
-        other: "Other",
-    };
-    return <span className="badge badge--slate">{map[label] ?? label}</span>;
-}
-
 function AlignChip({ v }) {
     if (v === "with") return <span className="badge badge--teal">With party</span>;
     if (v === "against") return <span className="badge badge--warning">Against party</span>;
     return <span className="badge badge--muted">Neutral</span>;
 }
 
+function ResultBadge({ result }) {
+    const r = String(result || "").toLowerCase();
+
+    if (
+        r.includes("agreed") ||
+        r.includes("passed") ||
+        r.includes("confirmed") ||
+        r.includes("accepted")
+    ) {
+        return <span className="badge badge--success">{result}</span>;
+    }
+
+    if (
+        r.includes("rejected") ||
+        r.includes("failed") ||
+        r.includes("not agreed") ||
+        r.includes("not passed")
+    ) {
+        return <span className="badge badge--danger">{result}</span>;
+    }
+
+    return <span className="badge badge--slate">{result || "—"}</span>;
+}
+
+function stageLabelFor(label) {
+    const map = {
+        cloture: "Cloture",
+        amendment: "Amendment",
+        final_passage: "Final passage",
+        nomination: "Nomination",
+        procedural: "Procedural",
+        other: "Other",
+    };
+
+    return map[label] ?? humanizeLabel(label);
+}
+
+function humanizeLabel(label) {
+    if (!label) return "Other";
+    return String(label)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function fmtDate(s) {
     if (!s) return "—";
     const d = new Date(s);
-    return isNaN(d.getTime()) ? s : d.toLocaleDateString();
+    return isNaN(d.getTime())
+        ? s
+        : d.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        });
 }
 
 function prettyVote(pos) {
@@ -132,7 +180,7 @@ function prettyVote(pos) {
     if (p === "yea" || p === "yes" || p === "aye") return "Yea";
     if (p === "nay" || p === "no") return "Nay";
     if (p.includes("present")) return "Present";
-    if (p.includes("not voting")) return "Not Voting";
+    if (p.includes("not voting")) return "Not voting";
     return pos;
 }
 
