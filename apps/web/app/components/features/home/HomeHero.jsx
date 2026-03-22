@@ -26,7 +26,7 @@ export default function HomeHero() {
           </p>
 
           <div className="hero__cta hero__cta--center">
-            <a className="btn btn--primary" href="/members">
+            <a className="btn btn--primary" href="/search">
               Find your representative
             </a>
             <a className="btn btn--ghost" href="/bills">

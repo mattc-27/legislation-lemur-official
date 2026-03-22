@@ -1,9 +1,10 @@
-// components/member/MemberAbout.jsx
 "use client";
 import React from "react";
-import { MapPin, Landmark, Flag, BadgeCheck } from "lucide-react";
+import { MapPin, Landmark, BadgeCheck } from "lucide-react";
+
 export default function MemberAbout({ profile }) {
   if (!profile) return null;
+
   const {
     name,
     party,
@@ -17,34 +18,29 @@ export default function MemberAbout({ profile }) {
     servingSince,
   } = profile;
 
-
   const stateLabel = state || stateCode;
-  const distText =
+
+  const districtLabel =
     chamber === "House"
       ? district == null || district === 0 || district === "AL"
-        ? "at-large district"
-        : `${ordinal(+district)} district`
+        ? "At-large"
+        : `District ${district}`
       : null;
 
   const fallback =
     chamber === "House"
-      ? `${name} is a ${partyName} member of the U.S. House representing ${stateLabel}’s ${distText}${servingSince ? ` since ${servingSince}` : ""
-      }.`
-      : `${name} is a ${partyName} U.S. senator for ${stateLabel}${servingSince ? ` since ${servingSince}` : ""
-      }.`;
+      ? `${name} is a ${partyName} member of the U.S. House representing ${stateLabel}${districtLabel ? `’s ${ordinal(+district)} district` : ""}${servingSince ? ` since ${servingSince}` : ""}.`
+      : `${name} is a ${partyName} U.S. senator for ${stateLabel}${servingSince ? ` since ${servingSince}` : ""}.`;
 
   const bio = about || fallback;
-
-  const partyClass =
-    party === "D" ? "chip chip--party-D" : party === "R" ? "chip chip--party-R" : "chip chip--party-I";
-
   const partyTone = party === "D" ? "D" : party === "R" ? "R" : "I";
+
   return (
-    <section className="llmp3-card llmp3-card--hero">
-      <div className="llmp3-head">
-        <div className="llmp3-head__avatar">
+    <section className="llmp3-card llmp3-card--hero llmp3-aboutCard">
+      <div className="llmp3-aboutCard__top">
+        <div className="llmp3-head__avatar llmp3-aboutCard__avatar">
           {imageUrl ? (
-            <img src={imageUrl} alt={name} width={84} height={84} />
+            <img src={imageUrl} alt={name} width={88} height={88} />
           ) : (
             <div className="llmp3-head__ph" aria-hidden="true">
               {initials(name)}
@@ -52,19 +48,23 @@ export default function MemberAbout({ profile }) {
           )}
         </div>
 
-        <div className="llmp3-head__main">
-          <h1 className="llmp3-h1">{name}</h1>
+        <div className="llmp3-aboutCard__main">
+          <div className="llmp3-aboutCard__identity">
+            <h1 className="llmp3-aboutCard__name">{name}</h1>
 
-          <div className="llmp3-meta">
             <span className={`llmp3-badge llmp3-badge--party-${partyTone}`}>
               <BadgeCheck size={14} aria-hidden="true" />
               {partyName}
             </span>
+          </div>
 
+          <div className="llmp3-aboutCard__meta">
             <span className="llmp3-kv">
               <Landmark size={14} aria-hidden="true" />
               <span className="llmp3-kv__label">Chamber</span>
-              <span className="llmp3-kv__value">{chamber}</span>
+              <span className="llmp3-kv__value">
+                {chamber === "House" ? "House of Representatives" : chamber}
+              </span>
             </span>
 
             <span className="llmp3-kv">
@@ -73,25 +73,24 @@ export default function MemberAbout({ profile }) {
               <span className="llmp3-kv__value">{stateLabel}</span>
             </span>
 
-            {chamber === "House" && (
+            {districtLabel ? (
               <span className="llmp3-kv">
-                <Flag size={14} aria-hidden="true" />
                 <span className="llmp3-kv__label">District</span>
-                <span className="llmp3-kv__value">{district}</span>
+                <span className="llmp3-kv__value">{districtLabel}</span>
               </span>
-            )}
+            ) : null}
 
-            {servingSince && (
+            {servingSince ? (
               <span className="llmp3-kv">
                 <span className="llmp3-kv__label">Serving since</span>
                 <span className="llmp3-kv__value">{servingSince}</span>
               </span>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
 
-      <p className="llmp3-blurb">{bio}</p>
+      <p className="llmp3-aboutCard__blurb">{bio}</p>
     </section>
   );
 }
@@ -102,6 +101,7 @@ function ordinal(n) {
   const v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
+
 function initials(name = "") {
   return name
     .split(/\s+/)

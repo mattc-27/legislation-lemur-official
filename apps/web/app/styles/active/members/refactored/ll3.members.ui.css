@@ -1,0 +1,455 @@
+/* app/styles/active/members/ll3.members.ui.css
+   ======================================================================
+   LL3 — Members UI Primitives
+   Typography, buttons, inputs, helper rows, shared frames.
+   No component-specific layout here.
+   ====================================================================== */
+
+.ll3-members,
+.ll3-members *,
+.ll3-members *::before,
+.ll3-members *::after,
+.llmp3-page,
+.llmp3-page *,
+.llmp3-page *::before,
+.llmp3-page *::after {
+    box-sizing: border-box;
+}
+
+.ll3-members,
+.llmp3-page {
+    font-family: var(--ll3-font);
+    color: var(--llm3-text);
+}
+
+/* ----------------------------------------------------------------------
+   Focus ring
+   ---------------------------------------------------------------------- */
+
+.ll3-members .ll3-focusable:focus-visible,
+.ll3-members .ll3-btn:focus-visible,
+.ll3-members .ll3-input:focus-visible,
+.ll3-members .ll3-linkbtn:focus-visible,
+.llmp3-page .ll3-focusable:focus-visible,
+.llmp3-page .ll3-btn:focus-visible,
+.llmp3-page .ll3-input:focus-visible,
+.llmp3-page .ll3-linkbtn:focus-visible,
+.llmp3-page .llmp3-linkbtn:focus-visible,
+.llmp3-page a:focus-visible,
+.llmp3-page button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--llm3-focus);
+}
+
+/* ----------------------------------------------------------------------
+   Typography helpers
+   ---------------------------------------------------------------------- */
+
+.ll3-members .llm3-h1,
+.llmp3-page .llm3-h1 {
+    margin: 0;
+    color: var(--llm3-ink);
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    font-size: var(--llm3-h1);
+    line-height: 1.18;
+}
+
+.ll3-members .llm3-h2,
+.llmp3-page .llm3-h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: var(--llm3-ink);
+    font-weight: 950;
+    letter-spacing: -0.01em;
+    font-size: var(--llm3-h2);
+}
+
+.llmp3-page .llmp3-h3,
+.llmp3-page .llm3-h3 {
+    margin: 0;
+    color: var(--llm3-ink);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    font-size: 1.05rem;
+    line-height: 1.2;
+}
+
+.ll3-members .llm3-muted,
+.llmp3-page .llm3-muted,
+.llmp3-page .muted {
+    color: rgba(17, 24, 39, 0.58);
+}
+
+.ll3-members .llm3-strong,
+.llmp3-page .llm3-strong,
+.llmp3-page .text-strong {
+    color: var(--llm3-ink);
+    font-weight: 900;
+}
+
+.ll3-members .llm3-small,
+.llmp3-page .llm3-small {
+    font-size: 0.86rem;
+}
+
+.ll3-members .llm3-asof,
+.llmp3-page .llm3-asof,
+.llmp3-page .llmp3-asof {
+    color: rgba(17, 24, 39, 0.58);
+    font-weight: 850;
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+.ll3-members .llm3-blurb,
+.llmp3-page .llm3-blurb {
+    margin: 12px 0 0;
+    color: var(--llm3-text);
+    line-height: 1.65;
+    font-size: var(--llm3-blurb);
+}
+
+.llmp3-page .llmp3-note,
+.llmp3-page .llm3-note {
+    margin: 12px 0 0;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: rgba(17, 24, 39, 0.62);
+}
+
+/* ----------------------------------------------------------------------
+   Shared rows / heads
+   ---------------------------------------------------------------------- */
+
+.ll3-members .llm3-cardHead,
+.llmp3-page .llm3-cardHead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ll3-members .llm3-pillRow,
+.llmp3-page .llm3-pillRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.ll3-members .llm3-metaRow,
+.llmp3-page .llm3-metaRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    min-width: 0;
+}
+
+.ll3-members .llm3-legendRow,
+.llmp3-page .llm3-legendRow {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.ll3-members .llm3-legendItem,
+.llmp3-page .llm3-legendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ll3-members .llm3-legendSwatch,
+.llmp3-page .llm3-legendSwatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+/* ----------------------------------------------------------------------
+   Buttons / link buttons / chip buttons
+   ---------------------------------------------------------------------- */
+
+.llmp3-page .ll3-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: var(--ll3-btn-h);
+    padding: 0 var(--ll3-btn-pad-x);
+    border-radius: var(--ll3-btn-r);
+    font-family: var(--ll3-font);
+    font-size: var(--ll3-btn-font);
+    font-weight: var(--ll3-btn-weight);
+    background: var(--ll3-surface-strong);
+    border: 1px solid var(--ll3-border);
+    color: var(--ll3-ink);
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: var(--ll3-btn-shadow);
+    transition: transform 0.06s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.llmp3-page .ll3-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--ll3-border-strong);
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.08);
+}
+
+.llmp3-page .ll3-btn:active {
+    transform: translateY(0);
+}
+
+.llmp3-page .ll3-btn--sm {
+    height: var(--ll3-btn-h-sm);
+    padding: 0 12px;
+    border-radius: var(--ll3-btn-r-sm);
+    font-size: 13px;
+    box-shadow: var(--llm3-btn-shadow);
+}
+
+.ll3-members .ll3-linkbtn,
+.llmp3-page .ll3-linkbtn,
+.llmp3-page .llmp3-linkbtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.75);
+    color: var(--llm3-ink);
+    font-size: 13px;
+    font-weight: 850;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: var(--llm3-btn-shadow);
+    transition: transform 0.06s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.ll3-members .ll3-linkbtn:hover,
+.llmp3-page .ll3-linkbtn:hover,
+.llmp3-page .llmp3-linkbtn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(17, 24, 39, 0.18);
+    box-shadow: 0 10px 18px rgba(17, 24, 39, 0.08);
+    background: #fff;
+}
+
+.llmp3-page .llm3-chipBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+    color: rgba(17, 24, 39, 0.86);
+    font-weight: 850;
+    cursor: pointer;
+    box-shadow: var(--llm3-btn-shadow);
+}
+
+.llmp3-page .llm3-chipBtn:hover {
+    background: #fff;
+    border-color: rgba(17, 24, 39, 0.16);
+}
+
+.llmp3-page .llm3-chipBtn__sep {
+    width: 1px;
+    height: 14px;
+    background: rgba(17, 24, 39, 0.16);
+    opacity: 0.8;
+}
+
+.llmp3-page .llm3-chipBtn__action {
+    color: rgba(17, 24, 39, 0.62);
+    font-weight: 850;
+}
+
+/* ----------------------------------------------------------------------
+   Inputs
+   ---------------------------------------------------------------------- */
+
+.llmp3-page .ll3-input {
+    width: 100%;
+    height: var(--ll3-input-h);
+    padding: 0 var(--ll3-input-pad-x);
+    border-radius: var(--ll3-input-r);
+    border: 1px solid var(--ll3-border);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--ll3-ink);
+    font-family: var(--ll3-font);
+    font-size: 14px;
+    outline: none;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
+}
+
+.llmp3-page .ll3-input:focus {
+    border-color: rgba(17, 24, 39, 0.22);
+    box-shadow: 0 0 0 4px rgba(180, 201, 232, 0.35);
+}
+
+/* ----------------------------------------------------------------------
+   Shared pills / kv pills
+   ---------------------------------------------------------------------- */
+
+.ll3-members .llm3-pill,
+.llmp3-page .llm3-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--llm3-pill-h);
+    padding: 0 10px;
+    border-radius: var(--llm3-pill-r);
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--llm3-ink);
+    font-size: 13px;
+    font-weight: 850;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.ll3-members .llm3-pill--subtle,
+.llmp3-page .llm3-pill--subtle {
+    background: rgba(17, 24, 39, 0.02);
+    border-color: rgba(17, 24, 39, 0.10);
+}
+
+.ll3-members .llm3-pill__strong,
+.llmp3-page .llm3-pill__strong {
+    color: rgba(17, 24, 39, 0.92);
+    font-weight: 950;
+}
+
+.ll3-members .llm3-pill--party-D,
+.llmp3-page .llm3-pill--party-D {
+    background: var(--llm3-party-D);
+    border-color: var(--llm3-party-D-border);
+    color: var(--llm3-party-D-text);
+}
+
+.ll3-members .llm3-pill--party-R,
+.llmp3-page .llm3-pill--party-R {
+    background: var(--llm3-party-R);
+    border-color: var(--llm3-party-R-border);
+    color: var(--llm3-party-R-text);
+}
+
+.ll3-members .llm3-pill--party-I,
+.llmp3-page .llm3-pill--party-I {
+    background: var(--llm3-party-I);
+    border-color: var(--llm3-party-I-border);
+    color: var(--llm3-party-I-text);
+}
+
+.ll3-members .llm3-kvPill,
+.llmp3-page .llm3-kvPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--llm3-pill-h);
+    padding: 0 10px;
+    border-radius: var(--llm3-pill-r);
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+    color: rgba(17, 24, 39, 0.88);
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.ll3-members .llm3-kvPill__k,
+.llmp3-page .llm3-kvPill__k {
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+}
+
+.ll3-members .llm3-kvPill__v,
+.llmp3-page .llm3-kvPill__v {
+    color: rgba(17, 24, 39, 0.90);
+    font-weight: 850;
+}
+
+/* ----------------------------------------------------------------------
+   Generic table shells
+   ---------------------------------------------------------------------- */
+
+.llmp3-page .llm3-tableFrame {
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.86);
+    overflow: hidden;
+}
+
+.llmp3-page .llm3-tableFrame--tight {
+    padding: 0;
+}
+
+.llmp3-page .llm3-tableScroll {
+    width: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.llmp3-page .llm3-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 860px;
+}
+
+.llmp3-page .llm3-table th {
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 900;
+    padding: 10px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.85);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.llmp3-page .llm3-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+    color: rgba(17, 24, 39, 0.86);
+    font-weight: 650;
+    vertical-align: top;
+}
+
+.llmp3-page .llm3-table tr:hover td {
+    background: rgba(17, 24, 39, 0.02);
+}
+
+.llmp3-page .llm3-tdwrap {
+    min-width: 280px;
+    max-width: 520px;
+    white-space: normal;
+}
+
+.llmp3-page .llm3-td--nowrap {
+    white-space: nowrap;
+}

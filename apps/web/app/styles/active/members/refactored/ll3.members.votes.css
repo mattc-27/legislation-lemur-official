@@ -1,0 +1,611 @@
+/* app/styles/active/members/ll3.members.votes.css
+   ======================================================================
+   LL3 — Members Votes
+   Vote section shell, recent votes list, show more button, split headers.
+   ====================================================================== */
+
+.llm3-votesSplit {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.llm3-votesSplit--stacked {
+    display: grid;
+    gap: 16px;
+}
+
+.llm3-votesSplit__row {
+    width: 100%;
+}
+
+.llm3-votesSplit__row--activity {
+    padding: 0;
+    overflow: hidden;
+}
+
+.llm3-votesSplit__top {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+}
+
+.llm3-votesSplit__heatCard,
+.llm3-votesSplit__tableCard {
+    min-width: 0;
+    width: 100%;
+}
+
+.llm3-votesSplit__rightHead,
+.llmp3-page .llm3-votesSplit__rightHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 14px 16px 10px;
+}
+
+.llm3-votesSplit__titleBlock,
+.llmp3-page .llm3-votesSplit__titleBlock {
+    min-width: 0;
+    flex: 1 1 360px;
+}
+
+.llm3-votesSplit__metaBlock,
+.llmp3-page .llm3-votesSplit__metaBlock {
+    flex: 0 0 auto;
+    margin-left: auto;
+    padding-left: 8px;
+}
+
+.llm3-votesSplit__tableHead,
+.llmp3-page .llm3-votesSplit__tableHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 12px;
+    margin-bottom: 10px;
+    padding: 0 16px 2px;
+}
+
+.llmp3-page .llm3-votesSplit__tableHead .llm3-h2 {
+    font-size: 15px;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.94);
+}
+
+.llm3-votesSplit__titleBlock .llm3-muted,
+.llmp3-page .llm3-votesSplit__titleBlock .llm3-muted {
+    margin-top: 6px;
+    max-width: 62ch;
+    line-height: 1.42;
+    font-size: 13px;
+    color: rgba(17, 24, 39, 0.68);
+}
+
+.llm3-votesSplit__metaText,
+.llmp3-page .llm3-votesSplit__metaText {
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: right;
+}
+
+.llm3-votesSplit__divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.06);
+    margin: 2px 0 0;
+}
+
+.llmp3-page .llm3-votesSplit__divider--spacious {
+    height: 18px;
+}
+
+.llm3-votesSplit__heatWrap {
+    padding: 10px 14px 8px;
+}
+
+.llm3-linkInline {
+    margin-left: 8px;
+    font: inherit;
+    color: inherit;
+    text-decoration: underline;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* show more */
+/* .llm3-moreBtn {
+    margin: 10px 16px 12px;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--llm3-ink);
+    font-weight: 850;
+    letter-spacing: -0.01em;
+    transition: transform 0.06s ease, border-color 0.18s ease, background 0.18s ease;
+}
+    */
+
+.llm3-moreBtn {
+    min-height: 32px;
+    min-width: 150px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(17, 24, 39, 0.18);
+    background: #fff;
+    color: rgba(17, 24, 39, 0.84);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+
+    /* positioning */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    margin: 12px 16px 14px;
+}
+
+@media (max-width: 900px) {
+    .llm3-moreBtn {
+        margin: 12px 14px 14px;
+    }
+}
+
+@media (max-width: 640px) {
+    .llm3-moreBtn {
+        display: flex;
+        width: calc(100% - 20px);
+        min-width: 0;
+        margin: 12px 10px 12px;
+    }
+}
+
+.llm3-moreBtn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(17, 24, 39, 0.18);
+    background: #fff;
+}
+
+.llm3-moreBtn:active {
+    transform: translateY(0);
+}
+
+.llm3-moreBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+    border-color: rgba(99, 102, 241, 0.35);
+}
+
+/* vote list */
+.llmp3-page .votes-list {
+    display: block;
+}
+
+.llmp3-page .votes-list__item {
+    padding: 14px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+    display: grid;
+    gap: 9px;
+}
+
+.llmp3-page .votes-list__item:last-child {
+    border-bottom: 0;
+}
+
+.llmp3-page .votes-list__top,
+.llmp3-page .votes-list__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.llmp3-page .votes-list__date {
+    font-size: 13px;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.82);
+    white-space: nowrap;
+}
+
+.llmp3-page .votes-list__measure {
+    min-width: 0;
+    color: rgba(17, 24, 39, 0.92);
+}
+
+.llmp3-page .votes-table__billLink,
+.llmp3-page .votes-table__billText {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.38;
+    word-break: break-word;
+    font-weight: 760;
+    color: inherit;
+    text-decoration: none;
+}
+
+.llmp3-page .votes-table__billLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.llmp3-page .votes-list__meta {
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.llmp3-page .votes-table__resultBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 22px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.llmp3-page .votes-table__resultBadge.is-pass {
+    background: rgba(16, 185, 129, 0.10);
+    color: rgba(4, 120, 87, 0.96);
+    border-color: rgba(16, 185, 129, 0.18);
+}
+
+.llmp3-page .votes-table__resultBadge.is-fail {
+    background: rgba(244, 63, 94, 0.10);
+    color: rgba(190, 24, 93, 0.96);
+    border-color: rgba(244, 63, 94, 0.18);
+}
+
+.llmp3-page .votes-table__resultBadge.is-other {
+    background: rgba(148, 163, 184, 0.12);
+    color: rgba(51, 65, 85, 0.92);
+    border-color: rgba(148, 163, 184, 0.22);
+}
+
+.llmp3-page .votes-table__empty {
+    color: rgba(17, 24, 39, 0.58);
+    font-weight: 800;
+}
+
+@media (max-width: 980px) {
+    .llm3-votesSplit__top {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .llmp3-page .llm3-votesSplit__rightHead {
+        display: grid;
+        gap: 8px;
+        padding: 14px 14px 10px;
+    }
+
+    .llmp3-page .llm3-votesSplit__metaBlock {
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .llmp3-page .llm3-votesSplit__metaText {
+        text-align: left;
+    }
+
+    .llmp3-page .llm3-votesSplit__tableHead {
+        padding: 0 14px 2px;
+    }
+}
+
+@media (min-width: 768px) {
+    .llmp3-page .votes-list__item {
+        padding: 14px 16px;
+        gap: 10px;
+    }
+
+    .llmp3-page .votes-list__date {
+        font-size: 14px;
+    }
+
+    .llmp3-page .votes-list__measure .votes-table__billLink,
+    .llmp3-page .votes-list__measure .votes-table__billText {
+        font-size: 15px;
+        -webkit-line-clamp: 2;
+    }
+}
+
+@media (max-width: 640px) {
+    .llmp3-page .llm3-votesSplit__divider--spacious {
+        height: 20px;
+    }
+
+    .llmp3-page .llm3-votesSplit__metaText {
+        font-size: 11px;
+        text-align: left;
+    }
+
+    .llmp3-page .llm3-votesSplit__titleBlock .llm3-muted {
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+
+    .llmp3-page .votes-list__item {
+        padding: 12px 10px;
+    }
+
+    .llmp3-page .votes-list__measure .votes-table__billLink,
+    .llmp3-page .votes-list__measure .votes-table__billText {
+        font-size: 13px;
+    }
+
+    .llmp3-page .votes-list__date,
+    .llmp3-page .votes-list__meta {
+        font-size: 11.5px;
+    }
+
+    .llmp3-page .votes-list .badge,
+    .llmp3-page .votes-table__resultBadge {
+        font-size: 10.5px;
+    }
+}
+
+/* ==========================================================================
+   LL3 — Senate vote groups
+   Cleaned to feel closer to the House recent-votes list
+   ========================================================================== */
+
+.llm3-senVotes {
+    display: grid;
+    gap: 16px;
+}
+
+.llm3-senVoteCard {
+    padding: 14px;
+    border-radius: 18px;
+}
+
+.llm3-senVoteHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 10px;
+}
+
+.llm3-senVoteHead__left {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.llm3-senVoteHead__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.llm3-senVoteHead__congressChip {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.llm3-senVoteHead__title {
+    margin: 0;
+    font-size: 1.12rem;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: rgba(17, 24, 39, 0.96);
+}
+
+.llm3-senVoteHead__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(17, 24, 39, 0.76);
+    text-decoration: none;
+    font-size: 0.94rem;
+    font-weight: 700;
+    line-height: 1.25;
+    width: fit-content;
+}
+
+.llm3-senVoteHead__link:hover {
+    color: rgba(17, 24, 39, 0.96);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.llm3-senVoteList {
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.72);
+    overflow: hidden;
+}
+
+.llm3-senVoteEmpty {
+    padding: 16px;
+    color: rgba(17, 24, 39, 0.58);
+    font-weight: 700;
+}
+
+.llm3-senVoteItem {
+    display: grid;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.llm3-senVoteItem:last-child {
+    border-bottom: 0;
+}
+
+.llm3-senVoteItem__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.llm3-senVoteItem__date {
+    font-size: 13px;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.78);
+    white-space: nowrap;
+}
+
+.llm3-senVoteItem__topBadges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.llm3-senVoteItem__main {
+    min-width: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.llm3-senVoteItem__question {
+    color: rgba(17, 24, 39, 0.94);
+    font-size: 1.02rem;
+    line-height: 1.35;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.llm3-senVoteItem__submeta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: rgba(17, 24, 39, 0.58);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.llm3-senVoteItem__stage {
+    color: rgba(17, 24, 39, 0.66);
+}
+
+.llm3-senVoteItem__dot {
+    color: rgba(17, 24, 39, 0.36);
+}
+
+.llm3-senVoteItem__roll {
+    color: rgba(17, 24, 39, 0.62);
+}
+
+.llm3-senVoteItem__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.llm3-senVoteItem__pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* make badges feel aligned with house list density */
+.llm3-senVoteItem .badge {
+    min-height: 28px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* desktop rhythm */
+@media (min-width: 900px) {
+    .llm3-senVoteCard {
+        padding: 16px;
+    }
+
+    .llm3-senVoteItem {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        padding: 16px 18px;
+    }
+
+    .llm3-senVoteItem__question {
+        font-size: 1.04rem;
+    }
+}
+
+/* mobile cleanup */
+@media (max-width: 640px) {
+    .llm3-senVoteCard {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .llm3-senVoteHead {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .llm3-senVoteHead__title {
+        font-size: 1.02rem;
+    }
+
+    .llm3-senVoteHead__link {
+        font-size: 0.9rem;
+    }
+
+    .llm3-senVoteList {
+        border-radius: 14px;
+    }
+
+    .llm3-senVoteItem {
+        padding: 12px 12px;
+        gap: 9px;
+    }
+
+    .llm3-senVoteItem__top {
+        gap: 10px;
+    }
+
+    .llm3-senVoteItem__date {
+        font-size: 12px;
+    }
+
+    .llm3-senVoteItem__question {
+        font-size: 0.96rem;
+        line-height: 1.34;
+    }
+
+    .llm3-senVoteItem__submeta {
+        font-size: 11.5px;
+        gap: 6px;
+    }
+
+    .llm3-senVoteItem .badge {
+        min-height: 26px;
+        font-size: 11px;
+        padding: 3px 9px;
+    }
+}
