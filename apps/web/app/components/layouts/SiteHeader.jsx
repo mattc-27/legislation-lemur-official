@@ -1,10 +1,10 @@
-// components/layout/SiteHeader.jsx
 "use client";
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/app/components/ui/system/ThemeToggle";
 
 function cx(...parts) {
     return parts.filter(Boolean).join(" ");
@@ -19,28 +19,25 @@ function isActive(pathname, href) {
 export default function SiteHeader() {
     const pathname = usePathname();
 
-    const [open, setOpen] = useState(false); // mobile menu
+    const [open, setOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
 
-    const [searchOpen, setSearchOpen] = useState(false); // desktop dropdown
     const dropdownId = useId();
     const dropdownWrapRef = useRef(null);
 
-    // Sticky header shadow
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 4);
+        const onScroll = () => setScrolled(window.scrollY > 6);
         onScroll();
         window.addEventListener("scroll", onScroll, { passive: true });
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
-    // Close menus on route change
     useEffect(() => {
         setOpen(false);
         setSearchOpen(false);
     }, [pathname]);
 
-    // Close desktop dropdown on outside click / escape
     useEffect(() => {
         if (!searchOpen) return;
 
@@ -55,6 +52,7 @@ export default function SiteHeader() {
 
         window.addEventListener("pointerdown", onDown);
         window.addEventListener("keydown", onKey);
+
         return () => {
             window.removeEventListener("pointerdown", onDown);
             window.removeEventListener("keydown", onKey);
@@ -67,12 +65,11 @@ export default function SiteHeader() {
         open && "site-header--menu-open"
     );
 
-    // ---- Routes (keep your current URLs; rename labels in UI) ----
     const ROUTES = {
-        members: "/search", // you can switch to /members later
+        home: "/",
+        members: "/search",
         bills: "/bills",
         committees: "/committees",
-        // insights: "/insights",
         wiki: "/references",
         about: "/about",
     };
@@ -80,17 +77,15 @@ export default function SiteHeader() {
     const membersActive = isActive(pathname, ROUTES.members);
     const billsActive = isActive(pathname, ROUTES.bills);
     const committeesActive = isActive(pathname, ROUTES.committees);
-    //   const insightsActive = isActive(pathname, ROUTES.insights);
     const wikiActive = isActive(pathname, ROUTES.wiki);
     const aboutActive = isActive(pathname, ROUTES.about);
-
     const searchSectionActive = membersActive || billsActive;
 
     return (
         <header className={headerClass} role="banner">
             <div className="container site-header__inner">
                 <Link
-                    href="/"
+                    href={ROUTES.home}
                     className="site-header__logo"
                     aria-label="Legislation Lemur — Home"
                 >
@@ -103,26 +98,27 @@ export default function SiteHeader() {
                     <span className="site-header__logo-text">Legislation Lemur</span>
                 </Link>
 
-                {/* Desktop */}
-                <nav className="site-header__nav site-header__nav--desktop" aria-label="Main navigation">
-                    {/* Search dropdown */}
+                <nav
+                    className="site-header__nav site-header__nav--desktop"
+                    aria-label="Main navigation"
+                >
                     <div className="site-header__dd" ref={dropdownWrapRef}>
                         <button
                             type="button"
                             className={cx(
                                 "site-header__link",
                                 "site-header__dd-trigger",
-                                searchSectionActive && "is-active"
+                                searchOpen && "is-active"
                             )}
                             aria-haspopup="menu"
                             aria-expanded={searchOpen}
                             aria-controls={dropdownId}
                             onClick={() => setSearchOpen((v) => !v)}
                         >
-                            <span>Search</span>
+                            <span>Explore</span>
                             <ChevronDown
                                 size={16}
-                                strokeWidth={2.5}
+                                strokeWidth={2.2}
                                 className={cx("site-header__dd-icon", searchOpen && "is-open")}
                                 aria-hidden="true"
                             />
@@ -132,8 +128,17 @@ export default function SiteHeader() {
                             id={dropdownId}
                             className={cx("site-header__dd-menu", searchOpen && "is-open")}
                             role="menu"
-                            aria-label="Search menu"
+                            aria-label="Explore menu"
                         >
+                            <Link
+                                href={ROUTES.members}
+                                className={cx("site-header__dd-item", membersActive && "is-active")}
+                                role="menuitem"
+                                onClick={() => setSearchOpen(false)}
+                            >
+                                Representatives
+                            </Link>
+
                             <Link
                                 href={ROUTES.bills}
                                 className={cx("site-header__dd-item", billsActive && "is-active")}
@@ -142,17 +147,9 @@ export default function SiteHeader() {
                             >
                                 Bills
                             </Link>
-
-                            <Link
-                                href={ROUTES.members}
-                                className={cx("site-header__dd-item", membersActive && "is-active")}
-                                role="menuitem"
-                                onClick={() => setSearchOpen(false)}
-                            >
-                                Members
-                            </Link>
                         </div>
                     </div>
+
                     <Link
                         href={ROUTES.committees}
                         className={cx("site-header__link", committeesActive && "is-active")}
@@ -161,20 +158,12 @@ export default function SiteHeader() {
                         Committees
                     </Link>
 
-                    {/*                     <Link
-                        href={ROUTES.insights}
-                        className={cx("site-header__link", insightsActive && "is-active")}
-                        aria-current={insightsActive ? "page" : undefined}
-                    >
-                        Insights
-                    </Link>*/}
-
                     <Link
                         href={ROUTES.wiki}
                         className={cx("site-header__link", wikiActive && "is-active")}
                         aria-current={wikiActive ? "page" : undefined}
                     >
-                        Wiki
+                        Reference
                     </Link>
 
                     <Link
@@ -186,25 +175,40 @@ export default function SiteHeader() {
                     </Link>
                 </nav>
 
-                {/* Mobile toggle */}
-                <button
-                    className="site-header__toggle"
-                    aria-label="Toggle menu"
-                    aria-expanded={open}
-                    aria-controls="mobile-menu"
-                    onClick={() => setOpen((v) => !v)}
-                    type="button"
-                >
-                    {open ? <X size={22} strokeWidth={2.5} /> : <Menu size={22} strokeWidth={2.5} />}
-                </button>
+                <div className="site-header__actions">
+                    <ThemeToggle />
+
+                    <button
+                        className="site-header__toggle"
+                        aria-label="Toggle menu"
+                        aria-expanded={open}
+                        aria-controls="mobile-menu"
+                        onClick={() => setOpen((v) => !v)}
+                        type="button"
+                    >
+                        {open ? <X size={22} strokeWidth={2.25} /> : <Menu size={22} strokeWidth={2.25} />}
+                    </button>
+                </div>
             </div>
 
-            {/* Mobile (flat list; no dropdown drama) */}
             <nav
                 id="mobile-menu"
                 className={cx("site-header__nav", "site-header__nav--mobile", open && "is-open")}
                 aria-label="Mobile navigation"
             >
+                <div className="site-header__mobileThemeRow">
+                    <ThemeToggle />
+                </div>
+
+                <Link
+                    href={ROUTES.members}
+                    className={cx("site-header__link", membersActive && "is-active")}
+                    aria-current={membersActive ? "page" : undefined}
+                    onClick={() => setOpen(false)}
+                >
+                    Representatives
+                </Link>
+
                 <Link
                     href={ROUTES.bills}
                     className={cx("site-header__link", billsActive && "is-active")}
@@ -215,29 +219,13 @@ export default function SiteHeader() {
                 </Link>
 
                 <Link
-                    href={ROUTES.members}
-                    className={cx("site-header__link", membersActive && "is-active")}
-                    aria-current={membersActive ? "page" : undefined}
-                    onClick={() => setOpen(false)}
-                >
-                    Members
-                </Link>
-                <Link
                     href={ROUTES.committees}
                     className={cx("site-header__link", committeesActive && "is-active")}
                     aria-current={committeesActive ? "page" : undefined}
+                    onClick={() => setOpen(false)}
                 >
                     Committees
                 </Link>
-
-                {/*               <Link
-                    href={ROUTES.insights}
-                    className={cx("site-header__link", insightsActive && "is-active")}
-                    aria-current={insightsActive ? "page" : undefined}
-                    onClick={() => setOpen(false)}
-                >
-                    Insights
-                </Link>*/}
 
                 <Link
                     href={ROUTES.wiki}
@@ -245,7 +233,7 @@ export default function SiteHeader() {
                     aria-current={wikiActive ? "page" : undefined}
                     onClick={() => setOpen(false)}
                 >
-                    Wiki
+                    Reference
                 </Link>
 
                 <Link

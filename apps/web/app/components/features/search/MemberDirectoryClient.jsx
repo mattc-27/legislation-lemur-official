@@ -3,111 +3,118 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import MemberDirectoryRow from "@/app/components/features/search/MemberDirectoryRow";
 
-const STATES_GROUPED_URL = "/data/states_grouped.json";
 const HOUSE_PREVIEW_COUNT = 6;
 
-const norm = (s) => (s || "").toLowerCase().trim();
-
-function matchesParty(member, party) {
-    if (!party) return true;
-    return String(member.party || "").toUpperCase() === String(party).toUpperCase();
+function normalizeParty(party) {
+    return String(party || "").toUpperCase();
 }
 
-function matchesChamber(member, chamber) {
-    if (!chamber) return true;
-    return String(member.chamber || "") === chamber;
+function normalizeChamber(chamber) {
+    const value = String(chamber || "").trim();
+
+    if (value === "Senate") return "Senate";
+    if (value === "House" || value === "House of Representatives") return "House";
+
+    return value;
 }
 
-function matchesQuery(member, q) {
-    if (!q) return true;
-
-    const qn = norm(q);
-    const hay = [
-        member.name,
-        member.state,
-        member.stateCode,
-        member.party,
-        member.chamber,
-        member.district === 0 || member.district === "0" ? "at-large" : `district ${member.district}`,
-    ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-    return hay.includes(qn);
-}
-
-function sortMembers(members = []) {
-    return [...members].sort((a, b) => {
-        const aDistrict = Number(a.district ?? 9999);
-        const bDistrict = Number(b.district ?? 9999);
-
-        if ((a.chamber || "") !== (b.chamber || "")) {
-            return String(a.chamber || "").localeCompare(String(b.chamber || ""));
-        }
-
-        if ((a.chamber || "") === "House" && aDistrict !== bDistrict) {
-            return aDistrict - bDistrict;
-        }
-
-        return String(a.name || "").localeCompare(String(b.name || ""));
-    });
-}
-
-function filterMembers(members = [], { q, chamber, party }) {
-    return sortMembers(
-        members.filter(
-            (m) => matchesQuery(m, q) && matchesChamber(m, chamber) && matchesParty(m, party)
-        )
-    );
-}
-
-function compositionFromMembers(senators = [], representatives = []) {
-    const all = [...senators, ...representatives];
-
-    let d = 0;
-    let r = 0;
-    let i = 0;
-
-    for (const m of all) {
-        const p = String(m.party || "").toUpperCase();
-        if (p === "D") d += 1;
-        else if (p === "R") r += 1;
-        else if (p === "I") i += 1;
-    }
-
+function normalizeMember(member, fallbackState = {}) {
     return {
-        d,
-        r,
-        i,
-        total: all.length,
-        senate: senators.length,
-        house: representatives.length,
+        ...member,
+        bioguideId: member?.bioguideId || member?.bioguide_id || null,
+        party: member?.party || null,
+        partyName: member?.partyName || member?.party_name || null,
+        state: member?.state || fallbackState?.state || "",
+        stateCode: String(member?.stateCode || member?.state_code || fallbackState?.stateCode || "").toUpperCase(),
+        district: member?.district == null ? null : Number(member.district),
+        chamber: normalizeChamber(member?.chamber),
+        imageUrl: member?.imageUrl || member?.image_url || null,
+        url: member?.url || null,
+        updateDate: member?.updateDate || member?.update_date || null,
     };
 }
 
+function sortMembers(list) {
+    return [...list].sort((a, b) => {
+        const chamberA = normalizeChamber(a?.chamber);
+        const chamberB = normalizeChamber(b?.chamber);
+
+        if (chamberA !== chamberB) {
+            if (chamberA === "Senate") return -1;
+            if (chamberB === "Senate") return 1;
+            return chamberA.localeCompare(chamberB);
+        }
+
+        const districtA = Number(a?.district);
+        const districtB = Number(b?.district);
+
+        if (Number.isFinite(districtA) && Number.isFinite(districtB) && districtA !== districtB) {
+            return districtA - districtB;
+        }
+
+        if (Number.isFinite(districtA) && !Number.isFinite(districtB)) return -1;
+        if (!Number.isFinite(districtA) && Number.isFinite(districtB)) return 1;
+
+        return String(a?.name || "").localeCompare(String(b?.name || ""));
+    });
+}
+
+function normalizeStateGroup(state) {
+    const normalizedState = {
+        state: state?.state || "",
+        stateCode: String(state?.stateCode || state?.state_code || "").toUpperCase(),
+        senators: sortMembers((state?.senators || []).map((m) => normalizeMember(m, state))),
+        representatives: sortMembers((state?.representatives || []).map((m) => normalizeMember(m, state))),
+    };
+
+    return normalizedState;
+}
+
+function filterMembers(members, { q, chamber, party }) {
+    const query = String(q || "").trim().toLowerCase();
+
+    return members.filter((m) => {
+        const normalizedChamberValue = normalizeChamber(m?.chamber);
+
+        const matchesQuery =
+            !query ||
+            String(m?.name || "").toLowerCase().includes(query) ||
+            String(m?.state || "").toLowerCase().includes(query) ||
+            String(m?.stateCode || "").toLowerCase().includes(query) ||
+            String(m?.district || "").toLowerCase().includes(query);
+
+        const matchesChamber = !chamber || normalizedChamberValue === chamber;
+        const matchesParty = !party || normalizeParty(m?.party) === normalizeParty(party);
+
+        return matchesQuery && matchesChamber && matchesParty;
+    });
+}
+
+function compositionForMembers(members) {
+    const result = { D: 0, R: 0, I: 0, total: members.length };
+
+    members.forEach((m) => {
+        const p = normalizeParty(m?.party);
+        if (p === "D") result.D += 1;
+        else if (p === "R") result.R += 1;
+        else result.I += 1;
+    });
+
+    return result;
+}
+
 function CompositionLine({ stateCode, totalVisible, composition }) {
+    if (!composition) return null;
+
     return (
-        <p className="ll3-stateSection__meta">
-            <span>{stateCode}</span>
-            <span className="ll3-metaSep">·</span>
-            <span>{totalVisible} visible members</span>
-            <span className="ll3-metaSep">|</span>
-            <span>Senate {composition.senate}</span>
-            <span className="ll3-metaSep">·</span>
-            <span>House {composition.house}</span>
-            <span className="ll3-metaSep">|</span>
-            <span>D {composition.d}</span>
-            <span className="ll3-metaSep">·</span>
-            <span>R {composition.r}</span>
-            {composition.i > 0 && (
-                <>
-                    <span className="ll3-metaSep">·</span>
-                    <span>I {composition.i}</span>
-                </>
-            )}
-            <span className="ll3-metaSep">|</span>
-            <span>{composition.total} total</span>
+        <p className="ll3-compositionLine">
+            <span className="ll3-compositionLine__state">{stateCode}</span>
+            <span className="ll3-metaSep">•</span>
+            {composition.D > 0 ? <span className="is-dem">{composition.D} D</span> : null}
+            {composition.R > 0 ? <span className="is-rep">{composition.R} R</span> : null}
+            {composition.I > 0 ? <span className="is-ind">{composition.I} I</span> : null}
+            <span className="ll3-metaSep">•</span>
+            <span>{totalVisible} shown</span>
         </p>
     );
 }
@@ -141,8 +148,17 @@ function HouseGroup({ members }) {
                 </div>
             </div>
 
-            {shouldCollapse && (
+            {shouldCollapse ? (
                 <details className="ll3-chamberExpand">
+                    <summary className="ll3-chamberExpand__summary">
+                        <span className="ll3-chamberExpand__text ll3-chamberExpand__text--closed">
+                            Show all {members.length} House members
+                        </span>
+                        <span className="ll3-chamberExpand__text ll3-chamberExpand__text--open">
+                            Collapse House members
+                        </span>
+                    </summary>
+
                     <div className="ll3-chamberExpand__body">
                         <div className="ll3-memberTable">
                             <div className="ll3-memberTable__body">
@@ -152,59 +168,34 @@ function HouseGroup({ members }) {
                             </div>
                         </div>
                     </div>
-
-                    <summary className="ll3-chamberExpand__summary">
-                        <span className="ll3-chamberExpand__text ll3-chamberExpand__text--closed">
-                            Show all {members.length} House members
-                        </span>
-                        <span className="ll3-chamberExpand__text ll3-chamberExpand__text--open">
-                            Collapse House members
-                        </span>
-                    </summary>
                 </details>
-            )}
+            ) : null}
         </div>
     );
 }
 
-export default function MemberDirectoryClient() {
-    const [loading, setLoading] = useState(true);
-    const [statesList, setStatesList] = useState([]);
+export default function MemberDirectoryClient({ initialData }) {
+    const [loading, setLoading] = useState(false);
+    const [statesList, setStatesList] = useState(() =>
+        (initialData?.states || []).map(normalizeStateGroup)
+    );
 
     const [q, setQ] = useState("");
     const [chamber, setChamber] = useState("");
     const [party, setParty] = useState("");
-    const [activeState, setActiveState] = useState("");
+    const [activeState, setActiveState] = useState(() => {
+        const firstState = (initialData?.states || [])[0];
+        return String(firstState?.stateCode || firstState?.state_code || "");
+    });
 
     const sectionRefs = useRef({});
     const topRef = useRef(null);
 
     useEffect(() => {
-        let live = true;
-
-        (async () => {
-            try {
-                const res = await fetch(STATES_GROUPED_URL, { cache: "force-cache" });
-                const json = res.ok ? await res.json() : { states: [] };
-                if (!live) return;
-
-                const states = (json?.states || []).map((s) => ({
-                    ...s,
-                    senators: sortMembers(s.senators || []),
-                    representatives: sortMembers(s.representatives || []),
-                }));
-
-                setStatesList(states);
-                setActiveState(states?.[0]?.stateCode || "");
-            } finally {
-                if (live) setLoading(false);
-            }
-        })();
-
-        return () => {
-            live = false;
-        };
-    }, []);
+        const nextStates = (initialData?.states || []).map(normalizeStateGroup);
+        setStatesList(nextStates);
+        setActiveState((prev) => prev || nextStates?.[0]?.stateCode || "");
+    }, [initialData]);
 
     const filteredStates = useMemo(() => {
         return statesList
@@ -221,12 +212,14 @@ export default function MemberDirectoryClient() {
                     party,
                 });
 
+                const totalVisible = senators.length + representatives.length;
+
                 return {
                     ...state,
                     senators,
                     representatives,
-                    totalVisible: senators.length + representatives.length,
-                    composition: compositionFromMembers(senators, representatives),
+                    totalVisible,
+                    composition: compositionForMembers([...senators, ...representatives]),
                 };
             })
             .filter((state) => state.totalVisible > 0);
@@ -234,9 +227,17 @@ export default function MemberDirectoryClient() {
 
     useEffect(() => {
         if (!filteredStates.length) return;
+        if (!filteredStates.find((s) => s.stateCode === activeState)) {
+            setActiveState(filteredStates[0].stateCode);
+        }
+    }, [filteredStates, activeState]);
 
-        const ids = filteredStates.map((s) => s.stateCode).filter(Boolean);
-        const nodes = ids.map((id) => sectionRefs.current[id]).filter(Boolean);
+    useEffect(() => {
+        if (!filteredStates.length) return;
+
+        const nodes = filteredStates
+            .map((s) => sectionRefs.current[s.stateCode])
+            .filter(Boolean);
 
         if (!nodes.length) return;
 
@@ -283,8 +284,6 @@ export default function MemberDirectoryClient() {
     }
 
     const totalVisibleMembers = filteredStates.reduce((sum, s) => sum + s.totalVisible, 0);
-    const activeStateLabel =
-        filteredStates.find((s) => s.stateCode === activeState)?.state || activeState;
 
     return (
         <section className="ll3-membersDirectory" ref={topRef}>
@@ -299,11 +298,11 @@ export default function MemberDirectoryClient() {
                         </div>
 
                         <div className="ll3-directoryFilters__summary">
-                            {!loading && (
+                            {!loading ? (
                                 <span className="ll3-directoryCount">
                                     {totalVisibleMembers} member{totalVisibleMembers === 1 ? "" : "s"} shown
                                 </span>
-                            )}
+                            ) : null}
                         </div>
                     </div>
 
@@ -330,7 +329,7 @@ export default function MemberDirectoryClient() {
                                 id="members-directory-chamber"
                                 className="ll3-input"
                                 value={chamber}
-                                onChange={(e) => setChamber(e.target.value)}
+                                onChange={(e) => setChamber(normalizeChamber(e.target.value))}
                             >
                                 <option value="">All Chambers</option>
                                 <option value="House">House</option>
@@ -367,11 +366,11 @@ export default function MemberDirectoryClient() {
                     </div>
 
                     <div className="ll3-directoryFilters__mobileCount">
-                        {!loading && (
+                        {!loading ? (
                             <span>
                                 {totalVisibleMembers} member{totalVisibleMembers === 1 ? "" : "s"} shown
                             </span>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </div>
@@ -414,6 +413,7 @@ export default function MemberDirectoryClient() {
                         <nav className="ll3-directorySidebar__nav">
                             {filteredStates.map((state) => {
                                 const isActive = activeState === state.stateCode;
+
                                 return (
                                     <button
                                         key={state.stateCode}
@@ -433,11 +433,11 @@ export default function MemberDirectoryClient() {
                 </aside>
 
                 <div className="ll3-directoryMain">
-                    {loading && <p className="search-empty">Loading directory…</p>}
+                    {loading ? <p className="search-empty">Loading directory…</p> : null}
 
-                    {!loading && filteredStates.length === 0 && (
+                    {!loading && filteredStates.length === 0 ? (
                         <p className="search-empty">No members match the current filters.</p>
-                    )}
+                    ) : null}
 
                     {!loading &&
                         filteredStates.map((state) => (
@@ -461,7 +461,7 @@ export default function MemberDirectoryClient() {
                                     </div>
                                 </div>
 
-                                {state.senators.length > 0 && (
+                                {state.senators.length > 0 ? (
                                     <div className="ll3-chamberBlock">
                                         <div className="ll3-chamberBlock__head">
                                             <h3 className="ll3-chamberBlock__title">Senate</h3>
@@ -485,11 +485,11 @@ export default function MemberDirectoryClient() {
                                             </div>
                                         </div>
                                     </div>
-                                )}
+                                ) : null}
 
-                                {state.representatives.length > 0 && (
+                                {state.representatives.length > 0 ? (
                                     <HouseGroup members={state.representatives} />
-                                )}
+                                ) : null}
                             </section>
                         ))}
                 </div>

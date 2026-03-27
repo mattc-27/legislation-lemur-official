@@ -1,8 +1,4 @@
-/* app/styles/active/members/ll3.members.votes.css
-   ======================================================================
-   LL3 — Members Votes
-   Vote section shell, recent votes list, show more button, split headers.
-   ====================================================================== */
+/* app/styles/active/members/ll3.members.votes.css */
 
 .llm3-votesSplit {
     display: flex;
@@ -74,7 +70,7 @@
 .llmp3-page .llm3-votesSplit__tableHead .llm3-h2 {
     font-size: 15px;
     font-weight: 900;
-    color: rgba(17, 24, 39, 0.94);
+    color: var(--llm3-ink);
 }
 
 .llm3-votesSplit__titleBlock .llm3-muted,
@@ -83,12 +79,12 @@
     max-width: 62ch;
     line-height: 1.42;
     font-size: 13px;
-    color: rgba(17, 24, 39, 0.68);
+    color: var(--llm3-muted);
 }
 
 .llm3-votesSplit__metaText,
 .llmp3-page .llm3-votesSplit__metaText {
-    color: rgba(17, 24, 39, 0.58);
+    color: var(--llm3-muted);
     font-size: 12px;
     font-weight: 700;
     line-height: 1.35;
@@ -97,7 +93,7 @@
 
 .llm3-votesSplit__divider {
     height: 1px;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--llm3-border);
     margin: 2px 0 0;
 }
 
@@ -120,37 +116,17 @@
     cursor: pointer;
 }
 
-/* show more */
-/* .llm3-moreBtn {
-    margin: 10px 16px 12px;
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.85);
-    color: var(--llm3-ink);
-    font-weight: 850;
-    letter-spacing: -0.01em;
-    transition: transform 0.06s ease, border-color 0.18s ease, background 0.18s ease;
-}
-    */
-
 .llm3-moreBtn {
     min-height: 32px;
     min-width: 150px;
     padding: 0 12px;
     border-radius: 8px;
-    border: 1px solid rgba(17, 24, 39, 0.18);
-    background: #fff;
-    color: rgba(17, 24, 39, 0.84);
+    border: 1px solid var(--llm3-border);
+    background: var(--llm3-surface-glass);
+    color: var(--llm3-ink);
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
-
-    /* positioning */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -158,25 +134,10 @@
     margin: 12px 16px 14px;
 }
 
-@media (max-width: 900px) {
-    .llm3-moreBtn {
-        margin: 12px 14px 14px;
-    }
-}
-
-@media (max-width: 640px) {
-    .llm3-moreBtn {
-        display: flex;
-        width: calc(100% - 20px);
-        min-width: 0;
-        margin: 12px 10px 12px;
-    }
-}
-
 .llm3-moreBtn:hover {
     transform: translateY(-1px);
-    border-color: rgba(17, 24, 39, 0.18);
-    background: #fff;
+    border-color: var(--llm3-border-strong);
+    background: var(--llm3-surface-soft);
 }
 
 .llm3-moreBtn:active {
@@ -185,18 +146,17 @@
 
 .llm3-moreBtn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
-    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 0 0 3px var(--llm3-focus);
+    border-color: color-mix(in srgb, var(--ll3-accent) 35%, var(--llm3-border));
 }
 
-/* vote list */
 .llmp3-page .votes-list {
     display: block;
 }
 
 .llmp3-page .votes-list__item {
     padding: 14px;
-    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+    border-bottom: 1px solid var(--llm3-border-soft);
     display: grid;
     gap: 9px;
 }
@@ -216,13 +176,13 @@
 .llmp3-page .votes-list__date {
     font-size: 13px;
     font-weight: 800;
-    color: rgba(17, 24, 39, 0.82);
+    color: var(--llm3-text);
     white-space: nowrap;
 }
 
 .llmp3-page .votes-list__measure {
     min-width: 0;
-    color: rgba(17, 24, 39, 0.92);
+    color: var(--llm3-ink);
 }
 
 .llmp3-page .votes-table__billLink,
@@ -244,7 +204,7 @@
 }
 
 .llmp3-page .votes-list__meta {
-    color: rgba(17, 24, 39, 0.58);
+    color: var(--llm3-muted);
     font-size: 12px;
     font-weight: 700;
 }
@@ -263,111 +223,28 @@
 }
 
 .llmp3-page .votes-table__resultBadge.is-pass {
-    background: rgba(16, 185, 129, 0.10);
-    color: rgba(4, 120, 87, 0.96);
-    border-color: rgba(16, 185, 129, 0.18);
+    background: var(--llm3-success-bg);
+    color: var(--llm3-success-text);
+    border-color: var(--llm3-success-border);
 }
 
 .llmp3-page .votes-table__resultBadge.is-fail {
-    background: rgba(244, 63, 94, 0.10);
-    color: rgba(190, 24, 93, 0.96);
-    border-color: rgba(244, 63, 94, 0.18);
+    background: var(--llm3-danger-bg);
+    color: var(--llm3-danger-text);
+    border-color: var(--llm3-danger-border);
 }
 
 .llmp3-page .votes-table__resultBadge.is-other {
-    background: rgba(148, 163, 184, 0.12);
-    color: rgba(51, 65, 85, 0.92);
-    border-color: rgba(148, 163, 184, 0.22);
+    background: var(--llm3-slate-bg);
+    color: var(--llm3-slate-text);
+    border-color: var(--llm3-slate-border);
 }
 
 .llmp3-page .votes-table__empty {
-    color: rgba(17, 24, 39, 0.58);
+    color: var(--llm3-muted);
     font-weight: 800;
+    padding: 12px 0;
 }
-
-@media (max-width: 980px) {
-    .llm3-votesSplit__top {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 900px) {
-    .llmp3-page .llm3-votesSplit__rightHead {
-        display: grid;
-        gap: 8px;
-        padding: 14px 14px 10px;
-    }
-
-    .llmp3-page .llm3-votesSplit__metaBlock {
-        margin-left: 0;
-        padding-left: 0;
-    }
-
-    .llmp3-page .llm3-votesSplit__metaText {
-        text-align: left;
-    }
-
-    .llmp3-page .llm3-votesSplit__tableHead {
-        padding: 0 14px 2px;
-    }
-}
-
-@media (min-width: 768px) {
-    .llmp3-page .votes-list__item {
-        padding: 14px 16px;
-        gap: 10px;
-    }
-
-    .llmp3-page .votes-list__date {
-        font-size: 14px;
-    }
-
-    .llmp3-page .votes-list__measure .votes-table__billLink,
-    .llmp3-page .votes-list__measure .votes-table__billText {
-        font-size: 15px;
-        -webkit-line-clamp: 2;
-    }
-}
-
-@media (max-width: 640px) {
-    .llmp3-page .llm3-votesSplit__divider--spacious {
-        height: 20px;
-    }
-
-    .llmp3-page .llm3-votesSplit__metaText {
-        font-size: 11px;
-        text-align: left;
-    }
-
-    .llmp3-page .llm3-votesSplit__titleBlock .llm3-muted {
-        font-size: 12.5px;
-        line-height: 1.4;
-    }
-
-    .llmp3-page .votes-list__item {
-        padding: 12px 10px;
-    }
-
-    .llmp3-page .votes-list__measure .votes-table__billLink,
-    .llmp3-page .votes-list__measure .votes-table__billText {
-        font-size: 13px;
-    }
-
-    .llmp3-page .votes-list__date,
-    .llmp3-page .votes-list__meta {
-        font-size: 11.5px;
-    }
-
-    .llmp3-page .votes-list .badge,
-    .llmp3-page .votes-table__resultBadge {
-        font-size: 10.5px;
-    }
-}
-
-/* ==========================================================================
-   LL3 — Senate vote groups
-   Cleaned to feel closer to the House recent-votes list
-   ========================================================================== */
 
 .llm3-senVotes {
     display: grid;
@@ -413,14 +290,14 @@
     line-height: 1.1;
     font-weight: 900;
     letter-spacing: -0.02em;
-    color: rgba(17, 24, 39, 0.96);
+    color: var(--llm3-ink);
 }
 
 .llm3-senVoteHead__link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: rgba(17, 24, 39, 0.76);
+    color: var(--llm3-text);
     text-decoration: none;
     font-size: 0.94rem;
     font-weight: 700;
@@ -429,21 +306,21 @@
 }
 
 .llm3-senVoteHead__link:hover {
-    color: rgba(17, 24, 39, 0.96);
+    color: var(--ll3-link);
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 
 .llm3-senVoteList {
-    border: 1px solid rgba(17, 24, 39, 0.08);
+    border: 1px solid var(--llm3-border);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--llm3-surface-glass);
     overflow: hidden;
 }
 
 .llm3-senVoteEmpty {
     padding: 16px;
-    color: rgba(17, 24, 39, 0.58);
+    color: var(--llm3-muted);
     font-weight: 700;
 }
 
@@ -451,7 +328,7 @@
     display: grid;
     gap: 10px;
     padding: 14px 16px;
-    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+    border-bottom: 1px solid var(--llm3-border-soft);
 }
 
 .llm3-senVoteItem:last-child {
@@ -468,7 +345,7 @@
 .llm3-senVoteItem__date {
     font-size: 13px;
     font-weight: 800;
-    color: rgba(17, 24, 39, 0.78);
+    color: var(--llm3-text);
     white-space: nowrap;
 }
 
@@ -487,7 +364,7 @@
 }
 
 .llm3-senVoteItem__question {
-    color: rgba(17, 24, 39, 0.94);
+    color: var(--llm3-ink);
     font-size: 1.02rem;
     line-height: 1.35;
     font-weight: 800;
@@ -499,22 +376,22 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    color: rgba(17, 24, 39, 0.58);
+    color: var(--llm3-muted);
     font-size: 12px;
     font-weight: 700;
     line-height: 1.35;
 }
 
 .llm3-senVoteItem__stage {
-    color: rgba(17, 24, 39, 0.66);
+    color: var(--llm3-text);
 }
 
 .llm3-senVoteItem__dot {
-    color: rgba(17, 24, 39, 0.36);
+    color: var(--llm3-muted);
 }
 
 .llm3-senVoteItem__roll {
-    color: rgba(17, 24, 39, 0.62);
+    color: var(--llm3-muted);
 }
 
 .llm3-senVoteItem__bottom {
@@ -531,7 +408,6 @@
     flex-wrap: wrap;
 }
 
-/* make badges feel aligned with house list density */
 .llm3-senVoteItem .badge {
     min-height: 28px;
     padding: 4px 10px;
@@ -539,25 +415,104 @@
     font-weight: 800;
 }
 
-/* desktop rhythm */
-@media (min-width: 900px) {
+@media (max-width: 980px) {
+    .llm3-votesSplit__top {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .llm3-moreBtn {
+        margin: 12px 14px 14px;
+    }
+
+    .llmp3-page .llm3-votesSplit__rightHead {
+        display: grid;
+        gap: 8px;
+        padding: 14px 14px 10px;
+    }
+
+    .llmp3-page .llm3-votesSplit__metaBlock {
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .llmp3-page .llm3-votesSplit__metaText {
+        text-align: left;
+    }
+
+    .llmp3-page .llm3-votesSplit__tableHead {
+        padding: 0 14px 2px;
+    }
+}
+
+@media (min-width: 768px) {
     .llm3-senVoteCard {
         padding: 16px;
     }
 
     .llm3-senVoteItem {
-        grid-template-columns: minmax(0, 1fr);
         gap: 10px;
         padding: 16px 18px;
     }
 
-    .llm3-senVoteItem__question {
-        font-size: 1.04rem;
+    .llmp3-page .votes-list__item {
+        padding: 14px 16px;
+        gap: 10px;
+    }
+
+    .llmp3-page .votes-list__date {
+        font-size: 14px;
+    }
+
+    .llmp3-page .votes-list__measure .votes-table__billLink,
+    .llmp3-page .votes-list__measure .votes-table__billText {
+        font-size: 15px;
+        -webkit-line-clamp: 2;
     }
 }
 
-/* mobile cleanup */
 @media (max-width: 640px) {
+    .llmp3-page .llm3-votesSplit__divider--spacious {
+        height: 20px;
+    }
+
+    .llmp3-page .llm3-votesSplit__metaText {
+        font-size: 11px;
+        text-align: left;
+    }
+
+    .llmp3-page .llm3-votesSplit__titleBlock .llm3-muted {
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+
+    .llm3-moreBtn {
+        display: flex;
+        width: calc(100% - 20px);
+        min-width: 0;
+        margin: 12px 10px 12px;
+    }
+
+    .llmp3-page .votes-list__item {
+        padding: 12px 10px;
+    }
+
+    .llmp3-page .votes-list__measure .votes-table__billLink,
+    .llmp3-page .votes-list__measure .votes-table__billText {
+        font-size: 13px;
+    }
+
+    .llmp3-page .votes-list__date,
+    .llmp3-page .votes-list__meta {
+        font-size: 11.5px;
+    }
+
+    .llmp3-page .votes-list .badge,
+    .llmp3-page .votes-table__resultBadge {
+        font-size: 10.5px;
+    }
+
     .llm3-senVoteCard {
         padding: 12px;
         border-radius: 16px;

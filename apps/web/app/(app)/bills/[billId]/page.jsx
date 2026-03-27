@@ -18,6 +18,8 @@ import {
   getBillRelated,
 } from "@/lib/server/routes/bills";
 
+import RelatedBillsGraph from "@/app/components/features/bills/RelatedBillsGraph";
+
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -36,8 +38,15 @@ import {
 
 /* import '@/app/styles/active/ll-bill-detail.css';*/
 
-import '@/app/styles/active/bills/ll3.bills.detail.page.css';
+//import '@/app/styles/active/bills/ll3.bills.detail.page.css';
 
+import "@/app/styles/active/bills/bill-details/ll3.bills.tokens.css";
+import "@/app/styles/active/bills/bill-details/ll3.bills.ui.css";
+import "@/app/styles/active/bills/bill-details/ll3.bills.details.css";
+import "@/app/styles/active/bills/bill-details/ll3.bills.hero.css";
+import "@/app/styles/active/bills/bill-details/ll3.bills.timeline.css";
+import "@/app/styles/active/bills/bill-details/ll3.bills.side.css";
+import "@/app/styles/active/bills/bill-details/ll3.bills.network.css";
 // ---------- helpers ----------
 const fmtDate = (v) => {
   if (!v) return "—";
@@ -121,6 +130,8 @@ export default async function BillPage({ params }) {
     getBillCommittees({ type, number, congress }),
     getBillRelated({ type, number, congress }),
   ]);
+
+  console.log(bill)
 
   if (!bill) return notFound();
 
@@ -332,20 +343,22 @@ export default async function BillPage({ params }) {
               </div>
 
               {relatedRows.length ? (
-                <ul className="llbd3-list">
-                  {relatedRows.map((r) => {
-                    const relSlug = `${r.related_type}-${r.related_number}-${r.related_congress}`.toLowerCase();
-                    return (
-                      <li key={r.id || relSlug} className="llbd3-list__item">
-                        <Link href={`/bills/${relSlug}`} className="llbd3-link">
-                          {r.related_type.toUpperCase()}. {r.related_number} ({r.related_congress})
-                        </Link>
-                        {r.relationship_type && <span className="llbd3-muted llbd3-small"> · {r.relationship_type}</span>}
-                        {r.latest_action_text && <div className="llbd3-muted llbd3-small llbd3-mt-6">{r.latest_action_text}</div>}
-                      </li>
-                    );
-                  })}
-                </ul>
+                <RelatedBillsGraph
+                  currentBill={{
+                    displayNumber:
+                      bill?.displayNumber || `${bill?.type?.toUpperCase()}. ${bill?.number}`,
+                    title: bill?.title,
+                  }}
+                  relatedBills={relatedRows.map((r) => ({
+                    type: r.related_type,
+                    number: r.related_number,
+                    congress: r.related_congress,
+                    relationshipType: r.relationship_type,
+                    latestActionText: r.latest_action_text,
+                    displayNumber: `${String(r.related_type || "").toUpperCase()}. ${r.related_number} (${r.related_congress})`,
+                    href: `/bills/${`${r.related_type}-${r.related_number}-${r.related_congress}`.toLowerCase()}`,
+                  }))}
+                />
               ) : (
                 <div className="llbd3-muted llbd3-small">No related bills listed.</div>
               )}

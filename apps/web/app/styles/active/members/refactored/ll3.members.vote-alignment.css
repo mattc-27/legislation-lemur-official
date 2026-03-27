@@ -1,23 +1,20 @@
-/* app/styles/active/members/ll3.vote-alignment.css
-   ======================================================================
-   LL3 — Vote Alignment
-   ====================================================================== */
+/* app/styles/active/members/ll3.vote-alignment.css */
 
 .llm3-va {
-    --va-border: rgba(15, 23, 42, 0.08);
-    --va-muted: rgba(15, 23, 42, 0.62);
-    --va-quiet: rgba(15, 23, 42, 0.48);
-    --va-bg-soft: rgba(15, 23, 42, 0.03);
+    --va-border: var(--llm3-border);
+    --va-muted: var(--llm3-muted);
+    --va-quiet: var(--llm3-muted-2);
+    --va-bg-soft: var(--llm3-surface-muted);
 
-    --va-good: rgba(16, 185, 129, 0.18);
-    --va-bad: rgba(239, 68, 68, 0.16);
-    --va-warn: rgba(245, 158, 11, 0.18);
-    --va-neutral: rgba(99, 102, 241, 0.14);
+    --va-good: var(--llm3-success-bg);
+    --va-bad: var(--llm3-danger-bg);
+    --va-warn: var(--llm3-warning-bg);
+    --va-neutral: var(--llm3-indigo-bg);
 
-    --va-good-text: rgba(16, 185, 129, 1);
-    --va-bad-text: rgba(239, 68, 68, 1);
-    --va-warn-text: rgba(245, 158, 11, 1);
-    --va-neutral-text: rgba(99, 102, 241, 1);
+    --va-good-text: var(--llm3-success-text);
+    --va-bad-text: var(--llm3-danger-text);
+    --va-warn-text: var(--llm3-warning-text);
+    --va-neutral-text: var(--llm3-indigo-text);
 }
 
 .llm3-va__head {
@@ -47,20 +44,20 @@
     height: 20px;
     border-radius: 999px;
     border: 1px solid var(--va-border);
-    background: #fff;
+    background: var(--llm3-surface-glass);
     color: var(--va-muted);
     cursor: pointer;
     padding: 0;
 }
 
 .llm3-va__info:hover {
-    color: rgba(15, 23, 42, 0.86);
-    border-color: rgba(15, 23, 42, 0.16);
+    color: var(--llm3-ink);
+    border-color: var(--llm3-border-strong);
 }
 
 .llm3-va__info:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+    box-shadow: 0 0 0 3px var(--llm3-focus);
 }
 
 .llm3-vaPopover {
@@ -71,15 +68,15 @@
     width: min(320px, 78vw);
     border: 1px solid var(--va-border);
     border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 20px 36px rgba(2, 8, 23, 0.12);
+    background: var(--llm3-surface-glass);
+    box-shadow: var(--llm3-shadow);
     padding: 12px;
 }
 
 .llm3-vaPopover__title {
     font-size: 12px;
     font-weight: 800;
-    color: rgba(15, 23, 42, 0.92);
+    color: var(--llm3-ink);
     margin-bottom: 6px;
 }
 
@@ -96,7 +93,7 @@
     gap: 6px;
     font-size: 12px;
     font-weight: 700;
-    color: rgba(29, 78, 216, 0.96);
+    color: var(--ll3-link);
     text-decoration: none;
 }
 
@@ -148,7 +145,7 @@
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.03em;
-    color: rgba(15, 23, 42, 0.92);
+    color: var(--llm3-ink);
     min-width: 120px;
 }
 
@@ -156,7 +153,7 @@
     font-size: 18px;
     font-weight: 700;
     margin-left: 6px;
-    color: rgba(15, 23, 42, 0.62);
+    color: var(--va-muted);
 }
 
 .llm3-va__heroMeta {
@@ -170,7 +167,7 @@
     align-items: center;
     gap: 8px;
     font-weight: 750;
-    color: rgba(15, 23, 42, 0.84);
+    color: var(--llm3-text);
 }
 
 .llm3-va__metaLine {
@@ -204,7 +201,7 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    background: #fff;
+    background: var(--llm3-surface-glass);
 }
 
 .llm3-vaStat__icon {
@@ -214,7 +211,7 @@
     display: grid;
     place-items: center;
     background: var(--va-bg-soft);
-    color: rgba(15, 23, 42, 0.72);
+    color: var(--llm3-text);
     flex: 0 0 auto;
 }
 
@@ -228,7 +225,7 @@
     font-size: 14px;
     font-weight: 750;
     letter-spacing: -0.01em;
-    color: rgba(15, 23, 42, 0.90);
+    color: var(--llm3-ink);
     margin-top: 2px;
     line-height: 1.35;
 }
@@ -260,9 +257,9 @@
     border: 1px solid var(--va-border);
     border-radius: 999px;
     padding: 7px 10px;
-    background: #fff;
+    background: var(--llm3-surface-glass);
     font-size: 12px;
-    color: rgba(15, 23, 42, 0.82);
+    color: var(--llm3-text);
     white-space: nowrap;
 }
 
@@ -283,22 +280,22 @@
 
 .llm3-vaChip--good {
     background: var(--va-good);
-    border-color: rgba(16, 185, 129, 0.28);
+    border-color: var(--llm3-success-border);
 }
 
 .llm3-vaChip--warn {
     background: var(--va-warn);
-    border-color: rgba(245, 158, 11, 0.28);
+    border-color: var(--llm3-warning-border);
 }
 
 .llm3-vaChip--neutral {
     background: var(--va-neutral);
-    border-color: rgba(99, 102, 241, 0.24);
+    border-color: var(--llm3-indigo-border);
 }
 
 .llm3-vaChip--bad {
     background: var(--va-bad);
-    border-color: rgba(239, 68, 68, 0.24);
+    border-color: var(--llm3-danger-border);
 }
 
 .llm3-va__deviations {
@@ -332,7 +329,7 @@
     border: 1px solid var(--va-border);
     border-radius: 999px;
     padding: 7px 10px;
-    background: #fff;
+    background: var(--llm3-surface-glass);
     min-width: 0;
 }
 
@@ -342,7 +339,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 12px;
-    color: rgba(15, 23, 42, 0.84);
+    color: var(--llm3-text);
 }
 
 .llm3-vaDev__delta {
@@ -356,12 +353,12 @@
 
 .llm3-vaDev--good {
     background: var(--va-good);
-    border-color: rgba(16, 185, 129, 0.26);
+    border-color: var(--llm3-success-border);
 }
 
 .llm3-vaDev--bad {
     background: var(--va-bad);
-    border-color: rgba(239, 68, 68, 0.22);
+    border-color: var(--llm3-danger-border);
 }
 
 .llm3-vaDev--neutral {
@@ -382,7 +379,7 @@
     user-select: none;
     padding: 10px 0;
     font-weight: 750;
-    color: rgba(15, 23, 42, 0.86);
+    color: var(--llm3-ink);
 }
 
 .llm3-va__summary::-webkit-details-marker {
@@ -397,7 +394,7 @@
     border-radius: 999px;
     background: var(--va-bg-soft);
     border: 1px solid var(--va-border);
-    color: rgba(15, 23, 42, 0.72);
+    color: var(--llm3-text);
     transition: transform 160ms ease;
 }
 
@@ -443,15 +440,15 @@ details[open] .llm3-va__summaryIcon {
     border: 1px solid var(--va-border);
     border-radius: 12px;
     padding: 8px 10px;
-    background: #fff;
+    background: var(--llm3-surface-glass);
     font-size: 12px;
-    color: rgba(15, 23, 42, 0.88);
+    color: var(--llm3-ink);
     outline: none;
 }
 
 .llm3-va__select:focus {
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
-    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 0 0 3px var(--llm3-focus);
+    border-color: color-mix(in srgb, var(--ll3-accent) 35%, var(--llm3-border));
 }
 
 .llm3-va__controlsHint {
@@ -473,12 +470,12 @@ details[open] .llm3-va__summaryIcon {
     grid-template-columns: minmax(180px, 1.2fr) 2fr auto;
     gap: 12px;
     align-items: center;
-    background: #fff;
+    background: var(--llm3-surface-glass);
 }
 
 .llm3-vaRow__name {
     font-weight: 700;
-    color: rgba(15, 23, 42, 0.90);
+    color: var(--llm3-ink);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -501,7 +498,7 @@ details[open] .llm3-va__summaryIcon {
 .llm3-vaRow__barFill {
     height: 100%;
     border-radius: 999px;
-    background: rgba(99, 102, 241, 0.42);
+    background: color-mix(in srgb, var(--ll3-accent) 42%, transparent);
 }
 
 .llm3-vaRow__right {
@@ -513,7 +510,7 @@ details[open] .llm3-va__summaryIcon {
 
 .llm3-vaRow__pct {
     font-weight: 750;
-    color: rgba(15, 23, 42, 0.90);
+    color: var(--llm3-ink);
 }
 
 .llm3-vaRow__delta {
@@ -523,25 +520,25 @@ details[open] .llm3-va__summaryIcon {
     border-radius: 999px;
     border: 1px solid var(--va-border);
     background: var(--va-bg-soft);
-    color: rgba(15, 23, 42, 0.72);
+    color: var(--llm3-text);
 }
 
 .llm3-vaRow__delta--good {
     background: var(--va-good);
-    border-color: rgba(16, 185, 129, 0.26);
-    color: rgba(6, 95, 70, 1);
+    border-color: var(--llm3-success-border);
+    color: var(--llm3-success-text);
 }
 
 .llm3-vaRow__delta--bad {
     background: var(--va-bad);
-    border-color: rgba(239, 68, 68, 0.22);
-    color: rgba(127, 29, 29, 1);
+    border-color: var(--llm3-danger-border);
+    color: var(--llm3-danger-text);
 }
 
 .llm3-vaRow__delta--neutral {
     background: var(--va-bg-soft);
     border-color: var(--va-border);
-    color: rgba(15, 23, 42, 0.70);
+    color: var(--llm3-text);
 }
 
 .llm3-va__empty {
