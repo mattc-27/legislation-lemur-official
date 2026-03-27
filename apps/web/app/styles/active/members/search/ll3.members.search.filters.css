@@ -1,0 +1,336 @@
+.ll3-membersFilters {
+    min-width: 0;
+}
+
+.ll3-membersFilters .ll3-control__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 2px 2px 12px;
+    flex-wrap: wrap;
+}
+
+.ll3-control__heading {
+    min-width: 220px;
+    flex: 1 1 260px;
+}
+
+.ll3-h2 {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    color: var(--llm3-ink, #111827);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.ll3-muted {
+    margin: 6px 0 0;
+    color: var(--llm3-text, #4b5563);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.ll3-membersFilters__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+}
+
+.ll3-field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ll3-field--span2 {
+    grid-column: 1 / -1;
+}
+
+.ll3-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--llm3-ink, #111827);
+    letter-spacing: 0.02em;
+}
+
+.ll3-membersFilters form {
+    min-width: 0;
+}
+
+.ll3-input {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--llm3-ink, #111827);
+    font-size: 14px;
+    outline: none;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
+}
+
+.ll3-input:focus {
+    border-color: rgba(17, 24, 39, 0.22);
+    box-shadow: 0 0 0 4px rgba(180, 201, 232, 0.32);
+}
+
+.ll3-searchbox {
+    position: relative;
+    min-width: 0;
+}
+
+.ll3-searchbox__input {
+    padding-right: 12px;
+}
+
+.ll3-searchbox__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    max-height: 420px;
+    overflow: auto;
+    padding: 10px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 16px 36px rgba(17, 24, 39, 0.14);
+    backdrop-filter: blur(10px);
+}
+
+.ll3-searchbox__empty {
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(17, 24, 39, 0.68);
+}
+
+.ll3-sbSection {
+    display: grid;
+    gap: 10px;
+}
+
+.ll3-sbSection__label {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 4px 0;
+}
+
+.ll3-sbDivider {
+    border: 0;
+    border-top: 1px solid rgba(17, 24, 39, 0.08);
+    margin: 10px 0;
+}
+
+.ll3-sbState {
+    display: grid;
+    gap: 8px;
+}
+
+.ll3-sbState__head {
+    padding: 0 4px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--llm3-ink, #111827);
+}
+
+.ll3-sbState__code {
+    margin-left: 6px;
+    color: rgba(17, 24, 39, 0.55);
+    font-weight: 700;
+}
+
+.ll3-sbList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.ll3-sbItem {
+    display: grid;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    transition: background 0.16s ease;
+}
+
+.ll3-sbItem:hover {
+    background: rgba(17, 24, 39, 0.04);
+}
+
+.ll3-sbLink {
+    color: var(--llm3-ink, #111827);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 800;
+}
+
+.ll3-sbLink:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.ll3-sbMeta {
+    font-size: 12.5px;
+    color: rgba(17, 24, 39, 0.60);
+    font-weight: 600;
+}
+
+.ll3-membersFilters__actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.ll3-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.06s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--llm3-ink, #111827);
+}
+
+.ll3-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(17, 24, 39, 0.18);
+    box-shadow: 0 12px 22px rgba(17, 24, 39, 0.10);
+}
+
+.ll3-btn--ghost {
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.ll3-btn--primary {
+    border-color: rgba(17, 24, 39, 0.92);
+    background: rgba(17, 24, 39, 0.92);
+    color: #fff;
+    box-shadow: 0 12px 26px rgba(17, 24, 39, 0.18);
+}
+
+.ll3-btn--primary:hover {
+    background: rgba(17, 24, 39, 1);
+    color: #fff;
+}
+
+.ll3-btn--full {
+    width: 100%;
+}
+
+.ll3-filterChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.ll3-filterHint {
+    font-size: 13px;
+}
+
+.chip--pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    padding: 0 8px 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: rgba(255, 255, 255, 0.78);
+    color: #111827;
+}
+
+.chip__label {
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.chip__x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(17, 24, 39, 0.70);
+    cursor: pointer;
+    padding: 0;
+}
+
+.chip__x:hover {
+    background: rgba(17, 24, 39, 0.06);
+    color: rgba(17, 24, 39, 0.92);
+}
+
+.ll3-pill__sep {
+    width: 1px;
+    height: 14px;
+    background: rgba(17, 24, 39, 0.12);
+    margin-right: 4px;
+}
+
+.ll3-pill__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 980px) {
+    .ll3-membersFilters__grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .ll3-membersFilters__grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .ll3-field--span2 {
+        grid-column: auto;
+    }
+
+    .ll3-membersFilters__actions {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .ll3-filterChips {
+        margin-top: 10px;
+        gap: 6px;
+    }
+
+    .ll3-membersFilters .ll3-control__header {
+        padding-bottom: 10px;
+    }
+}

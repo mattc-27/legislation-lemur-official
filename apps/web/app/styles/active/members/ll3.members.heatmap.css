@@ -1,56 +1,198 @@
-/* app/styles/active/members/ll3.members.heatmap.css
-   ======================================================================
-   Heatmap — isolated styling (component is just viz; card controls layout)
-   ====================================================================== */
-
-.llmp3-page .llm3-heatmap {
-    width: 100%;
-    display: grid;
-    grid-template-rows: 1fr auto;
-    gap: 10px;
-    align-items: center;
-    justify-items: center;
-    min-height: 0;
+.llmp3-page .llm3-heatmapCard {
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96));
+    overflow: hidden;
 }
 
-.llmp3-page .llm3-heatmap__plot {
-    width: 100%;
+.llmp3-page .llm3-heatmapCard__head {
     display: flex;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px 8px;
+}
+
+.llmp3-page .llm3-heatmapCard__titleBlock {
+    min-width: 0;
+}
+
+.llmp3-page .llm3-heatmapCard__title {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 850;
+    color: rgba(17, 24, 39, 0.96);
+}
+
+.llmp3-page .llm3-heatmapCard__sub {
+    margin: 4px 0 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: rgba(17, 24, 39, 0.64);
+    max-width: 72ch;
+}
+
+.llmp3-page .llm3-heatmapCard__meta {
+    flex: 0 0 auto;
+    font-size: 11px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.62);
+    white-space: nowrap;
+    padding-top: 2px;
+}
+
+.llmp3-page .llm3-heatmapCard__gridWrap {
+    padding: 2px 16px 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.llmp3-page .llm3-heatmapCard__svg {
+    display: block;
+    min-width: 100%;
+    height: auto;
+}
+
+.llmp3-page .llm3-heatmapCard__legendRow {
+    display: flex;
     align-items: center;
-    min-height: 0;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 0 16px 12px;
 }
 
-.llmp3-page .llm3-heatmap__legend {
-    width: 100%;
-    display: grid;
-    gap: 6px;
-    justify-items: center;
-    align-content: center;
-}
-
-.llmp3-page .llm3-heatmap__legendRow {
+.llmp3-page .llm3-heatmapCard__scale {
     display: inline-flex;
     align-items: center;
     gap: 6px;
 }
 
-.llmp3-page .llm3-heatmap__box {
+.llmp3-page .llm3-heatmapCard__legendText {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.62);
+}
+
+.llmp3-page .llm3-heatmapCard__scaleBox {
     width: 12px;
     height: 12px;
-    border-radius: 2px;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    border-radius: 3px;
+    display: inline-block;
+    box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.08);
 }
 
-.llmp3-page .llm3-heatmap__muted {
-    color: #64748b;
+.llmp3-page .llm3-heatmapCard__outcomes {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.llmp3-page .llm3-heatmapCard__outcome {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 12px;
     font-weight: 700;
+    color: rgba(17, 24, 39, 0.66);
 }
 
-.llmp3-page .llm3-heatmap__meta {
-    color: #64748b;
+.llmp3-page .llm3-heatmapCard__outcomeDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.llmp3-page .llm3-heatmapCard__outcomeDot.is-pass {
+    background: #22C55E;
+}
+
+.llmp3-page .llm3-heatmapCard__outcomeDot.is-fail {
+    background: #EF4444;
+}
+
+.llmp3-page .llm3-heatmapCard__summary {
+    border-top: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.55);
+    padding: 12px 16px 14px;
+}
+
+.llmp3-page .llm3-heatmapCard__summaryTitle {
     font-size: 12px;
-    font-weight: 750;
-    text-align: center;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.76);
+    margin-bottom: 8px;
+}
+
+.llmp3-page .llm3-heatmapCard__summaryStats {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.llmp3-page .llm3-heatmapCard__summaryItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.84);
+}
+
+.llmp3-page .llm3-heatmapCard__summaryMeta {
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.62);
+}
+
+@media (max-width: 900px) {
+    .llmp3-page .llm3-heatmapCard__head {
+        display: grid;
+        gap: 6px;
+    }
+
+    .llmp3-page .llm3-heatmapCard__meta {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 640px) {
+    .llmp3-page .llm3-heatmapCard__head {
+        padding: 12px 12px 6px;
+    }
+
+    .llmp3-page .llm3-heatmapCard__gridWrap {
+        padding: 2px 12px 6px;
+    }
+
+    .llmp3-page .llm3-heatmapCard__legendRow {
+        padding: 0 12px 10px;
+        gap: 10px;
+    }
+
+    .llmp3-page .llm3-heatmapCard__summary {
+        padding: 10px 12px 12px;
+    }
+
+    .llmp3-page .llm3-heatmapCard__title {
+        font-size: 15px;
+    }
+
+    .llmp3-page .llm3-heatmapCard__sub,
+    .llmp3-page .llm3-heatmapCard__summaryMeta,
+    .llmp3-page .llm3-heatmapCard__outcome,
+    .llmp3-page .llm3-heatmapCard__legendText {
+        font-size: 11px;
+    }
+
+    .llmp3-page .llm3-heatmapCard__summaryItem {
+        font-size: 12px;
+    }
 }

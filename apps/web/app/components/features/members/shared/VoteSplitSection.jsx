@@ -45,7 +45,7 @@ export default function VotesSplitSection({
     tableInitialLimit = 20,
     votesFreshnessAsOf = null,
     chamberLabel = "",
-    heatmapWeeks = 52,
+    heatmapWeeks = 13,
 }) {
     const [selectedDate, setSelectedDate] = useState(null);
     const [tableLimit, setTableLimit] = useState(tableInitialLimit);
@@ -100,7 +100,7 @@ export default function VotesSplitSection({
                         <div className="llm3-muted">
                             {selectedDate ? (
                                 <>
-                                    Filtering: <strong>{selectedLabel}</strong>{" "}
+                                    Showing votes from <strong>{selectedLabel}</strong>
                                     <button
                                         type="button"
                                         className="llm3-linkInline"
@@ -111,17 +111,15 @@ export default function VotesSplitSection({
                                     </button>
                                 </>
                             ) : (
-                                "Click a day to filter recent votes."
+                                "Daily voting activity over the last 90 days. Darker squares indicate more votes on that day."
                             )}
                         </div>
                     </div>
 
                     <div className="llm3-votesSplit__metaBlock">
-                        <div className="llm3-pill llm3-pill--subtle" title="Rolling 12 months">
-                            Last year{" "}
-                            {asOfLabel ? (
-                                <strong className="llm3-pill__strong">• Updated {asOfLabel}</strong>
-                            ) : null}
+                        <div className="llm3-votesSplit__metaText">
+                            {heatmapWeeks <= 13 ? "Last 90 days" : "Last year"}
+                            {asOfLabel ? ` • Updated ${asOfLabel}` : ""}
                         </div>
                     </div>
                 </div>
@@ -130,8 +128,8 @@ export default function VotesSplitSection({
                     <VotesHeatmap
                         votes={vizVotes}
                         weeks={heatmapWeeks}
-                        height={170}
-                        heatmapRatio={0.78}
+                        height={260}
+                        heatmapRatio={0.87}
                         onSelectDay={(key) => {
                             setSelectedDate((prev) => (prev === key ? null : key));
                         }}

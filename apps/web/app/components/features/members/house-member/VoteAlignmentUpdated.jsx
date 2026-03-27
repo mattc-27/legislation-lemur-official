@@ -1,9 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-
-// If you already use lucide-react anywhere, this is perfect.
-// If not, swap to your icon system or replace icons with simple text.
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
     CheckCircle2,
     Users,
@@ -15,25 +12,10 @@ import {
     Filter,
     ArrowUpDown,
     ChevronDown,
+    Info,
+    ExternalLink,
 } from "lucide-react";
 
-/**
- * Cleaner Vote Alignment panel.
- *
- * Accepts either:
- *  - Legacy value: { alignment_pct, attendance_pct }
- *  - New value: {
- *      overall: {
- *        alignment_pct, attendance_pct,
- *        alignment_vs_house_median, attendance_vs_house_median,
- *        alignment_percentile, attendance_percentile,
- *        votes_total, votes_missed, data_fresh_as_of
- *      },
- *      byPolicy: [...],
- *      topDeviations: [...],
- *      minVotes: 10
- *    }
- */
 export default function VoteAlignmentUpdated({ value, className = "", chamber = "" }) {
     const isPanel = !!value && typeof value === "object" && !!value.overall;
     const overall = isPanel ? value.overall : value;
@@ -59,12 +41,23 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
     const chamberNoun = chamber || "House";
     const label = chamber ? `${chamber} roll calls` : "roll calls";
 
-    // -------------------------
-    // Policy drilldown state
-    // -------------------------
     const initialMinVotes = isPanel ? (value?.minVotes ?? 10) : 10;
     const [minVotes, setMinVotes] = useState(initialMinVotes);
-    const [sortKey, setSortKey] = useState("votes"); // votes | lowest_alignment | highest_alignment | biggest_delta
+    const [sortKey, setSortKey] = useState("votes");
+    const [detailsOpen, setDetailsOpen] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const mq = window.matchMedia("(min-width: 901px)");
+        const apply = () => setDetailsOpen(mq.matches);
+        apply();
+        if (mq.addEventListener) {
+            mq.addEventListener("change", apply);
+            return () => mq.removeEventListener("change", apply);
+        }
+        mq.addListener(apply);
+        return () => mq.removeListener(apply);
+    }, []);
 
     const rawByPolicy = isPanel ? (Array.isArray(value.byPolicy) ? value.byPolicy : []) : [];
 
@@ -131,21 +124,27 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
     }, [isPanel, value, byPolicy]);
 
     const freshnessLabel = fmtAsOfShort(dataFreshAsOf);
-
     const deviationsLine = topDeviations.length ? topDeviations : null;
 
-    // -------------------------
-    // Render
-    // -------------------------
     return (
         <section className={`llmp3-card llm3-va ${className}`} aria-label="Vote alignment">
             <header className="llmp3-card__head llm3-va__head">
                 <div className="llm3-va__title">
-                    <h3 className="llm3-h2 llm3-va__h" style={{ margin: 0 }}>
-                        Party-line alignment
-                    </h3>
+                    <div className="llm3-va__titleRow">
+                        <h3 className="llm3-h2 llm3-va__h" style={{ margin: 0 }}>
+                            Votes aligned with party majority
+                        </h3>
+
+                        <InfoPopover
+                            label="About party-majority voting"
+                            wikiHref="/wiki/party-line-voting"
+                            title="What this measures"
+                            body="This shows how often the member voted the same way as most members of their party on comparable roll calls. It is not a value judgment; it is a voting-pattern measure."
+                        />
+                    </div>
+
                     <div className="llm3-va__subtitle">
-                        Share of votes matching the party line on {label}.
+                        How often this member voted with most members of their party on {label}.
                     </div>
                 </div>
 
@@ -155,13 +154,12 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
                         icon={<CalendarClock size={14} />}
                         label="Attendance"
                         value={`${Math.round(att)}%`}
-                        title="Share of this member’s cast votes out of all roll calls in their active window"
+                        title="Share of roll calls where this member cast a vote"
                     />
                 )}
             </header>
 
             <div className="llm3-va__body">
-                {/* HERO + SUPPORT STATS */}
                 <div className="llm3-va__topGrid">
                     <div className="llm3-va__hero">
                         <div className="llm3-va__heroRow">
@@ -173,14 +171,14 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
                             <div className="llm3-va__heroMeta">
                                 <div className="llm3-va__heroLabel">
                                     <CheckCircle2 size={16} />
-                                    <span>Aligned with party line</span>
+                                    <span>Voted with party majority</span>
                                 </div>
 
                                 <div className="llm3-va__metaLine">
                                     {votesTotal != null ? (
                                         <span className="llm3-va__metaItem">
                                             <Vote size={14} />
-                                            {votesTotal.toLocaleString()} votes
+                                            Compared across {votesTotal.toLocaleString()} votes
                                             {votesMissed != null ? (
                                                 <span className="llm3-va__metaMuted">
                                                     {" "}
@@ -204,39 +202,38 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
                     <div className="llm3-va__stats">
                         <StatCard
                             icon={<Users size={16} />}
-                            label={`Vs ${chamberNoun} median`}
-                            value={Number.isFinite(alignmentVsMedian) ? fmtDelta(alignmentVsMedian, { pp: true }) : "—"}
+                            label={`Compared with ${chamberNoun} median`}
+                            value={Number.isFinite(alignmentVsMedian) ? fmtDelta(alignmentVsMedian, { pts: true }) : "—"}
                             tone={toneForDelta(alignmentVsMedian)}
-                            hint="Difference in alignment vs chamber median"
+                            hint="Difference from the chamber median, in percentage points"
                         />
                         <StatCard
                             icon={<BarChart3 size={16} />}
                             label="Alignment percentile"
-                            value={Number.isFinite(alignmentPctile) ? fmtOrdinal(alignmentPctile) : "—"}
+                            value={Number.isFinite(alignmentPctile) ? fmtPercentileLabel(alignmentPctile) : "—"}
                             tone="neutral"
-                            hint="Percentile among members in the chamber"
+                            hint="Relative standing among members in the chamber"
                         />
                         <StatCard
                             icon={Number.isFinite(attendanceVsMedian) && attendanceVsMedian < 0 ? <TrendingDown size={16} /> : <TrendingUp size={16} />}
                             label={`Attendance vs ${chamberNoun}`}
-                            value={Number.isFinite(attendanceVsMedian) ? fmtDelta(attendanceVsMedian, { pp: true }) : "—"}
+                            value={Number.isFinite(attendanceVsMedian) ? fmtDelta(attendanceVsMedian, { pts: true }) : "—"}
                             tone={toneForDelta(attendanceVsMedian)}
-                            hint="Difference in attendance vs chamber median"
+                            hint="Difference in attendance from the chamber median, in percentage points"
                         />
                         <StatCard
                             icon={<BarChart3 size={16} />}
                             label="Attendance percentile"
-                            value={Number.isFinite(attendancePctile) ? fmtOrdinal(attendancePctile) : "—"}
+                            value={Number.isFinite(attendancePctile) ? fmtPercentileLabel(attendancePctile) : "—"}
                             tone="neutral"
-                            hint="Percentile among members in the chamber"
+                            hint="Relative standing among members in the chamber"
                         />
                     </div>
                 </div>
 
-                {/* DEVIATIONS */}
                 {isPanel && deviationsLine ? (
                     <div className="llm3-va__deviations">
-                        <div className="llm3-va__deviationsLabel">Top deviations</div>
+                        <div className="llm3-va__deviationsLabel">Biggest differences by policy area</div>
                         <div className="llm3-va__deviationsList">
                             {deviationsLine.map((d, i) => (
                                 <DeviationPill
@@ -249,70 +246,81 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
                     </div>
                 ) : null}
 
-                {/* DRILLDOWN */}
                 {isPanel ? (
-                    <details className="llm3-va__details">
-                        <summary className="llm3-va__summary">
-                            <span>Alignment by policy area</span>
+                    <details className="llm3-va__details" open={detailsOpen}>
+                        <summary
+                            className="llm3-va__summary"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setDetailsOpen((v) => !v);
+                            }}
+                        >
+                            <span>Voting with party majority by policy area</span>
                             <span className="llm3-va__summaryIcon" aria-hidden="true">
                                 <ChevronDown size={16} />
                             </span>
                         </summary>
 
-                        <div className="llm3-va__drill">
-                            <div className="llm3-va__controls">
-                                <label className="llm3-va__control">
-                                    <span className="llm3-va__controlLabel">
-                                        <ArrowUpDown size={14} /> Sort by
-                                    </span>
-                                    <select
-                                        className="llm3-va__select"
-                                        value={sortKey}
-                                        onChange={(e) => setSortKey(e.target.value)}
-                                        aria-label="Sort policy areas"
-                                    >
-                                        <option value="votes">Most votes</option>
-                                        <option value="biggest_delta">Biggest deviation</option>
-                                        <option value="lowest_alignment">Lowest alignment</option>
-                                        <option value="highest_alignment">Highest alignment</option>
-                                    </select>
-                                </label>
+                        {detailsOpen ? (
+                            <div className="llm3-va__drill">
+                                <div className="llm3-va__drillIntro">
+                                    Shows how often this member voted with most members of their party within each policy area.
+                                </div>
 
-                                <label className="llm3-va__control">
-                                    <span className="llm3-va__controlLabel">
-                                        <Filter size={14} /> Min votes
-                                    </span>
-                                    <select
-                                        className="llm3-va__select"
-                                        value={minVotes}
-                                        onChange={(e) => setMinVotes(parseInt(e.target.value, 10))}
-                                        aria-label="Minimum votes threshold"
-                                    >
-                                        <option value={5}>5+</option>
-                                        <option value={10}>10+</option>
-                                        <option value={20}>20+</option>
-                                        <option value={50}>50+</option>
-                                    </select>
-                                </label>
+                                <div className="llm3-va__controls">
+                                    <label className="llm3-va__control">
+                                        <span className="llm3-va__controlLabel">
+                                            <ArrowUpDown size={14} /> Sort by
+                                        </span>
+                                        <select
+                                            className="llm3-va__select"
+                                            value={sortKey}
+                                            onChange={(e) => setSortKey(e.target.value)}
+                                            aria-label="Sort policy areas"
+                                        >
+                                            <option value="votes">Most votes</option>
+                                            <option value="biggest_delta">Biggest difference</option>
+                                            <option value="lowest_alignment">Lowest alignment</option>
+                                            <option value="highest_alignment">Highest alignment</option>
+                                        </select>
+                                    </label>
 
-                                <div className="llm3-va__controlsHint">
-                                    Showing areas with <strong>{minVotes}+</strong> party-line votes
+                                    <label className="llm3-va__control">
+                                        <span className="llm3-va__controlLabel">
+                                            <Filter size={14} /> Min votes
+                                        </span>
+                                        <select
+                                            className="llm3-va__select"
+                                            value={minVotes}
+                                            onChange={(e) => setMinVotes(parseInt(e.target.value, 10))}
+                                            aria-label="Minimum votes threshold"
+                                        >
+                                            <option value={5}>5+</option>
+                                            <option value={10}>10+</option>
+                                            <option value={20}>20+</option>
+                                            <option value={50}>50+</option>
+                                        </select>
+                                    </label>
+
+                                    <div className="llm3-va__controlsHint">
+                                        Showing areas with <strong>{minVotes}+</strong> comparable votes
+                                    </div>
+                                </div>
+
+                                <div className="llm3-va__rows">
+                                    {byPolicy.length ? (
+                                        byPolicy.map((row) => (
+                                            <PolicyRow
+                                                key={row.policy_area_id ?? row.policy_area_slug ?? row.policy_area_name}
+                                                row={row}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="llm3-va__empty">No policy areas meet this threshold.</div>
+                                    )}
                                 </div>
                             </div>
-
-                            <div className="llm3-va__rows">
-                                {byPolicy.length ? (
-                                    byPolicy.map((row) => (
-                                        <PolicyRow
-                                            key={row.policy_area_id ?? row.policy_area_slug ?? row.policy_area_name}
-                                            row={row}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="llm3-va__empty">No policy areas meet this threshold.</div>
-                                )}
-                            </div>
-                        </div>
+                        ) : null}
                     </details>
                 ) : null}
             </div>
@@ -320,7 +328,61 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
     );
 }
 
-/* ---------------- UI bits ---------------- */
+function InfoPopover({ label, title, body, wikiHref }) {
+    const [open, setOpen] = useState(false);
+    const wrapRef = useRef(null);
+
+    useEffect(() => {
+        function onDocClick(e) {
+            if (!wrapRef.current?.contains(e.target)) setOpen(false);
+        }
+        function onEsc(e) {
+            if (e.key === "Escape") setOpen(false);
+        }
+        document.addEventListener("mousedown", onDocClick);
+        document.addEventListener("keydown", onEsc);
+        return () => {
+            document.removeEventListener("mousedown", onDocClick);
+            document.removeEventListener("keydown", onEsc);
+        };
+    }, []);
+
+    return (
+        <span
+            className="llm3-vaInfoWrap"
+            ref={wrapRef}
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+        >
+            <button
+                type="button"
+                className="llm3-va__info"
+                aria-label={label}
+                aria-expanded={open}
+                onFocus={() => setOpen(true)}
+                onBlur={(e) => {
+                    if (!wrapRef.current?.contains(e.relatedTarget)) setOpen(false);
+                }}
+                onClick={() => setOpen((v) => !v)}
+            >
+                <Info size={14} />
+            </button>
+
+            {open ? (
+                <div className="llm3-vaPopover" role="dialog" aria-label={label}>
+                    <div className="llm3-vaPopover__title">{title}</div>
+                    <div className="llm3-vaPopover__body">{body}</div>
+                    {wikiHref ? (
+                        <a href={wikiHref} className="llm3-vaPopover__link">
+                            Learn more
+                            <ExternalLink size={13} aria-hidden="true" />
+                        </a>
+                    ) : null}
+                </div>
+            ) : null}
+        </span>
+    );
+}
 
 function Chip({ icon, label, value, tone = "neutral", title }) {
     return (
@@ -352,11 +414,11 @@ function DeviationPill({ name, delta }) {
                 <ArrowUpDown size={14} />;
 
     return (
-        <span className={`llm3-vaDev llm3-vaDev--${tone}`} title="Difference vs overall alignment">
+        <span className={`llm3-vaDev llm3-vaDev--${tone}`} title="Difference from overall alignment">
             <span className="llm3-vaDev__name" title={name}>{name}</span>
             <span className="llm3-vaDev__delta">
                 <span className="llm3-vaDev__icon" aria-hidden="true">{icon}</span>
-                {fmtDelta(delta, { pp: true })}
+                {fmtDelta(delta, { pts: true })}
             </span>
         </span>
     );
@@ -369,14 +431,13 @@ function PolicyRow({ row }) {
     const pct = clamp(toNum(row.alignment_pct) ?? 0, 0, 100);
     const delta = toNum(row.alignment_delta);
     const n = toInt(row.considered_count);
-
     const tone = toneForDelta(delta);
 
     return (
-        <div className="llm3-vaRow" title={`${name} • ${pct.toFixed(1)}% • Δ ${fmtDelta(delta, { pp: true })}`}>
+        <div className="llm3-vaRow" title={`${name} • ${pct.toFixed(1)}% • ${fmtDelta(delta, { pts: true })}`}>
             <div className="llm3-vaRow__left">
                 <div className="llm3-vaRow__name" title={name}>{name}</div>
-                <div className="llm3-vaRow__sub">{n != null ? `${n} votes` : "—"}</div>
+                <div className="llm3-vaRow__sub">{n != null ? `${n} comparable votes` : "—"}</div>
             </div>
 
             <div className="llm3-vaRow__bar" aria-hidden="true">
@@ -386,14 +447,12 @@ function PolicyRow({ row }) {
             <div className="llm3-vaRow__right">
                 <div className="llm3-vaRow__pct">{pct.toFixed(1)}%</div>
                 <span className={`llm3-vaRow__delta llm3-vaRow__delta--${tone}`}>
-                    Δ {fmtDelta(delta, { pp: true })}
+                    {fmtDelta(delta, { pts: true })}
                 </span>
             </div>
         </div>
     );
 }
-
-/* ---------------- helpers ---------------- */
 
 function toneForDelta(x) {
     if (!Number.isFinite(x)) return "neutral";
@@ -435,10 +494,10 @@ function toInt(x) {
     const n = typeof x === "number" ? x : parseInt(x, 10);
     return Number.isFinite(n) ? n : null;
 }
-function fmtDelta(x, { pp = false } = {}) {
+function fmtDelta(x, { pts = false } = {}) {
     if (!Number.isFinite(x)) return "—";
     const sign = x > 0 ? "+" : "";
-    return pp ? `${sign}${x.toFixed(1)} pp` : `${sign}${x.toFixed(1)}`;
+    return pts ? `${sign}${x.toFixed(1)} pts` : `${sign}${x.toFixed(1)}`;
 }
 function fmtAsOfShort(asOf) {
     if (!asOf) return null;
@@ -446,15 +505,11 @@ function fmtAsOfShort(asOf) {
     if (Number.isNaN(d.getTime())) return null;
     return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
-function fmtOrdinal(n) {
+function fmtPercentileLabel(n) {
     if (!Number.isFinite(n)) return "—";
     const x = Math.round(n);
-    const mod100 = x % 100;
-    const mod10 = x % 10;
-    const suf =
-        mod100 >= 11 && mod100 <= 13 ? "th" :
-            mod10 === 1 ? "st" :
-                mod10 === 2 ? "nd" :
-                    mod10 === 3 ? "rd" : "th";
-    return `${x}${suf}`;
+    if (x >= 90) return `Top ${100 - x}%`;
+    if (x >= 75) return `Upper ${100 - x}%`;
+    if (x <= 10) return `Bottom ${10 - x}%`;
+    return `${x}th percentile`;
 }

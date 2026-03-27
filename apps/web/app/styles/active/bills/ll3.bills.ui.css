@@ -1,11 +1,8 @@
 /* app/(app)/styles/bills/ll3.bills.ui.css
-   ======================================================================
-   Bills UI Primitives (Buttons / Inputs / Typography / Pills)
-   - Shared by Bills Directory + Bill Detail
-   - Consolidated from your 3 sheets
-   ====================================================================== */
+   ==========================================================================
+   Bills UI Primitives
+   ========================================================================== */
 
-/* Bills-scope box sizing safety */
 .ll3-bills,
 .ll3-bills *,
 .ll3-bills *::before,
@@ -17,7 +14,6 @@
     box-sizing: border-box;
 }
 
-/* Typography helpers */
 .ll3-bills,
 .llbd3-page {
     font-family: var(--ll3-font);
@@ -39,25 +35,23 @@
     font-size: 0.86rem;
 }
 
-/* Consistent “label” text style used throughout filters/meta/details */
 .ll3-label,
 .llbd3-label {
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 900;
     color: var(--ll3-ink);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
-/* Hint text (you used this pattern in several spots) */
 .ll3-label__hint {
     display: inline-block;
     margin-left: 8px;
     font-weight: 700;
     font-size: 0.85em;
-    color: rgba(15, 23, 42, 0.55);
+    color: var(--ll3-muted);
 }
 
-/* Focus ring (single source of truth) */
 .ll3-focusable:focus-visible,
 .ll3-btn:focus-visible,
 .ll3-input:focus-visible,
@@ -70,58 +64,50 @@
     box-shadow: 0 0 0 4px var(--ll3-focus-ring);
 }
 
-/* ----------------------------------------------------------------------
-   Buttons
-   ---------------------------------------------------------------------- */
-
 .ll3-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     height: var(--ll3-btn-h);
     padding: 0 var(--ll3-btn-pad-x);
     border-radius: var(--ll3-btn-r);
-
     font-family: var(--ll3-font);
     font-size: var(--ll3-btn-font);
     font-weight: var(--ll3-btn-weight);
-
     background: var(--ll3-surface-strong);
     border: 1px solid var(--ll3-border);
     color: var(--ll3-ink);
     text-decoration: none;
     cursor: pointer;
-
     box-shadow: var(--ll3-btn-shadow);
     transition:
         transform 0.06s ease,
         box-shadow 0.18s ease,
         border-color 0.18s ease,
         background 0.18s ease,
-        filter 0.18s ease;
+        filter 0.18s ease,
+        color 0.18s ease;
 }
 
 .ll3-btn:hover {
     transform: translateY(-1px);
     border-color: var(--ll3-border-strong);
-    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.08);
+    box-shadow: var(--ll3-shadow2);
 }
 
 .ll3-btn:active {
     transform: translateY(0);
 }
 
-/* Variants */
 .ll3-btn--primary {
-    background: var(--ll3-primary);
+    background: linear-gradient(180deg, var(--ll3-primary), var(--ll3-accent-strong, var(--ll3-primary)));
     border-color: transparent;
     color: var(--ll3-primaryText);
 }
 
 .ll3-btn--ghost {
-    background: rgba(255, 255, 255, 0.78);
+    background: var(--ll3-surface);
 }
 
 .ll3-btn--sm {
@@ -129,71 +115,73 @@
     padding: 0 12px;
     border-radius: var(--ll3-btn-r-sm);
     font-size: 13px;
-    box-shadow: 0 6px 14px rgba(17, 24, 39, 0.07);
+    box-shadow: var(--ll3-shadow-sm);
 }
 
 .ll3-btn--full {
     width: 100%;
 }
 
-/* “Open” is just a semantic alias for primary,
-   but you had extra safeguards for stable white text. */
 .ll3-btn--open {
-    color: #fff;
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.96), rgba(99, 102, 241, 0.78));
+    border: 1px solid rgba(99, 102, 241, 0.38);
+    color: #fff !important;
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.10);
 }
 
-.ll3-btn--open:hover,
-.ll3-btn--open:active,
-.ll3-btn--open:focus-visible {
-    color: #fff;
+.ll3-btn--open *,
+.ll3-btn--open svg {
+    color: inherit !important;
 }
 
 .ll3-btn--open:hover {
-    filter: brightness(0.95);
+    color: #fff;
+    transform: translateY(-1px);
+    filter: brightness(0.98);
+    box-shadow: 0 12px 28px rgba(2, 8, 23, 0.14);
+    border-color: rgba(99, 102, 241, 0.55);
 }
 
 .ll3-btn--open:active {
-    filter: brightness(0.90);
+    color: #fff;
+    transform: translateY(0);
+    filter: brightness(0.94);
 }
 
-/* Saved state (calmer) */
+.ll3-btn--open:focus-visible {
+    outline: 3px solid rgba(99, 102, 241, 0.35);
+    outline-offset: 2px;
+}
+
 .ll3-btn.is-saved,
 .ll3-btn--saved {
-    border-color: rgba(17, 24, 39, 0.18);
-    background: rgba(17, 24, 39, 0.03);
+    border-color: color-mix(in srgb, var(--ll3-accent) 28%, var(--ll3-border));
+    background: color-mix(in srgb, var(--ll3-accent) 8%, var(--ll3-surface));
+    color: var(--ll3-ink);
 }
 
-/* A compact “link button” pattern you already use */
 .ll3-linkbtn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     height: 34px;
     padding: 0 10px;
     border-radius: 10px;
-
-    border: 1px solid rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid var(--ll3-border);
+    background: var(--ll3-surface);
     color: var(--ll3-ink);
-
     font-size: 13px;
     font-weight: 800;
     cursor: pointer;
-
-    box-shadow: 0 6px 14px rgba(17, 24, 39, 0.06);
+    box-shadow: var(--ll3-shadow-sm);
     transition: transform .06s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
 .ll3-linkbtn:hover {
     transform: translateY(-1px);
-    border-color: rgba(17, 24, 39, 0.18);
-    box-shadow: 0 10px 18px rgba(17, 24, 39, 0.08);
+    border-color: var(--ll3-border-strong);
+    box-shadow: var(--ll3-shadow2);
 }
-
-/* ----------------------------------------------------------------------
-   Inputs / fields
-   ---------------------------------------------------------------------- */
 
 .ll3-field {
     display: grid;
@@ -209,98 +197,79 @@
     width: 100%;
     height: var(--ll3-input-h);
     padding: 0 var(--ll3-input-pad-x);
-
     border-radius: var(--ll3-input-r);
     border: 1px solid var(--ll3-border);
-    background: rgba(255, 255, 255, 0.85);
-
+    background: var(--ll3-input-bg, var(--ll3-surface-strong));
     color: var(--ll3-ink);
     font-family: var(--ll3-font);
     font-size: 14px;
     outline: none;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.06s ease, background 0.18s ease;
+}
 
-    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
+.ll3-input::placeholder {
+    color: var(--ll3-muted);
 }
 
 .ll3-input:focus {
-    border-color: rgba(17, 24, 39, 0.22);
-    box-shadow: 0 0 0 4px rgba(180, 201, 232, 0.35);
+    border-color: color-mix(in srgb, var(--ll3-accent) 38%, var(--ll3-border));
+    box-shadow: 0 0 0 4px var(--ll3-focus-ring);
 }
 
-/* Utility: prevent overflow in grids */
 .ll3-input,
 .ll3-btn {
     max-width: 100%;
     min-width: 0;
 }
 
-/* ----------------------------------------------------------------------
-   Pills / chips / status
-   ---------------------------------------------------------------------- */
-
-/* Base pill */
 .ll3-pill {
     display: inline-flex;
     align-items: center;
     height: var(--ll3-pill-h);
     padding: 0 10px;
     border-radius: var(--ll3-pill-r);
-
     border: 1px solid var(--ll3-pill-border);
     background: var(--ll3-pill-bg);
     color: var(--ll3-ink);
-
     font-size: 13px;
     font-weight: 800;
     white-space: nowrap;
     max-width: 100%;
 }
 
-/* BillChip (your later “smaller + lighter” rules win) */
 .ll3-chip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     padding: 6px 10px;
     border-radius: 999px;
-
-    border: 1px solid rgba(17, 24, 39, 0.10);
-    background: rgba(255, 255, 255, 0.78);
-
+    border: 1px solid color-mix(in srgb, var(--ll3-text) 10%, transparent);
+    background: var(--ll3-surface);
     text-decoration: none;
     max-width: 100%;
     overflow: hidden;
-
     box-shadow: none;
-    transition: border-color 0.18s ease;
+    transition: border-color 0.18s ease, background 0.18s ease;
 }
 
 .ll3-chip:hover {
-    border-color: rgba(17, 24, 39, 0.14);
+    border-color: color-mix(in srgb, var(--ll3-text) 16%, transparent);
+    background: var(--ll3-surface-strong);
 }
 
 .ll3-chip__code {
-    font-family: var(--ll3-font);
-    font-weight: 800;
+    color: color-mix(in srgb, var(--ll3-ink) 90%, transparent);
+    font-weight: 850;
     letter-spacing: 0.01em;
-    color: var(--ll3-ink);
     white-space: nowrap;
     font-size: 13px;
 }
 
-.ll3-chip__meta {
-    font-family: var(--ll3-font);
-    font-weight: 600;
-    color: rgba(75, 85, 99, 0.95);
-    white-space: nowrap;
-    font-size: 13px;
-}
-
+.ll3-chip__meta,
 .ll3-chip__sep {
-    color: rgba(75, 85, 99, 0.7);
-    flex: 0 0 auto;
-    opacity: 0.55;
+    color: color-mix(in srgb, var(--ll3-text) 78%, transparent);
+    font-weight: 700;
+    font-size: 13px;
 }
 
 .ll3-chip__icon {
@@ -308,20 +277,17 @@
     align-items: center;
     justify-content: center;
     color: var(--ll3-ink);
-    opacity: 0.7;
+    opacity: 0.72;
 }
 
-/* Status pill (shared) */
 .ll3-status {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     padding: 6px 10px;
     border-radius: 999px;
-
-    border: 1px solid rgba(17, 24, 39, 0.10);
-    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid color-mix(in srgb, var(--ll3-text) 10%, transparent);
+    background: var(--ll3-surface);
     white-space: nowrap;
     flex: 0 0 auto;
 }
@@ -339,7 +305,6 @@
     color: var(--ll3-ink);
 }
 
-/* tone modifiers */
 .ll3-status--introduced .ll3-status__dot {
     background: var(--ll3-status-introduced);
 }
@@ -368,11 +333,6 @@
     background: var(--ll3-status-veto);
 }
 
-/* ----------------------------------------------------------------------
-   Removable filter chip (your .chip block) — kept as-is
-   (We can rename later; this prevents collisions today.)
-   ---------------------------------------------------------------------- */
-
 .chip {
     display: inline-flex;
     align-items: center;
@@ -383,9 +343,9 @@
     height: 32px;
     padding: 0 8px 0 10px;
     border-radius: 999px;
-    border: 1px solid rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.78);
-    color: #111827;
+    border: 1px solid color-mix(in srgb, var(--ll3-text) 12%, transparent);
+    background: var(--ll3-surface);
+    color: var(--ll3-ink);
     gap: 8px;
 }
 
@@ -399,7 +359,7 @@
 .chip__sep {
     width: 1px;
     height: 14px;
-    background: rgba(17, 24, 39, 0.14);
+    background: color-mix(in srgb, var(--ll3-text) 16%, transparent);
     flex: 0 0 auto;
 }
 
@@ -412,36 +372,28 @@
     border-radius: 999px;
     border: none;
     background: transparent;
-    color: rgba(17, 24, 39, 0.70);
+    color: color-mix(in srgb, var(--ll3-text) 76%, transparent);
     cursor: pointer;
     padding: 0;
     flex: 0 0 auto;
 }
 
 .chip__x:hover {
-    background: rgba(17, 24, 39, 0.06);
-    color: rgba(17, 24, 39, 0.90);
+    background: color-mix(in srgb, var(--ll3-text) 6%, transparent);
+    color: var(--ll3-ink);
 }
 
-/* ----------------------------------------------------------------------
-   Bill Detail: keep your existing llbd3 classes, but align “button-like” bits
-   ---------------------------------------------------------------------- */
-
 .llbd3-btn {
-    /* Align with ll3 button sizing/feel */
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-
     height: var(--ll3-btn-h);
     padding: 0 14px;
     border-radius: 12px;
-
     border: 1px solid var(--llbd3-border);
-    background: #fff;
+    background: var(--ll3-surface-strong);
     color: var(--llbd3-ink);
-
     text-decoration: none;
     font-weight: 800;
     box-shadow: var(--llbd3-shadow2);
@@ -450,7 +402,7 @@
 
 .llbd3-btn:hover {
     transform: translateY(-1px);
-    border-color: rgba(17, 24, 39, 0.16);
+    border-color: var(--ll3-border-strong);
     box-shadow: var(--llbd3-shadow);
 }
 
@@ -458,41 +410,31 @@
     transform: translateY(0);
 }
 
-/* Primary on detail: use same primary token */
 .llbd3-btn--primary {
     border: none;
     background: var(--llbd3-primary);
     color: var(--llbd3-primaryText);
 }
 
-/* Subtle header external link (as you requested) */
 .llbd3-extlink {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     height: 36px;
     padding: 0 10px;
     border-radius: 999px;
-
     text-decoration: none;
     font-weight: 750;
-
-    color: rgba(17, 24, 39, 0.78);
+    color: color-mix(in srgb, var(--ll3-text) 82%, transparent);
     background: transparent;
-    border: 1px solid rgba(17, 24, 39, 0.14);
-
+    border: 1px solid color-mix(in srgb, var(--ll3-text) 14%, transparent);
     transition: background 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
 }
 
 .llbd3-extlink:hover {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(17, 24, 39, 0.20);
+    background: var(--ll3-surface);
+    border-color: color-mix(in srgb, var(--ll3-text) 20%, transparent);
     transform: translateY(-1px);
-}
-
-.llbd3-extlink:active {
-    transform: translateY(0);
 }
 
 @media (max-width: 640px) {
@@ -500,134 +442,11 @@
         height: 34px;
         padding: 0 9px;
         font-weight: 700;
-        color: rgba(17, 24, 39, 0.72);
-        border-color: rgba(17, 24, 39, 0.12);
-        background: rgba(255, 255, 255, 0.55);
+        color: color-mix(in srgb, var(--ll3-text) 76%, transparent);
+        border-color: color-mix(in srgb, var(--ll3-text) 12%, transparent);
+        background: var(--ll3-surface);
+        -webkit-backdrop-filter: blur(6px);
         backdrop-filter: blur(6px);
         white-space: nowrap;
     }
-}
-
-
-/* =========================================
-   Bill card buttons + chip readability
-   Add to your LL3 UI layer (or ll3.bills.css)
-   Later rules win.
-========================================= */
-
-/* ---------- OPEN (primary CTA): purple + white ---------- */
-.ll3-btn--open {
-    background: linear-gradient(180deg, rgba(99, 102, 241, 0.96), rgba(99, 102, 241, 0.78));
-    border: 1px solid rgba(99, 102, 241, 0.38);
-    color: #fff;
-    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.10);
-}
-
-.ll3-btn--open:hover {
-    color: #fff;
-    transform: translateY(-1px);
-    filter: brightness(0.98);
-    box-shadow: 0 12px 28px rgba(2, 8, 23, 0.14);
-    border-color: rgba(99, 102, 241, 0.55);
-}
-
-.ll3-btn--open:active {
-    color: #fff;
-    transform: translateY(0);
-    filter: brightness(0.94);
-}
-
-.ll3-btn--open:focus-visible {
-    outline: 3px solid rgba(99, 102, 241, 0.35);
-    outline-offset: 2px;
-}
-
-/* Make sure icons inherit the white */
-.ll3-btn--open svg {
-    color: currentColor;
-}
-
-/* ---------- SAVE (keep ghost, but slightly clearer) ---------- */
-.ll3-btn--ghost.ll3-btn--sm {
-    border-color: rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.86);
-    color: rgba(17, 24, 39, 0.82);
-}
-
-.ll3-btn--ghost.ll3-btn--sm:hover {
-    background: #fff;
-    border-color: rgba(17, 24, 39, 0.16);
-}
-
-/* Optional: saved state pop a bit without screaming */
-.ll3-btn--saved {
-    border-color: rgba(99, 102, 241, 0.28);
-    background: rgba(99, 102, 241, 0.08);
-    color: rgba(55, 65, 81, 0.92);
-}
-
-/* ---------- DETAILS (make it feel like a control, not a big button) ---------- */
-.ll3-details__summary {
-    height: 36px;
-    padding: 0 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.70);
-    color: rgba(17, 24, 39, 0.78);
-    font-weight: 750;
-}
-
-.ll3-details__summary:hover {
-    background: #fff;
-    border-color: rgba(17, 24, 39, 0.16);
-}
-
-.ll3-details__summary:focus-visible {
-    outline: 3px solid rgba(99, 102, 241, 0.25);
-    outline-offset: 2px;
-}
-
-/* ---------- Bill chip readability (HCONRES. 72 etc.) ---------- */
-/* Soften the “code” from heavy ink to a nice charcoal */
-.ll3-chip__code {
-    color: rgba(17, 24, 39, 0.78);
-    font-weight: 850;
-    /* keep authority */
-    letter-spacing: 0.01em;
-}
-
-/* Make the separators/meta slightly lighter than the code */
-.ll3-chip__sep,
-.ll3-chip__meta {
-    color: rgba(17, 24, 39, 0.58);
-    font-weight: 700;
-}
-
-/* If the chip border feels too strong against the card, soften it */
-.ll3-chip {
-    border-color: rgba(17, 24, 39, 0.10);
-    background: rgba(255, 255, 255, 0.78);
-}
-
-.ll3-chip:hover {
-    background: #fff;
-    border-color: rgba(17, 24, 39, 0.14);
-}
-
-/* ---------- Card actions spacing (optional polish) ---------- */
-.ll3-card__actions {
-    gap: 10px;
-    /* a touch more breathing room */
-}
-
-/* Strong, unambiguous: Open CTA is always white */
-.ll3-btn.ll3-btn--open,
-.ll3-card__actions .ll3-btn.ll3-btn--open {
-    color: #fff !important;
-}
-
-/* Ensure any children (span, svg) inherit white */
-.ll3-btn.ll3-btn--open *,
-.ll3-card__actions .ll3-btn.ll3-btn--open * {
-    color: inherit !important;
 }

@@ -1,44 +1,93 @@
-export const HOME_INTRO_TITLE = "Legislation Lemur";
+export const HOME_HERO_EYEBROW = "Transparency first";
+
+export const HOME_HERO_TITLE = "Civic data, made more human.";
+
+export const HOME_HERO_SUB =
+    "Navigate Congress with clearer profiles, readable bill activity, and a neutral interface designed to prioritize context over noise.";
+
+export const HOME_HERO_PRIMARY_CTA = {
+    label: "Find your representative",
+    href: "/search",
+};
+
+export const HOME_HERO_SECONDARY_CTA = {
+    label: "Browse bills",
+    href: "/bills",
+};
+
+export const HOME_INTRO_TITLE = "Tools for the modern citizen";
 
 export const HOME_INTRO_PARAS = [
     `Legislation Lemur is a neutral, data-driven way to explore the U.S. Congress. The platform brings together members of Congress, sponsored and co-sponsored bills, floor votes, and high-level session composition into a fast, readable interface built for clarity—not spin.`,
-    `You can search members by name or state, open clean factual profiles, and get a snapshot of the current Congress without digging through dense tables or PDFs. Core legislative data is refreshed on a weekly basis, keeping activity current while prioritizing accuracy and stability.`,
+    `Search by member or state, open clean factual profiles, and follow bills and activity without digging through dense tables or PDFs. Core legislative data is refreshed on a regular basis, with an emphasis on readability, stability, and source-aware presentation.`,
 ];
 
-export const HOME_COMING_SOON_BADGE = "More detail coming soon";
-
-export const HOME_COMING_SOON_ITEMS = [
-    "Richer member pages: committees, voting patterns, issue focus",
-    "Deeper Congress-wide views: filters, trends, demographics",
-    "Interactive timelines for bills, floor actions, and committee progress",
-    "Saved members & states for quick return visits",
-    "Email updates with weekly summaries and activity highlights (planned for 2026)",
-    "Election tools: state proposition breakdowns, voter guides, and neutral AI summaries",
-    "Session 2 of the 119th Congress begins January 7, 2026 — coverage will expand as the new session starts",
+export const HOME_FEATURE_CARDS = [
+    {
+        title: "Representative profiles",
+        desc: "Browse members by state or name and open clean snapshots of service, activity, and legislative context.",
+        href: "/search",
+        accent: "primary",
+    },
+    {
+        title: "Bill tracking",
+        desc: "Follow sponsored bills, recent actions, and legislative movement in a more readable interface.",
+        href: "/bills",
+    },
+    {
+        title: "Committee navigation",
+        desc: "Explore committee structure, types, and coverage without getting lost in government directory sprawl.",
+        href: "/committees",
+    },
+    {
+        title: "Reference / Wiki",
+        desc: "Get straightforward explanations of core congressional concepts, data sources, and terminology.",
+        href: "/references",
+    },
 ];
 
 export const HOME_RECENTLY_ADDED_BADGE = "Recently added";
 
 export const HOME_RECENTLY_ADDED_ITEMS = [
     {
-        label: "Member vote alignment insights (issue-level patterns and context)",
+        label: "Member vote alignment insights",
+        desc: "Issue-level patterns and context to help make member voting behavior easier to interpret.",
     },
     {
-        label: "Committees directory + overview page (types, counts, and navigation)",
+        label: "Committees directory + overview page",
+        desc: "Committee types, counts, and easier site-wide navigation.",
         href: "/committees",
     },
     {
-        label: "Reference / Wiki pages for congressional concepts and sources",
+        label: "Reference / Wiki pages",
+        desc: "Background pages for congressional concepts, sources, and platform context.",
         href: "/references",
     },
     {
-        label: "Layout and readability improvements across core pages",
+        label: "Readability improvements across core pages",
+        desc: "Ongoing layout, spacing, and scanning updates across member, bill, and supporting views.",
     },
 ];
 
 export const HOME_ROADMAP_ITEMS = [
-    "Email updates — weekly summaries by saved locations and tracked members, with activity highlights and “what changed” comparisons",
-    "Insights & Explore dashboards — Congress-wide views, filters, and change-over-time comparisons (bills, votes, committees)",
-    "Improved bill understanding — better summaries, topic extraction, and sentiment/stance signals with clear sourcing and confidence",
-    "Election tools — neutral voter guides and proposition breakdowns (where data is available)",
+    {
+        quarter: "Q2 2026",
+        title: "Email updates",
+        desc: "Weekly summaries by saved locations and tracked members, with activity highlights and what-changed comparisons.",
+    },
+    {
+        quarter: "Q3 2026",
+        title: "Insights & Explore dashboards",
+        desc: "Congress-wide views, filters, and change-over-time comparisons across bills, votes, and committees.",
+    },
+    {
+        quarter: "Q4 2026",
+        title: "Improved bill understanding",
+        desc: "Better summaries, topic extraction, and sourced confidence signals for complex legislative text.",
+    },
+    {
+        quarter: "Q1 2027",
+        title: "Election tools",
+        desc: "Neutral voter guides and proposition breakdowns where public data is available.",
+    },
 ];

@@ -79,7 +79,7 @@ export default function VotesSection({
           <div className="llm3-votesViz__frame" aria-label="Voting activity heatmap">
             <VotesHeatmap
               votes={vizVotes}
-              weeks={52}
+              weeks={13}
               height={320}
               heatmapRatio={0.7}
               onSelectDay={setSelectedDate}

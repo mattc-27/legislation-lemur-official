@@ -1,8 +1,3 @@
-/* app/(app)/styles/committees/ll3.committees.ui.css
-   ======================================================================
-   Committees UI primitives (scoped)
-   ====================================================================== */
-
 .ll3-committees,
 .ll3-committees *,
 .ll3-committees *::before,
@@ -10,19 +5,15 @@
     box-sizing: border-box;
 }
 
-
-
-
-
 .ll3-committees {
     font-family: var(--ll3c-font-body);
     color: var(--ll3c-text);
 }
 
-/* Page + section titles use slab */
 .ll3c-h1,
 .ll3c-h2,
-.ll3c-lane__title {
+.ll3c-lane__title,
+.ll3c-card__name {
     font-family: var(--ll3c-font-head);
 }
 
@@ -32,6 +23,22 @@
 
 .ll3c-muted {
     color: var(--ll3c-muted);
+}
+
+.ll3c-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: var(--ll3c-eyebrow);
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.ll3c-eyebrow--small {
+    margin-bottom: 8px;
 }
 
 .ll3c-label {
@@ -45,21 +52,18 @@
     width: 100%;
     height: var(--ll3c-input-h);
     padding: 0 var(--ll3c-input-pad-x);
-
     border-radius: var(--ll3c-input-r);
     border: 1px solid var(--ll3c-border);
     background: rgba(255, 255, 255, 0.85);
-
     color: var(--ll3c-ink);
     font-family: var(--ll3c-font);
     font-size: 14px;
-
     outline: none;
     transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
 }
 
 .ll3c-input:focus {
-    border-color: rgba(17, 24, 39, 0.22);
+    border-color: rgba(17, 24, 39, 0.18);
     box-shadow: 0 0 0 4px var(--ll3c-focus-ring);
 }
 
@@ -72,28 +76,24 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     height: var(--ll3c-btn-h);
     padding: 0 var(--ll3c-btn-pad-x);
     border-radius: var(--ll3c-btn-r);
-
     font-size: 13px;
     font-weight: 850;
-
     background: var(--ll3c-surface-strong);
     border: 1px solid var(--ll3c-border);
     color: var(--ll3c-ink);
     text-decoration: none;
     cursor: pointer;
-
-    box-shadow: 0 6px 16px rgba(2, 8, 23, 0.06);
+    box-shadow: var(--ll3c-shadow-sm);
     transition: transform 0.06s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
 .ll3c-btn:hover {
     transform: translateY(-1px);
     border-color: var(--ll3c-border-strong);
-    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.08);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
 }
 
 .ll3c-btn:active {
@@ -101,7 +101,7 @@
 }
 
 .ll3c-btn--primary {
-    background: var(--ll3c-primary);
+    background: linear-gradient(135deg, var(--ll3c-primary), var(--ll3c-primary-2));
     border-color: transparent;
     color: var(--ll3c-primaryText);
 }
@@ -113,7 +113,9 @@
 .ll3c-btn:focus-visible,
 .ll3c-input:focus-visible,
 .ll3c-ext:focus-visible,
-.ll3c-details__summary:focus-visible {
+.ll3c-details__summary:focus-visible,
+.ll3c-tab:focus-visible,
+.ll3c-infoLink:focus-visible {
     outline: none;
     box-shadow: 0 0 0 4px var(--ll3c-focus-ring);
 }
@@ -122,17 +124,22 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    height: var(--ll3c-pill-h);
+    height: 30px;
     padding: 0 10px;
     border-radius: var(--ll3c-pill-r);
-
-    border: 1px solid rgba(17, 24, 39, 0.10);
-    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(255, 255, 255, 0.72);
     color: var(--ll3c-ink);
-
-    font-size: 13px;
-    font-weight: 850;
+    font-size: 12.5px;
+    font-weight: 800;
     white-space: nowrap;
+}
+
+.ll3c-pill__icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.72;
+    flex: 0 0 auto;
 }
 
 .ll3c-code code {

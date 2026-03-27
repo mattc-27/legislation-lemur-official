@@ -1,5 +1,3 @@
-/* ll3.vote-alignment.css */
-
 .llm3-va {
     --va-border: rgba(15, 23, 42, 0.08);
     --va-muted: rgba(15, 23, 42, 0.62);
@@ -24,8 +22,86 @@
     gap: 14px;
 }
 
+.llm3-va__titleRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.llm3-vaInfoWrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.llm3-va__info {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    border: 1px solid var(--va-border);
+    background: #fff;
+    color: var(--va-muted);
+    cursor: pointer;
+    padding: 0;
+}
+
+.llm3-va__info:hover {
+    color: rgba(15, 23, 42, 0.86);
+    border-color: rgba(15, 23, 42, 0.16);
+}
+
+.llm3-va__info:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+}
+
+.llm3-vaPopover {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    width: min(320px, 78vw);
+    border: 1px solid var(--va-border);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 20px 36px rgba(2, 8, 23, 0.12);
+    padding: 12px;
+}
+
+.llm3-vaPopover__title {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.92);
+    margin-bottom: 6px;
+}
+
+.llm3-vaPopover__body {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--va-muted);
+}
+
+.llm3-vaPopover__link {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(29, 78, 216, 0.96);
+    text-decoration: none;
+}
+
+.llm3-vaPopover__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
 .llm3-va__h {
-    font-weight: 650;
+    font-weight: 750;
     letter-spacing: -0.01em;
 }
 
@@ -33,13 +109,14 @@
     margin-top: 4px;
     font-size: 12px;
     color: var(--va-muted);
+    max-width: 64ch;
+    line-height: 1.45;
 }
 
 .llm3-va__body {
     padding-top: 2px;
 }
 
-/* Top grid: hero + stat cards */
 .llm3-va__topGrid {
     display: grid;
     grid-template-columns: 1.15fr 1fr;
@@ -69,7 +146,7 @@
 
 .llm3-va__pct {
     font-size: 54px;
-    font-weight: 750;
+    font-weight: 800;
     line-height: 1;
     letter-spacing: -0.03em;
     color: rgba(15, 23, 42, 0.92);
@@ -78,7 +155,7 @@
 
 .llm3-va__pctUnit {
     font-size: 18px;
-    font-weight: 650;
+    font-weight: 700;
     margin-left: 6px;
     color: rgba(15, 23, 42, 0.62);
 }
@@ -93,7 +170,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: 650;
+    font-weight: 750;
     color: rgba(15, 23, 42, 0.84);
 }
 
@@ -127,7 +204,6 @@
     }
 }
 
-/* Stat cards */
 .llm3-vaStat {
     border: 1px solid var(--va-border);
     border-radius: 14px;
@@ -152,18 +228,18 @@
 .llm3-vaStat__label {
     font-size: 12px;
     color: var(--va-muted);
-    line-height: 1.15;
+    line-height: 1.2;
 }
 
 .llm3-vaStat__value {
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 750;
     letter-spacing: -0.01em;
     color: rgba(15, 23, 42, 0.90);
     margin-top: 2px;
+    line-height: 1.35;
 }
 
-/* tone accents (subtle) */
 .llm3-vaStat--good .llm3-vaStat__icon {
     background: var(--va-good);
     color: var(--va-good-text);
@@ -184,7 +260,6 @@
     color: var(--va-neutral-text);
 }
 
-/* Attendance chip (header) */
 .llm3-vaChip {
     display: inline-flex;
     align-items: center;
@@ -233,7 +308,6 @@
     border-color: rgba(239, 68, 68, 0.24);
 }
 
-/* Deviations row */
 .llm3-va__deviations {
     margin-top: 12px;
     padding-top: 10px;
@@ -247,7 +321,7 @@
 .llm3-va__deviationsLabel {
     font-size: 12px;
     color: var(--va-muted);
-    font-weight: 650;
+    font-weight: 700;
     padding-top: 6px;
 }
 
@@ -283,7 +357,7 @@
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 750;
     letter-spacing: -0.01em;
 }
 
@@ -301,7 +375,6 @@
     background: var(--va-bg-soft);
 }
 
-/* Details / drilldown */
 .llm3-va__details {
     margin-top: 14px;
 }
@@ -315,7 +388,7 @@
     cursor: pointer;
     user-select: none;
     padding: 10px 0;
-    font-weight: 650;
+    font-weight: 750;
     color: rgba(15, 23, 42, 0.86);
 }
 
@@ -345,6 +418,13 @@ details[open] .llm3-va__summaryIcon {
     gap: 12px;
 }
 
+.llm3-va__drillIntro {
+    font-size: 12px;
+    color: var(--va-muted);
+    line-height: 1.45;
+    max-width: 70ch;
+}
+
 .llm3-va__controls {
     display: flex;
     align-items: flex-end;
@@ -363,7 +443,7 @@ details[open] .llm3-va__summaryIcon {
     gap: 6px;
     font-size: 12px;
     color: var(--va-muted);
-    font-weight: 650;
+    font-weight: 700;
 }
 
 .llm3-va__select {
@@ -387,7 +467,6 @@ details[open] .llm3-va__summaryIcon {
     padding-bottom: 8px;
 }
 
-/* Rows list */
 .llm3-va__rows {
     display: grid;
     gap: 10px;
@@ -409,10 +488,16 @@ details[open] .llm3-va__summaryIcon {
         grid-template-columns: 1fr;
         gap: 10px;
     }
+
+    .llm3-vaPopover {
+        left: auto;
+        right: 0;
+        width: min(300px, 86vw);
+    }
 }
 
 .llm3-vaRow__name {
-    font-weight: 650;
+    font-weight: 700;
     color: rgba(15, 23, 42, 0.90);
     overflow: hidden;
     text-overflow: ellipsis;

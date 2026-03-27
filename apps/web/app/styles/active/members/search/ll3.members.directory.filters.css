@@ -1,0 +1,287 @@
+.ll3-directoryFilters {
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: 18px;
+    box-shadow: 0 8px 16px rgba(17, 24, 39, 0.06);
+    backdrop-filter: blur(10px);
+    padding: 16px;
+}
+
+.ll3-directoryFilters__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 2px 2px 14px;
+    flex-wrap: wrap;
+}
+
+.ll3-directoryFilters__intro {
+    min-width: 220px;
+    flex: 1 1 320px;
+}
+
+.ll3-h2 {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    color: var(--llm3-ink, #111827);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.ll3-muted {
+    margin: 6px 0 0;
+    color: var(--llm3-text, #4b5563);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.ll3-directoryFilters__summary {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+.ll3-directoryCount {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(17, 24, 39, 0.04);
+    color: rgba(17, 24, 39, 0.80);
+    font-size: 12.5px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.ll3-directoryFilters__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.9fr) minmax(0, 0.9fr) 180px;
+    gap: 12px;
+    align-items: end;
+    min-width: 0;
+}
+
+.ll3-directoryFilters__search {
+    min-width: 0;
+}
+
+.ll3-field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ll3-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--llm3-ink, #111827);
+    letter-spacing: 0.02em;
+}
+
+.ll3-input {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--llm3-ink, #111827);
+    font-size: 14px;
+    outline: none;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.ll3-input:focus {
+    border-color: rgba(17, 24, 39, 0.22);
+    box-shadow: 0 0 0 4px rgba(180, 201, 232, 0.32);
+}
+
+.ll3-directoryFilters__actions {
+    display: grid;
+}
+
+.ll3-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.06s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--llm3-ink, #111827);
+}
+
+.ll3-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(17, 24, 39, 0.18);
+    box-shadow: 0 12px 22px rgba(17, 24, 39, 0.10);
+}
+
+.ll3-btn--ghost {
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.ll3-btn--full {
+    width: 100%;
+}
+
+.ll3-directoryFilters__mobileCount {
+    display: none;
+}
+
+.ll3-mobileStateBarWrap {
+    display: none;
+}
+
+.ll3-mobileStateBar {
+    display: none;
+}
+
+.ll3-membersDirectory,
+.ll3-membersDirectory__top,
+.ll3-directoryShell,
+.ll3-directoryMain {
+    overflow: visible;
+}
+
+@media (max-width: 1120px) {
+    .ll3-directoryFilters__grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ll3-directoryFilters__search {
+        grid-column: 1 / -1;
+    }
+
+    .ll3-directoryFilters__actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 720px) {
+    .ll3-directoryFilters {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .ll3-directoryFilters__header {
+        padding-bottom: 10px;
+        gap: 8px;
+    }
+
+    .ll3-directoryFilters__intro {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .ll3-directoryFilters__intro .ll3-h2 {
+        font-size: 15px;
+    }
+
+    .ll3-directoryFilters__intro .ll3-muted {
+        font-size: 12.5px;
+        line-height: 1.35;
+        margin-top: 4px;
+    }
+
+    .ll3-directoryFilters__summary {
+        display: none;
+    }
+
+    .ll3-directoryFilters__grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .ll3-directoryFilters__search,
+    .ll3-directoryFilters__actions {
+        grid-column: auto;
+    }
+
+    .ll3-directoryFilters__mobileCount {
+        display: block;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(17, 24, 39, 0.08);
+        color: rgba(17, 24, 39, 0.58);
+        font-size: 12.5px;
+        font-weight: 700;
+    }
+
+    .ll3-mobileStateBarWrap {
+        display: block;
+        position: sticky;
+        top: 64px;
+        z-index: 40;
+        margin-top: 8px;
+        margin-bottom: 6px;
+    }
+
+    .ll3-mobileStateBar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-top: 1px solid rgba(17, 24, 39, 0.06);
+        border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(8px);
+        box-shadow: none;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+
+    .ll3-mobileStateBar__left {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: grid;
+        gap: 4px;
+    }
+
+    .ll3-mobileStateBar__label {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        color: rgba(17, 24, 39, 0.52);
+        padding-left: 2px;
+    }
+
+    .ll3-mobileStateBar__select {
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.92);
+    }
+
+    .ll3-mobileStateBar__topBtn {
+        flex: 0 0 auto;
+        height: 36px;
+        padding: 0 4px;
+        border: none;
+        background: transparent;
+        color: rgba(17, 24, 39, 0.72);
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .ll3-mobileStateBar__topBtn:hover {
+        color: #111827;
+        background: transparent;
+    }
+}

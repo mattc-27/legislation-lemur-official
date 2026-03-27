@@ -1,7 +1,6 @@
 // app/(app)/member/[bioguideId]/page.jsx
 import Link from "next/link";
 
-
 import { getSectionFreshness } from "@/lib/domains/freshness/getSectionFreshness";
 import { fetchMemberData } from '@/lib/utils/memberData';
 import { getMemberVotes } from '@/lib/server/routes/votes';
@@ -18,23 +17,30 @@ import SenateVotes from '@/app/components/features/members/senate-member/SenateV
 
 import VotesSplitSection from "@/app/components/features/members/shared/VoteSplitSection";
 
+
+
 import {
     ArrowLeft
 } from "lucide-react";
 
-import "@/app/styles/active/members/ll3.members.tokens.css";
-import "@/app/styles/active/members/ll3.members.ui.css";
+import "@/app/styles/active/members/refactored/ll3.members.tokens.css";
+import "@/app/styles/active/members/refactored/ll3.members.ui.css";
 
-import "@/app/styles/active/members/ll3.members.search.css";
-import '@/app/styles/active/members/ll-members-styles.css';
-import "@/app/styles/active/members/ll3.members.details.css";
+// import "@/app/styles/active/members/ll3.members.search.css";
+// import '@/app/styles/active/members/ll-members-styles.css';
+import "@/app/styles/active/members/refactored/ll3.members.details.css";
+import "@/app/styles/active/members/refactored/ll3.members.about.css";
 
-import "@/app/styles/active/members/ll3.members.badges.css";
-import "@/app/styles/active/members/ll3.members.tabs.css";
-import "@/app/styles/active/members/ll3.members.heatmap.css";
-import "@/app/styles/active/members/ll3.members.gauge.css";
-import "@/app/styles/active/members/ll3.members.viz.css";
-import "@/app/styles/active/members/ll3.vote-alignment.css";
+import "@/app/styles/active/members/refactored/ll3.members.terms.css";
+
+import "@/app/styles/active/members/refactored/ll3.members.badges.css";
+import "@/app/styles/active/members/refactored/ll3.members.tabs.css";
+import "@/app/styles/active/members/refactored/ll3.members.heatmap.css";
+// import "@/app/styles/active/members/ll3.members.gauge.css";
+// import "@/app/styles/active/members/ll3.members.viz.css";
+import "@/app/styles/active/members/refactored/ll3.members.viz.css";
+import "@/app/styles/active/members/refactored/ll3.members.votes.css";
+import "@/app/styles/active/members/refactored/ll3.members.vote-alignment.css";
 
 // import VotesSection from '@/app/components/features/members/house-member/VoteSection';
 // import VoteAlignmentPanel from '@/app/components/features/members/house-member/VoteAlignmentGauge';
@@ -133,28 +139,29 @@ export default async function MemberPage({ params }) {
         // page.jsx (fragment)
         <div className="llmp3-page">
             <div className="llmp3-wrap llmp3-stack-24">
-                <div className="llmp3-back">
-                    <Link
-                        href={`/search?state=${encodeURIComponent(profile.stateCode || "")}`}
-                        className="llmp3-back__members llmp3-back--member"
-                    >
-                        <ArrowLeft size={16} aria-hidden="true" />
-                        <span>Back to {stateLabel} results</span>
-                    </Link>
-                </div>
-                {/* Header */}
-                <SectionBoundary where="MemberHeader">
-                    <>
-                        <MemberAbout profile={profile} />
-                        <MemberTerms terms={profile.terms} />
-                    </>
-                </SectionBoundary>
+                <section className="llmp3-intro">
+                    <div className="llmp3-back">
+                        <Link
+                            href={`/search?state=${encodeURIComponent(profile.stateCode || "")}`}
+                            className="llmp3-back__link"
+                        >
+                            <ArrowLeft size={16} aria-hidden="true" />
+                            <span>Back to {stateLabel} results</span>
+                        </Link>
+                    </div>
 
-                {/* KPIs */}
+                    <SectionBoundary where="MemberHeader">
+                        <div className="llmp3-intro__stack">
+                            <MemberAbout profile={profile} />
+                            <MemberTerms terms={profile.terms} />
+                        </div>
+                    </SectionBoundary>
+                </section>
+                {/* KPIs 
                 <SectionBoundary where="KpiRow">
                     <KpiRow kpis={kpis} />
                 </SectionBoundary>
-
+*/}
                 {/* Tabs                          <SectionBoundary where="MemberTabs">     </SectionBoundary> */}
 
                 <div className="llmp3-panel">
@@ -184,12 +191,13 @@ export default async function MemberPage({ params }) {
                                     tableInitialLimit={20}
                                     votesFreshnessAsOf={votesFreshness.asOf}
                                     chamberLabel={isSenate ? "Senate" : "House"}
-                                    heatmapWeeks={52}
+                                    heatmapWeeks={13}
                                 />
                             </>
                         )}
                     </div>
                 </SectionBoundary>
+
             </div>
         </div>
         /*         <MemberAbout profile={profile} />

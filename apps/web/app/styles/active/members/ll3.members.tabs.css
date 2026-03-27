@@ -3,33 +3,67 @@
    Scoped to .llmp3-page (member detail route)
    ========================================================================== */
 
-/* ---------- header ---------- */
-
 .llmp3-page .llm3-tabs {
     padding: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.llmp3-page .llm3-tabs__head {
+.llmp3-page .llm3-tabs__topbar {
+    border-bottom: 1px solid rgba(17, 24, 39, 0.10);
+    margin-bottom: 10px;
+}
+
+.llmp3-page .llm3-tabs__modeTabs {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 8px;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
 }
 
-.llmp3-page .llm3-tabs__titleBlock {
-    min-width: 0;
-}
-
-.llmp3-page .llm3-tabs__title {
+.llmp3-page .llm3-tabs__modeTab {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 0 0 10px;
     margin: 0;
+    color: rgba(17, 24, 39, 0.72);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
 }
 
-.llmp3-page .llm3-tabs__sub {
-    margin-top: 4px;
+.llmp3-page .llm3-tabs__modeTab:hover {
+    color: rgba(17, 24, 39, 0.92);
+}
+
+.llmp3-page .llm3-tabs__modeTab.is-active {
+    color: rgba(29, 78, 216, 0.96);
+    border-bottom-color: rgba(29, 78, 216, 0.96);
+}
+
+.llmp3-page .llm3-tabs__subline {
+    margin-bottom: 14px;
     font-size: 12px;
-    color: rgba(17, 24, 39, 0.58);
-    font-weight: 750;
+    color: rgba(17, 24, 39, 0.62);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.llmp3-page .llm3-tabsRow {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+    gap: 14px;
+    align-items: start;
+}
+
+@media (max-width: 920px) {
+    .llmp3-page .llm3-tabsRow {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
 }
 
 /* ---------- segmented row (Policy Areas / Legislative Topics) ---------- */
@@ -55,6 +89,7 @@
     }
 }
 
+
 /* ---------- 2-col layout desktop, 1-col mobile ---------- */
 
 .llmp3-page .llm3-tabsRow {
@@ -67,10 +102,12 @@
 @media (max-width: 920px) {
     .llmp3-page .llm3-tabsRow {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
 }
 
-/* Viz + table frames (match the rest of member detail cards) */
+/* Viz + table frames */
+
 .llmp3-page .llm3-tabsViz,
 .llmp3-page .llm3-tabsTable {
     border: 1px solid rgba(17, 24, 39, 0.10);
@@ -78,35 +115,37 @@
     border-radius: 14px;
     padding: 12px;
     box-shadow: 0 10px 22px rgba(2, 8, 23, 0.04);
-    overflow: hidden;
+    overflow: visible;
+    /* was hidden */
 }
 
-/* Donut: prevent it from exploding */
+.ll3-members .llm3-tabsViz__frame,
 .llmp3-page .llm3-tabsViz__frame {
     width: 100%;
-    max-width: 420px;
-    /* clamp donut size */
+    max-width: 520px;
     margin: 0 auto;
-    aspect-ratio: 1 / 1;
-    /* stable square for svg */
     display: grid;
     place-items: center;
+    aspect-ratio: auto;
+    /* don't force square on mobile */
+    min-height: 0;
 }
 
-/* ---------- TopicDonut (viz) ---------- */
-
+/* donut */
 .llmp3-page .viz {
     width: 100%;
     min-width: 0;
+    display: grid;
+    gap: 10px;
 }
 
 .llmp3-page .viz__title {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    font-weight: 950;
-    color: rgba(17, 24, 39, 0.55);
-    margin: 2px 0 10px;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.52);
+    margin: 0;
 }
 
 .llmp3-page .viz-donut__body {
@@ -115,7 +154,6 @@
     gap: 10px;
 }
 
-/* donut itself */
 .llmp3-page .viz-donut__chart {
     width: 100%;
     display: grid;
@@ -124,167 +162,165 @@
 
 .llmp3-page .viz-donut__svg {
     width: 100%;
-    height: 100%;
-    max-width: 360px;
-    /* key: size control */
-    max-height: 360px;
+    height: auto;
+    max-width: 320px;
     display: block;
 }
 
-/* legend */
 .llmp3-page .viz__legend {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     gap: 6px;
+    min-width: 0;
 }
 
-.llmp3-page .viz__legend-item {
+.llmp3-page .viz__legendToggleRow {
+    margin-top: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.llmp3-page .viz__legend-item--plain {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
     align-items: center;
-
-    padding: 8px 10px;
-    border-radius: 12px;
-    border: 1px solid rgba(17, 24, 39, 0.06);
-    background: rgba(17, 24, 39, 0.02);
-
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    border-radius: 0;
     cursor: pointer;
 }
 
-.llmp3-page .viz__legend-item:hover {
-    background: rgba(17, 24, 39, 0.035);
-    border-color: rgba(17, 24, 39, 0.10);
+.llmp3-page .viz__legend-item--plain:hover {
+    background: transparent;
+    border-color: transparent;
 }
 
 .llmp3-page .viz__legend-label {
     min-width: 0;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    color: rgba(17, 24, 39, 0.86);
-    font-weight: 800;
+    gap: 8px;
+    color: rgba(17, 24, 39, 0.78);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.25;
 }
 
-.llmp3-page .viz__legend-swatch {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    display: inline-block;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+.llmp3-page .viz__legend-icon {
     flex: 0 0 auto;
+    opacity: 0.95;
 }
 
 .llmp3-page .viz__legend-item .muted {
-    color: rgba(17, 24, 39, 0.58);
-    font-weight: 850;
+    color: rgba(17, 24, 39, 0.62);
+    font-weight: 700;
     font-size: 12px;
 }
 
-/* +more button */
+.llmp3-page .viz__legendToggleRow {
+    margin-top: 8px;
+}
+
 .llmp3-page .viz__legend-more {
-    height: 32px;
+    min-height: 32px;
+    min-width: 150px;
     padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.72);
-    color: rgba(17, 24, 39, 0.78);
-    font-weight: 900;
+    border-radius: 8px;
+    border: 1px solid rgba(17, 24, 39, 0.18);
+    background: #fff;
+    color: rgba(17, 24, 39, 0.84);
+    font-weight: 700;
+    font-size: 13px;
     cursor: pointer;
 }
 
-.llmp3-page .viz__legend-more:hover {
-    background: #fff;
-    border-color: rgba(17, 24, 39, 0.18);
-}
-
 .llmp3-page .viz__hint {
-    margin-top: 10px;
-    color: rgba(17, 24, 39, 0.58);
+    margin-top: 4px;
+    color: rgba(17, 24, 39, 0.56);
     font-size: 12px;
-    font-weight: 750;
+    font-weight: 700;
+    line-height: 1.35;
 }
 
-/* ---------- BillTable controls + table chrome ---------- */
-
+/* bill table */
 .llmp3-page .billtable {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.llmp3-page .billtable__sectionHead {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.llmp3-page .billtable__sectionTitle {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.94);
+}
+
+.llmp3-page .billtable__block {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.llmp3-page .billtable__controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
+.llmp3-page .billtable__eyebrow {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.55);
 }
 
-/* member-scoped inputs (don’t rely on global .field/.btn) */
+.llmp3-page .billtable__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+    align-items: end;
+}
+
+.llmp3-page .billtable__control {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.llmp3-page .billtable__label {
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 800;
+    color: rgba(17, 24, 39, 0.72);
+}
+
 .llmp3-page .billtable .field {
+    width: 100%;
+    min-width: 0;
     font: inherit;
     line-height: 1.2;
-
-    height: 34px;
+    height: 36px;
     padding: 0 10px;
-    border-radius: 10px;
-
+    border-radius: 8px;
     border: 1px solid rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.86);
+    background: rgba(255, 255, 255, 0.92);
     color: rgba(17, 24, 39, 0.86);
-
-    font-weight: 800;
-    font-size: 13px;
-
-    box-shadow: 0 6px 14px rgba(17, 24, 39, 0.05);
+    font-weight: 500;
+    font-size: 12px;
 }
 
-.llmp3-page .billtable .field:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px var(--ll3-focus-ring);
-    border-color: rgba(17, 24, 39, 0.18);
-}
-
-.llmp3-page .billtable .dategroup,
-.llmp3-page .billtable .sortgroup {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.llmp3-page .billtable .dash {
-    opacity: 0.6;
-    font-weight: 900;
-}
-
-/* sort dir button */
-.llmp3-page .billtable .btn {
-    height: 34px;
-    width: 34px;
-    display: inline-grid;
-    place-items: center;
-    border-radius: 10px;
-
-    border: 1px solid rgba(17, 24, 39, 0.12);
-    background: rgba(255, 255, 255, 0.72);
-    color: rgba(17, 24, 39, 0.78);
-
-    font-weight: 950;
-    cursor: pointer;
-    box-shadow: 0 6px 14px rgba(17, 24, 39, 0.05);
-}
-
-.llmp3-page .billtable .btn:hover {
-    background: #fff;
-    border-color: rgba(17, 24, 39, 0.18);
-}
-
-/* table frame */
 .llmp3-page .billtable__scroller {
     border: 1px solid rgba(17, 24, 39, 0.10);
-    border-radius: 14px;
+    border-radius: 10px;
     background: rgba(255, 255, 255, 0.92);
     overflow: auto;
     -webkit-overflow-scrolling: touch;
@@ -294,6 +330,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    table-layout: fixed;
 }
 
 .llmp3-page .billtable__table thead th {
@@ -301,28 +338,52 @@
     top: 0;
     z-index: 1;
     background: rgba(248, 250, 252, 0.96);
-
     text-align: left;
-    font-weight: 950;
-
+    font-weight: 800;
     padding: 10px 12px;
     border-bottom: 1px solid rgba(17, 24, 39, 0.10);
-
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     font-size: 11px;
-    color: rgba(17, 24, 39, 0.55);
+    color: rgba(17, 24, 39, 0.52);
     white-space: nowrap;
 }
 
-.llmp3-page .billtable__table tbody td {
+.llmp3-page .billtable__table thead th.sortable {
+    padding: 0;
+}
+
+.llmp3-page .billtable__sortBtn {
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     padding: 10px 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+}
+
+.llmp3-page .billtable__sortIcon {
+    flex: 0 0 auto;
+    opacity: 0.7;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.llmp3-page .billtable__table tbody td {
+    padding: 12px;
     border-bottom: 1px solid rgba(17, 24, 39, 0.06);
     vertical-align: top;
-
     font-size: 14px;
     font-weight: 650;
-    /* <- less heavy, more readable */
     color: rgba(17, 24, 39, 0.86);
 }
 
@@ -331,14 +392,24 @@
 }
 
 .llmp3-page .billtable__cell--title {
-    font-weight: 750;
-    /* keep titles slightly stronger */
+    min-width: 0;
     color: rgba(17, 24, 39, 0.92);
+}
+
+.llmp3-page .billlink,
+.llmp3-page .billtable__cell--title>span {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-decoration: none;
+    word-break: break-word;
+    line-height: 1.32;
+    font-weight: 780;
 }
 
 .llmp3-page .billlink {
     color: inherit;
-    text-decoration: none;
 }
 
 .llmp3-page .billlink:hover {
@@ -347,19 +418,81 @@
 }
 
 .llmp3-page .billtable__cell--topic {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    text-align: center;
+}
+
+.llmp3-page .billtable__topicIcon {
+    opacity: 0.95;
+}
+
+.llmp3-page .billtable__cell--details {
     min-width: 0;
 }
 
-.llmp3-page .billtable__cell--topic .swatch {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    display: inline-block;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+.llmp3-page .billtable__detailsStack {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.llmp3-page .billtable__detailsMain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.llmp3-page .billtable__detailsType {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.82);
+    line-height: 1.2;
+}
+
+.llmp3-page .billtable__detailsDate {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(17, 24, 39, 0.58);
+    line-height: 1.2;
+}
+
+.llmp3-page .billtable__detailsBadge {
     flex: 0 0 auto;
+    padding-top: 1px;
+}
+
+.llmp3-page .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    min-width: 22px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    line-height: 1;
+    font-weight: 800;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.llmp3-page .chip--s {
+    background: rgba(59, 130, 246, 0.10);
+    color: rgba(30, 64, 175, 0.96);
+    border-color: rgba(59, 130, 246, 0.18);
+}
+
+.llmp3-page .chip--c {
+    background: rgba(16, 185, 129, 0.10);
+    color: rgba(4, 120, 87, 0.96);
+    border-color: rgba(16, 185, 129, 0.18);
+}
+
+.llmp3-page .chip--mix {
+    background: rgba(139, 92, 246, 0.10);
+    color: rgba(109, 40, 217, 0.96);
+    border-color: rgba(139, 92, 246, 0.18);
 }
 
 .llmp3-page .billtable__empty {
@@ -369,34 +502,54 @@
     font-weight: 800;
 }
 
-/* ---------- mobile tweaks ---------- */
 @media (max-width: 640px) {
     .llmp3-page .llm3-tabs {
-        padding: 14px;
+        padding: 12px 10px;
+    }
+
+    .llmp3-page .llm3-tabs__modeTabs {
+        gap: 14px;
+    }
+
+    .llmp3-page .llm3-tabs__modeTab {
+        font-size: 12px;
+        padding-bottom: 8px;
+    }
+
+    .llmp3-page .llm3-tabsViz {
+        padding: 10px 10px 12px;
+        border-radius: 12px;
+        overflow: visible;
+    }
+
+    .llmp3-page .llm3-tabsTable {
+        padding: 10px;
+        border-radius: 12px;
     }
 
     .llmp3-page .llm3-tabsViz__frame {
-        max-width: 360px;
+        max-width: none;
+        width: 100%;
+        aspect-ratio: auto;
     }
 
     .llmp3-page .viz-donut__svg {
-        max-width: 320px;
-        max-height: 320px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .llmp3-page .viz__legend-label {
+        font-size: 12px;
+    }
+
+    .llmp3-page .viz__legend-item .muted {
+        font-size: 11px;
     }
 
     .llmp3-page .billtable__controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .llmp3-page .billtable .dategroup,
-    .llmp3-page .billtable .sortgroup {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .llmp3-page .billtable .field {
-        width: 100%;
+        grid-template-columns: 1fr;
     }
 
     .llmp3-page .billtable__table thead th {
@@ -404,8 +557,31 @@
         font-size: 10.5px;
     }
 
-    .llmp3-page .billtable__table tbody td {
+    .llmp3-page .billtable__sortBtn {
         padding: 8px 10px;
+    }
+
+    .llmp3-page .billtable__table tbody td {
+        padding: 10px;
         font-size: 13px;
     }
+
+    .llmp3-page .billtable__detailsType,
+    .llmp3-page .billtable__detailsDate,
+    .llmp3-page .chip {
+        font-size: 11px;
+    }
 }
+
+
+
+/* 
+@media (max-width: 640px) {
+    .llmp3-page .viz-donut__svg,
+    .llmp3-page .viz-donut__chart svg,
+    .llmp3-page .viz-donut__chart canvas {
+        pointer-events: none;
+        touch-action: pan-y;
+    }
+}
+    */

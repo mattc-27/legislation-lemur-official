@@ -1,0 +1,116 @@
+/* app/styles/active/members/ll3.members.badges.css
+   ======================================================================
+   LL3 — Members Badges / Chips
+   ====================================================================== */
+
+.llmp3-page .badge,
+.llmp3-page .chip,
+.llmp3-page .llmp3-badge,
+.llmp3-page .llmp3-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.78);
+    color: rgba(17, 24, 39, 0.82);
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.llmp3-page .badge--muted,
+.llmp3-page .chip--muted {
+    background: rgba(17, 24, 39, 0.04);
+    border-color: rgba(17, 24, 39, 0.10);
+    color: rgba(17, 24, 39, 0.62);
+}
+
+.llmp3-page .badge--slate {
+    background: var(--llm3-slate-bg);
+    border-color: var(--llm3-slate-border);
+    color: var(--llm3-slate-text);
+}
+
+.llmp3-page .badge--success {
+    background: var(--llm3-success-bg);
+    border-color: var(--llm3-success-border);
+    color: var(--llm3-success-text);
+}
+
+.llmp3-page .badge--danger {
+    background: var(--llm3-danger-bg);
+    border-color: var(--llm3-danger-border);
+    color: var(--llm3-danger-text);
+}
+
+.llmp3-page .badge--teal {
+    background: var(--llm3-teal-bg);
+    border-color: var(--llm3-teal-border);
+    color: var(--llm3-teal-text);
+}
+
+.llmp3-page .badge--warning {
+    background: var(--llm3-warning-bg);
+    border-color: var(--llm3-warning-border);
+    color: var(--llm3-warning-text);
+}
+
+/* party */
+.llmp3-page .llmp3-badge--party-D {
+    background: var(--llm3-party-D);
+    border-color: var(--llm3-party-D-border);
+    color: var(--llm3-party-D-text);
+}
+
+.llmp3-page .llmp3-badge--party-R {
+    background: var(--llm3-party-R);
+    border-color: var(--llm3-party-R-border);
+    color: var(--llm3-party-R-text);
+}
+
+.llmp3-page .llmp3-badge--party-I {
+    background: var(--llm3-party-I);
+    border-color: var(--llm3-party-I-border);
+    color: var(--llm3-party-I-text);
+}
+
+/* bill table S / C / mixed chips */
+.llmp3-page .chip--s {
+    background: var(--llm3-indigo-bg);
+    border-color: var(--llm3-indigo-border);
+    color: var(--llm3-indigo-text);
+}
+
+.llmp3-page .chip--c {
+    background: rgba(17, 24, 39, 0.04);
+    border-color: rgba(17, 24, 39, 0.10);
+    color: rgba(51, 65, 85, 0.92);
+}
+
+.llmp3-page .chip--mix {
+    background: var(--llm3-cyan-bg);
+    border-color: var(--llm3-cyan-border);
+    color: var(--llm3-cyan-text);
+}
+
+/* compact vote/result use */
+.llmp3-page .votes-list .badge,
+.llmp3-page .votes-table__resultBadge,
+.llmp3-page .chip {
+    min-height: 22px;
+    height: auto;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.llmp3-page .llm3-pill--good {
+    border-color: rgba(16, 185, 129, 0.24);
+    background: rgba(16, 185, 129, 0.08);
+}
