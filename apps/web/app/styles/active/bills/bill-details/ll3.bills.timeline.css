@@ -1,0 +1,190 @@
+/* app/(app)/styles/active/bills/ll3.bills.timeline.css
+   ==========================================================================
+   LL3 — Bills Timeline / Documents / Related content
+   ========================================================================== */
+
+.llbd3-note {
+    margin: 8px 0 0;
+    color: var(--llb3-muted);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.llbd3-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.llbd3-timeline__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+}
+
+.llbd3-timeline__rail {
+    position: relative;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.llbd3-timeline__rail::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: -12px;
+    width: 2px;
+    background: var(--llb3-border);
+}
+
+.llbd3-timeline__item:last-child .llbd3-timeline__rail::before {
+    display: none;
+}
+
+.llbd3-timeline__dot {
+    position: relative;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    margin-top: 6px;
+    border-radius: 999px;
+    background: rgba(99, 102, 241, 0.86);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
+}
+
+.llbd3-timeline__card {
+    border: 1px solid var(--llb3-border2);
+    background: var(--llb3-surface-strong);
+    border-radius: 14px;
+    padding: 12px;
+    min-width: 0;
+}
+
+.llbd3-timeline__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.llbd3-timeline__date {
+    color: var(--llb3-ink);
+    font-weight: 900;
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+.llbd3-timeline__meta {
+    color: var(--llb3-muted);
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+.llbd3-timeline__text {
+    margin-top: 8px;
+    color: var(--llb3-text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.llbd3-docs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.llbd3-doc {
+    display: grid;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid var(--llb3-border2);
+    background: var(--llb3-surface-strong);
+}
+
+.llbd3-doc__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.llbd3-doc__title {
+    color: var(--llb3-ink);
+    font-weight: 850;
+    line-height: 1.35;
+}
+
+.llbd3-doc__sub {
+    margin-top: 4px;
+    color: var(--llb3-muted);
+    font-size: 0.84rem;
+    font-weight: 750;
+}
+
+.llbd3-doc__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 999px;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 1px solid var(--llb3-border);
+    color: var(--llb3-text);
+    background: var(--llb3-surface-strong);
+    font-size: 13px;
+    font-weight: 850;
+}
+
+.llbd3-doc__link:hover {
+    background: var(--llb3-surface-solid);
+    border-color: var(--llb3-border-strong);
+    color: var(--llb3-ink);
+}
+
+.llbd3-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.llbd3-list__item {
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid var(--llb3-border2);
+    background: var(--llb3-surface-strong);
+}
+
+.llbd3-list__title {
+    color: var(--llb3-ink);
+    font-weight: 850;
+    line-height: 1.35;
+    text-decoration: none;
+}
+
+.llbd3-list__title:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.llbd3-list__meta {
+    margin-top: 4px;
+    color: var(--llb3-muted);
+    font-size: 0.84rem;
+    font-weight: 750;
+    line-height: 1.45;
+}

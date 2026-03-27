@@ -1,37 +1,62 @@
+import Link from "next/link";
 import {
-  HOME_INTRO_TITLE,
-  HOME_INTRO_PARAS,
+  HOME_HERO_EYEBROW,
+  HOME_HERO_TITLE,
+  HOME_HERO_SUB,
+  HOME_HERO_PRIMARY_CTA,
+  HOME_HERO_SECONDARY_CTA,
 } from "@/lib/content/homeContent";
+
 export default function HomeHero() {
   return (
     <section className="hero hero--home" aria-label="Home hero">
-      <div className="container hero__grid hero__grid--center">
-        {/* Background art */}
-        <figure className="hero__bg" aria-hidden="true">
+      <div className="container hero__grid hero__grid--home">
+        <div className="hero__art hero__art--behind" aria-hidden="true">
           <img
-            src="https://storage.googleapis.com/legislation-lemur-images/coming-soon-email-lemur.png"
+            src="https://storage.googleapis.com/legislation-lemur-images/f7262476-5004-46d9-b414-10e7ffafc652.png"
             alt=""
-            className="hero__bgImg"
-            loading="lazy"
+            className="hero__art-img"
+            loading="eager"
+            decoding="async"
           />
-        </figure>
+        </div>
 
-        <div className="hero__content hero__content--center">
-          <div className="hero__pill">LEGISLATION LEMUR</div>
-          <h1 className="hero__title hero__title--home">
-            Explore your representatives in Congress
-          </h1>
-          <p className="hero__sub">
-            Search by member or state. Clear, data-driven summaries of activity and topics.
-          </p>
+        <div className="hero__content hero__content--home">
+          <div className="hero__eyebrow">{HOME_HERO_EYEBROW}</div>
 
-          <div className="hero__cta hero__cta--center">
-            <a className="btn btn--primary" href="/members">
-              Find your representative
-            </a>
-            <a className="btn btn--ghost" href="/bills">
-              Browse bills
-            </a>
+          <h1 className="hero__title hero__title--home">{HOME_HERO_TITLE}</h1>
+
+          <p className="hero__sub hero__sub--home">{HOME_HERO_SUB}</p>
+
+          <div className="hero__lower">
+            <div className="hero__cta hero__cta--left">
+              <Link className="btn btn--primary" href={HOME_HERO_PRIMARY_CTA.href}>
+                {HOME_HERO_PRIMARY_CTA.label}
+              </Link>
+              <Link className="btn btn--ghost" href={HOME_HERO_SECONDARY_CTA.href}>
+                {HOME_HERO_SECONDARY_CTA.label}
+              </Link>
+            </div>
+
+            <div className="hero__signals" aria-label="Platform highlights">
+              <div className="hero__cue">
+                <span className="hero__cue-dot" aria-hidden="true" />
+                <div className="hero__cue-copy">
+                  <div className="hero__cue-title">Clearer legislative snapshots</div>
+                  <div className="hero__cue-meta">
+                    Readable profiles, bill context, and ongoing session activity.
+                  </div>
+                </div>
+              </div>
+
+              <div className="hero__cue">
+                <span className="hero__cue-dot" aria-hidden="true" />
+                <div className="hero__cue-copy">
+                  <div className="hero__cue-title">Neutral presentation</div>
+                  <div className="hero__cue-meta">Built for clarity, not spin.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
