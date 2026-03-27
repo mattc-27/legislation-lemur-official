@@ -64,3 +64,111 @@
     box-shadow: 0 0 0 4px var(--ll3-focus);
     border-color: rgba(59, 130, 246, 0.35);
 }
+
+/* core/ll3.primitives.css */
+
+.ll3 .card,
+.ll3 .panel {
+    background: var(--ll3-panel);
+    border: 1px solid var(--ll3-border);
+    border-radius: var(--ll3-r-lg);
+    box-shadow: var(--ll3-shadow);
+    -webkit-backdrop-filter: blur(16px) saturate(1.02);
+    backdrop-filter: blur(16px) saturate(1.02);
+}
+
+.ll3 .card--flat {
+    box-shadow: none;
+}
+
+.ll3 .btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: var(--ll3-r-pill);
+    border: 1px solid var(--ll3-border);
+
+    background: var(--ll3-panel-strong);
+    color: var(--ll3-text);
+    box-shadow: var(--ll3-shadow-xs);
+
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+
+    transition:
+        transform 120ms ease,
+        box-shadow 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease,
+        color 160ms ease;
+}
+
+.ll3 .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--ll3-shadow-sm);
+    border-color: var(--ll3-border-strong);
+}
+
+.ll3 .btn:focus-visible {
+    box-shadow: 0 0 0 4px var(--ll3-focus);
+}
+
+.ll3 .btn--primary {
+    background: linear-gradient(180deg, var(--ll3-accent), var(--ll3-accent-strong));
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow:
+        0 10px 24px rgba(79, 70, 229, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.ll3 .btn--primary:hover {
+    box-shadow:
+        0 14px 30px rgba(79, 70, 229, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.ll3 .btn--ghost {
+    background: var(--ll3-panel);
+    color: var(--ll3-text);
+}
+
+.ll3 .input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 16px;
+    border: 1px solid var(--ll3-input-border);
+    background: var(--ll3-input-bg);
+    color: var(--ll3-text);
+
+    border-radius: var(--ll3-r-pill);
+    box-shadow: var(--ll3-shadow-xs);
+
+    transition:
+        border-color 140ms ease,
+        box-shadow 140ms ease,
+        background 140ms ease;
+}
+
+.ll3 .input::placeholder {
+    color: var(--ll3-muted2);
+}
+
+.ll3 .input:focus {
+    border-color: var(--ll3-accent);
+    box-shadow:
+        var(--ll3-shadow-xs),
+        0 0 0 4px var(--ll3-focus);
+}
+
+.ll3 .text-dim {
+    color: var(--ll3-muted);
+}

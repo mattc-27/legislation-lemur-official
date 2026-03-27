@@ -1,4 +1,5 @@
-import { searchMembers, getStateRoster } from "@/lib/server/routes/search";
+// import { searchMembers, getStateRoster } from "@/lib/server/routes/search";
+import { getMembersDirectory } from "@/lib/server/routes/search";
 import { getViewsFreshness, formatAsOfMMDDYYYY } from "@/lib/server/routes/viewStatus";
 
 import SearchFilters from "@/app/components/features/search/SearchFilters";
@@ -18,16 +19,22 @@ import "@/app/styles/active/members/refactored/ll3.members.badges.css";
 
 
 import "@/app/styles/active/members/search/ll3.members.directory.layout.css";
+
 import "@/app/styles/active/members/search/ll3.members.directory.filters.css";
+
 import "@/app/styles/active/members/search/ll3.members.directory.sidebar.css";
 import "@/app/styles/active/members/search/ll3.members.directory.results.css";
+import "@/app/styles/active/members/search/ll3.members.directory.css";
 
 
-export const revalidate = 600;
+
+
+export const revalidate = 1800;
 
 export default async function SearchPage() {
+    const directory = await getMembersDirectory();
     const freshness = await getViewsFreshness(["mv_member_core_v1"]);
-    const asOfText = formatAsOfMMDDYYYY(freshness.asOf);
+    const asOfText = formatAsOfMMDDYYYY(freshness?.asOf);
 
     return (
         <div className="ll3-members ll3-membersDirectoryPage">
@@ -36,21 +43,22 @@ export default async function SearchPage() {
                     <div className="ll3-head__titleWrap">
                         <h1 className="ll3-h1">Explore Members of Congress</h1>
                         <p className="ll3-sub">
-                            Browse all members by state, then filter by name, chamber, or party.
+                            Browse members by state, filter by chamber or party, and open cleaner
+                            congressional profiles.
                         </p>
                     </div>
 
                     <div className="ll3-head__meta">
-                        {asOfText && (
+                        {asOfText ? (
                             <span className="ll3-freshness">
                                 Data current as of <strong className="ll3-strong">{asOfText}</strong>
                             </span>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </header>
 
-            <MemberDirectoryClient />
+            <MemberDirectoryClient initialData={directory} />
         </div>
     );
 }

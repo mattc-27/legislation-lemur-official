@@ -415,3 +415,4 @@ export async function autocompleteBillsQuery(prefix, { limit = 12 } = {}) {
   const { rows } = await q("bills:auto:q:search", sql, [qraw, limit]);
   return rows ?? [];
 }
+

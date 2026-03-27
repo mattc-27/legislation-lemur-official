@@ -17,6 +17,8 @@ import SenateVotes from '@/app/components/features/members/senate-member/SenateV
 
 import VotesSplitSection from "@/app/components/features/members/shared/VoteSplitSection";
 
+
+
 import {
     ArrowLeft
 } from "lucide-react";

@@ -1,78 +1,19 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import {
-    AlertTriangle,
-    Banknote,
-    BookOpen,
-    Briefcase,
-    Building2,
-    Car,
-    DollarSign,
-    Feather,
-    Flag,
-    Gavel,
-    Globe,
-    GraduationCap,
-    HandHeart,
-    HeartPulse,
-    Landmark,
-    Leaf,
-    Megaphone,
-    PawPrint,
-    Scale,
-    Shield,
-    Sprout,
-    Tractor,
-    Trees,
-    Users,
-    Waves,
-} from "lucide-react";
 import { getCongressBillUrl } from "@/lib/utils/getCongressBillUrl";
+import {
+    getTopicMeta,
+    getTopicColor,
+    normalizeTopicLabel,
+} from "@/lib/utils/member-info-topics";
 
-const PALETTE = ["#6366F1", "#22C55E", "#F59E0B", "#06B6D4", "#F43F5E", "#10B981", "#A78BFA", "#FB7185"];
-
-const TOPIC_META = {
-    "Agriculture and Food": { short: "Ag & food", icon: Tractor },
-    Animals: { short: "Animals", icon: PawPrint },
-    "Armed Forces and National Security": { short: "Defense", icon: Shield },
-    "Arts, Culture, Religion": { short: "Arts & culture", icon: Feather },
-    "Civil Rights and Liberties, Minority Issues": { short: "Civil rights", icon: Scale },
-    Commerce: { short: "Commerce", icon: Briefcase },
-    Congress: { short: "Congress", icon: Landmark },
-    "Crime and Law Enforcement": { short: "Crime", icon: Gavel },
-    "Economics and Public Finance": { short: "Econ & finance", icon: DollarSign },
-    Education: { short: "Education", icon: GraduationCap },
-    Energy: { short: "Energy", icon: AlertTriangle },
-    "Environmental Protection": { short: "Environment", icon: Leaf },
-    Families: { short: "Families", icon: Users },
-    "Finance and Financial Sector": { short: "Finance", icon: Banknote },
-    "Foreign Trade and International Finance": { short: "Trade", icon: Globe },
-    "Government Operations and Politics": { short: "Gov ops", icon: Building2 },
-    Health: { short: "Health", icon: HeartPulse },
-    Immigration: { short: "Immigration", icon: Flag },
-    "International Affairs": { short: "Intl affairs", icon: Globe },
-    "Labor and Employment": { short: "Labor", icon: Briefcase },
-    "Native Americans": { short: "Native affairs", icon: Sprout },
-    "Public Lands and Natural Resources": { short: "Public lands", icon: Trees },
-    "Science, Technology, Communications": { short: "Sci / tech", icon: Megaphone },
-    "Social Welfare": { short: "Social welfare", icon: HandHeart },
-    Taxation: { short: "Taxation", icon: BookOpen },
-    "Transportation and Public Works": { short: "Transport", icon: Car },
-    Uncategorized: { short: "Other", icon: Waves },
-};
-
-const normSubject = (s) => (typeof s === "string" ? s : s?.name || s?.title || s?.subject || "Uncategorized");
 const pick = (obj, keys) => keys.map((k) => obj?.[k]).find((v) => v != null);
-
-function getTopicMeta(label = "") {
-    return TOPIC_META[label] || { short: label || "Other", icon: BookOpen };
-}
 
 export default function BillTable({ groups = [], maxHeight = 420, selectedTopic }) {
     const rows = useMemo(() => {
         const out = [];
         for (const g of groups || []) {
-            const subject = normSubject(g?.subject);
+            const subject = normalizeTopicLabel(g?.subject);
             for (const it of g?.items || []) {
                 const id = pick(it, ["id", "bill_id", "href", "url", "title"]) || cryptoRandomId();
                 const title = pick(it, ["title", "displayTitle", "displayyTitle", "id"]) || String(id);
@@ -81,7 +22,17 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                 const date = introducedAt ? new Date(introducedAt) : null;
                 const kinds = Array.isArray(it?.kinds) ? it.kinds : [it?.kind ?? it?.__kind].filter(Boolean);
                 const href = resolveLink(it);
-                out.push({ subject, id, title, type, date, dateRaw: introducedAt ?? it?.date, kinds, href });
+
+                out.push({
+                    subject,
+                    id,
+                    title,
+                    type,
+                    date,
+                    dateRaw: introducedAt ?? it?.date,
+                    kinds,
+                    href,
+                });
             }
         }
         return out;
@@ -100,13 +51,17 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
     }, [selectedTopic]);
 
     const allSubjects = useMemo(
-        () => ["All", ...Array.from(new Set((groups || []).map((g) => normSubject(g.subject)).filter(Boolean))).sort()],
+        () => [
+            "All",
+            ...Array.from(new Set((groups || []).map((g) => normalizeTopicLabel(g?.subject)).filter(Boolean))).sort(),
+        ],
         [groups]
     );
 
     const filtered = useMemo(() => {
         const fFrom = from ? new Date(from) : null;
         const fTo = to ? new Date(to) : null;
+
         return rows
             .filter((r) => (subject === "All" ? true : r.subject === subject))
             .filter((r) => (fFrom ? (r.date ? r.date >= fFrom : false) : true))
@@ -116,6 +71,7 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                     const cmp = a.subject.localeCompare(b.subject);
                     return sortDir === "asc" ? cmp : -cmp;
                 }
+
                 const ta = a.date ? a.date.getTime() : -Infinity;
                 const tb = b.date ? b.date.getTime() : -Infinity;
                 const cmp = ta - tb;
@@ -187,10 +143,7 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                         <thead>
                             <tr>
                                 <th style={{ width: "56%" }}>Title</th>
-                                <th
-                                    className="sortable"
-                                    style={{ width: "12%" }}
-                                >
+                                <th className="sortable" style={{ width: "12%" }}>
                                     <button
                                         type="button"
                                         className="billtable__sortBtn"
@@ -198,13 +151,12 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                                         aria-label={`Sort by topic ${sortKey === "subject" && sortDir === "asc" ? "descending" : "ascending"}`}
                                     >
                                         <span>Topic</span>
-                                        <span className="billtable__sortIcon">{sortKey === "subject" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}</span>
+                                        <span className="billtable__sortIcon">
+                                            {sortKey === "subject" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}
+                                        </span>
                                     </button>
                                 </th>
-                                <th
-                                    className="sortable"
-                                    style={{ width: "32%" }}
-                                >
+                                <th className="sortable" style={{ width: "32%" }}>
                                     <button
                                         type="button"
                                         className="billtable__sortBtn"
@@ -212,7 +164,9 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                                         aria-label={`Sort by date ${sortKey === "date" && sortDir === "desc" ? "ascending" : "descending"}`}
                                     >
                                         <span>Details</span>
-                                        <span className="billtable__sortIcon">{sortKey === "date" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}</span>
+                                        <span className="billtable__sortIcon">
+                                            {sortKey === "date" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}
+                                        </span>
                                     </button>
                                 </th>
                             </tr>
@@ -258,7 +212,13 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                                                 <div className="billtable__detailsMain">
                                                     <div className="billtable__detailsType">{r.type || "—"}</div>
                                                     <div className="billtable__detailsDate">
-                                                        {r.date ? r.date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : r.dateRaw || "—"}
+                                                        {r.date
+                                                            ? r.date.toLocaleDateString(undefined, {
+                                                                month: "short",
+                                                                day: "numeric",
+                                                                year: "numeric",
+                                                            })
+                                                            : r.dateRaw || "—"}
                                                     </div>
                                                 </div>
 
@@ -277,7 +237,9 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
 
                             {filtered.length === 0 && (
                                 <tr>
-                                    <td colSpan={3} className="billtable__empty">No bills match your filters.</td>
+                                    <td colSpan={3} className="billtable__empty">
+                                        No bills match your filters.
+                                    </td>
                                 </tr>
                             )}
                         </tbody>
@@ -295,33 +257,44 @@ function resolveLink(it) {
     const isExternal = Boolean(publicUrl);
     return { url, isExternal };
 }
+
 function computeBadge(it = {}) {
     const kinds = Array.isArray(it.kinds) ? it.kinds : [it?.kind ?? it?.__kind].filter(Boolean);
     const set = new Set(kinds.map((k) => String(k).toLowerCase()));
     const isS = set.has("s") || set.has("sponsored");
     const isC = set.has("c") || set.has("cosponsored") || set.has("co-sponsored") || set.has("co_sponsored");
+
     if (isS && isC) return { text: "S+C", className: "chip--mix", title: "Sponsored and co-sponsored" };
     if (isS) return { text: "S", className: "chip--s", title: "Sponsored" };
     if (isC) return { text: "C", className: "chip--c", title: "Co-sponsored" };
     return null;
 }
+
 function endOfDay(d) {
     const x = new Date(d);
     x.setHours(23, 59, 59, 999);
     return x;
 }
+
 function buildColorMap(groups = []) {
     const counts = new Map();
+
     for (const g of groups) {
-        const key = normSubject(g?.subject);
+        const key = normalizeTopicLabel(g?.subject);
         const inc = Array.isArray(g?.items) ? g.items.length : Number(g?.count) || 0;
         counts.set(key, (counts.get(key) || 0) + inc);
     }
+
     const sorted = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
     const map = new Map();
-    sorted.forEach(([label], i) => map.set(label, PALETTE[i % PALETTE.length]));
+
+    sorted.forEach(([label], i) => {
+        map.set(label, getTopicColor(i));
+    });
+
     return map;
 }
+
 function cryptoRandomId() {
     try {
         return crypto.randomUUID();

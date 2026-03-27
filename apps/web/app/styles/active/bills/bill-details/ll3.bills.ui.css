@@ -1,0 +1,261 @@
+/* app/(app)/styles/active/bills/ll3.bills.ui.css
+   ==========================================================================
+   LL3 — Bills UI Primitives
+   Typography / pills / buttons / focus / reusable frames
+   Scoped to .llbd3-page
+   ========================================================================== */
+
+.llbd3-page,
+.llbd3-page *,
+.llbd3-page *::before,
+.llbd3-page *::after {
+    box-sizing: border-box;
+}
+
+.llbd3-page {
+    font-family: var(--ll3-font-sans, "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif);
+    color: var(--llb3-text);
+}
+
+.llbd3-page a:focus-visible,
+.llbd3-page button:focus-visible,
+.llbd3-page [role="button"]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--llb3-focus);
+}
+
+.llbd3-page .llbd3-h1 {
+    margin: 0;
+    color: var(--llb3-ink);
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    font-size: var(--llb3-h1);
+    line-height: 1.18;
+}
+
+.llbd3-page .llbd3-h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: var(--llb3-ink);
+    font-weight: 950;
+    letter-spacing: -0.01em;
+    font-size: var(--llb3-h2);
+}
+
+.llbd3-page .llbd3-muted {
+    color: var(--llb3-muted);
+}
+
+.llbd3-page .llbd3-small {
+    font-size: var(--llb3-small);
+}
+
+.llbd3-page .llbd3-strong {
+    color: var(--llb3-ink);
+    font-weight: 900;
+}
+
+.llbd3-page .llbd3-subtitle {
+    margin: 10px 0 0;
+    color: var(--llb3-text);
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 86ch;
+}
+
+.llbd3-page .llbd3-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--llb3-border);
+    background: var(--llb3-surface);
+    color: var(--llb3-ink);
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: var(--llb3-shadow2);
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.06s ease, color 0.18s ease;
+}
+
+.llbd3-page .llbd3-back:hover {
+    background: var(--llb3-surface-strong);
+    border-color: var(--llb3-border-strong);
+    transform: translateY(-1px);
+}
+
+.llbd3-page .llbd3-back:active {
+    transform: translateY(0);
+}
+
+.llbd3-page .llbd3-back--simple {
+    background: transparent;
+    box-shadow: none;
+    border-color: var(--llb3-border);
+}
+
+.llbd3-page .llbd3-extlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 750;
+    color: var(--llb3-text);
+    background: transparent;
+    border: 1px solid var(--llb3-border);
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.06s ease, color 0.18s ease;
+}
+
+.llbd3-page .llbd3-extlink:hover {
+    background: var(--llb3-surface);
+    border-color: var(--llb3-border-strong);
+    color: var(--llb3-ink);
+    transform: translateY(-1px);
+}
+
+.llbd3-page .llbd3-eyebrow {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.78rem;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--llb3-muted);
+    font-weight: 850;
+}
+
+.llbd3-page .llbd3-eyebrow__sep {
+    opacity: 0.6;
+}
+
+.llbd3-page .llbd3-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--llb3-border);
+    background: var(--llb3-surface-strong);
+    color: var(--llb3-ink);
+    font-weight: 850;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.llbd3-page .llbd3-status__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--llb3-status-default);
+}
+
+.llbd3-page .llbd3-status--introduced .llbd3-status__dot { background: var(--llb3-status-introduced); }
+.llbd3-page .llbd3-status--committee .llbd3-status__dot { background: var(--llb3-status-committee); }
+.llbd3-page .llbd3-status--reported .llbd3-status__dot { background: var(--llb3-status-reported); }
+.llbd3-page .llbd3-status--passed .llbd3-status__dot { background: var(--llb3-status-passed); }
+.llbd3-page .llbd3-status--final .llbd3-status__dot { background: var(--llb3-status-final); }
+.llbd3-page .llbd3-status--law .llbd3-status__dot { background: var(--llb3-status-law); }
+.llbd3-page .llbd3-status--veto .llbd3-status__dot { background: var(--llb3-status-veto); }
+
+.llbd3-page .llbd3-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.llbd3-page .llbd3-frame {
+    border: 1px solid var(--llb3-border);
+    background: var(--llb3-surface-strong);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.llbd3-page .llbd3-pillRow,
+.llbd3-page .llbd3-subjectRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.llbd3-page .llbd3-pill,
+.llbd3-page .llbd3-subject {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--llb3-pill-h);
+    padding: 0 10px;
+    border-radius: var(--llb3-pill-r);
+    border: 1px solid var(--llb3-border);
+    background: var(--llb3-surface-strong);
+    color: var(--llb3-ink);
+    font-weight: 850;
+    font-size: 0.86rem;
+    max-width: 100%;
+}
+
+.llbd3-page .llbd3-subject__label {
+    max-width: 22ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.llbd3-page .llbd3-chipLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--llb3-border);
+    background: var(--llb3-surface-strong);
+    color: var(--llb3-ink);
+    text-decoration: none;
+    font-weight: 850;
+    max-width: 100%;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.06s ease;
+}
+
+.llbd3-page .llbd3-chipLink:hover {
+    background: var(--llb3-surface-solid);
+    border-color: var(--llb3-border-strong);
+    transform: translateY(-1px);
+}
+
+.llbd3-page .llbd3-mt-6 { margin-top: 6px; }
+.llbd3-page .llbd3-mt-10 { margin-top: 10px; }
+
+@media (max-width: 640px) {
+    .llbd3-page .llbd3-back--simple {
+        height: 36px;
+        padding: 0 10px;
+        gap: 6px;
+        font-weight: 700;
+        border-color: var(--llb3-border);
+        background: var(--llb3-surface);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+    }
+
+    .llbd3-page .llbd3-extlink {
+        height: 34px;
+        padding: 0 9px;
+        font-weight: 750;
+        color: var(--llb3-text);
+        border-color: var(--llb3-border);
+        background: var(--llb3-surface);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        white-space: nowrap;
+    }
+}

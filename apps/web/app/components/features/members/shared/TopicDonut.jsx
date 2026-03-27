@@ -1,89 +1,30 @@
 import { useState, useMemo, useEffect } from "react";
 import {
-    AlertTriangle,
-    Banknote,
-    BookOpen,
-    Briefcase,
-    Building2,
-    Car,
-    DollarSign,
-    Feather,
-    Flag,
-    Gavel,
-    Globe,
-    GraduationCap,
-    HandHeart,
-    HeartPulse,
-    Landmark,
-    Leaf,
-    Megaphone,
-    PawPrint,
-    Scale,
-    Shield,
-    Sprout,
-    Tractor,
-    Trees,
-    Users,
-    Waves,
-} from "lucide-react";
-
-const PALETTE = ["#6366F1", "#22C55E", "#F59E0B", "#06B6D4", "#F43F5E", "#10B981", "#A78BFA", "#FB7185"];
-
-const TOPIC_META = {
-    "Agriculture and Food": { short: "Ag & food", icon: Tractor },
-    Animals: { short: "Animals", icon: PawPrint },
-    "Armed Forces and National Security": { short: "Defense", icon: Shield },
-    "Arts, Culture, Religion": { short: "Arts & culture", icon: Feather },
-    "Civil Rights and Liberties, Minority Issues": { short: "Civil rights", icon: Scale },
-    Commerce: { short: "Commerce", icon: Briefcase },
-    Congress: { short: "Congress", icon: Landmark },
-    "Crime and Law Enforcement": { short: "Crime", icon: Gavel },
-    "Economics and Public Finance": { short: "Econ & finance", icon: DollarSign },
-    Education: { short: "Education", icon: GraduationCap },
-    Energy: { short: "Energy", icon: AlertTriangle },
-    "Environmental Protection": { short: "Environment", icon: Leaf },
-    Families: { short: "Families", icon: Users },
-    "Finance and Financial Sector": { short: "Finance", icon: Banknote },
-    "Foreign Trade and International Finance": { short: "Trade", icon: Globe },
-    "Government Operations and Politics": { short: "Gov ops", icon: Building2 },
-    Health: { short: "Health", icon: HeartPulse },
-    Immigration: { short: "Immigration", icon: Flag },
-    "International Affairs": { short: "Intl affairs", icon: Globe },
-    "Labor and Employment": { short: "Labor", icon: Briefcase },
-    "Native Americans": { short: "Native affairs", icon: Sprout },
-    "Public Lands and Natural Resources": { short: "Public lands", icon: Trees },
-    "Science, Technology, Communications": { short: "Sci / tech", icon: Megaphone },
-    "Social Welfare": { short: "Social welfare", icon: HandHeart },
-    Taxation: { short: "Taxation", icon: BookOpen },
-    "Transportation and Public Works": { short: "Transport", icon: Car },
-    Uncategorized: { short: "Other", icon: Waves },
-};
-
-function normLabel(x) {
-    if (typeof x === "string") return x;
-    if (x && typeof x === "object") return String(x.name || x.title || x.subject || "Uncategorized");
-    return "Uncategorized";
-}
-
-function getTopicMeta(label = "") {
-    return TOPIC_META[label] || { short: label || "Other", icon: BookOpen };
-}
+    getTopicMeta,
+    getTopicColor,
+    normalizeTopicLabel,
+} from "@/lib/utils/member-info-topics";
 
 export default function TopicDonut({ data, groups = [], onSelectTopic }) {
     const rows = useMemo(() => {
         if (Array.isArray(data) && data.length) {
             return data
-                .map((d) => ({ label: normLabel(d.label), value: Number(d.value) || 0 }))
+                .map((d) => ({
+                    label: normalizeTopicLabel(d?.label),
+                    value: Number(d?.value) || 0,
+                }))
                 .filter((r) => r.value > 0);
         }
 
         const g = Array.isArray(groups) ? groups : [];
         const map = new Map();
+
         for (const group of g) {
-            const key = normLabel(group?.subject);
+            const key = normalizeTopicLabel(group?.subject);
             const inc = Array.isArray(group?.items) ? group.items.length : Number(group?.count) || 0;
             map.set(key, (map.get(key) || 0) + inc);
         }
+
         return Array.from(map.entries()).map(([label, value]) => ({ label, value }));
     }, [data, groups]);
 
@@ -92,20 +33,27 @@ export default function TopicDonut({ data, groups = [], onSelectTopic }) {
     const annotated = rows
         .slice()
         .sort((a, b) => b.value - a.value)
-        .map((r) => ({ ...r, pct: total ? Math.round((r.value / total) * 100) : 0 }));
+        .map((r) => ({
+            ...r,
+            pct: total ? Math.round((r.value / total) * 100) : 0,
+        }));
 
     const [showAllLegend, setShowAllLegend] = useState(false);
     const [legendDefaultCount, setLegendDefaultCount] = useState(5);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
+
         const mq = window.matchMedia("(min-width: 641px)");
         const apply = () => setLegendDefaultCount(mq.matches ? 5 : 5);
+
         apply();
+
         if (mq.addEventListener) {
             mq.addEventListener("change", apply);
             return () => mq.removeEventListener("change", apply);
         }
+
         mq.addListener(apply);
         return () => mq.removeListener(apply);
     }, []);
@@ -131,6 +79,8 @@ export default function TopicDonut({ data, groups = [], onSelectTopic }) {
                                 const seg = total ? (r.value / total) * C : 0;
                                 const visible = Math.max(seg - GAP, 0);
                                 const dasharray = `${visible} ${C - visible}`;
+                                const color = getTopicColor(i);
+
                                 const el = (
                                     <circle
                                         key={`${r.label}-${i}`}
@@ -141,7 +91,7 @@ export default function TopicDonut({ data, groups = [], onSelectTopic }) {
                                         strokeLinejoin="round"
                                         strokeDasharray={dasharray}
                                         strokeDashoffset={-offset}
-                                        stroke={PALETTE[i % PALETTE.length]}
+                                        stroke={color}
                                         transform="rotate(-90)"
                                         style={{ cursor: "pointer" }}
                                         onClick={() => onSelectTopic?.(r.label)}
@@ -149,6 +99,7 @@ export default function TopicDonut({ data, groups = [], onSelectTopic }) {
                                         <title>{`${r.label}: ${r.value} (${r.pct}%)`}</title>
                                     </circle>
                                 );
+
                                 offset += seg;
                                 return el;
                             })}
@@ -163,7 +114,7 @@ export default function TopicDonut({ data, groups = [], onSelectTopic }) {
                     {legendRows.map((r, i) => {
                         const topicMeta = getTopicMeta(r.label);
                         const Icon = topicMeta.icon;
-                        const color = PALETTE[i % PALETTE.length];
+                        const color = getTopicColor(i);
 
                         return (
                             <li

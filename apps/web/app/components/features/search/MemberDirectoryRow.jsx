@@ -22,8 +22,8 @@ function districtLabel(m) {
 
     const district = Number(m?.district);
     if (Number.isFinite(district)) {
-        if (district === 0) return `${m?.state || m?.stateCode}-AL`;
-        return `${m?.state || m?.stateCode}-${district}`;
+        if (district === 0) return `${m?.stateCode || m?.state || ""}-AL`;
+        return `${m?.stateCode || m?.state || ""}-${district}`;
     }
 
     return m?.state || m?.stateCode || "";
@@ -38,6 +38,7 @@ export default function MemberDirectoryRow({ m }) {
                 <Link href={href} className="ll3-memberRow__nameLink">
                     {m.name}
                 </Link>
+
                 <span
                     className={`ll3-memberRow__partyDot ${partyClass(m.party)}`}
                     aria-label={partyLabel(m.party)}

@@ -1,0 +1,112 @@
+/* app/(app)/styles/active/bills/ll3.bills.details.css
+   ==========================================================================
+   LL3 — Bills Detail Page Shell
+   ========================================================================== */
+
+.llbd3-page {
+    color: var(--llb3-text);
+    background:
+        radial-gradient(1000px 520px at 14% 0%, color-mix(in srgb, var(--ll3-accent) 12%, transparent), transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, color-mix(in srgb, #06b6d4 8%, transparent), transparent 62%);
+}
+
+.llbd3-wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 22px 16px 34px;
+}
+
+.llbd3-top {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.llbd3-top__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.llbd3-head {
+    max-width: 86ch;
+}
+
+.llbd3-titleRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.llbd3-body {
+    margin-top: 16px;
+    display: grid;
+    gap: 18px;
+    align-items: start;
+}
+
+@media (min-width: 980px) {
+    .llbd3-body {
+        grid-template-columns: minmax(0, 2.15fr) minmax(320px, 0.95fr);
+    }
+}
+
+.llbd3-main,
+.llbd3-side {
+    min-width: 0;
+    display: grid;
+    gap: 14px;
+}
+
+.llbd3-card {
+    background: var(--llb3-surface-solid);
+    border: 1px solid var(--llb3-border);
+    border-radius: var(--llb3-radius);
+    box-shadow: var(--llb3-shadow2);
+    padding: 16px;
+    min-width: 0;
+}
+
+.llbd3-card--soft {
+    background: var(--llb3-surface);
+    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+    backdrop-filter: saturate(1.1) blur(10px);
+}
+
+.llbd3-panel {
+    background: var(--llb3-surface);
+    border: 1px solid var(--llb3-border);
+    border-radius: var(--llb3-radius);
+    box-shadow: var(--llb3-shadow);
+    -webkit-backdrop-filter: saturate(1.1) blur(10px);
+    backdrop-filter: saturate(1.1) blur(10px);
+    overflow: hidden;
+}
+
+.llbd3-main>*,
+.llbd3-side>*,
+.llbd3-card>* {
+    min-width: 0;
+}
+
+.llbd3-page h1,
+.llbd3-page h2,
+.llbd3-page h3 {
+    color: var(--llb3-ink);
+    letter-spacing: -0.01em;
+}
+
+@media (max-width: 640px) {
+    .llbd3-wrap {
+        padding-top: 18px;
+    }
+
+    .llbd3-card {
+        padding: 14px;
+    }
+}

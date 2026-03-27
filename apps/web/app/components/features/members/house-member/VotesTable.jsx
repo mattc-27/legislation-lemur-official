@@ -5,7 +5,7 @@ import { CheckCircle2, XCircle, CircleSlash } from "lucide-react";
 export default function VotesTable({ votes = [] }) {
   if (!votes || votes.length === 0) {
     return (
-      <p className="llm3-muted votes-table__empty" style={{ padding: "12px 0" }}>
+      <p className="llm3-muted votes-table__empty">
         No votes found.
       </p>
     );

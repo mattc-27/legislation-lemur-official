@@ -50,13 +50,34 @@ export const metadata = {
   description: "Stay informed without overwhelm. Legislation Lemur makes it easy to find your reps, track bills, and see who’s shaping the issues that matter most to you.",
 };
 
+const themeInitScript = `
+(function () {
+  try {
+    var root = document.documentElement;
+    var saved = localStorage.getItem("ll3-theme");
+    var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var theme = saved === "light" || saved === "dark"
+      ? saved
+      : (systemDark ? "dark" : "light");
+    root.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+`;
+
+
 export default function RootLayout({ children }) {
 
   const gaId = GA_MEASUREMENT_ID;
   return (
-
-    <html lang="en" className={`ll3 ${sans.variable} ${serif.variable}`}>
-      <body>
+    <html
+      lang="en"
+      className={`ll3 ${sans.variable} ${serif.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="ll3-body">
         {gaId ? (
           <>
             <Script
@@ -77,24 +98,57 @@ export default function RootLayout({ children }) {
             </Suspense>
           </>
         ) : null}
+
         <QuoteLogger />
 
-        <SiteHeader />
-        <main className="site-main">{children}</main>
-        <SiteFooter />
-
-        {/*   <RouteLoadingToastClient />
-      <RouteToastClient /> 
-
-        <Toaster
-          position="bottom-center"
-          gutter={10}
-          toastOptions={{
-            duration: 2800,
-            style: { background: "transparent", boxShadow: "none", padding: 0 },
-          }}
-        />*/}
+        <div className="ll3-site">
+          <SiteHeader />
+          <main className="site-main">{children}</main>
+          <SiteFooter />
+        </div>
       </body>
     </html>
+
+    /* <html lang="en" className={`ll3 ${sans.variable} ${serif.variable}`}>
+       <body>
+         {gaId ? (
+           <>
+             <Script
+               src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+               strategy="afterInteractive"
+             />
+             <Script id="ga-init" strategy="afterInteractive">
+               {`
+                 window.dataLayer = window.dataLayer || [];
+                 function gtag(){dataLayer.push(arguments);}
+                 gtag('js', new Date());
+                 gtag('config', '${gaId}', { send_page_view: false });
+               `}
+             </Script>
+ 
+             <Suspense fallback={null}>
+               <GAListener gaId={gaId} />
+             </Suspense>
+           </>
+         ) : null}
+         <QuoteLogger />
+ 
+         <SiteHeader />
+         <main className="site-main">{children}</main>
+         <SiteFooter />
+ 
+    <RouteLoadingToastClient />
+       <RouteToastClient /> 
+ 
+         <Toaster
+           position="bottom-center"
+           gutter={10}
+           toastOptions={{
+             duration: 2800,
+             style: { background: "transparent", boxShadow: "none", padding: 0 },
+           }}
+         />
+       </body>
+     </html>*/
   );
 }
