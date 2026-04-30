@@ -9,6 +9,10 @@ function meterLevel(v) {
     return Math.min(5, Math.max(1, Math.ceil(v / 20)));
 }
 
+function getBillSummary(bill) {
+    return bill?.summary_short || bill?.summary_text_plain || null;
+}
+
 function SignalMini({ label, value, tone = "impact", Icon }) {
     const lvl = meterLevel(value);
 
@@ -53,6 +57,7 @@ export default function BillsTable({ rows = [] }) {
 
                         const statusKey = normalizeStatusKey(r.status_code);
                         const sm = STATUS_META[statusKey] || STATUS_META.introduced;
+                        const summary = getBillSummary(r);
 
                         return (
                             <tr key={r.bill_id || slug}>
@@ -70,6 +75,10 @@ export default function BillsTable({ rows = [] }) {
                                     <div className="ll3-table__metaLine">
                                         Sponsor: {r.sponsor_name || "—"}
                                         {Number.isFinite(r.cosponsor_count) ? ` • ${r.cosponsor_count} cosponsors` : ""}
+                                    </div>
+
+                                    <div className={summary ? "ll3-table__summary" : "ll3-table__summary ll3-muted"}>
+                                        {summary || "Summary not available."}
                                     </div>
                                 </td>
 

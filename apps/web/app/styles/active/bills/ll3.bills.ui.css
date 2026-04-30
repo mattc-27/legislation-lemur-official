@@ -2,6 +2,19 @@
    ==========================================================================
    Bills UI Primitives
    ========================================================================== */
+/* Light mode cleanup */
+:root:not([data-theme="dark"]) .ll3-bills,
+:root:not([data-theme="dark"]) .llbd3-page {
+    color: color-mix(in srgb, var(--ll3-ink) 90%, transparent);
+}
+
+:root:not([data-theme="dark"]) .ll3-btn--ghost {
+    background: #ffffff;
+}
+
+:root:not([data-theme="dark"]) .ll3-btn--open {
+    box-shadow: 0 8px 18px rgba(99, 102, 241, 0.18);
+}
 
 .ll3-bills,
 .ll3-bills *,
@@ -449,4 +462,22 @@
         backdrop-filter: blur(6px);
         white-space: nowrap;
     }
+}
+
+
+.ll3-btn.ll3-btn--iconOnly,
+.ll3-btn[aria-label] {
+    width: 40px;
+    min-width: 40px;
+    padding: 0;
+}
+
+.ll3-btn--iconOnly {
+    width: 40px;
+    min-width: 40px;
+    padding: 0;
+}
+
+.ll3-btn--iconOnly span {
+    display: none;
 }

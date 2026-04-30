@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
     CalendarDays,
+    FileText,
     FolderKanban,
     Landmark,
     Users,
@@ -60,6 +61,7 @@ export default function BillsFilterForm({
         to: `to_${suffix}`,
         minCos: `minCos_${suffix}`,
         sort: `sort_${suffix}`,
+        hasSummary: `hasSummary_${suffix}`,
     };
 
     const topLevelClass = ["ll3-filters", variant ? `ll3-filters--${variant}` : ""]
@@ -78,7 +80,7 @@ export default function BillsFilterForm({
                         id={ids.q}
                         name="q"
                         defaultValue={filters.q || ""}
-                        placeholder="Search by bill number, topic, action, sponsor…"
+                        placeholder="Search by bill number, topic, action, summary…"
                         endpoint="/api/bills/autocomplete/q"
                         mode="q"
                         autoSubmitOnType={!isMobile}
@@ -151,6 +153,34 @@ export default function BillsFilterForm({
                                     <option value="impact">Impact</option>
                                     <option value="trending">Trending</option>
                                 </select>
+                            </div>
+                        </div>
+                    </FilterSection>
+
+                    <FilterSection
+                        icon={FileText}
+                        title="Summaries"
+                        hint="AI summary availability"
+                        defaultOpen={isSidebar ? false : true}
+                    >
+                        <div className="ll3-filterGrid">
+                            <div className="ll3-field ll3-field--span2">
+                                <label className="ll3-checkRow" htmlFor={ids.hasSummary}>
+                                    <input
+                                        id={ids.hasSummary}
+                                        type="checkbox"
+                                        name="hasSummary"
+                                        value="true"
+                                        defaultChecked={Boolean(filters.hasSummary)}
+                                        className="ll3-checkRow__input"
+                                    />
+                                    <span className="ll3-checkRow__body">
+                                        <span className="ll3-checkRow__label">Has summary</span>
+                                        <span className="ll3-checkRow__hint">
+                                            Only show bills with an AI-generated summary.
+                                        </span>
+                                    </span>
+                                </label>
                             </div>
                         </div>
                     </FilterSection>
