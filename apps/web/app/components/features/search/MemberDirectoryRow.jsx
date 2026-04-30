@@ -1,6 +1,8 @@
 import Link from "next/link";
 
-function partyLabel(party) {
+function partyLabel(party, isVacant = false) {
+    if (isVacant) return "Vacant";
+
     const p = String(party || "").toUpperCase();
     if (p === "D") return "Democrat";
     if (p === "R") return "Republican";
@@ -8,7 +10,9 @@ function partyLabel(party) {
     return party || "Unknown";
 }
 
-function partyClass(party) {
+function partyClass(party, isVacant = false) {
+    if (isVacant) return "is-vacant";
+
     const p = String(party || "").toUpperCase();
     if (p === "D") return "is-dem";
     if (p === "R") return "is-rep";
@@ -30,32 +34,47 @@ function districtLabel(m) {
 }
 
 export default function MemberDirectoryRow({ m }) {
-    const href = `/member/${m.bioguideId || m.id}`;
+    const isVacant = Boolean(m?.isVacant || m?.seatStatus === "vacant");
+    const href = !isVacant && (m?.bioguideId || m?.id) ? `/member/${m.bioguideId || m.id}` : null;
+    const label = partyLabel(m?.party, isVacant);
+    const className = partyClass(m?.party, isVacant);
 
     return (
-        <div className="ll3-memberRow">
+        <div className={`ll3-memberRow ${isVacant ? "is-vacant" : ""}`}>
             <div className="ll3-memberRow__nameCell">
-                <Link href={href} className="ll3-memberRow__nameLink">
-                    {m.name}
-                </Link>
+                {href ? (
+                    <Link href={href} className="ll3-memberRow__nameLink">
+                        {m.name}
+                    </Link>
+                ) : (
+                    <span className="ll3-memberRow__nameLink ll3-memberRow__nameLink--disabled">
+                        Vacant seat
+                    </span>
+                )}
 
                 <span
-                    className={`ll3-memberRow__partyDot ${partyClass(m.party)}`}
-                    aria-label={partyLabel(m.party)}
-                    title={partyLabel(m.party)}
+                    className={`ll3-memberRow__partyDot ${className}`}
+                    aria-label={label}
+                    title={label}
                 />
             </div>
 
-            <div className={`ll3-memberRow__party ${partyClass(m.party)}`}>
-                {partyLabel(m.party)}
+            <div className={`ll3-memberRow__party ${className}`}>
+                {label}
             </div>
 
             <div className="ll3-memberRow__district">{districtLabel(m)}</div>
 
             <div className="ll3-memberRow__actionCell">
-                <Link href={href} className="ll3-memberRow__action">
-                    View profile <span aria-hidden="true">→</span>
-                </Link>
+                {href ? (
+                    <Link href={href} className="ll3-memberRow__action">
+                        View profile <span aria-hidden="true">→</span>
+                    </Link>
+                ) : (
+                    <span className="ll3-memberRow__action ll3-memberRow__action--disabled">
+                        Seat vacant
+                    </span>
+                )}
             </div>
         </div>
     );

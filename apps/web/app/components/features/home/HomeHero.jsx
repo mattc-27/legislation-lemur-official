@@ -11,16 +11,6 @@ export default function HomeHero() {
   return (
     <section className="hero hero--home" aria-label="Home hero">
       <div className="container hero__grid hero__grid--home">
-        <div className="hero__art hero__art--behind" aria-hidden="true">
-          <img
-            src="https://storage.googleapis.com/legislation-lemur-images/f7262476-5004-46d9-b414-10e7ffafc652.png"
-            alt=""
-            className="hero__art-img"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
-
         <div className="hero__content hero__content--home">
           <div className="hero__eyebrow">{HOME_HERO_EYEBROW}</div>
 
@@ -33,31 +23,22 @@ export default function HomeHero() {
               <Link className="btn btn--primary" href={HOME_HERO_PRIMARY_CTA.href}>
                 {HOME_HERO_PRIMARY_CTA.label}
               </Link>
+
               <Link className="btn btn--ghost" href={HOME_HERO_SECONDARY_CTA.href}>
                 {HOME_HERO_SECONDARY_CTA.label}
               </Link>
             </div>
-
-            <div className="hero__signals" aria-label="Platform highlights">
-              <div className="hero__cue">
-                <span className="hero__cue-dot" aria-hidden="true" />
-                <div className="hero__cue-copy">
-                  <div className="hero__cue-title">Clearer legislative snapshots</div>
-                  <div className="hero__cue-meta">
-                    Readable profiles, bill context, and ongoing session activity.
-                  </div>
-                </div>
-              </div>
-
-              <div className="hero__cue">
-                <span className="hero__cue-dot" aria-hidden="true" />
-                <div className="hero__cue-copy">
-                  <div className="hero__cue-title">Neutral presentation</div>
-                  <div className="hero__cue-meta">Built for clarity, not spin.</div>
-                </div>
-              </div>
-            </div>
           </div>
+        </div>
+
+        <div className="hero__art hero__art--home" aria-hidden="true">
+          <img
+            src="https://storage.googleapis.com/legislation-lemur-images/f7262476-5004-46d9-b414-10e7ffafc652.png"
+            alt=""
+            className="hero__art-img"
+            loading="eager"
+            decoding="async"
+          />
         </div>
       </div>
     </section>

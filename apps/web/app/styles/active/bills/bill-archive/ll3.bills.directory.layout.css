@@ -9,9 +9,22 @@
     margin: 0 auto;
     padding: 18px 16px 40px;
     color: var(--ll3-text);
+    background: transparent;
+}
+
+html[data-theme="dark"] .ll3-bills,
+body[data-theme="dark"] .ll3-bills,
+.dark .ll3-bills {
     background:
-        radial-gradient(1000px 520px at 14% 0%, color-mix(in srgb, var(--ll3-accent) 10%, transparent), transparent 60%),
-        radial-gradient(900px 520px at 90% 10%, color-mix(in srgb, #06b6d4 8%, transparent), transparent 62%);
+        radial-gradient(900px 440px at 14% 0%,
+            color-mix(in srgb, var(--ll3-accent) 9%, transparent),
+            transparent 62%),
+        radial-gradient(760px 420px at 88% 8%,
+            color-mix(in srgb, #06b6d4 6%, transparent),
+            transparent 64%),
+        linear-gradient(180deg,
+            var(--ll3-bg, #07111f) 0%,
+            color-mix(in srgb, var(--ll3-bg, #07111f) 88%, #020617 12%) 100%);
 }
 
 @media (max-width: 900px) {
@@ -34,14 +47,14 @@
 .ll3-h1 {
     margin: 0;
     font-size: 28px;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    color: var(--ll3-ink);
-    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: color-mix(in srgb, var(--ll3-ink) 96%, transparent);
+    font-weight: 850;
 }
 
 .ll3-h1__sep {
-    opacity: 0.35;
+    opacity: 0.28;
     margin: 0 6px;
 }
 
@@ -57,13 +70,16 @@
     font-size: 12.5px;
     color: var(--ll3-muted);
     white-space: nowrap;
+    font-weight: 650;
 }
 
 .ll3-sub {
     margin: 10px 0 0;
-    color: var(--ll3-text);
+    color: color-mix(in srgb, var(--ll3-text) 86%, transparent);
     font-size: 14.5px;
     line-height: 1.6;
+    font-weight: 500;
+    max-width: 72ch;
 }
 
 @media (max-width: 820px) {
@@ -85,14 +101,20 @@
 }
 
 .ll3-searchTop__inner {
-    background: linear-gradient(180deg, var(--ll3-surface-strong), var(--ll3-surface));
+    background: var(--ll3-surface-strong);
     border: 1px solid var(--ll3-border);
     border-radius: 18px;
     box-shadow: var(--ll3-shadow-sm);
     padding: 14px;
+    min-width: 0;
+}
+
+html[data-theme="dark"] .ll3-searchTop__inner,
+body[data-theme="dark"] .ll3-searchTop__inner,
+.dark .ll3-searchTop__inner {
+    background: linear-gradient(180deg, var(--ll3-surface-strong), var(--ll3-surface));
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    min-width: 0;
 }
 
 .ll3-searchTop .ll3-filters {
@@ -120,14 +142,20 @@
     max-height: calc(100vh - 104px);
     overflow: auto;
     overscroll-behavior: contain;
-    background: linear-gradient(180deg, var(--ll3-surface-strong), var(--ll3-surface));
+    background: var(--ll3-surface-strong);
     border: 1px solid color-mix(in srgb, var(--ll3-text) 8%, transparent);
     border-radius: 18px;
     box-shadow: var(--ll3-shadow-sm);
     padding: 14px;
+    min-width: 0;
+}
+
+html[data-theme="dark"] .ll3-sidebar,
+body[data-theme="dark"] .ll3-sidebar,
+.dark .ll3-sidebar {
+    background: linear-gradient(180deg, var(--ll3-surface-strong), var(--ll3-surface));
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    min-width: 0;
 }
 
 .ll3-sidebar::-webkit-scrollbar {
@@ -199,10 +227,12 @@
     font-size: 13px;
     text-align: right;
     max-width: 560px;
+    font-weight: 500;
 }
 
 .ll3-results__count {
     font-size: 14px;
+    color: color-mix(in srgb, var(--ll3-text) 82%, transparent);
 }
 
 .ll3-viewToggle {
@@ -227,7 +257,7 @@
     border-radius: 0;
     text-decoration: none;
     font-size: 13px;
-    font-weight: 900;
+    font-weight: 800;
     color: color-mix(in srgb, var(--ll3-text) 76%, transparent);
     background: transparent;
     transition: color 0.12s ease;
@@ -302,7 +332,7 @@
     text-align: left;
     padding: 13px 14px;
     font-size: 11px;
-    font-weight: 900;
+    font-weight: 850;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--ll3-text) 72%, transparent);
@@ -315,7 +345,7 @@
     padding: 12px 14px;
     border-bottom: 1px solid color-mix(in srgb, var(--ll3-text) 6%, transparent);
     vertical-align: top;
-    color: var(--ll3-text);
+    color: color-mix(in srgb, var(--ll3-text) 90%, transparent);
     font-size: 13.5px;
 }
 
@@ -330,26 +360,27 @@
 .ll3-table__billCode,
 .ll3-table__titleLink {
     text-decoration: none;
-    color: var(--ll3-ink);
+    color: color-mix(in srgb, var(--ll3-ink) 94%, transparent);
 }
 
 .ll3-table__billCode {
-    font-weight: 900;
+    font-weight: 850;
     white-space: nowrap;
     font-size: 13px;
 }
 
 .ll3-table__titleLink {
     display: inline-block;
-    font-weight: 850;
-    line-height: 1.28;
+    font-weight: 760;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
 }
 
 .ll3-table__metaLine {
     margin-top: 5px;
     font-size: 12px;
     color: var(--ll3-muted);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.35;
 }
 
@@ -364,13 +395,13 @@
     gap: 6px;
     color: color-mix(in srgb, var(--ll3-text) 84%, transparent);
     font-size: 12.5px;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .ll3-table__actionText {
-    color: var(--ll3-ink);
+    color: color-mix(in srgb, var(--ll3-ink) 92%, transparent);
     font-weight: 700;
-    line-height: 1.34;
+    line-height: 1.36;
 }
 
 .ll3-table__actionDate {
@@ -379,7 +410,7 @@
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    font-weight: 850;
+    font-weight: 800;
     color: var(--ll3-muted);
 }
 
@@ -404,7 +435,7 @@
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    font-weight: 900;
+    font-weight: 850;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--ll3-text) 74%, transparent);
@@ -412,8 +443,8 @@
 
 .ll3-tableSignal__value {
     font-size: 11px;
-    font-weight: 900;
-    color: var(--ll3-ink);
+    font-weight: 850;
+    color: color-mix(in srgb, var(--ll3-ink) 92%, transparent);
 }
 
 .ll3-tableSignal__meter {
@@ -424,23 +455,23 @@
 }
 
 .ll3-tableSignal__meter[data-level="1"] {
-    background: linear-gradient(90deg, rgba(37, 99, 235, .82) 0 20%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 20% 100%);
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.82) 0 20%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 20% 100%);
 }
 
 .ll3-tableSignal__meter[data-level="2"] {
-    background: linear-gradient(90deg, rgba(37, 99, 235, .82) 0 40%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 40% 100%);
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.82) 0 40%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 40% 100%);
 }
 
 .ll3-tableSignal__meter[data-level="3"] {
-    background: linear-gradient(90deg, rgba(37, 99, 235, .82) 0 60%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 60% 100%);
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.82) 0 60%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 60% 100%);
 }
 
 .ll3-tableSignal__meter[data-level="4"] {
-    background: linear-gradient(90deg, rgba(37, 99, 235, .82) 0 80%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 80% 100%);
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.82) 0 80%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 80% 100%);
 }
 
 .ll3-tableSignal__meter[data-level="5"] {
-    background: linear-gradient(90deg, rgba(37, 99, 235, .82) 0 100%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 100% 100%);
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.82) 0 100%, color-mix(in srgb, var(--ll3-text) 12%, transparent) 100% 100%);
 }
 
 .ll3-tableSignal__meter.is-empty {

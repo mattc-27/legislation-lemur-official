@@ -1,19 +1,20 @@
 import Link from "next/link";
 
 import { getViewsFreshness, formatAsOfMMDDYYYY } from "@/lib/server/routes/viewStatus";
+import { parseBillsFiltersV2 } from "@/lib/domains/bills/queryV3";
 import {
     getBillsDirectoryV2,
     getBillsFilterOptionsV2,
     getBillsFacetCountsV2,
-} from "@/lib/server/bills";
-import { parseBillsFiltersV2 } from "@/lib/domains/bills/queryV2";
+} from "@/lib/server/bills/index";
 
-import BillCard from "@/app/components/features/bills/bill-archive/BillCard";
+import BillCard from "@/app/components/features/bills/bill-archive/BillCardNew";
 import BillsTable from "@/app/components/features/bills/bill-archive/BillsTable";
 import RefineResultsBarClient from "@/app/components/features/bills/RefineResultsBarClient";
 import ModifyRefineButtonClient from "@/app/components/features/bills/ModifyRefineButtonClient";
 import MobileDraftFormClient from "@/app/components/features/forms/MobileDraftFormClient";
 import BillsFilterForm from "@/app/components/features/bills/bill-archive/BillsFilterForm";
+import BillsMobileBottomNavClient from "@/app/components/features/bills/bill-archive/BillsMobileBottomNavClient";
 
 import "@/app/styles/active/bills/ll3.bills.tokens.css";
 import "@/app/styles/active/bills/ll3.bills.ui.css";
@@ -77,6 +78,45 @@ function buildSearchHref(searchParams, patch = {}) {
     return qs ? `/bills?${qs}` : "/bills";
 }
 
+function getMobileNavActive(filters = {}) {
+    if (filters.sort === "trending") return "trending";
+    if (filters.sort === "impact") return "impact";
+    return "bills";
+}
+
+function buildFiltersSummary(activeFilters, lookups) {
+    const parts = [];
+
+    if (activeFilters.q) parts.push(`“${activeFilters.q}”`);
+    if (activeFilters.chamber) parts.push(activeFilters.chamber);
+    if (activeFilters.type?.length) {
+        parts.push(activeFilters.type.map((t) => t.toUpperCase()).join(", "));
+    }
+
+    if (activeFilters.policyAreaId) {
+        const pa = lookups.policyAreas?.find(
+            (p) => String(p.policy_area_id) === String(activeFilters.policyAreaId)
+        );
+        if (pa) parts.push(pa.policy_area_name);
+    }
+
+    if (activeFilters.statusId) {
+        const st = lookups.statuses?.find(
+            (s) => String(s.status_id) === String(activeFilters.statusId)
+        );
+        if (st) parts.push(st.status_label);
+    }
+
+    if (activeFilters.subject) parts.push(`Subject: ${activeFilters.subject}`);
+    if (activeFilters.committeeCodes?.length) {
+        parts.push(`Committees: ${activeFilters.committeeCodes.length}`);
+    }
+    if (activeFilters.from || activeFilters.to) parts.push("Dates");
+    if (activeFilters.hasSummary) parts.push("Has summary");
+
+    return parts;
+}
+
 export default async function BillsPage({ searchParams }) {
     const sp = await searchParams;
     const { filters } = parseBillsFiltersV2(sp);
@@ -85,7 +125,7 @@ export default async function BillsPage({ searchParams }) {
 
     const [dirRes, freshness, filterOptions] = await Promise.all([
         getBillsDirectoryV2(null, filters),
-        getViewsFreshness(["bill_search_index", "mv_bill_activity_weekly_v1"]),
+        getViewsFreshness(["bill_search_index_v2", "mv_bill_activity_weekly_v1"]),
         getBillsFilterOptionsV2(),
     ]);
 
@@ -144,39 +184,8 @@ export default async function BillsPage({ searchParams }) {
         (filters.policyAreaId ? 1 : 0) +
         (filters.statusId ? 1 : 0) +
         (filters.type?.length ? 1 : 0) +
-        (filters.committeeCodes?.length ? 1 : 0);
-
-    function buildFiltersSummary(activeFilters, lookups) {
-        const parts = [];
-
-        if (activeFilters.q) parts.push(`“${activeFilters.q}”`);
-        if (activeFilters.chamber) parts.push(activeFilters.chamber);
-        if (activeFilters.type?.length) {
-            parts.push(activeFilters.type.map((t) => t.toUpperCase()).join(", "));
-        }
-
-        if (activeFilters.policyAreaId) {
-            const pa = lookups.policyAreas?.find(
-                (p) => String(p.policy_area_id) === String(activeFilters.policyAreaId)
-            );
-            if (pa) parts.push(pa.policy_area_name);
-        }
-
-        if (activeFilters.statusId) {
-            const st = lookups.statuses?.find(
-                (s) => String(s.status_id) === String(activeFilters.statusId)
-            );
-            if (st) parts.push(st.status_label);
-        }
-
-        if (activeFilters.subject) parts.push(`Subject: ${activeFilters.subject}`);
-        if (activeFilters.committeeCodes?.length) {
-            parts.push(`Committees: ${activeFilters.committeeCodes.length}`);
-        }
-        if (activeFilters.from || activeFilters.to) parts.push("Dates");
-
-        return parts;
-    }
+        (filters.committeeCodes?.length ? 1 : 0) +
+        (filters.hasSummary ? 1 : 0);
 
     const summaryParts = buildFiltersSummary(filters, { policyAreas, statuses });
 
@@ -200,7 +209,7 @@ export default async function BillsPage({ searchParams }) {
     const compactHref = buildSearchHref(sp, { view: "compact", offset: 0 });
 
     return (
-        <div className="ll3-bills">
+        <div className="ll3-bills ll3-billsDirectory">
             <header className="ll3-head">
                 <div className="ll3-head__top">
                     <h1 className="ll3-h1">
@@ -215,9 +224,11 @@ export default async function BillsPage({ searchParams }) {
                     ) : null}
                 </div>
 
-                <p className="ll3-sub">Browse bills by topic, chamber, and recent activity.</p>
+                <p className="ll3-sub">Browse bills by topic, chamber, summaries, and recent activity.</p>
             </header>
 
+            {/* 
+            TEMP DISABLING
             <section className="ll3-searchTop" aria-label="Search bills">
                 <div className="ll3-searchTop__inner">
                     <BillsFilterForm
@@ -234,6 +245,7 @@ export default async function BillsPage({ searchParams }) {
                     />
                 </div>
             </section>
+            */}
 
             <section className="ll3-directory">
                 <aside id="ll3-filters-sidebar" className="ll3-sidebar" aria-label="Filters">
@@ -307,7 +319,7 @@ export default async function BillsPage({ searchParams }) {
 
                     <RefineResultsBarClient
                         label="Bills"
-                        hint="Tap to refine results"
+                        hint="Search, sort, and filter"
                         activeCount={activeCount}
                     >
                         <div className="ll3-control__panel">
@@ -320,7 +332,7 @@ export default async function BillsPage({ searchParams }) {
                                     policyAreas={policyAreas}
                                     statuses={statuses}
                                     committees={committees}
-                                    showSearch={false}
+                                    showSearch={true}
                                     showFilters={true}
                                     showActions={true}
                                 />
@@ -355,6 +367,8 @@ export default async function BillsPage({ searchParams }) {
                     </div>
                 </div>
             </section>
+
+            <BillsMobileBottomNavClient active={getMobileNavActive(filters)} />
         </div>
     );
 }
