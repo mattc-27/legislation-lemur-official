@@ -1,6 +1,6 @@
 /* app/(app)/styles/bills/ll3.bills.tokens.css
    ==========================================================================
-   Bills UI Tokens — LL3-aligned / dark-mode ready
+   Bills UI Tokens — LL3-aligned / cleaned light mode
    ========================================================================== */
 
 .ll3-bills,
@@ -12,6 +12,8 @@
     --ll3-muted: var(--ll3-muted2);
 
     --ll3-bg: transparent;
+
+    /* default to existing system tokens */
     --ll3-card: var(--ll3-panel-solid);
     --ll3-surface: var(--ll3-panel);
     --ll3-surface-strong: var(--ll3-panel-strong);
@@ -44,9 +46,9 @@
     --ll3-btn-weight: 800;
     --ll3-btn-shadow: var(--ll3-shadow-xs);
 
-    --ll3-input-h: 44px;
-    --ll3-input-r: 12px;
-    --ll3-input-pad-x: 12px;
+    --ll3-input-h: 46px;
+    --ll3-input-r: 14px;
+    --ll3-input-pad-x: 14px;
 
     --ll3-pill-h: 32px;
     --ll3-pill-r: 999px;
@@ -63,6 +65,61 @@
 
     --ll3-chart-intro: #2563eb;
     --ll3-chart-acts: #059669;
+}
+
+/* Bills-only light mode overrides */
+:root:not([data-theme="dark"]) .ll3-bills,
+:root:not([data-theme="dark"]) .llbd3-page,
+html:not([data-theme="dark"]) .ll3-bills,
+html:not([data-theme="dark"]) .llbd3-page,
+body:not([data-theme="dark"]) .ll3-bills,
+body:not([data-theme="dark"]) .llbd3-page {
+    --ll3-ink: #111827;
+    --ll3-text: #334155;
+    --ll3-muted: #64748b;
+
+    --ll3-card: #ffffff;
+    --ll3-surface: #ffffff;
+    --ll3-surface-strong: #fcfcfd;
+    --ll3-surface-soft: #f8fafc;
+    --ll3-surface-muted: #f3f4f6;
+
+    --ll3-border: rgba(15, 23, 42, 0.08);
+    --ll3-border2: rgba(15, 23, 42, 0.06);
+    --ll3-border-strong: rgba(15, 23, 42, 0.14);
+
+    --ll3-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.04);
+    --ll3-shadow2: 0 14px 34px rgba(15, 23, 42, 0.08);
+    --ll3-btn-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+
+    --ll3-focus-ring: rgba(99, 102, 241, 0.18);
+}
+
+/* Explicit dark theme fallback */
+html[data-theme="dark"] .ll3-bills,
+html[data-theme="dark"] .llbd3-page,
+body[data-theme="dark"] .ll3-bills,
+body[data-theme="dark"] .llbd3-page,
+.dark .ll3-bills,
+.dark .llbd3-page {
+    --ll3-ink: var(--ll3-text-strong);
+    --ll3-text: var(--ll3-text);
+    --ll3-muted: var(--ll3-muted2);
+
+    --ll3-card: var(--ll3-panel-solid);
+    --ll3-surface: var(--ll3-panel);
+    --ll3-surface-strong: var(--ll3-panel-strong);
+    --ll3-surface-soft: var(--ll3-surface-2);
+    --ll3-surface-muted: color-mix(in srgb, var(--ll3-text) 4%, transparent);
+
+    --ll3-border: var(--ll3-border);
+    --ll3-border2: var(--ll3-border-soft);
+    --ll3-border-strong: var(--ll3-border-strong);
+
+    --ll3-shadow: var(--ll3-shadow);
+    --ll3-shadow2: var(--ll3-shadow-sm);
+    --ll3-shadow-sm: var(--ll3-shadow-xs);
+    --ll3-btn-shadow: var(--ll3-shadow-xs);
 }
 
 html[data-ll3-density="compact"] {

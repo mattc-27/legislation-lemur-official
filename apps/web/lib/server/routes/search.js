@@ -1,7 +1,10 @@
 // lib/server/routes/search.js
+
+// Note: Changed member directory queries from sandbox_lemur_app_views_v1.mv_member_core_v1
+// lib/server/routes/search.js
+
 import "server-only";
 
-import { pool } from "../db/db";
 import { q } from "../db/instrumented-query";
 
 const DIRECTORY_STATE_CODES = new Set([
@@ -22,9 +25,20 @@ function normalizeChamber(chamber) {
   return value;
 }
 
+function normalizeSeatStatus(status) {
+  const value = String(status || "").trim().toLowerCase();
+  if (value === "filled") return "filled";
+  if (value === "vacant") return "vacant";
+  return "";
+}
+
 function normalizeMemberRow(row) {
   return {
-    bioguideId: row.bioguideId,
+    directoryRowId: row.directoryRowId || null,
+    rowKind: row.rowKind || "member",
+    districtId: row.districtId || null,
+
+    bioguideId: row.bioguideId || null,
     name: row.name,
     party: row.party || null,
     partyName: row.partyName || null,
@@ -32,6 +46,10 @@ function normalizeMemberRow(row) {
     stateCode: String(row.stateCode || "").toUpperCase(),
     district: row.district == null ? null : Number(row.district),
     chamber: normalizeChamber(row.chamber),
+
+    isVacant: Boolean(row.isVacant),
+    seatStatus: row.seatStatus || (row.isVacant ? "vacant" : "filled"),
+
     imageUrl: row.imageUrl || null,
     url: row.url || null,
     updateDate: row.updateDate || null,
@@ -58,6 +76,9 @@ function sortMembers(list) {
 
     if (Number.isFinite(districtA) && !Number.isFinite(districtB)) return -1;
     if (!Number.isFinite(districtA) && Number.isFinite(districtB)) return 1;
+
+    if (a?.isVacant && !b?.isVacant) return 1;
+    if (!a?.isVacant && b?.isVacant) return -1;
 
     return String(a?.name || "").localeCompare(String(b?.name || ""));
   });
@@ -98,77 +119,57 @@ function groupMembersByState(rows) {
     .sort((a, b) => String(a.state || "").localeCompare(String(b.state || "")));
 }
 
+const DIRECTORY_SELECT = `
+  SELECT
+    directory_row_id AS "directoryRowId",
+    row_kind AS "rowKind",
+    district_id AS "districtId",
+    bioguide_id AS "bioguideId",
+    name,
+    party,
+    party_name AS "partyName",
+    state,
+    state_code AS "stateCode",
+    district,
+    chamber,
+    is_vacant AS "isVacant",
+    seat_status AS "seatStatus",
+    image_url AS "imageUrl",
+    url,
+    updated_at AS "updateDate"
+  FROM sandbox_lemur_app_views_v1.mv_member_directory_v2
+`;
+
+const DIRECTORY_ORDER = `
+  ORDER BY
+    state,
+    CASE
+      WHEN chamber = 'Senate' THEN 0
+      WHEN chamber = 'House' THEN 1
+      ELSE 2
+    END,
+    COALESCE(district, 0),
+    is_vacant,
+    name
+`;
+
 export async function getMembersDirectory() {
   console.log("[getMembersDirectory]");
 
-  try {
-    const identSql = `
-      select
-        current_user,
-        session_user,
-        current_database() as db,
-        inet_server_addr() as server_ip
-    `;
-    const ident = await q("debug:identity", identSql, []);
-    console.log("[db identity]", ident.rows?.[0]);
-  } catch (e) {
-    console.log("[db identity] probe failed", e);
-  }
-
   const sql = `
-    SELECT
-      bioguide_id AS "bioguideId",
-      name,
-      party AS party,
-      party_name AS "partyName",
-      state,
-      state_code AS "stateCode",
-      district,
-      chamber AS chamber,
-      image_url AS "imageUrl",
-      url,
-      NULL::timestamptz AS "updateDate"
-    FROM sandbox_lemur_app_views_v1.mv_member_core_v1
+    ${DIRECTORY_SELECT}
     WHERE state_code = ANY($1::text[])
-    ORDER BY
-      state,
-      CASE
-        WHEN chamber = 'Senate' THEN 0
-        WHEN chamber = 'House' THEN 1
-        WHEN chamber = 'House of Representatives' THEN 1
-        ELSE 2
-      END,
-      COALESCE(district, 0),
-      name;
+    ${DIRECTORY_ORDER};
   `;
 
   const params = [[...DIRECTORY_STATE_CODES]];
 
-  try {
-    const { rows } = await q("members:getMembersDirectory", sql, params);
-    return { states: groupMembersByState(rows) };
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
+  const { rows } = await q("members:getMembersDirectory", sql, params);
+  return { states: groupMembersByState(rows) };
 }
 
 export async function getStateRoster(stateCode) {
   console.log("[getStateRoster]");
-
-  try {
-    const identSql = `
-      select
-        current_user,
-        session_user,
-        current_database() as db,
-        inet_server_addr() as server_ip
-    `;
-    const ident = await q("debug:identity", identSql, []);
-    console.log("[db identity]", ident.rows?.[0]);
-  } catch (e) {
-    console.log("[db identity] probe failed", e);
-  }
 
   const normalizedStateCode = String(stateCode || "").trim().toUpperCase();
 
@@ -180,46 +181,27 @@ export async function getStateRoster(stateCode) {
   }
 
   const sql = `
-    SELECT
-      bioguide_id AS "bioguideId",
-      name,
-      party AS party,
-      party_name AS "partyName",
-      state,
-      state_code AS "stateCode",
-      district,
-      chamber AS chamber,
-      image_url AS "imageUrl",
-      url,
-      NULL::timestamptz AS "updateDate"
-    FROM sandbox_lemur_app_views_v1.mv_member_core_v1
+    ${DIRECTORY_SELECT}
     WHERE state_code = $1
-    ORDER BY
-      CASE
-        WHEN chamber = 'Senate' THEN 0
-        WHEN chamber = 'House' THEN 1
-        WHEN chamber = 'House of Representatives' THEN 1
-        ELSE 2
-      END,
-      COALESCE(district, 0),
-      name;
+    ${DIRECTORY_ORDER};
   `;
 
-  try {
-    const { rows } = await q("members:getStateRoster", sql, [normalizedStateCode]);
-    const normalizedRows = rows.map(normalizeMemberRow);
+  const { rows } = await q("members:getStateRoster", sql, [normalizedStateCode]);
+  const normalizedRows = rows.map(normalizeMemberRow);
 
-    return {
-      senators: sortMembers(normalizedRows.filter((r) => r.chamber === "Senate")),
-      representatives: sortMembers(normalizedRows.filter((r) => r.chamber === "House")),
-    };
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
+  return {
+    senators: sortMembers(normalizedRows.filter((r) => r.chamber === "Senate")),
+    representatives: sortMembers(normalizedRows.filter((r) => r.chamber === "House")),
+  };
 }
 
-export async function searchMembers({ q: searchQuery = "", state = "", chamber = "", party = "" } = {}) {
+export async function searchMembers({
+  q: searchQuery = "",
+  state = "",
+  chamber = "",
+  party = "",
+  seatStatus = "",
+} = {}) {
   const parts = [];
   const params = [];
   let i = 1;
@@ -234,15 +216,18 @@ export async function searchMembers({ q: searchQuery = "", state = "", chamber =
 
   const normalizedChamber = normalizeChamber(chamber);
   if (normalizedChamber) {
-    if (normalizedChamber === "House") {
-      parts.push(`chamber IN ('House', 'House of Representatives')`);
-    } else {
-      parts.push(`chamber = $${i++}`);
-      params.push(normalizedChamber);
-    }
+    parts.push(`chamber = $${i++}`);
+    params.push(normalizedChamber);
+  }
+
+  const normalizedSeatStatus = normalizeSeatStatus(seatStatus);
+  if (normalizedSeatStatus) {
+    parts.push(`seat_status = $${i++}`);
+    params.push(normalizedSeatStatus);
   }
 
   if (party && party.trim()) {
+    parts.push(`is_vacant IS FALSE`);
     parts.push(`party = $${i++}`);
     params.push(party.trim().toUpperCase());
   }
@@ -263,43 +248,41 @@ export async function searchMembers({ q: searchQuery = "", state = "", chamber =
   const where = parts.length ? `WHERE ${parts.join(" AND ")}` : "";
 
   const sql = `
-    SELECT
-      bioguide_id AS "bioguideId",
-      name,
-      party AS party,
-      party_name AS "partyName",
-      state,
-      state_code AS "stateCode",
-      district,
-      chamber AS chamber,
-      image_url AS "imageUrl",
-      url,
-      NULL::timestamptz AS "updateDate"
-    FROM sandbox_lemur_app_views_v1.mv_member_core_v1
+    ${DIRECTORY_SELECT}
     ${where}
-    ORDER BY
-      state,
-      CASE
-        WHEN chamber = 'Senate' THEN 0
-        WHEN chamber = 'House' THEN 1
-        WHEN chamber = 'House of Representatives' THEN 1
-        ELSE 2
-      END,
-      COALESCE(district, 0),
-      name;
+    ${DIRECTORY_ORDER};
   `;
 
-  try {
-    const { rows } = await q("members:search", sql, params);
-    const normalizedRows = rows.map(normalizeMemberRow);
+  const { rows } = await q("members:search", sql, params);
+  const normalizedRows = rows.map(normalizeMemberRow);
 
-    return {
-      senators: sortMembers(normalizedRows.filter((r) => r.chamber === "Senate")),
-      representatives: sortMembers(normalizedRows.filter((r) => r.chamber === "House")),
-      states: groupMembersByState(normalizedRows),
-    };
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
+  return {
+    senators: sortMembers(normalizedRows.filter((r) => r.chamber === "Senate")),
+    representatives: sortMembers(normalizedRows.filter((r) => r.chamber === "House")),
+    states: groupMembersByState(normalizedRows),
+  };
+}
+
+export async function getMemberRecentChanges({ limit = 12 } = {}) {
+  const sql = `
+    SELECT
+      detected_at AS "detectedAt",
+      bioguide_id AS "bioguideId",
+      name,
+      change_type AS "changeType",
+      headline,
+      state_code AS "stateCode",
+      district,
+      chamber,
+      district_id AS "districtId",
+      is_vacant AS "isVacant",
+      seat_status AS "seatStatus"
+    FROM sandbox_lemur_app_views_v1.v_member_recent_changes_v3
+    ORDER BY detected_at DESC
+    LIMIT $1;
+  `;
+
+  const { rows } = await q("members:getRecentChanges", sql, [limit]);
+  console.log(rows)
+  return rows;
 }

@@ -18,20 +18,42 @@ function normalizeChamber(chamber) {
     return value;
 }
 
+function normalizeSeatStatus(status) {
+    const value = String(status || "").trim().toLowerCase();
+    if (value === "filled") return "filled";
+    if (value === "vacant") return "vacant";
+    return "";
+}
+
 function normalizeMember(member, fallbackState = {}) {
+    const isVacant = Boolean(member?.isVacant || member?.is_vacant || member?.seatStatus === "vacant");
+
     return {
         ...member,
+        directoryRowId: member?.directoryRowId || member?.directory_row_id || null,
+        rowKind: member?.rowKind || member?.row_kind || (isVacant ? "seat" : "member"),
+        districtId: member?.districtId || member?.district_id || null,
+
         bioguideId: member?.bioguideId || member?.bioguide_id || null,
+        name: member?.name || (isVacant ? "Vacant seat" : ""),
         party: member?.party || null,
         partyName: member?.partyName || member?.party_name || null,
         state: member?.state || fallbackState?.state || "",
         stateCode: String(member?.stateCode || member?.state_code || fallbackState?.stateCode || "").toUpperCase(),
         district: member?.district == null ? null : Number(member.district),
         chamber: normalizeChamber(member?.chamber),
+
+        isVacant,
+        seatStatus: member?.seatStatus || member?.seat_status || (isVacant ? "vacant" : "filled"),
+
         imageUrl: member?.imageUrl || member?.image_url || null,
         url: member?.url || null,
         updateDate: member?.updateDate || member?.update_date || null,
     };
+}
+
+function memberKey(m) {
+    return m?.directoryRowId || m?.bioguideId || m?.districtId || `${m?.stateCode}-${m?.chamber}-${m?.district}-${m?.name}`;
 }
 
 function sortMembers(list) {
@@ -55,45 +77,60 @@ function sortMembers(list) {
         if (Number.isFinite(districtA) && !Number.isFinite(districtB)) return -1;
         if (!Number.isFinite(districtA) && Number.isFinite(districtB)) return 1;
 
+        if (a?.isVacant && !b?.isVacant) return 1;
+        if (!a?.isVacant && b?.isVacant) return -1;
+
         return String(a?.name || "").localeCompare(String(b?.name || ""));
     });
 }
 
 function normalizeStateGroup(state) {
-    const normalizedState = {
+    return {
         state: state?.state || "",
         stateCode: String(state?.stateCode || state?.state_code || "").toUpperCase(),
         senators: sortMembers((state?.senators || []).map((m) => normalizeMember(m, state))),
         representatives: sortMembers((state?.representatives || []).map((m) => normalizeMember(m, state))),
     };
-
-    return normalizedState;
 }
 
-function filterMembers(members, { q, chamber, party }) {
+function filterMembers(members, { q, chamber, party, seatStatus }) {
     const query = String(q || "").trim().toLowerCase();
+    const normalizedSeatStatus = normalizeSeatStatus(seatStatus);
 
     return members.filter((m) => {
         const normalizedChamberValue = normalizeChamber(m?.chamber);
+        const isVacant = Boolean(m?.isVacant || m?.seatStatus === "vacant");
 
         const matchesQuery =
             !query ||
             String(m?.name || "").toLowerCase().includes(query) ||
             String(m?.state || "").toLowerCase().includes(query) ||
             String(m?.stateCode || "").toLowerCase().includes(query) ||
-            String(m?.district || "").toLowerCase().includes(query);
+            String(m?.district || "").toLowerCase().includes(query) ||
+            String(m?.seatStatus || "").toLowerCase().includes(query) ||
+            (isVacant && "vacant seat open unfilled".includes(query));
 
         const matchesChamber = !chamber || normalizedChamberValue === chamber;
-        const matchesParty = !party || normalizeParty(m?.party) === normalizeParty(party);
+        const matchesParty = !party || (!isVacant && normalizeParty(m?.party) === normalizeParty(party));
+        const matchesSeatStatus = !normalizedSeatStatus || normalizeSeatStatus(m?.seatStatus) === normalizedSeatStatus;
 
-        return matchesQuery && matchesChamber && matchesParty;
+        return matchesQuery && matchesChamber && matchesParty && matchesSeatStatus;
     });
 }
 
 function compositionForMembers(members) {
-    const result = { D: 0, R: 0, I: 0, total: members.length };
+    const result = { D: 0, R: 0, I: 0, vacant: 0, filled: 0, total: members.length };
 
     members.forEach((m) => {
+        const isVacant = Boolean(m?.isVacant || m?.seatStatus === "vacant");
+
+        if (isVacant) {
+            result.vacant += 1;
+            return;
+        }
+
+        result.filled += 1;
+
         const p = normalizeParty(m?.party);
         if (p === "D") result.D += 1;
         else if (p === "R") result.R += 1;
@@ -113,6 +150,7 @@ function CompositionLine({ stateCode, totalVisible, composition }) {
             {composition.D > 0 ? <span className="is-dem">{composition.D} D</span> : null}
             {composition.R > 0 ? <span className="is-rep">{composition.R} R</span> : null}
             {composition.I > 0 ? <span className="is-ind">{composition.I} I</span> : null}
+            {composition.vacant > 0 ? <span>{composition.vacant} vacant</span> : null}
             <span className="ll3-metaSep">•</span>
             <span>{totalVisible} shown</span>
         </p>
@@ -122,6 +160,8 @@ function CompositionLine({ stateCode, totalVisible, composition }) {
 function HouseGroup({ members }) {
     if (!members?.length) return null;
 
+    const filledCount = members.filter((m) => !m.isVacant).length;
+    const vacantCount = members.filter((m) => m.isVacant).length;
     const shouldCollapse = members.length > HOUSE_PREVIEW_COUNT;
     const preview = members.slice(0, HOUSE_PREVIEW_COUNT);
     const remainder = members.slice(HOUSE_PREVIEW_COUNT);
@@ -130,7 +170,9 @@ function HouseGroup({ members }) {
         <div className="ll3-chamberBlock">
             <div className="ll3-chamberBlock__head">
                 <h3 className="ll3-chamberBlock__title">House</h3>
-                <span className="ll3-chamberBlock__meta">{members.length} members</span>
+                <span className="ll3-chamberBlock__meta">
+                    {filledCount} filled{vacantCount ? ` / ${vacantCount} vacant` : ""}
+                </span>
             </div>
 
             <div className="ll3-memberTable">
@@ -143,7 +185,7 @@ function HouseGroup({ members }) {
 
                 <div className="ll3-memberTable__body">
                     {preview.map((m) => (
-                        <MemberDirectoryRow key={m.bioguideId || m.id} m={m} />
+                        <MemberDirectoryRow key={memberKey(m)} m={m} />
                     ))}
                 </div>
             </div>
@@ -152,10 +194,10 @@ function HouseGroup({ members }) {
                 <details className="ll3-chamberExpand">
                     <summary className="ll3-chamberExpand__summary">
                         <span className="ll3-chamberExpand__text ll3-chamberExpand__text--closed">
-                            Show all {members.length} House members
+                            Show all {members.length} House seats
                         </span>
                         <span className="ll3-chamberExpand__text ll3-chamberExpand__text--open">
-                            Collapse House members
+                            Collapse House seats
                         </span>
                     </summary>
 
@@ -163,7 +205,7 @@ function HouseGroup({ members }) {
                         <div className="ll3-memberTable">
                             <div className="ll3-memberTable__body">
                                 {remainder.map((m) => (
-                                    <MemberDirectoryRow key={m.bioguideId || m.id} m={m} />
+                                    <MemberDirectoryRow key={memberKey(m)} m={m} />
                                 ))}
                             </div>
                         </div>
@@ -175,7 +217,7 @@ function HouseGroup({ members }) {
 }
 
 export default function MemberDirectoryClient({ initialData }) {
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
     const [statesList, setStatesList] = useState(() =>
         (initialData?.states || []).map(normalizeStateGroup)
     );
@@ -183,6 +225,7 @@ export default function MemberDirectoryClient({ initialData }) {
     const [q, setQ] = useState("");
     const [chamber, setChamber] = useState("");
     const [party, setParty] = useState("");
+    const [seatStatus, setSeatStatus] = useState("");
     const [activeState, setActiveState] = useState(() => {
         const firstState = (initialData?.states || [])[0];
         return String(firstState?.stateCode || firstState?.state_code || "");
@@ -204,12 +247,14 @@ export default function MemberDirectoryClient({ initialData }) {
                     q,
                     chamber: chamber === "House" ? "__none__" : chamber,
                     party,
+                    seatStatus: seatStatus === "vacant" ? "__none__" : seatStatus,
                 });
 
                 const representatives = filterMembers(state.representatives || [], {
                     q,
                     chamber: chamber === "Senate" ? "__none__" : chamber,
                     party,
+                    seatStatus,
                 });
 
                 const totalVisible = senators.length + representatives.length;
@@ -223,7 +268,7 @@ export default function MemberDirectoryClient({ initialData }) {
                 };
             })
             .filter((state) => state.totalVisible > 0);
-    }, [statesList, q, chamber, party]);
+    }, [statesList, q, chamber, party, seatStatus]);
 
     useEffect(() => {
         if (!filteredStates.length) return;
@@ -281,9 +326,10 @@ export default function MemberDirectoryClient({ initialData }) {
         setQ("");
         setChamber("");
         setParty("");
+        setSeatStatus("");
     }
 
-    const totalVisibleMembers = filteredStates.reduce((sum, s) => sum + s.totalVisible, 0);
+    const totalVisibleRows = filteredStates.reduce((sum, s) => sum + s.totalVisible, 0);
 
     return (
         <section className="ll3-membersDirectory" ref={topRef}>
@@ -293,14 +339,14 @@ export default function MemberDirectoryClient({ initialData }) {
                         <div className="ll3-directoryFilters__intro">
                             <h2 className="ll3-h2">Browse and filter</h2>
                             <p className="ll3-muted">
-                                Start with the full directory, then narrow by name, chamber, or party.
+                                Start with the full directory, then narrow by name, chamber, party, or seat status.
                             </p>
                         </div>
 
                         <div className="ll3-directoryFilters__summary">
                             {!loading ? (
                                 <span className="ll3-directoryCount">
-                                    {totalVisibleMembers} member{totalVisibleMembers === 1 ? "" : "s"} shown
+                                    {totalVisibleRows} row{totalVisibleRows === 1 ? "" : "s"} shown
                                 </span>
                             ) : null}
                         </div>
@@ -315,7 +361,7 @@ export default function MemberDirectoryClient({ initialData }) {
                                 id="members-directory-search"
                                 className="ll3-input"
                                 type="search"
-                                placeholder="Search by member, state, or district…"
+                                placeholder="Search by member, state, district, or vacant seat…"
                                 value={q}
                                 onChange={(e) => setQ(e.target.value)}
                             />
@@ -354,6 +400,22 @@ export default function MemberDirectoryClient({ initialData }) {
                             </select>
                         </div>
 
+                        <div className="ll3-field">
+                            <label className="ll3-label" htmlFor="members-directory-seat-status">
+                                Seat status
+                            </label>
+                            <select
+                                id="members-directory-seat-status"
+                                className="ll3-input"
+                                value={seatStatus}
+                                onChange={(e) => setSeatStatus(e.target.value)}
+                            >
+                                <option value="">All seats</option>
+                                <option value="filled">Filled</option>
+                                <option value="vacant">Vacant</option>
+                            </select>
+                        </div>
+
                         <div className="ll3-directoryFilters__actions">
                             <button
                                 type="button"
@@ -368,7 +430,7 @@ export default function MemberDirectoryClient({ initialData }) {
                     <div className="ll3-directoryFilters__mobileCount">
                         {!loading ? (
                             <span>
-                                {totalVisibleMembers} member{totalVisibleMembers === 1 ? "" : "s"} shown
+                                {totalVisibleRows} row{totalVisibleRows === 1 ? "" : "s"} shown
                             </span>
                         ) : null}
                     </div>
@@ -436,7 +498,7 @@ export default function MemberDirectoryClient({ initialData }) {
                     {loading ? <p className="search-empty">Loading directory…</p> : null}
 
                     {!loading && filteredStates.length === 0 ? (
-                        <p className="search-empty">No members match the current filters.</p>
+                        <p className="search-empty">No directory rows match the current filters.</p>
                     ) : null}
 
                     {!loading &&
@@ -480,7 +542,7 @@ export default function MemberDirectoryClient({ initialData }) {
 
                                             <div className="ll3-memberTable__body">
                                                 {state.senators.map((m) => (
-                                                    <MemberDirectoryRow key={m.bioguideId || m.id} m={m} />
+                                                    <MemberDirectoryRow key={memberKey(m)} m={m} />
                                                 ))}
                                             </div>
                                         </div>

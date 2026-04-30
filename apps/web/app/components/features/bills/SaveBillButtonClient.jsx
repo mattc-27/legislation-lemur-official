@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Bookmark, BookmarkCheck } from "lucide-react";
 
 const LS_KEY = "ll3_saved_bills_v1";
-import { Bookmark, BookmarkCheck } from "lucide-react";
+
 /**
  * Saved record shape:
  * {
  *   id: string,
  *   href: string,
  *   label: string,
- *   savedAt: string (ISO),
+ *   savedAt: string,
  *   meta?: any
  * }
  */
@@ -42,12 +43,35 @@ function writeSavedSet(set) {
         // ignore
     }
 }
+
+function readSavedRecords() {
+    try {
+        const raw = localStorage.getItem(`${LS_KEY}__records`);
+        if (!raw) return {};
+        return safeParse(raw) || {};
+    } catch {
+        return {};
+    }
+}
+
+function writeSavedRecords(records) {
+    try {
+        localStorage.setItem(`${LS_KEY}__records`, JSON.stringify(records));
+    } catch {
+        // ignore
+    }
+}
+
 export default function SaveBillButtonClient({
     billId,
     href,
     label,
     meta,
     size = "sm",
+    iconOnly = false,
+    savedIcon = null,
+    unsavedIcon = null,
+    className = "",
 }) {
     const key = useMemo(() => String(billId || href || label || ""), [billId, href, label]);
     const [saved, setSaved] = useState(false);
@@ -59,26 +83,55 @@ export default function SaveBillButtonClient({
 
     const toggle = () => {
         const set = readSavedSet();
-        const next = !set.has(key);
-        if (next) set.add(key);
-        else set.delete(key);
-        writeSavedSet(set);
-        setSaved(next);
+        const records = readSavedRecords();
 
-        // optional: stash metadata separately if you want later
-        // (keep minimal for now)
+        const next = !set.has(key);
+
+        if (next) {
+            set.add(key);
+            records[key] = {
+                id: key,
+                href: href || "",
+                label: label || "",
+                savedAt: new Date().toISOString(),
+                meta: meta ?? null,
+            };
+        } else {
+            set.delete(key);
+            delete records[key];
+        }
+
+        writeSavedSet(set);
+        writeSavedRecords(records);
+        setSaved(next);
     };
+
+    const icon = saved
+        ? savedIcon || <BookmarkCheck size={16} aria-hidden="true" />
+        : unsavedIcon || <Bookmark size={16} aria-hidden="true" />;
+
+    const title = saved ? "Saved" : "Save";
 
     return (
         <button
             type="button"
-            className={`ll3-btn ll3-btn--ghost ll3-btn--sm ${saved ? "ll3-btn--saved" : ""}`}
+            className={[
+                "ll3-btn",
+                "ll3-btn--ghost",
+                size === "sm" ? "ll3-btn--sm" : "",
+                saved ? "ll3-btn--saved" : "",
+                iconOnly ? "ll3-btn--iconOnly" : "",
+                className,
+            ]
+                .filter(Boolean)
+                .join(" ")}
             onClick={toggle}
             aria-pressed={saved}
-            title={saved ? "Saved" : "Save"}
+            aria-label={title}
+            title={title}
         >
-            {saved ? <BookmarkCheck size={16} aria-hidden="true" /> : <Bookmark size={16} aria-hidden="true" />}
-            <span>{saved ? "Saved" : "Save"}</span>
+            {icon}
+            {!iconOnly ? <span>{title}</span> : null}
         </button>
     );
 }

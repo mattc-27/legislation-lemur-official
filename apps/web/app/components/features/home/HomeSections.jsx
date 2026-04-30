@@ -6,6 +6,17 @@ import {
   HOME_ROADMAP_ITEMS,
 } from "@/lib/content/homeContent";
 
+const HERO_BANNER_ITEMS = [
+  {
+    title: "Clearer legislative snapshots",
+    desc: "Readable profiles, bill context, and ongoing session activity.",
+  },
+  {
+    title: "Neutral presentation",
+    desc: "Built for clarity, not spin.",
+  },
+];
+
 const FEATURE_CARDS = [
   {
     title: "Representative profiles",
@@ -38,6 +49,20 @@ export default function HomeSections() {
   return (
     <section className="home-sections">
       <div className="container home-sections__stack">
+        <section className="hero-banner" aria-label="Platform highlights">
+          <div className="hero-banner__grid">
+            {HERO_BANNER_ITEMS.map((item) => (
+              <article className="hero-banner__item" key={item.title}>
+                <span className="hero-banner__icon" aria-hidden="true" />
+                <div className="hero-banner__copy">
+                  <h2 className="hero-banner__title">{item.title}</h2>
+                  <p className="hero-banner__desc">{item.desc}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <RecentActivitySection
           maxItems={3}
           showHeader={true}
@@ -76,9 +101,8 @@ export default function HomeSections() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className={`feature-tile ${
-                    item.accent === "primary" ? "feature-tile--primary" : ""
-                  }`}
+                  className={`feature-tile ${item.accent === "primary" ? "feature-tile--primary" : ""
+                    }`}
                 >
                   <div className="feature-tile__inner">
                     <h3 className="feature-tile__title">{item.title}</h3>
