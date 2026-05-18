@@ -11,8 +11,6 @@ import MemberAbout from "@/app/components/features/members/shared/MemberAbout";
 import MemberTabs from '@/app/components/features/members/shared/MemberTabs';
 import MemberTerms from '@/app/components/features/members/shared/MemberTerms';
 
-import KpiRow from '@/app/components/features/members/shared/KpiRow';
-
 import SenateVotes from '@/app/components/features/members/senate-member/SenateVotes';
 
 import VotesSplitSection from "@/app/components/features/members/shared/VoteSplitSection";
@@ -26,8 +24,6 @@ import {
 import "@/app/styles/active/members/refactored/ll3.members.tokens.css";
 import "@/app/styles/active/members/refactored/ll3.members.ui.css";
 
-// import "@/app/styles/active/members/ll3.members.search.css";
-// import '@/app/styles/active/members/ll-members-styles.css';
 import "@/app/styles/active/members/refactored/ll3.members.details.css";
 import "@/app/styles/active/members/refactored/ll3.members.about.css";
 
@@ -36,20 +32,10 @@ import "@/app/styles/active/members/refactored/ll3.members.terms.css";
 import "@/app/styles/active/members/refactored/ll3.members.badges.css";
 import "@/app/styles/active/members/refactored/ll3.members.tabs.css";
 import "@/app/styles/active/members/refactored/ll3.members.heatmap.css";
-// import "@/app/styles/active/members/ll3.members.gauge.css";
-// import "@/app/styles/active/members/ll3.members.viz.css";
+
 import "@/app/styles/active/members/refactored/ll3.members.viz.css";
 import "@/app/styles/active/members/refactored/ll3.members.votes.css";
 import "@/app/styles/active/members/refactored/ll3.members.vote-alignment.css";
-
-// import VotesSection from '@/app/components/features/members/house-member/VoteSection';
-// import VoteAlignmentPanel from '@/app/components/features/members/house-member/VoteAlignmentGauge';
-// import ActivityTimeline from '@/app/components/features/members/house-member/ActivityTimeline';
-// import '@/app/styles/legacy_refactor/member-styles.refactored.css'
-// import '../../../../lib/stylesheets/refactored/member-styles.refactored.css';
-// import '../../../../lib/stylesheets/refactored/vote-ui.refactored.css';
-// import '../../../../lib/stylesheets/refactored/ui-controls.css';
-// import '../../../../lib/stylesheets/refactored/home-styles.refactored.css';
 
 
 export default async function MemberPage({ params }) {
@@ -63,11 +49,11 @@ export default async function MemberPage({ params }) {
         cosponsoredRes,
         //recentVotes,
         // alignment,
-        kpis,
+        // kpis,
         alignmentPanel,
-        monthlyActivity,
-        subjects,
-        bills,
+        //  monthlyActivity,
+        //  subjects,
+        //  bills,
 
     } = await fetchMemberData(bioguideId);
 

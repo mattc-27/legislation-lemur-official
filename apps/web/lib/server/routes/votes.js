@@ -1,7 +1,7 @@
-// lib/congress.js
+// lib/server/routes/votes.js
 import "server-only";
-import { pool } from "../db/db";
 import { q } from "../db/instrumented-query";
+import { perfLog } from "@/lib/server/debug/perf";
 
 /* ------------------------------------------
 Set to public schema, 11/25/2025
@@ -17,12 +17,35 @@ For stage, remove the `_v1`
  */
 
 
+async function timed(label, fn, meta = {}) {
+  const start = performance.now();
+
+  try {
+    const result = await fn();
+
+    perfLog(`${label}: ${Math.round(performance.now() - start)}ms`, {
+      ...meta,
+    });
+
+    return result;
+  } catch (err) {
+    perfLog(`${label}:error:${Math.round(performance.now() - start)}ms`, {
+      message: err?.message,
+      code: err?.code,
+      ...meta,
+    });
+
+    throw err;
+  }
+}
 
 /* House member votes */
 export async function getHouseMemberVotes(
   bioguideId,
   { limit = 1000, offset = 0, verify = true } = {}
 ) {
+  const totalStart = performance.now();
+
   const dataSql = `
     SELECT
       vm.identifier                              AS vote_id,
@@ -33,12 +56,11 @@ export async function getHouseMemberVotes(
       vm.session,
       vm.rollcall_number,
       vm.bill_id,
-   
       CASE
         WHEN vm.bill_id IS NULL THEN NULL
         ELSE UPPER(
                REGEXP_REPLACE(
-                 SPLIT_PART(vm.bill_id, '-', 1),   -- 'hr1047'
+                 SPLIT_PART(vm.bill_id, '-', 1),
                  '^([a-z]+)(\\d+)$',
                  '\\1-\\2'
                )
@@ -70,14 +92,19 @@ export async function getHouseMemberVotes(
     WHERE hv.member_id = $1;
   `;
 
-  /*     const [dataRes, aggRes] = await Promise.all([
-        pool.query(dataSql, [bioguideId, limit, offset]),
-        pool.query(aggSql, [bioguideId]),
-      ]);
-      */
   const [dataRes, aggRes] = await Promise.all([
-    q("house:getVotes:data", dataSql, [bioguideId, limit, offset]),
-    q("house:getVotes:agg", aggSql, [bioguideId]),
+    timed("votes:getHouseMemberVotes:data", () =>
+      q("house:getVotes:data", dataSql, [bioguideId, limit, offset]), {
+      bioguideId,
+      limit,
+      offset,
+    }
+    ),
+    timed("votes:getHouseMemberVotes:agg", () =>
+      q("house:getVotes:agg", aggSql, [bioguideId]), {
+      bioguideId,
+    }
+    ),
   ]);
 
   const rows = dataRes.rows;
@@ -85,6 +112,7 @@ export async function getHouseMemberVotes(
   if (verify) {
     const { total_count = 0, earliest = null, latest = null } = aggRes.rows[0] || {};
     const fmt = (d) => (d ? new Date(d).toISOString().slice(0, 10) : null);
+
     if (rows.length === 0 && total_count > 0) {
       console.warn(
         `[getMemberVotes] ${bioguideId}: 0 rows; DB has ${total_count}. ${fmt(earliest)} → ${fmt(latest)}.`
@@ -92,63 +120,24 @@ export async function getHouseMemberVotes(
     }
   }
 
+  perfLog(`votes:getHouseMemberVotes:total: ${Math.round(performance.now() - totalStart)}ms`, {
+    bioguideId,
+    rowCount: rows.length,
+    limit,
+    offset,
+  });
+
   return rows;
 }
 
 /* Senate member votes */
-
 export async function getSenateMemberVotes(
   bioguideId,
   { limit = 1000, offset = 0 } = {}
 ) {
+  const totalStart = performance.now();
+
   const sql = `
-    WITH party_majorities AS (
-      SELECT
-        p.congress,
-        p.session,
-        p.rollcall_number,
-        CASE
-          WHEN SUM((p.choice = 'Yea')::int)
-               FILTER (WHERE p.party_at_vote = 'D')
-             > SUM((p.choice = 'Nay')::int)
-               FILTER (WHERE p.party_at_vote = 'D')
-          THEN 'Yea'
-          WHEN SUM((p.choice = 'Nay')::int)
-               FILTER (WHERE p.party_at_vote = 'D')
-             > SUM((p.choice = 'Yea')::int)
-               FILTER (WHERE p.party_at_vote = 'D')
-          THEN 'Nay'
-          ELSE NULL
-        END AS dem_majority_position,
-        CASE
-          WHEN SUM((p.choice = 'Yea')::int)
-               FILTER (WHERE p.party_at_vote = 'R')
-             > SUM((p.choice = 'Nay')::int)
-               FILTER (WHERE p.party_at_vote = 'R')
-          THEN 'Yea'
-          WHEN SUM((p.choice = 'Nay')::int)
-               FILTER (WHERE p.party_at_vote = 'R')
-             > SUM((p.choice = 'Yea')::int)
-               FILTER (WHERE p.party_at_vote = 'R')
-          THEN 'Nay'
-          ELSE NULL
-        END AS rep_majority_position,
-        CASE
-          WHEN SUM((p.choice = 'Yea')::int)
-               FILTER (WHERE p.party_at_vote IN ('I', 'ID'))
-             > SUM((p.choice = 'Nay')::int)
-               FILTER (WHERE p.party_at_vote IN ('I', 'ID'))
-          THEN 'Yea'
-          WHEN SUM((p.choice = 'Nay')::int)
-               FILTER (WHERE p.party_at_vote IN ('I', 'ID'))
-             > SUM((p.choice = 'Yea')::int)
-               FILTER (WHERE p.party_at_vote IN ('I', 'ID'))
-          THEN 'Nay'
-          ELSE NULL
-        END AS ind_majority_position
-      FROM sandbox_public_v2.senate_member_votes p
-      GROUP BY p.congress, p.session, p.rollcall_number
-    )
     SELECT
       p.congress,
       p.session,
@@ -197,7 +186,7 @@ export async function getSenateMemberVotes(
     JOIN sandbox_public_v2.senate_votes_meta m
       ON (m.congress, m.session, m.rollcall_number) =
          (p.congress, p.session, p.rollcall_number)
-    JOIN party_majorities pm
+    LEFT JOIN sandbox_lemur_app_views_v1.mv_senate_vote_party_majorities_v1 pm
       ON (pm.congress, pm.session, pm.rollcall_number) =
          (p.congress, p.session, p.rollcall_number)
     WHERE p.bioguide_id = $1
@@ -206,12 +195,20 @@ export async function getSenateMemberVotes(
     OFFSET $3;
   `;
 
-  //const { rows } = await pool.query(sql, [bioguideId, limit, offset]);
-  const { rows } = await q("member:getSenateVotes", sql, [bioguideId, limit, offset]);
-  // Group rows by measure (each measure = one card)
+  const { rows } = await timed("votes:getSenateMemberVotes:query", () =>
+    q("member:getSenateVotes", sql, [bioguideId, limit, offset]), {
+    bioguideId,
+    limit,
+    offset,
+  }
+  );
+
+  const groupStart = performance.now();
+
   const groups = {};
   for (const r of rows) {
     const key = `${r.base_measure_number || "PN"}:${r.congress}`;
+
     if (!groups[key]) {
       groups[key] = {
         base_measure: r.base_measure_number || "PN",
@@ -221,6 +218,7 @@ export async function getSenateMemberVotes(
         stages: [],
       };
     }
+
     groups[key].stages.push({
       datetime: r.voted_at,
       label: r.question_group,
@@ -234,17 +232,25 @@ export async function getSenateMemberVotes(
     });
   }
 
-  // Sort each group chronologically
-  return Object.values(groups).map((g) => {
+  const result = Object.values(groups).map((g) => {
     g.stages.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
     return g;
   });
+
+  perfLog(`votes:getSenateMemberVotes:group: ${Math.round(performance.now() - groupStart)}ms`, {
+    bioguideId,
+    rowCount: rows.length,
+    groupCount: result.length,
+  });
+
+  perfLog(`votes:getSenateMemberVotes:total: ${Math.round(performance.now() - totalStart)}ms`, {
+    bioguideId,
+    rowCount: rows.length,
+    groupCount: result.length,
+  });
+
+  return result;
 }
-
-
-
-
-// --- Vote alignment: % of votes matching member’s party caucus ------------- */
 
 export async function getHouseMemberVoteAlignment(bioguideId) {
   const sql = `
@@ -265,85 +271,129 @@ export async function getHouseMemberVoteAlignment(bioguideId) {
     WHERE m.bioguide_id = $1
   ),
   party_line AS (
-
-SELECT
-vm.identifier AS vote_id,
-    CASE
-WHEN(j ->> 'yeaTotal') IS NULL OR(j ->> 'nayTotal') IS NULL THEN NULL
-WHEN(j ->> 'yeaTotal'):: int = (j ->> 'nayTotal')::int       THEN NULL
-WHEN(j ->> 'yeaTotal'):: int > (j ->> 'nayTotal')::int       THEN 'Yea'
+    SELECT
+      vm.identifier AS vote_id,
+      CASE
+        WHEN (j ->> 'yeaTotal') IS NULL OR (j ->> 'nayTotal') IS NULL THEN NULL
+        WHEN (j ->> 'yeaTotal')::int = (j ->> 'nayTotal')::int THEN NULL
+        WHEN (j ->> 'yeaTotal')::int > (j ->> 'nayTotal')::int THEN 'Yea'
         ELSE 'Nay'
       END AS party_line_choice
     FROM sandbox_public_v2.house_rollcall_votes vm
     JOIN member_party mp ON TRUE
-    LEFT JOIN LATERAL(
-    SELECT j
+    LEFT JOIN LATERAL (
+      SELECT j
       FROM jsonb_array_elements(
         COALESCE(
-            vm.rest -> 'votePartyTotal',
-            vm.rest #> '{houseRollCallVotes,votePartyTotal}',
-            '[]':: jsonb
+          vm.rest -> 'votePartyTotal',
+          vm.rest #> '{houseRollCallVotes,votePartyTotal}',
+          '[]'::jsonb
         )
-    ) AS j
+      ) AS j
       WHERE j ->> 'voteParty' = mp.party_txt
-) s ON TRUE
+    ) s ON TRUE
     WHERE vm.chamber = 'House of Representatives'
   ),
-  base AS(
-
-    SELECT hv.identifier AS vote_id, hv.choice:: text AS choice_txt
+  base AS (
+    SELECT hv.identifier AS vote_id, hv.choice::text AS choice_txt
     FROM sandbox_public_v2.house_member_votes hv
     WHERE hv.member_id = $1
-)
-SELECT
-CASE
-      WHEN SUM((pl.party_line_choice IS NOT NULL AND b.choice_txt IN('Yea', 'Nay'))::int ) = 0
+  )
+  SELECT
+    CASE
+      WHEN SUM((pl.party_line_choice IS NOT NULL AND b.choice_txt IN ('Yea', 'Nay'))::int) = 0
         THEN NULL
-ELSE
-100.0 * SUM((pl.party_line_choice IS NOT NULL AND b.choice_txt IN('Yea', 'Nay') AND b.choice_txt = pl.party_line_choice)::int )
-              / SUM( (pl.party_line_choice IS NOT NULL AND b.choice_txt IN ('Yea','Nay'))::int )
+      ELSE
+        100.0 * SUM((pl.party_line_choice IS NOT NULL AND b.choice_txt IN ('Yea', 'Nay') AND b.choice_txt = pl.party_line_choice)::int)
+        / SUM((pl.party_line_choice IS NOT NULL AND b.choice_txt IN ('Yea', 'Nay'))::int)
     END AS alignment_pct,
     CASE
-      WHEN SUM((b.choice_txt IN('Yea', 'Nay', 'Present', 'Not Voting'))::int ) = 0
+      WHEN SUM((b.choice_txt IN ('Yea', 'Nay', 'Present', 'Not Voting'))::int) = 0
         THEN NULL
-ELSE
-100.0 * SUM((b.choice_txt IN('Yea', 'Nay', 'Present'))::int )
-              / SUM( (b.choice_txt IN ('Yea','Nay','Present','Not Voting'))::int )
+      ELSE
+        100.0 * SUM((b.choice_txt IN ('Yea', 'Nay', 'Present'))::int)
+        / SUM((b.choice_txt IN ('Yea', 'Nay', 'Present', 'Not Voting'))::int)
     END AS attendance_pct
   FROM base b
   LEFT JOIN party_line pl ON pl.vote_id = b.vote_id;
 `;
-  //  const { rows } = await pool.query(sql, [bioguideId]);
-  const { rows } = await q("member:getHouseVoteAlignment", sql, [bioguideId]);
+
+  const { rows } = await timed("votes:getHouseMemberVoteAlignment", () =>
+    q("member:getHouseVoteAlignment", sql, [bioguideId]), {
+    bioguideId,
+  }
+  );
+
   return rows[0] ?? { alignment_pct: null, attendance_pct: null };
 }
 
-
-
-
 export async function getMemberVotes(bioguideId, opts = {}) {
-  const chamber = await getMemberChamber(bioguideId);
-  return chamber === 'Senate'
-    ? getSenateMemberVotes(bioguideId, opts)
-    : getHouseMemberVotes(bioguideId, opts);
-}
+  const totalStart = performance.now();
 
+  const chamber = await timed("votes:getMemberChamber", () =>
+    getMemberChamber(bioguideId), {
+    bioguideId,
+  }
+  );
+
+  perfLog("votes:resolvedChamber", { bioguideId, chamber });
+
+  const result =
+    chamber === "Senate"
+      ? await timed("votes:getSenateMemberVotes", () =>
+        getSenateMemberVotes(bioguideId, opts), {
+        bioguideId,
+        chamber,
+      }
+      )
+      : await timed("votes:getHouseMemberVotes", () =>
+        getHouseMemberVotes(bioguideId, opts), {
+        bioguideId,
+        chamber,
+      }
+      );
+
+  perfLog(`votes:getMemberVotes:total: ${Math.round(performance.now() - totalStart)}ms`, {
+    bioguideId,
+    chamber,
+    rowCount: Array.isArray(result) ? result.length : null,
+  });
+
+  return result;
+}
 
 export async function getMemberVoteAlignment(bioguideId) {
   await getHouseMemberVoteAlignment(bioguideId);
 }
 
-
-
-
-
-// ---------- Chamber lookup (kept if you still use it elsewhere) ----------
 export async function getMemberChamber(bioguideId) {
-  const sql = `SELECT chamber FROM sandbox_public_v2.members WHERE bioguide_id = $1 LIMIT 1`;
-  let r = await q("member:getChamber", sql, [bioguideId]);
+  const sql = `
+    SELECT chamber
+    FROM sandbox_public_v2.members
+    WHERE bioguide_id = $1
+    LIMIT 1;
+  `;
+
+  let r = await timed("votes:getMemberChamber:query", () =>
+    q("member:getChamber", sql, [bioguideId]), {
+    bioguideId,
+  }
+  );
+
   if (r.rows.length) return r.rows[0].chamber;
 
-  const fallback = `SELECT 1 FROM sandbox_public_v2.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
-  r = await q("member:getChamberFallback", fallback, [bioguideId]);
+  const fallback = `
+    SELECT 1
+    FROM sandbox_public_v2.senate_member_id_ref
+    WHERE bioguide_id = $1
+    LIMIT 1;
+  `;
+
+  r = await timed("votes:getMemberChamber:fallback", () =>
+    q("member:getChamberFallback", fallback, [bioguideId]), {
+    bioguideId,
+  }
+  );
+
   return r.rows.length ? "Senate" : "House";
 }
