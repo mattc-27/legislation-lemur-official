@@ -1,10 +1,11 @@
-// lib/congress.js
+// lib/server/routes/members.js
 import "server-only";
 import { pool } from "../db/db";
 import { q } from "../db/instrumented-query";
+import { perfLog } from "@/lib/server/debug/perf";
 
-const ACTIVE_VIEW_SCHEMA = 'sandbox_lemur_app_views_v1'
-const ACTIVE_DATA_SCHEMA = 'sandbox_public_v2'
+const ACTIVE_VIEW_SCHEMA = "sandbox_lemur_app_views_v1";
+const ACTIVE_DATA_SCHEMA = "sandbox_public_v2";
 
 /*
 const freshness = await getSectionFreshness({
@@ -51,48 +52,81 @@ async function qWithSentry(label, sql, params = [], extra = {}) {
 */
 
 // -- 
+
+async function timed(label, fn, extra = {}) {
+    const start = performance.now();
+
+    try {
+        const result = await fn();
+        const ms = Math.round(performance.now() - start);
+
+        const rowCount = Array.isArray(result?.rows)
+            ? result.rows.length
+            : Array.isArray(result)
+                ? result.length
+                : Array.isArray(result?.items)
+                    ? result.items.length
+                    : null;
+
+        perfLog(`${label}: ${ms}ms`, {
+            rowCount,
+            ...extra,
+        });
+
+        return result;
+    } catch (err) {
+        perfLog(`${label}:error:${Math.round(performance.now() - start)}ms`, {
+            message: err?.message,
+            code: err?.code,
+            ...extra,
+        });
+
+        throw err;
+    }
+}
+
 function groupBySubjectWithCounts(rows, kind) {
     const by = new Map();
+
     for (const r of rows) {
         const key = r.subject || "Uncategorized";
-        if (!by.has(key)) by.set(key, new Map()); // inner map by bill_id
+
+        if (!by.has(key)) by.set(key, new Map());
+
         const bucket = by.get(key);
+
         if (bucket.has(r.bill_id)) {
-            // merge kinds if same bill appears twice
             const existing = bucket.get(r.bill_id);
             if (kind && !existing.kinds.includes(kind)) existing.kinds.push(kind);
         } else {
             bucket.set(r.bill_id, toItem(r, kind));
         }
     }
-    // materialize with counts
+
     return Array.from(by.entries()).map(([subject, m]) => {
         const items = Array.from(m.values());
         return { subject, count: items.length, items };
     });
 }
 
-// add/keep these helpers near the top
 function toItem(r, kind) {
     return {
         id: r.bill_id,
         title: r.title,
-        type: r.type,               // HR / S / etc
+        type: r.type,
         number: r.number,
-        introducedAt: r.introduced_date,     // <-- BillList uses this
+        introducedAt: r.introduced_date,
         latestActionDate: r.latest_action_date,
         latestActionText: r.latest_action_text,
-        url: r.url,                 // <-- for getCongressBillUrl(url)
+        url: r.url,
         appHref: `/bill/${r.bill_id}`,
-        kinds: kind ? [kind] : [],  // <-- "s" or "c" for badge
+        kinds: kind ? [kind] : [],
     };
 }
-// --- helper: determine chamber for a bioguide ---
-
-
-// ---------- PROFILE (+ terms + about) ----------
 
 export async function getMemberProfile(bioguideId) {
+    const totalStart = performance.now();
+
     const sql = `
     SELECT
       m.bioguide_id        AS "bioguideId",
@@ -115,20 +149,46 @@ export async function getMemberProfile(bioguideId) {
     LIMIT 1;
   `;
 
-    const { rows } = await q("member:getProfile", sql, [bioguideId], { bioguideId });
+    const { rows } = await timed(
+        "memberRoute:getMemberProfile:query",
+        () => q("member:getProfile", sql, [bioguideId], { bioguideId }),
+        { bioguideId }
+    );
 
     const profile = rows?.[0] ?? null;
-    if (!profile) return null;
 
-    const terms = await getMemberTerms(bioguideId);
+    if (!profile) {
+        perfLog(`memberRoute:getMemberProfile:total: ${Math.round(performance.now() - totalStart)}ms`, {
+            bioguideId,
+            found: false,
+        });
+
+        return null;
+    }
+
+    const terms = await timed(
+        "memberRoute:getMemberProfile:getTerms",
+        () => getMemberTerms(bioguideId),
+        { bioguideId }
+    );
+
+    const aboutStart = performance.now();
     const about = composeMemberAbout(profile, terms);
+
+    perfLog(`memberRoute:getMemberProfile:composeAbout: ${Math.round(performance.now() - aboutStart)}ms`, {
+        bioguideId,
+        termsCount: terms?.length ?? 0,
+    });
+
+    perfLog(`memberRoute:getMemberProfile:total: ${Math.round(performance.now() - totalStart)}ms`, {
+        bioguideId,
+        found: true,
+        termsCount: terms?.length ?? 0,
+    });
 
     return { ...profile, terms, about };
 }
 
-
-
-// ---------- TERMS (timeline source)  ----------
 export async function getMemberTerms(bioguideId) {
     const sql = `
     SELECT
@@ -142,16 +202,16 @@ export async function getMemberTerms(bioguideId) {
     WHERE t.member_id = $1
     ORDER BY t.start_year ASC NULLS LAST, t.end_year ASC NULLS LAST;
   `;
-    const { rows } = await q(
-        "member:getTerms",
-        sql,
-        [bioguideId],
+
+    const { rows } = await timed(
+        "memberRoute:getMemberTerms:query",
+        () => q("member:getTerms", sql, [bioguideId], { bioguideId }),
         { bioguideId }
     );
+
     return rows ?? [];
 }
 
-// ---------- ABOUT/BIO ----------
 function composeMemberAbout(profile, terms = []) {
     const {
         name,
@@ -163,11 +223,11 @@ function composeMemberAbout(profile, terms = []) {
         servingSince,
     } = profile;
 
-    // If MV is missing for some reason, fall back to scanning terms of same chamber
     const backupSince = (() => {
         const currentSameChamber = terms
             .filter((t) => t.chamber === chamber && t.endYear == null)
             .map((t) => t.startYear);
+
         return currentSameChamber.length ? Math.min(...currentSameChamber) : null;
     })();
 
@@ -180,6 +240,7 @@ function composeMemberAbout(profile, terms = []) {
             district == null || district === 0 || district === "AL"
                 ? "at-large district"
                 : `${ordinal(+district)} district`;
+
         return `${name} is a ${partyName} member of the U.S. House representing ${stateLabel}’s ${distText}${sinceTxt}.`;
     }
 
@@ -192,26 +253,44 @@ function composeMemberAbout(profile, terms = []) {
 
 function ordinal(n) {
     if (Number.isNaN(n)) return `${n}`;
+
     const s = ["th", "st", "nd", "rd"];
     const v = n % 100;
+
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
-
-// ---------- Chamber lookup (kept if you still use it elsewhere)
-// stage.senate_member_id_ref
-//  ----------
 export async function getMemberChamber(bioguideId) {
-    const sql = `SELECT chamber FROM ${ACTIVE_DATA_SCHEMA}.members WHERE bioguide_id = $1 LIMIT 1`;
-    let r = await q("member:getChamber", sql, [bioguideId]);
+    const sql = `
+    SELECT chamber
+    FROM ${ACTIVE_DATA_SCHEMA}.members
+    WHERE bioguide_id = $1
+    LIMIT 1;
+  `;
+
+    let r = await timed(
+        "memberRoute:getMemberChamber:query",
+        () => q("member:getChamber", sql, [bioguideId]),
+        { bioguideId }
+    );
+
     if (r.rows.length) return r.rows[0].chamber;
 
-    const fallback = `SELECT 1 FROM ${ACTIVE_DATA_SCHEMA}.senate_member_id_ref WHERE bioguide_id = $1 LIMIT 1`;
-    r = await q("member:getChamberFallback", fallback, [bioguideId]);
+    const fallback = `
+    SELECT 1
+    FROM ${ACTIVE_DATA_SCHEMA}.senate_member_id_ref
+    WHERE bioguide_id = $1
+    LIMIT 1;
+  `;
+
+    r = await timed(
+        "memberRoute:getMemberChamber:fallback",
+        () => q("member:getChamberFallback", fallback, [bioguideId]),
+        { bioguideId }
+    );
+
     return r.rows.length ? "Senate" : "House";
 }
-
-
 
 export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
     const sql = `
@@ -222,11 +301,15 @@ export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
     ORDER BY total_count DESC, subject_name ASC
     LIMIT $2;
   `;
-    const { rows } = await q("member:getSubjects:mv", sql, [bioguideId, limit]);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberSubjects:query",
+        () => q("member:getSubjects:mv", sql, [bioguideId, limit]),
+        { bioguideId, limit }
+    );
+
     return rows;
 }
-
-
 
 export async function getMemberMonthlyStats(bioguideId) {
     const sql = `
@@ -235,7 +318,13 @@ export async function getMemberMonthlyStats(bioguideId) {
     WHERE bioguide_id = $1
     ORDER BY month DESC;
   `;
-    const { rows } = await q("member:getMonthlyStats:mv", sql, [bioguideId]);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberMonthlyStats:query",
+        () => q("member:getMonthlyStats:mv", sql, [bioguideId]),
+        { bioguideId }
+    );
+
     return rows;
 }
 
@@ -246,13 +335,20 @@ export async function getMemberMonthlyActivity(bioguideId) {
     WHERE bioguide_id = $1
     ORDER BY month ASC;
   `;
-    const { rows } = await q("member:getMonthlyActivity:mv", sql, [bioguideId]);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberMonthlyActivity:query",
+        () => q("member:getMonthlyActivity:mv", sql, [bioguideId]),
+        { bioguideId }
+    );
+
     return rows;
 }
 
-
-
-export async function getMemberBills(bioguideId, { limit = 50, offset = 0, congress = 119 } = {}) {
+export async function getMemberBills(
+    bioguideId,
+    { limit = 50, offset = 0, congress = 119 } = {}
+) {
     const sql = `
     SELECT bill_id, type, number, title, latest_action_date, latest_action_text, url,
            my_role, cosponsor_count
@@ -261,11 +357,19 @@ export async function getMemberBills(bioguideId, { limit = 50, offset = 0, congr
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $3 OFFSET $4;
   `;
-    const { rows } = await q("member:getBills:mv", sql, [bioguideId, congress, limit, offset]);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberBills:query",
+        () => q("member:getBills:mv", sql, [bioguideId, congress, limit, offset]),
+        { bioguideId, congress, limit, offset }
+    );
+
     return rows;
 }
 
 export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = {}) {
+    const totalStart = performance.now();
+
     const sql = `
     SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
            policy_area, legislative_topic, legislative_topics, cosponsor_count
@@ -274,22 +378,62 @@ export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = 
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
   `;
-    const { rows } = await q("member:getSponsored:mv", sql, [bioguideId, Math.min(max, 1000)]);
-    const normalized = rows.map(r => ({
+
+    const queryLimit = Math.min(max, 1000);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberSponsoredLegislation:query",
+        () => q("member:getSponsored:mv", sql, [bioguideId, queryLimit]),
+        { bioguideId, max, queryLimit }
+    );
+
+    const normalizeStart = performance.now();
+    const normalized = rows.map((r) => ({
         ...r,
         subject: r.policy_area ?? r.legislative_topic ?? "Uncategorized",
     }));
-    return {
+
+    perfLog(`memberRoute:getMemberSponsoredLegislation:normalize: ${Math.round(performance.now() - normalizeStart)}ms`, {
+        bioguideId,
+        rowCount: rows.length,
+    });
+
+    const groupStart = performance.now();
+
+    const result = {
         groups: {
-            policy_area: groupBySubjectWithCounts(normalized.map(r => ({ ...r, subject: r.policy_area ?? "Uncategorized" })), "s"),
-            legislative: groupBySubjectWithCounts(normalized.map(r => ({ ...r, subject: r.legislative_topic ?? "Uncategorized" })), "s"),
+            policy_area: groupBySubjectWithCounts(
+                normalized.map((r) => ({ ...r, subject: r.policy_area ?? "Uncategorized" })),
+                "s"
+            ),
+            legislative: groupBySubjectWithCounts(
+                normalized.map((r) => ({ ...r, subject: r.legislative_topic ?? "Uncategorized" })),
+                "s"
+            ),
         },
         legacy: groupBySubjectWithCounts(normalized, "s"),
         items: normalized,
     };
+
+    perfLog(`memberRoute:getMemberSponsoredLegislation:group: ${Math.round(performance.now() - groupStart)}ms`, {
+        bioguideId,
+        itemCount: normalized.length,
+        policyGroups: result.groups.policy_area.length,
+        legislativeGroups: result.groups.legislative.length,
+        legacyGroups: result.legacy.length,
+    });
+
+    perfLog(`memberRoute:getMemberSponsoredLegislation:total: ${Math.round(performance.now() - totalStart)}ms`, {
+        bioguideId,
+        itemCount: normalized.length,
+    });
+
+    return result;
 }
 
 export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } = {}) {
+    const totalStart = performance.now();
+
     const sql = `
     SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
            policy_area, legislative_topic, legislative_topics, cosponsor_count
@@ -298,22 +442,58 @@ export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } 
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
   `;
-    const { rows } = await q("member:getCosponsored:mv", sql, [bioguideId, Math.min(max, 1000)]);
-    const normalized = rows.map(r => ({
+
+    const queryLimit = Math.min(max, 1000);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberCosponsoredLegislation:query",
+        () => q("member:getCosponsored:mv", sql, [bioguideId, queryLimit]),
+        { bioguideId, max, queryLimit }
+    );
+
+    const normalizeStart = performance.now();
+    const normalized = rows.map((r) => ({
         ...r,
         subject: r.policy_area ?? r.legislative_topic ?? "Uncategorized",
     }));
-    return {
+
+    perfLog(`memberRoute:getMemberCosponsoredLegislation:normalize: ${Math.round(performance.now() - normalizeStart)}ms`, {
+        bioguideId,
+        rowCount: rows.length,
+    });
+
+    const groupStart = performance.now();
+
+    const result = {
         groups: {
-            policy_area: groupBySubjectWithCounts(normalized.map(r => ({ ...r, subject: r.policy_area ?? "Uncategorized" })), "c"),
-            legislative: groupBySubjectWithCounts(normalized.map(r => ({ ...r, subject: r.legislative_topic ?? "Uncategorized" })), "c"),
+            policy_area: groupBySubjectWithCounts(
+                normalized.map((r) => ({ ...r, subject: r.policy_area ?? "Uncategorized" })),
+                "c"
+            ),
+            legislative: groupBySubjectWithCounts(
+                normalized.map((r) => ({ ...r, subject: r.legislative_topic ?? "Uncategorized" })),
+                "c"
+            ),
         },
         legacy: groupBySubjectWithCounts(normalized, "c"),
         items: normalized,
     };
+
+    perfLog(`memberRoute:getMemberCosponsoredLegislation:group: ${Math.round(performance.now() - groupStart)}ms`, {
+        bioguideId,
+        itemCount: normalized.length,
+        policyGroups: result.groups.policy_area.length,
+        legislativeGroups: result.groups.legislative.length,
+        legacyGroups: result.legacy.length,
+    });
+
+    perfLog(`memberRoute:getMemberCosponsoredLegislation:total: ${Math.round(performance.now() - totalStart)}ms`, {
+        bioguideId,
+        itemCount: normalized.length,
+    });
+
+    return result;
 }
-
-
 
 export async function getHouseMemberVoteAlignment(bioguideId) {
     const sql = `
@@ -321,12 +501,15 @@ export async function getHouseMemberVoteAlignment(bioguideId) {
     FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_alignment_house_v1
     WHERE bioguide_id = $1;
   `;
-    const { rows } = await q("member:getHouseVoteAlignment:mv", sql, [bioguideId]);
+
+    const { rows } = await timed(
+        "memberRoute:getHouseMemberVoteAlignment:query",
+        () => q("member:getHouseVoteAlignment:mv", sql, [bioguideId]),
+        { bioguideId }
+    );
+
     return rows[0] ?? { alignment_pct: null, attendance_pct: null };
 }
-
-
-
 
 export async function getMemberVoteAgg(bioguideId) {
     const sql = `
@@ -334,11 +517,15 @@ export async function getMemberVoteAgg(bioguideId) {
     FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_vote_agg_v1
     WHERE bioguide_id = $1;
   `;
-    const { rows } = await q("member:getVoteAgg", sql, [bioguideId]);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberVoteAgg:query",
+        () => q("member:getVoteAgg", sql, [bioguideId]),
+        { bioguideId }
+    );
+
     return rows[0] ?? { total_count: 0, earliest: null, latest: null };
 }
-
-
 
 export async function getMemberVoteAlignment(bioguideId) {
     await getHouseMemberVoteAlignment(bioguideId);
@@ -360,34 +547,18 @@ export async function getMemberKpis(bioguideId) {
      AND vs.view_name   = 'member_kpis_v1'
     WHERE k.bioguide_id = $1;
   `;
-    const { rows } = await q("member:getKpis:mv", sql, [bioguideId]);
+
+    const { rows } = await timed(
+        "memberRoute:getMemberKpis:query",
+        () => q("member:getKpis:mv", sql, [bioguideId]),
+        { bioguideId }
+    );
+
     return rows[0] ?? null;
 }
 
-
-
-
-
-/* UPDATED VOTES */
 export async function getHouseMemberAlignmentPanelOverall(bioguideId) {
-
-    // 0) Log what schema you're actually querying
-    console.log("[getHouseMemberAlignmentPanelOverall] ACTIVE_VIEW_SCHEMA =", ACTIVE_VIEW_SCHEMA);
-
-    // 1) DB identity probe (same connection via q())
-    try {
-        const identSql = `
-      select
-        current_user,
-        session_user,
-        current_database() as db,
-        inet_server_addr() as server_ip
-    `;
-        const ident = await q("debug:identity", identSql, []);
-        console.log("[db identity]", ident.rows?.[0]);
-    } catch (e) {
-        console.log("[db identity] probe failed", e);
-    }
+    const totalStart = performance.now();
 
     const sql = `
     SELECT
@@ -409,10 +580,20 @@ export async function getHouseMemberAlignmentPanelOverall(bioguideId) {
      AND vs.view_name   = 'mv_house_alignment_benchmarks_v1'
     WHERE b.bioguide_id = $1;
   `;
-    const { rows } = await q("member:getAlignPanel:overall", sql, [bioguideId]);
+
+    const { rows } = await timed(
+        "memberRoute:getHouseMemberAlignmentPanelOverall:query",
+        () => q("member:getAlignPanel:overall", sql, [bioguideId]),
+        { bioguideId }
+    );
+
+    perfLog(`memberRoute:getHouseMemberAlignmentPanelOverall:total: ${Math.round(performance.now() - totalStart)}ms`, {
+        bioguideId,
+        rowCount: rows.length,
+    });
+
     return rows[0] ?? null;
 }
-
 
 export async function getHouseMemberAlignmentByPolicy(
     bioguideId,
@@ -425,7 +606,7 @@ export async function getHouseMemberAlignmentByPolicy(
                 ? `p.alignment_pct DESC NULLS LAST, p.considered_count DESC`
                 : sort === "biggest_delta"
                     ? `abs(p.alignment_pct - o.overall_alignment_pct) DESC, p.considered_count DESC`
-                    : `p.considered_count DESC`; // default "votes"
+                    : `p.considered_count DESC`;
 
     const sql = `
     WITH overall AS (
@@ -451,14 +632,14 @@ export async function getHouseMemberAlignmentByPolicy(
     LIMIT $3;
   `;
 
-    const { rows } = await q("member:getAlignPanel:policy", sql, [
-        bioguideId,
-        minVotes,
-        limit,
-    ]);
+    const { rows } = await timed(
+        "memberRoute:getHouseMemberAlignmentByPolicy:query",
+        () => q("member:getAlignPanel:policy", sql, [bioguideId, minVotes, limit]),
+        { bioguideId, minVotes, sort, limit }
+    );
+
     return rows;
 }
-
 
 export async function getHouseMemberAlignmentTopDeviations(
     bioguideId,
@@ -483,10 +664,12 @@ export async function getHouseMemberAlignmentTopDeviations(
     ORDER BY abs(p.alignment_pct - o.overall_alignment_pct) DESC, p.considered_count DESC
     LIMIT $3;
   `;
-    const { rows } = await q("member:getAlignPanel:deviations", sql, [
-        bioguideId,
-        minVotes,
-        limit,
-    ]);
+
+    const { rows } = await timed(
+        "memberRoute:getHouseMemberAlignmentTopDeviations:query",
+        () => q("member:getAlignPanel:deviations", sql, [bioguideId, minVotes, limit]),
+        { bioguideId, minVotes, limit }
+    );
+
     return rows;
 }

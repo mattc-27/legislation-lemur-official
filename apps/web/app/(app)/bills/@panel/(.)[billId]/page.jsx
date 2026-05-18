@@ -1,14 +1,11 @@
+// /bills/@pane/(.)[billId]/page.jsx
 import { notFound } from "next/navigation";
 
 import { getBillPanelDetail } from "@/lib/server/bills/indexV2";
 import BillPanelDetail from "@/app/components/features/bills/BillPanelDetail";
+import BillPanelOverlayClient from "@/app/components/features/bills/BillPanelOverlayClient";
 
-import "@/app/styles/active/bills/bill-details/ll3.bills.tokens.css";
-import "@/app/styles/active/bills/bill-details/ll3.bills.ui.css";
-import "@/app/styles/active/bills/bill-details/ll3.bills.details.css";
 import "@/app/styles/active/bills/bill-details/ll3.bill-panel.css";
-
-export const revalidate = 600;
 
 function parseBillSlug(value) {
     const slug = decodeURIComponent((value ?? "").toString().trim()).toLowerCase();
@@ -23,13 +20,9 @@ function parseBillSlug(value) {
         const [, type, numberStr] = match;
         const number = Number(numberStr);
 
-        return {
-            slug,
-            type,
-            number,
-            congress,
-            billId: `${type}${number}-${congress}`,
-        };
+        if (!Number.isFinite(number)) return null;
+
+        return { slug, type, number, congress, billId: `${type}${number}-${congress}` };
     }
 
     if (parts.length === 3) {
@@ -37,23 +30,15 @@ function parseBillSlug(value) {
         const number = Number(numberStr);
         const congress = Number(congressStr);
 
-        if (!type || !Number.isFinite(number) || !Number.isFinite(congress)) {
-            return null;
-        }
+        if (!type || !Number.isFinite(number) || !Number.isFinite(congress)) return null;
 
-        return {
-            slug,
-            type,
-            number,
-            congress,
-            billId: `${type}${number}-${congress}`,
-        };
+        return { slug, type, number, congress, billId: `${type}${number}-${congress}` };
     }
 
     return null;
 }
 
-export default async function BillPage({ params }) {
+export default async function BillPanelRoute({ params }) {
     const resolvedParams = await params;
     const parsed = parseBillSlug(resolvedParams?.billId);
 
@@ -68,5 +53,9 @@ export default async function BillPage({ params }) {
 
     if (!bill) return notFound();
 
-    return <BillPanelDetail bill={bill} />;
+    return (
+        <BillPanelOverlayClient>
+            <BillPanelDetail bill={bill} mode="panel" />
+        </BillPanelOverlayClient>
+    );
 }

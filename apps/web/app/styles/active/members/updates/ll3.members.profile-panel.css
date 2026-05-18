@@ -1,0 +1,335 @@
+/* app/styles/active/members/refactored/ll3.members.profile-panel.css
+   ======================================================================
+   LL3 — Member Profile Master/Detail Panel
+   Adds the bills-style intercepted-route drawer behavior for member profiles.
+   ====================================================================== */
+
+.llmp3-profileView {
+    display: grid;
+    gap: 24px;
+}
+
+.llmp3-profileView--panel {
+    gap: 18px;
+}
+
+.llmp3-page--panel {
+    min-height: 100%;
+    background: transparent;
+}
+
+.llmp3-panelRoute {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    grid-template-columns: minmax(220px, 0.26fr) minmax(760px, 1fr);
+    background: rgba(2, 6, 23, 0.22);
+}
+
+.llmp3-panelRoute__scrim {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background: rgba(2, 6, 23, 0.46);
+    -webkit-backdrop-filter: blur(9px) saturate(1.05);
+    backdrop-filter: blur(9px) saturate(1.05);
+}
+
+.llmp3-panelRoute__panel {
+    min-width: 0;
+    height: 100dvh;
+    overflow: hidden;
+    border-left: 1px solid var(--llm3-border);
+    background:
+        radial-gradient(900px 520px at 18% 0%, color-mix(in srgb, var(--ll3-accent) 14%, transparent), transparent 60%),
+        radial-gradient(760px 500px at 92% 12%, color-mix(in srgb, #06b6d4 8%, transparent), transparent 64%),
+        var(--ll3-bg, #fff);
+    box-shadow: -28px 0 80px rgba(2, 6, 23, 0.24);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.llmp3-panelRoute__bar {
+    min-height: 58px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border-bottom: 1px solid var(--llm3-border-soft);
+    background: color-mix(in srgb, var(--llm3-surface-glass) 84%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.08);
+    backdrop-filter: blur(14px) saturate(1.08);
+}
+
+.llmp3-panelRoute__back,
+.llmp3-panelRoute__close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--llm3-ink);
+    cursor: pointer;
+    font: inherit;
+}
+
+.llmp3-panelRoute__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 4px;
+    font-size: 14px;
+    font-weight: 850;
+}
+
+.llmp3-panelRoute__back:hover {
+    color: var(--ll3-link);
+}
+
+.llmp3-panelRoute__close {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--llm3-border);
+    background: var(--llm3-surface-soft);
+    box-shadow: var(--llm3-btn-shadow);
+}
+
+.llmp3-panelRoute__close:hover {
+    border-color: var(--llm3-border-strong);
+    background: var(--llm3-surface-glass);
+}
+
+.llmp3-panelRoute__back:focus-visible,
+.llmp3-panelRoute__close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--llm3-focus);
+}
+
+.llmp3-panelRoute__body {
+    min-width: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 22px 36px;
+}
+
+/* Panel-specific profile density. Keep standalone profile roomier. */
+.llmp3-profileView--panel .llmp3-aboutCard {
+    margin-bottom: 14px;
+}
+
+.llmp3-profileView--panel .llmp3-aboutCard__name {
+    font-size: clamp(2rem, 3.1vw, 3rem);
+}
+
+.llmp3-profileView--panel .llmp3-aboutCard__blurb,
+.llmp3-profileView--panel .llmp3-aboutCard .llmp3-blurb {
+    max-width: 86ch;
+}
+
+.llmp3-profileView--panel .llmp3-panel {
+    box-shadow: var(--llm3-soft-shadow);
+}
+
+.llmp3-profileView--panel .llm3-tabsRow {
+    grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
+}
+
+@media (min-width: 1280px) {
+    .llmp3-panelRoute {
+        grid-template-columns: minmax(280px, 0.28fr) minmax(860px, 1fr);
+    }
+
+    .llmp3-panelRoute__body {
+        padding: 22px 28px 40px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .llmp3-panelRoute {
+        grid-template-columns: minmax(110px, 0.16fr) minmax(0, 1fr);
+    }
+
+    .llmp3-profileView--panel .llm3-tabsRow {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 820px) {
+    .llmp3-panelRoute {
+        grid-template-columns: 1fr;
+    }
+
+    .llmp3-panelRoute__scrim {
+        display: none;
+    }
+
+    .llmp3-panelRoute__panel {
+        height: 100dvh;
+        border-left: 0;
+        box-shadow: none;
+    }
+
+    .llmp3-panelRoute__bar {
+        min-height: 56px;
+        padding: 10px 14px;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    .llmp3-panelRoute__body {
+        padding: 16px 12px 30px;
+    }
+
+    .llmp3-profileView--panel {
+        gap: 14px;
+    }
+}
+
+@media (max-width: 560px) {
+    .llmp3-panelRoute__body {
+        padding: 14px 10px 26px;
+    }
+
+    .llmp3-profileView--panel .llmp3-aboutCard__name {
+        font-size: clamp(1.85rem, 8vw, 2.55rem);
+    }
+
+    .llmp3-profileView--panel .llmp3-panel,
+    .llmp3-profileView--panel .llmp3-card {
+        border-radius: 18px;
+    }
+}
+
+
+/* ==========================================================================
+   Member Profile Panel — dark mode readability fixes
+   ========================================================================== */
+
+/* Donut center number/text */
+[data-theme="dark"] .llmp3-page .viz-donut__center,
+[data-theme="dark"] .llmp3-page .viz-donut__centerText,
+[data-theme="dark"] .llmp3-page .viz-donut text,
+.dark .llmp3-page .viz-donut__center,
+.dark .llmp3-page .viz-donut__centerText,
+.dark .llmp3-page .viz-donut text {
+    fill: var(--llm3-ink, #f8fafc);
+    color: var(--llm3-ink, #f8fafc);
+}
+
+/* Recent votes frame was staying light */
+[data-theme="dark"] .llmp3-page .llm3-tableFrame,
+[data-theme="dark"] .llmp3-page .votes-list,
+.dark .llmp3-page .llm3-tableFrame,
+.dark .llmp3-page .votes-list {
+    background: color-mix(in srgb, var(--llm3-surface) 88%, #020617);
+    border-color: var(--llm3-border);
+}
+
+/* Vote rows */
+[data-theme="dark"] .llmp3-page .votes-list__item,
+.dark .llmp3-page .votes-list__item {
+    background: transparent;
+    border-bottom-color: var(--llm3-border-soft);
+}
+
+[data-theme="dark"] .llmp3-page .votes-list__date,
+[data-theme="dark"] .llmp3-page .votes-table__billLink,
+[data-theme="dark"] .llmp3-page .votes-table__billText,
+.dark .llmp3-page .votes-list__date,
+.dark .llmp3-page .votes-table__billLink,
+.dark .llmp3-page .votes-table__billText {
+    color: var(--llm3-ink, #f8fafc);
+}
+
+[data-theme="dark"] .llmp3-page .votes-list__meta,
+.dark .llmp3-page .votes-list__meta {
+    color: var(--llm3-muted, #a8b3c7);
+}
+
+/* Show more votes button */
+[data-theme="dark"] .llmp3-page .llm3-moreBtn,
+.dark .llmp3-page .llm3-moreBtn {
+    background: var(--llm3-surface-soft);
+    color: var(--llm3-ink);
+    border-color: var(--llm3-border);
+    box-shadow: var(--llm3-btn-shadow);
+}
+
+[data-theme="dark"] .llmp3-page .llm3-moreBtn:hover,
+.dark .llmp3-page .llm3-moreBtn:hover {
+    background: var(--llm3-surface-glass);
+    border-color: var(--llm3-border-strong);
+}
+
+.llmp3-panel--loading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.llmp3-skeletonStack {
+    flex: 1;
+    display: grid;
+    gap: 0.55rem;
+}
+
+.llmp3-skeleton {
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 10%, transparent);
+    animation: llmp3SkeletonPulse 1.2s ease-in-out infinite;
+}
+
+.llmp3-skeleton--avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+}
+
+.llmp3-skeleton--title {
+    width: 42%;
+    height: 1.4rem;
+}
+
+.llmp3-skeleton--line {
+    width: 72%;
+    height: 0.8rem;
+}
+
+.llmp3-skeleton--line.short {
+    width: 46%;
+}
+
+.llmp3-panel--loadingBlock {
+    padding: 1rem;
+    display: grid;
+    gap: 0.85rem;
+}
+
+.llmp3-skeleton--cardTitle {
+    width: 28%;
+    height: 1rem;
+}
+
+.llmp3-skeleton--card {
+    width: 100%;
+    height: 140px;
+    border-radius: 18px;
+}
+
+@keyframes llmp3SkeletonPulse {
+    0%, 100% {
+        opacity: 0.45;
+    }
+
+    50% {
+        opacity: 0.85;
+    }
+}

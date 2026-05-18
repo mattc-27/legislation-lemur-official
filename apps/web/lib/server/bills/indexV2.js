@@ -3,9 +3,19 @@ import "server-only";
 import { pool } from "@/lib/server/db/db";
 import { q } from "@/lib/server/db/instrumented-query";
 import { ACTIVE_VIEW_SCHEMA, ACTIVE_DATA_SCHEMA, REF_SCHEMA } from "@/lib/server/db/schemas";
+import { perfLog } from "@/lib/server/debug/perf";
 
 const BILL_SEARCH_INDEX = "bill_search_index_v2";
 const BILL_METRICS = "mv_bill_metrics_v2";
+const BILL_CARD_DETAIL = "v_bill_card_detail_v1";
+
+const ALLOWED_BILL_SORTS = new Set([
+  "latest_action",
+  "introduced",
+  "cosponsors",
+  "impact",
+  "trending",
+]);
 
 function normalizeText(v) {
   if (v == null) return null;
@@ -49,6 +59,29 @@ function normalizeLimit(v, fallback = 25) {
 
 function normalizeOffset(v) {
   return Math.max(0, normalizeNum(v) ?? 0);
+}
+
+async function timedQuery(label, sql, params = [], meta = {}) {
+  const start = performance.now();
+
+  try {
+    const res = await q(label, sql, params);
+
+    perfLog(`${label}: ${Math.round(performance.now() - start)}ms`, {
+      rowCount: res?.rows?.length ?? 0,
+      ...meta,
+    });
+
+    return res;
+  } catch (err) {
+    perfLog(`${label}:error:${Math.round(performance.now() - start)}ms`, {
+      message: err?.message,
+      code: err?.code,
+      ...meta,
+    });
+
+    throw err;
+  }
 }
 
 export async function getCurrentCongress() {
@@ -138,8 +171,7 @@ export async function getBillsDirectoryV2(
   const safeOffset = normalizeOffset(offset);
 
   const sortNorm = normalizeText(sort) || "latest_action";
-  const allowedSort = new Set(["latest_action", "introduced", "cosponsors", "impact", "trending"]);
-  const safeSort = allowedSort.has(sortNorm) ? sortNorm : "latest_action";
+  const safeSort = ALLOWED_BILL_SORTS.has(sortNorm) ? sortNorm : "latest_action";
 
   const params = [
     c,
@@ -236,8 +268,16 @@ export async function getBillsDirectoryV2(
     `;
 
   const [rowsRes, countRes] = await Promise.all([
-    q("bills:directory:v2:rows", rowsSql, [...params, safeLimit, safeOffset]),
-    q("bills:directory:v2:count", countSql, params),
+    timedQuery("bills:directory:v2:rows", rowsSql, [...params, safeLimit, safeOffset], {
+      congress: c,
+      sort: safeSort,
+      limit: safeLimit,
+      offset: safeOffset,
+    }),
+    timedQuery("bills:directory:v2:count", countSql, params, {
+      congress: c,
+      sort: safeSort,
+    }),
   ]);
 
   const total = Number(countRes.rows?.[0]?.total_count ?? 0);
@@ -254,29 +294,29 @@ export async function getBillsFilterOptionsV2(congress = null) {
   const c = await resolveCongress(congress);
 
   const [policyAreas, statuses, types, committees] = await Promise.all([
-    q("bills:filters:policyAreas", `
+    timedQuery("bills:filters:policyAreas", `
       SELECT policy_area_id, policy_area_name, policy_area_slug
       FROM ${REF_SCHEMA}.dim_policy_area
       WHERE is_active = true
       ORDER BY sort_order, policy_area_name;
     `),
 
-    q("bills:filters:statuses", `
+    timedQuery("bills:filters:statuses", `
       SELECT status_id, status_key, status_label
       FROM ${REF_SCHEMA}.dim_bill_status_canon
       WHERE is_active = true
       ORDER BY sort_order, status_label;
     `),
 
-    q("bills:filters:types", `
+    timedQuery("bills:filters:types", `
       SELECT bill_type, COUNT(*)::int AS bill_count
       FROM ${ACTIVE_VIEW_SCHEMA}.${BILL_SEARCH_INDEX}
       WHERE congress = $1
       GROUP BY 1
       ORDER BY bill_count DESC, bill_type;
-    `, [c]),
+    `, [c], { congress: c }),
 
-    q("bills:filters:committees", `
+    timedQuery("bills:filters:committees", `
       SELECT committee_system_code, committee_name, COUNT(DISTINCT bill_id)::int AS bill_count
       FROM ${ACTIVE_DATA_SCHEMA}.bill_committees
       GROUP BY 1,2
@@ -412,21 +452,21 @@ export async function getBillsFacetCountsV2({
   `;
 
   const [policyRes, statusRes, committeeRes] = await Promise.all([
-    q("bills:facets:policy", policySql, [
+    timedQuery("bills:facets:policy", policySql, [
       ...commonParams,
       statusIdNum,
       typeArr,
       committeeArr,
       hasSummaryBool,
     ]),
-    q("bills:facets:status", statusSql, [
+    timedQuery("bills:facets:status", statusSql, [
       ...commonParams,
       policyAreaIdNum,
       typeArr,
       committeeArr,
       hasSummaryBool,
     ]),
-    q("bills:facets:committee", committeeSql, [
+    timedQuery("bills:facets:committee", committeeSql, [
       ...commonParams,
       policyAreaIdNum,
       statusIdNum,
@@ -445,20 +485,26 @@ export async function getBillsFacetCountsV2({
 
 export async function autocompleteCommittees(prefix) {
   const p = normalizeText(prefix) || "";
+
   const sql = `
     SELECT committee_system_code, committee_name, COUNT(DISTINCT bill_id)::int AS bill_count
     FROM ${ACTIVE_DATA_SCHEMA}.bill_committees
     WHERE committee_name ILIKE ($1 || '%')
     GROUP BY 1,2
-    ORDER BY bill_count DESC, committee_name
+    ORDER BY bill_count DESC, committee_name;
     LIMIT 20;
   `;
-  const { rows } = await q("bills:auto:committees", sql, [p]);
+
+  const { rows } = await timedQuery("bills:auto:committees", sql, [p], {
+    prefix: p,
+  });
+
   return rows ?? [];
 }
 
 export async function autocompleteSubjects(prefix) {
   const p = normalizeText(prefix) || "";
+
   const sql = `
     SELECT subject_name AS subject, COUNT(DISTINCT bill_id)::int AS bill_count
     FROM ${ACTIVE_DATA_SCHEMA}.bill_subjects
@@ -467,7 +513,11 @@ export async function autocompleteSubjects(prefix) {
     ORDER BY bill_count DESC, subject_name
     LIMIT 20;
   `;
-  const { rows } = await q("bills:auto:subjects", sql, [p]);
+
+  const { rows } = await timedQuery("bills:auto:subjects", sql, [p], {
+    prefix: p,
+  });
+
   return rows ?? [];
 }
 
@@ -497,12 +547,19 @@ export async function autocompleteBillsQuery(prefix, { limit = 12 } = {}) {
         NULLIF(summary_text_plain, '') AS summary_text_plain,
         COALESCE(key_actions, '[]'::jsonb) AS key_actions
       FROM ${ACTIVE_VIEW_SCHEMA}.${BILL_SEARCH_INDEX}
-      WHERE lower(bill_type) = $1
+      WHERE bill_type = $1
         AND bill_number = $2
       ORDER BY congress DESC
       LIMIT $3;
     `;
-    const { rows } = await q("bills:auto:q:billcode", sql, [billType, billNumber, safeLimit]);
+
+    const { rows } = await timedQuery(
+      "bills:auto:q:billcode",
+      sql,
+      [billType, billNumber, safeLimit],
+      { billType, billNumber, limit: safeLimit }
+    );
+
     return rows ?? [];
   }
 
@@ -531,130 +588,75 @@ export async function autocompleteBillsQuery(prefix, { limit = 12 } = {}) {
     ORDER BY latest_action_date DESC NULLS LAST
     LIMIT $2;
   `;
-  const { rows } = await q("bills:auto:q:search", sql, [qraw, safeLimit]);
+
+  const { rows } = await timedQuery("bills:auto:q:search", sql, [qraw, safeLimit], {
+    query: qraw,
+    limit: safeLimit,
+  });
+
   return rows ?? [];
 }
 
+export async function getBillPanelDetail({
+  billId = null,
+  type = null,
+  number = null,
+  congress = null,
+} = {}) {
+  const totalStart = performance.now();
 
-// NEW getBillPanelDetail() 
-
-export async function getBillPanelDetail({ billId = null, type = null, number = null, congress = null } = {}) {
   const billIdNorm = normalizeText(billId)?.toLowerCase();
   const typeNorm = normalizeText(type)?.toLowerCase();
   const numberNorm = normalizeText(number);
   const congressNorm = normalizeNum(congress);
 
+  if (billIdNorm) {
+    const sql = `
+      SELECT *
+      FROM ${ACTIVE_VIEW_SCHEMA}.${BILL_CARD_DETAIL} b
+      WHERE b.bill_id = $1::text
+      LIMIT 1;
+    `;
+
+    const { rows } = await timedQuery(
+      "bill:panelDetail:v1:byBillId",
+      sql,
+      [billIdNorm],
+      { billId: billIdNorm }
+    );
+
+    perfLog(`billRoute:getBillPanelDetail:total: ${Math.round(performance.now() - totalStart)}ms`, {
+      billId: billIdNorm,
+      found: Boolean(rows?.[0]),
+    });
+
+    return rows?.[0] ?? null;
+  }
+
   const sql = `
-    WITH bill AS (
-      SELECT b.*
-      FROM ${ACTIVE_VIEW_SCHEMA}.${BILL_SEARCH_INDEX} b
-      WHERE (
-        lower(b.bill_id) = $1::text
-      )
-      OR (
-      $1::text IS NULL
-      AND $2::text IS NOT NULL
-      AND $3::text IS NOT NULL
-      AND $4::int IS NOT NULL
-      AND lower(b.bill_type::text) = $2::text
-      AND b.bill_number::text = $3::text
-      AND b.congress::int = $4::int
-)
-      LIMIT 1
-    ),
-    text_versions AS (
-      SELECT
-        t.bill_id,
-        jsonb_agg(
-          jsonb_build_object(
-            'format_type', t.format_type,
-            'version_date', t.version_date,
-            'format_url', t.format_url
-          )
-          ORDER BY t.version_date DESC NULLS LAST, t.format_type
-        ) AS rows,
-        (
-          array_agg(t.format_url ORDER BY
-            CASE WHEN lower(t.format_type) = 'pdf' THEN 0 ELSE 1 END,
-            t.version_date DESC NULLS LAST
-          )
-        )[1] AS primary_text_url
-      FROM ${ACTIVE_DATA_SCHEMA}.bill_text_versions t
-      JOIN bill b USING (bill_id)
-      GROUP BY t.bill_id
-    ),
-    amendments AS (
-      SELECT
-        a.bill_id,
-        COUNT(*)::int AS amendment_count
-      FROM ${ACTIVE_DATA_SCHEMA}.bill_amendments a
-      JOIN bill b USING (bill_id)
-      GROUP BY a.bill_id
-    )
-    SELECT
-      b.bill_id,
-      b.congress,
-      b.bill_type,
-      b.bill_number,
-      b.display_title,
-      b.title,
-      b.origin_chamber,
-      b.sponsor_bioguide_id,
-      b.introduced_date,
-      b.latest_action_date,
-      b.latest_action_text,
-      b.policy_area_name,
-      b.policy_area_id,
-      b.status_id,
-      b.status_key,
-      b.cosponsors_total AS cosponsor_count,
-      b.subjects,
-      b.url,
-      NULL::text AS sponsor_name,
-      NULLIF(s.summary_short, '') AS summary_short,
-      NULLIF(s.summary_text_plain, '') AS summary_text_plain,
-      COALESCE(b.status_key, b.status_code) AS status_label,
-      COALESCE(s.key_actions, b.key_actions, '[]'::jsonb) AS key_actions,
-      COALESCE(s.has_summary, b.has_ai_summary, false) AS has_summary,
-      s.summary_generation_type,
-      s.summary_origin,
-      s.summary_updated_at,
-
-      m.impact_score,
-      m.impact_explain,
-      m.trending_score,
-      m.trending_explain,
-
-      COALESCE(tv.rows, '[]'::jsonb) AS text_versions,
-      tv.primary_text_url,
-
-      COALESCE(am.amendment_count, 0) AS amendment_count,
-
-      CASE
-        WHEN b.congress IS NOT NULL AND b.bill_type IS NOT NULL AND b.bill_number IS NOT NULL
-        THEN 'https://www.congress.gov/bill/' || b.congress || 'th-congress/' || b.bill_type || '/' || b.bill_number
-        ELSE b.url
-      END AS congress_url,
-
-      CASE
-        WHEN b.congress IS NOT NULL AND b.bill_type IS NOT NULL AND b.bill_number IS NOT NULL
-        THEN 'https://www.congress.gov/bill/' || b.congress || 'th-congress/' || b.bill_type || '/' || b.bill_number || '/amendments'
-        ELSE NULL
-      END AS amendments_url
-
-    FROM bill b
-    LEFT JOIN ${ACTIVE_VIEW_SCHEMA}.v_bill_summary_current_v2 s
-      USING (bill_id)
-    LEFT JOIN ${ACTIVE_VIEW_SCHEMA}.${BILL_METRICS} m
-      USING (bill_id)
-    LEFT JOIN text_versions tv
-      USING (bill_id)
-    LEFT JOIN amendments am
-      USING (bill_id);
+    SELECT *
+    FROM ${ACTIVE_VIEW_SCHEMA}.${BILL_CARD_DETAIL} b
+    WHERE b.bill_type::text = $1::text
+      AND b.bill_number::text = $2::text
+      AND b.congress::int = $3::int
+    LIMIT 1;
   `;
 
-  const params = [billIdNorm, typeNorm, numberNorm, congressNorm];
-  const { rows } = await q("bill:panelDetail:v1", sql, params);
+  const { rows } = await timedQuery(
+    "bill:panelDetail:v1:byParts",
+    sql,
+    [typeNorm, numberNorm, congressNorm],
+    {
+      type: typeNorm,
+      number: numberNorm,
+      congress: congressNorm,
+    }
+  );
+
+  perfLog(`billRoute:getBillPanelDetail:total: ${Math.round(performance.now() - totalStart)}ms`, {
+    billId: billIdNorm,
+    found: Boolean(rows?.[0]),
+  });
 
   return rows?.[0] ?? null;
 }

@@ -16,13 +16,18 @@ export function parseBillsFiltersV2(searchParams) {
     return Number.isFinite(n) ? n : d;
   };
 
+  const clampLimit = (v, d = 25) => {
+    const n = toNum(v, d);
+    return Math.min(Math.max(n, 1), 100);
+  };
+
   const toArray = (v) => {
     if (v == null) return null;
-    if (Array.isArray(v)) return v.filter(Boolean);
+    if (Array.isArray(v)) return v.map(String).map((s) => s.trim()).filter(Boolean);
     if (typeof v === "string" && v.includes(",")) {
       return v.split(",").map((s) => s.trim()).filter(Boolean);
     }
-    return [String(v)].filter(Boolean);
+    return [String(v).trim()].filter(Boolean);
   };
 
   const toBool = (v) => {
@@ -42,8 +47,8 @@ export function parseBillsFiltersV2(searchParams) {
       to: nz(sp.to),
       minCos: toNum(sp.minCos, 0),
       sort,
-      limit: 25,
-      offset: toNum(sp.offset, 0),
+      limit: clampLimit(sp.limit, 25),
+      offset: Math.max(0, toNum(sp.offset, 0)),
 
       policyAreaId: toNumOrNull(sp.policyAreaId),
       statusId: toNumOrNull(sp.statusId),

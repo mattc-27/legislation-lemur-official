@@ -1393,3 +1393,104 @@
         justify-content: center;
     }
 }
+
+
+
+/* ==========================================================================
+   Members Directory — density + breakpoint cleanup
+   ========================================================================== */
+
+/* Keep desktop/tablet filter panel from creating the giant empty middle state */
+.ll3-directoryFilters {
+    min-height: 0;
+}
+
+.ll3-directoryFilters__header {
+    align-items: center;
+}
+
+.ll3-directoryFilters__intro {
+    gap: 2px;
+}
+
+.ll3-directoryFilters__intro .ll3-h2,
+.ll3-directoryFilters__intro h2 {
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.ll3-directoryFilters__intro .ll3-muted,
+.ll3-directoryFilters__intro p {
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+/* Slightly reduce input/select height like bills */
+.ll3-members .ll3-input,
+.ll3-members select.ll3-input {
+    min-height: 42px;
+    height: 42px;
+    border-radius: 13px;
+    font-size: 14px;
+    padding-left: 13px;
+    padding-right: 38px;
+}
+
+.ll3-members .ll3-btn {
+    min-height: 42px;
+    height: 42px;
+    border-radius: 13px;
+    font-size: 13.5px;
+}
+
+/* Prevent the awkward “large centered Members text” transitional layout */
+@media (min-width: 721px) {
+
+    .ll3-directoryFilters[data-mobile-compact="true"],
+    .ll3-directoryFilters.is-mobileCommand,
+    .ll3-directoryFilters.ll3-directoryFilters--mobileCommand {
+        min-height: 0;
+    }
+
+    .ll3-directoryFilters__mobileCommand,
+    .ll3-mobileRefineCommand {
+        min-height: 0;
+        padding: 0;
+        display: none;
+    }
+}
+
+/* Earlier switch to compact mobile command */
+@media (max-width: 860px) {
+    .ll3-directoryFilters__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-directoryFilters__search,
+    .ll3-directoryFilters__actions {
+        grid-column: auto;
+    }
+}
+
+/* Mobile command card should stay compact */
+@media (max-width: 720px) {
+    .ll3-directoryFilters {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .ll3-directoryFilters__header {
+        margin-bottom: 0;
+        padding: 0;
+    }
+
+    .ll3-directoryFilters__intro .ll3-h2,
+    .ll3-directoryFilters__intro h2 {
+        font-size: 16px;
+    }
+
+    .ll3-directoryFilters__intro .ll3-muted,
+    .ll3-directoryFilters__intro p {
+        font-size: 12.5px;
+    }
+}

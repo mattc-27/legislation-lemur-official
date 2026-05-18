@@ -209,3 +209,103 @@
         display: none;
     }
 }
+
+
+/* ==========================================================================
+   Bills targeted cleanup — mobile refine polish
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    .ll3-refineBar__inner {
+        background: color-mix(in srgb, var(--ll3-surface-strong) 92%, transparent);
+        border-color: color-mix(in srgb, var(--ll3-text) 12%, transparent);
+    }
+
+    .ll3-refineSheet__panel {
+        background: var(--ll3-surface-strong);
+        color: var(--ll3-text);
+    }
+
+    html[data-theme="dark"] .ll3-refineSheet__panel,
+    body[data-theme="dark"] .ll3-refineSheet__panel,
+    .dark .ll3-refineSheet__panel {
+        background: linear-gradient(180deg, var(--ll3-surface-strong), var(--ll3-surface));
+    }
+}
+
+
+/* ==========================================================================
+   Refine sheet cleanup
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    .ll3-refineOverlay {
+        background: color-mix(in srgb, #020817 56%, transparent);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+
+    .ll3-refineSheet__panel {
+        height: 82vh;
+        max-height: 82vh;
+        padding: 14px 14px 120px;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+    }
+
+    .ll3-refineSheet__head {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        align-items: center;
+        padding: 4px 0 12px;
+        margin-bottom: 12px;
+        background: var(--ll3-surface-strong);
+        border-bottom: 1px solid color-mix(in srgb, var(--ll3-text) 8%, transparent);
+    }
+
+    .ll3-refineSheet__title {
+        font-size: 1.08rem;
+        line-height: 1.15;
+    }
+
+    .ll3-refineSheet__sub {
+        margin-top: 4px;
+        font-size: 0.86rem;
+        font-weight: 750;
+    }
+
+    .ll3-refineSheet__close {
+        height: 38px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--ll3-surface) 88%, transparent);
+        border: 1px solid color-mix(in srgb, var(--ll3-text) 12%, transparent);
+        color: var(--ll3-ink);
+        font-size: 13px;
+        font-weight: 850;
+        box-shadow: none;
+    }
+
+    .ll3-refineSheet__close:hover {
+        background: color-mix(in srgb, var(--ll3-accent) 7%, var(--ll3-surface));
+        border-color: color-mix(in srgb, var(--ll3-accent) 24%, var(--ll3-border));
+    }
+
+    .ll3-refineSheet__panel .ll3-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 6;
+        margin-inline: -14px;
+        padding: 12px 14px 14px;
+        background: color-mix(in srgb, var(--ll3-surface-strong) 96%, transparent);
+        border-top: 1px solid color-mix(in srgb, var(--ll3-text) 10%, transparent);
+        box-shadow: 0 -12px 24px rgba(2, 8, 23, 0.08);
+    }
+
+    html[data-theme="dark"] .ll3-refineSheet__head,
+    body[data-theme="dark"] .ll3-refineSheet__head,
+    .dark .ll3-refineSheet__head {
+        background: var(--ll3-surface-strong);
+    }
+}

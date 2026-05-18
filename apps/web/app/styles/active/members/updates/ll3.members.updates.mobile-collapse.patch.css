@@ -1,0 +1,116 @@
+/* ==========================================================================
+   LL3 Member Updates — responsive compact/mobile disclosure pass
+   Append after existing ll3.members.updates.css.
+   ========================================================================== */
+
+.ll3-memberUpdates__details {
+    border: 0;
+}
+
+.ll3-memberUpdates__summary {
+    list-style: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: default;
+}
+
+.ll3-memberUpdates__summary::-webkit-details-marker {
+    display: none;
+}
+
+.ll3-memberUpdates__summaryPill {
+    display: none;
+}
+
+.ll3-memberUpdates__head {
+    display: none;
+}
+
+.ll3-memberUpdateCard {
+    min-width: 0;
+}
+
+.ll3-memberUpdateCard__body {
+    min-width: 0;
+    display: grid;
+    gap: 10px;
+}
+
+@media (max-width: 720px) {
+    .ll3-memberUpdates {
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .ll3-memberUpdates__details {
+        padding: 14px;
+        border: 1px solid var(--llm3-border);
+        border-radius: 22px;
+        background: linear-gradient(180deg, var(--llm3-surface-glass), var(--llm3-surface));
+        box-shadow: var(--llm3-shadow);
+    }
+
+    .ll3-memberUpdates__summary {
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .ll3-memberUpdates__summaryPill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 32px;
+        padding: 0 10px;
+        border-radius: 999px;
+        border: 1px solid var(--llm3-border);
+        background: var(--llm3-surface-soft);
+        color: var(--llm3-ink);
+        font-size: 12px;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    .ll3-memberUpdates__summary::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        flex: 0 0 auto;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        color: var(--llm3-muted);
+        transform: rotate(45deg);
+        transition: transform 160ms ease;
+    }
+
+    .ll3-memberUpdates__details[open] .ll3-memberUpdates__summary::after {
+        transform: rotate(225deg);
+    }
+
+    .ll3-memberUpdates__title {
+        font-size: 17px;
+        letter-spacing: -0.02em;
+    }
+
+    .ll3-memberUpdates__sub {
+        font-size: 12.5px;
+        line-height: 1.35;
+    }
+
+    .ll3-memberUpdates__list {
+        display: none;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .ll3-memberUpdates__details[open] .ll3-memberUpdates__list {
+        display: grid;
+    }
+
+    .ll3-memberUpdateCard {
+        padding: 14px;
+        border-radius: 18px;
+    }
+}

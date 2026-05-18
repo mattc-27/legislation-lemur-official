@@ -68,26 +68,25 @@ export const HOME_RECENTLY_ADDED_ITEMS = [
         desc: "Ongoing layout, spacing, and scanning updates across member, bill, and supporting views.",
     },
 ];
-
 export const HOME_ROADMAP_ITEMS = [
     {
         quarter: "Q2 2026",
-        title: "Email updates",
-        desc: "Weekly summaries by saved locations and tracked members, with activity highlights and what-changed comparisons.",
+        title: "Expanded bill summaries",
+        desc: "Ongoing improvements to TL;DR summaries, topic extraction, and clarity signals.",
     },
     {
         quarter: "Q3 2026",
-        title: "Insights & Explore dashboards",
-        desc: "Congress-wide views, filters, and change-over-time comparisons across bills, votes, and committees.",
+        title: "Email updates",
+        desc: "Weekly digests by saved location and tracked members, with activity highlights and what changed comparisons.",
     },
     {
         quarter: "Q4 2026",
-        title: "Improved bill understanding",
-        desc: "Better summaries, topic extraction, and sourced confidence signals for complex legislative text.",
+        title: "Insights & Explore dashboards",
+        desc: "Congress-wide views with filters and change-over-time comparisons across bills, votes, and committees.",
     },
     {
         quarter: "Q1 2027",
-        title: "Election tools",
-        desc: "Neutral voter guides and proposition breakdowns where public data is available.",
+        title: "Colorado election tools",
+        desc: "Neutral voter guides and ballot measure breakdowns based on available public data.",
     },
 ];
