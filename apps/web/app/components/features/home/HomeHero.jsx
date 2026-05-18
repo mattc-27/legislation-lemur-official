@@ -18,16 +18,14 @@ export default function HomeHero() {
 
           <p className="hero__sub hero__sub--home">{HOME_HERO_SUB}</p>
 
-          <div className="hero__lower">
-            <div className="hero__cta hero__cta--left">
-              <Link className="btn btn--primary" href={HOME_HERO_PRIMARY_CTA.href}>
-                {HOME_HERO_PRIMARY_CTA.label}
-              </Link>
+          <div className="hero__cta hero__cta--home">
+            <Link className="btn btn--primary" href={HOME_HERO_PRIMARY_CTA.href}>
+              {HOME_HERO_PRIMARY_CTA.label}
+            </Link>
 
-              <Link className="btn btn--ghost" href={HOME_HERO_SECONDARY_CTA.href}>
-                {HOME_HERO_SECONDARY_CTA.label}
-              </Link>
-            </div>
+            <Link className="btn btn--ghost" href={HOME_HERO_SECONDARY_CTA.href}>
+              {HOME_HERO_SECONDARY_CTA.label}
+            </Link>
           </div>
         </div>
 

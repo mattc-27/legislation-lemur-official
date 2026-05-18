@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 import { getViewsFreshness, formatAsOfMMDDYYYY } from "@/lib/server/routes/viewStatus";
-import { parseBillsFiltersV2 } from "@/lib/domains/bills/queryV3";
+import { parseBillsFiltersV2 } from "@/lib/domains/bills/queryV4";
 import {
     getBillsDirectoryV2,
     getBillsFilterOptionsV2,
     getBillsFacetCountsV2,
-} from "@/lib/server/bills/index";
+} from "@/lib/server/bills/indexV2";
 
-import BillCard from "@/app/components/features/bills/bill-archive/BillCardNew";
+import BillCard from "@/app/components/features/bills/BillPanelCard";
 import BillsTable from "@/app/components/features/bills/bill-archive/BillsTable";
 import RefineResultsBarClient from "@/app/components/features/bills/RefineResultsBarClient";
 import ModifyRefineButtonClient from "@/app/components/features/bills/ModifyRefineButtonClient";
@@ -20,28 +20,33 @@ import "@/app/styles/active/bills/ll3.bills.tokens.css";
 import "@/app/styles/active/bills/ll3.bills.ui.css";
 import "@/app/styles/active/bills/bill-archive/ll3.bills.directory.layout.css";
 import "@/app/styles/active/bills/bill-archive/ll3.bills.directory.controls.css";
-import "@/app/styles/active/bills/bill-archive/ll3.bills.directory.cards.css";
+
+import "@/app/styles/active/bills/ll3.bills.directory.cards.css";
 import "@/app/styles/active/bills/bill-archive/ll3.bills.directory.refineSheet.css";
 
 export const revalidate = 600;
 
 function indexCountsById(rows, key = "id") {
     const m = new Map();
+
     for (const r of rows || []) {
         const k = r?.[key];
         if (k == null) continue;
         m.set(String(k), Number(r.bill_count ?? 0));
     }
+
     return m;
 }
 
 function indexCountsByCode(rows, key = "committee_system_code") {
     const m = new Map();
+
     for (const r of rows || []) {
         const k = r?.[key];
         if (!k) continue;
         m.set(String(k), Number(r.bill_count ?? 0));
     }
+
     return m;
 }
 
@@ -89,6 +94,7 @@ function buildFiltersSummary(activeFilters, lookups) {
 
     if (activeFilters.q) parts.push(`“${activeFilters.q}”`);
     if (activeFilters.chamber) parts.push(activeFilters.chamber);
+
     if (activeFilters.type?.length) {
         parts.push(activeFilters.type.map((t) => t.toUpperCase()).join(", "));
     }
@@ -111,6 +117,7 @@ function buildFiltersSummary(activeFilters, lookups) {
     if (activeFilters.committeeCodes?.length) {
         parts.push(`Committees: ${activeFilters.committeeCodes.length}`);
     }
+
     if (activeFilters.from || activeFilters.to) parts.push("Dates");
     if (activeFilters.hasSummary) parts.push("Has summary");
 
@@ -129,7 +136,7 @@ export default async function BillsPage({ searchParams }) {
         getBillsFilterOptionsV2(),
     ]);
 
-    const { rows, total, congress } = dirRes;
+    const { rows = [], total = 0, congress } = dirRes || {};
 
     const facets = await getBillsFacetCountsV2({
         congress,
@@ -152,7 +159,10 @@ export default async function BillsPage({ searchParams }) {
         "id"
     );
 
-    const committeeCounts = indexCountsByCode(facets?.committees || [], "committee_system_code");
+    const committeeCounts = indexCountsByCode(
+        facets?.committees || [],
+        "committee_system_code"
+    );
 
     const policyAreas = (filterOptions?.policyAreas || []).map((p) => ({
         ...p,
@@ -167,11 +177,12 @@ export default async function BillsPage({ searchParams }) {
     const committees = (filterOptions?.committees || []).map((c) => ({
         ...c,
         bill_count:
-            committeeCounts.get(String(c.committee_system_code)) ?? Number(c.bill_count ?? 0),
+            committeeCounts.get(String(c.committee_system_code)) ??
+            Number(c.bill_count ?? 0),
     }));
 
     const types = filterOptions?.types || [];
-    const asOfText = formatAsOfMMDDYYYY(freshness.asOf);
+    const asOfText = formatAsOfMMDDYYYY(freshness?.asOf);
 
     const activeCount =
         (filters.q ? 1 : 0) +
@@ -213,39 +224,25 @@ export default async function BillsPage({ searchParams }) {
             <header className="ll3-head">
                 <div className="ll3-head__top">
                     <h1 className="ll3-h1">
-                        Legislation Archive <span className="ll3-h1__sep" aria-hidden="true">|</span>{" "}
+                        Legislation Archive{" "}
+                        <span className="ll3-h1__sep" aria-hidden="true">
+                            |
+                        </span>{" "}
                         <span className="ll3-h1__meta">{congress}th Congress</span>
                     </h1>
 
                     {asOfText ? (
                         <div className="ll3-head__fresh">
-                            Data current as of <strong className="ll3-strong">{asOfText}</strong>
+                            Data current as of{" "}
+                            <strong className="ll3-strong">{asOfText}</strong>
                         </div>
                     ) : null}
                 </div>
 
-                <p className="ll3-sub">Browse bills by topic, chamber, summaries, and recent activity.</p>
+                <p className="ll3-sub">
+                    Browse bills by topic, chamber, summaries, and recent activity.
+                </p>
             </header>
-
-            {/* 
-            TEMP DISABLING
-            <section className="ll3-searchTop" aria-label="Search bills">
-                <div className="ll3-searchTop__inner">
-                    <BillsFilterForm
-                        formId="bills-search-top"
-                        variant="top"
-                        filters={filters}
-                        types={types}
-                        policyAreas={policyAreas}
-                        statuses={statuses}
-                        committees={committees}
-                        showSearch={true}
-                        showFilters={false}
-                        showActions={false}
-                    />
-                </div>
-            </section>
-            */}
 
             <section className="ll3-directory">
                 <aside id="ll3-filters-sidebar" className="ll3-sidebar" aria-label="Filters">
@@ -274,8 +271,8 @@ export default async function BillsPage({ searchParams }) {
                             <h2 className="ll3-h2">Bills</h2>
                             <div className="ll3-results__count">
                                 <span className="ll3-muted">
-                                    Showing <strong className="ll3-strong">{rows.length}</strong> of{" "}
-                                    <strong className="ll3-strong">{total}</strong>
+                                    Showing <strong className="ll3-strong">{rows.length}</strong>{" "}
+                                    of <strong className="ll3-strong">{total}</strong>
                                 </span>
                             </div>
                         </div>
@@ -285,7 +282,8 @@ export default async function BillsPage({ searchParams }) {
                                 <div className="ll3-viewToggle" aria-label="View mode">
                                     <Link
                                         href={cardsHref}
-                                        className={`ll3-viewToggle__btn ${view === "cards" ? "is-active" : ""}`}
+                                        className={`ll3-viewToggle__btn ${view === "cards" ? "is-active" : ""
+                                            }`}
                                         aria-current={view === "cards" ? "page" : undefined}
                                     >
                                         Detailed
@@ -293,7 +291,8 @@ export default async function BillsPage({ searchParams }) {
 
                                     <Link
                                         href={compactHref}
-                                        className={`ll3-viewToggle__btn ${view === "compact" ? "is-active" : ""}`}
+                                        className={`ll3-viewToggle__btn ${view === "compact" ? "is-active" : ""
+                                            }`}
                                         aria-current={view === "compact" ? "page" : undefined}
                                     >
                                         Compact
@@ -311,7 +310,9 @@ export default async function BillsPage({ searchParams }) {
                             {summaryParts.length ? (
                                 <div className="ll3-results__summary">
                                     Showing results for:{" "}
-                                    <strong className="ll3-strong">{summaryParts.join(" • ")}</strong>
+                                    <strong className="ll3-strong">
+                                        {summaryParts.join(" • ")}
+                                    </strong>
                                 </div>
                             ) : null}
                         </div>
@@ -346,7 +347,9 @@ export default async function BillsPage({ searchParams }) {
                         <div className="ll3-cards" role="list">
                             {rows.map((r) => {
                                 const billKey =
-                                    r.bill_id || `${r.bill_type}-${r.bill_number}-${r.congress}`.toLowerCase();
+                                    r.bill_id ||
+                                    `${r.bill_type}-${r.bill_number}-${r.congress}`.toLowerCase();
+
                                 return <BillCard key={billKey} bill={r} />;
                             })}
                         </div>

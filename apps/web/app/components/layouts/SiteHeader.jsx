@@ -67,7 +67,8 @@ export default function SiteHeader() {
 
     const ROUTES = {
         home: "/",
-        members: "/search",
+        // members: "/search",
+        members: "/member",
         bills: "/bills",
         committees: "/committees",
         wiki: "/references",

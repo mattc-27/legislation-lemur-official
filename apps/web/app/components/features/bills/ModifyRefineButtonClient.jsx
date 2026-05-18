@@ -10,7 +10,7 @@ export default function ModifyRefineButtonClient({
     desktopTargetId = "ll3-refine-desktop",
     mobileTargetId = "ll3-open-refine",
     children = "Modify",
-    className = "ll3-btn ll3-btn--ghost ll3-btn--sm",
+    className = "ll3-btn ll3-btn--ghost ll3-btn--sm ll3-modifyRefineBtn",
 }) {
     const onClick = useCallback(() => {
         if (typeof window === "undefined") return;

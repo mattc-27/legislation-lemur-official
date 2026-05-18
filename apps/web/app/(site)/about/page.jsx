@@ -2,12 +2,13 @@ import {
     Search,
     LayoutGrid,
     ScrollText,
+    BarChart3,
     Mail,
     Sparkles,
     ArrowRight,
 } from "lucide-react";
 
-import "@/app/styles/active/site/ll3.about.css";
+import "@/app/styles/active/site/ll3.about.updated.css";
 
 import {
     ABOUT_TITLE,
@@ -24,6 +25,8 @@ import {
     ABOUT_HOW_TITLE,
     ABOUT_HOW_ITEMS,
     ABOUT_STACK_NOTE,
+    ABOUT_SUMMARIES_TITLE,
+    ABOUT_SUMMARIES_PARAS,
     ABOUT_ROADMAP_TITLE,
     ABOUT_ROADMAP_PARAS,
     ABOUT_ROADMAP_ITEMS,
@@ -34,6 +37,8 @@ export const metadata = {
     title: "About • Legislation Lemur",
     description: "What Legislation Lemur is, why it exists, and where it’s headed.",
 };
+
+const featureIcons = [Search, LayoutGrid, ScrollText, BarChart3];
 
 export default function AboutPage() {
     return (
@@ -72,18 +77,16 @@ export default function AboutPage() {
                             <h2 className="section__title about__section-title">{ABOUT_FEATURES_TITLE}</h2>
 
                             <ul className="icon-list">
-                                <li className="icon-list__item">
-                                    <Search className="icon-list__icon" size={19} />
-                                    <span>{ABOUT_FEATURES_ITEMS[0]}</span>
-                                </li>
-                                <li className="icon-list__item">
-                                    <LayoutGrid className="icon-list__icon" size={19} />
-                                    <span>{ABOUT_FEATURES_ITEMS[1]}</span>
-                                </li>
-                                <li className="icon-list__item">
-                                    <ScrollText className="icon-list__icon" size={19} />
-                                    <span>{ABOUT_FEATURES_ITEMS[2]}</span>
-                                </li>
+                                {ABOUT_FEATURES_ITEMS.map((item, i) => {
+                                    const Icon = featureIcons[i] ?? Sparkles;
+
+                                    return (
+                                        <li key={item} className="icon-list__item">
+                                            <Icon className="icon-list__icon" size={19} />
+                                            <span>{item}</span>
+                                        </li>
+                                    );
+                                })}
                             </ul>
 
                             {ABOUT_FEATURES_NOTE ? (
@@ -143,11 +146,7 @@ export default function AboutPage() {
                             <h2 className="section__title about__section-title">{ABOUT_RECENT_TITLE}</h2>
                         </div>
 
-                        {ABOUT_RECENT_SUB ? (
-                            <p className="about__lede reg">
-                                {ABOUT_RECENT_SUB}
-                            </p>
-                        ) : null}
+                        {ABOUT_RECENT_SUB ? <p className="about__lede reg">{ABOUT_RECENT_SUB}</p> : null}
 
                         <ul className="checklist about__lede">
                             {ABOUT_RECENT_ITEMS.map((item) => (
@@ -179,6 +178,21 @@ export default function AboutPage() {
                         </div>
 
                         <p className="about__small">{ABOUT_LAST_UPDATED}</p>
+                    </div>
+                </section>
+
+                <section className="section">
+                    <div className="panel about__panel" data-anim="fade-up" style={{ "--i": 0 }}>
+                        <div className="section__eyebrow">Bill summaries</div>
+                        <h2 className="section__title about__section-title">{ABOUT_SUMMARIES_TITLE}</h2>
+
+                        <div className="about__copy">
+                            {ABOUT_SUMMARIES_PARAS.map((text, i) => (
+                                <p key={i} className="about__lede reg">
+                                    {text}
+                                </p>
+                            ))}
+                        </div>
                     </div>
                 </section>
 

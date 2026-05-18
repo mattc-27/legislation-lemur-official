@@ -1,7 +1,6 @@
 /* app/styles/active/site/ll3.home.css
    ==========================================================================
    LL3 Home
-   Full homepage stylesheet
    ========================================================================== */
 
 .ll3 .home {
@@ -16,7 +15,7 @@
     pointer-events: none;
     z-index: 0;
     filter: blur(60px);
-    opacity: 0.9;
+    opacity: 0.85;
 }
 
 .ll3 .home::before {
@@ -51,15 +50,15 @@
 .ll3 .hero--home {
     position: relative;
     overflow: clip;
-    padding: clamp(28px, 4vw, 42px) 0 clamp(14px, 2.5vw, 22px);
+    padding: clamp(30px, 4vw, 54px) 0 clamp(18px, 2.5vw, 28px);
 }
 
 .ll3 .hero__grid--home {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 0.96fr) minmax(420px, 1.04fr);
+    grid-template-columns: minmax(0, 0.95fr) minmax(380px, 1.05fr);
     gap: clamp(28px, 4vw, 72px);
-    min-height: clamp(560px, 72vh, 760px);
+    min-height: clamp(520px, 68vh, 720px);
     align-items: center;
 }
 
@@ -67,9 +66,9 @@
     position: relative;
     z-index: 2;
     display: grid;
-    gap: 18px;
+    gap: clamp(14px, 1.7vw, 20px);
     width: 100%;
-    max-width: 620px;
+    max-width: 640px;
 }
 
 .ll3 .hero__eyebrow,
@@ -92,9 +91,9 @@
 
 .ll3 .hero__title--home {
     margin: 0;
-    max-width: 9.8ch;
-    font-size: clamp(2.75rem, 4.5vw, 5rem);
-    line-height: 0.94;
+    max-width: 10ch;
+    font-size: clamp(2.75rem, 4.6vw, 5rem);
+    line-height: 0.96;
     letter-spacing: -0.06em;
     font-weight: 900;
     color: var(--ll3-text-strong);
@@ -103,23 +102,18 @@
 
 .ll3 .hero__sub--home {
     margin: 0;
-    max-width: 38rem;
-    font-size: clamp(1.02rem, 1.08vw, 1.14rem);
+    max-width: 40rem;
+    font-size: clamp(1.02rem, 1.08vw, 1.15rem);
     line-height: 1.72;
     color: var(--ll3-muted);
     text-wrap: pretty;
 }
 
-.ll3 .hero__lower {
-    display: grid;
-    gap: 18px;
-    margin-top: 4px;
-}
-
-.ll3 .hero__cta {
+.ll3 .hero__cta--home {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+    margin-top: 4px;
 }
 
 .ll3 .hero__art--home {
@@ -147,67 +141,11 @@
     position: relative;
     z-index: 1;
     display: block;
-    width: min(100%, 760px);
+    width: min(100%, 740px);
     height: auto;
     object-fit: contain;
     filter: drop-shadow(0 24px 42px rgba(2, 6, 23, 0.12));
     opacity: 0.98;
-}
-
-/* ==========================================================================
-   Hero banner
-   ========================================================================== */
-
-.ll3 .hero-banner {
-    margin-top: 4px;
-}
-
-.ll3 .hero-banner__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-}
-
-.ll3 .hero-banner__item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    min-height: 100%;
-    padding: 16px 18px;
-    border: 1px solid var(--ll3-border);
-    border-radius: 18px;
-    background: var(--ll3-panel);
-    box-shadow: var(--ll3-shadow-xs);
-}
-
-.ll3 .hero-banner__icon {
-    width: 12px;
-    height: 12px;
-    margin-top: 6px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, var(--ll3-accent), var(--ll3-accent-strong));
-    box-shadow: 0 0 0 6px var(--ll3-accent-soft);
-    flex: 0 0 auto;
-}
-
-.ll3 .hero-banner__copy {
-    min-width: 0;
-}
-
-.ll3 .hero-banner__title {
-    margin: 0;
-    font-size: 15px;
-    line-height: 1.25;
-    font-weight: 850;
-    letter-spacing: -0.01em;
-    color: var(--ll3-text-strong);
-}
-
-.ll3 .hero-banner__desc {
-    margin: 6px 0 0;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--ll3-muted);
 }
 
 /* ==========================================================================
@@ -217,7 +155,11 @@
 .ll3 .home .btn {
     border-radius: 999px;
     font-weight: 800;
-    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    transition:
+        transform 0.08s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 .ll3 .home .btn:active {
@@ -228,7 +170,7 @@
     background: linear-gradient(135deg, #4f46e5, #5b4ff2);
     color: #ffffff;
     border: 1px solid rgba(79, 70, 229, 0.18);
-    box-shadow: 0 14px 30px rgba(79, 70, 229, 0.20);
+    box-shadow: 0 14px 30px rgba(79, 70, 229, 0.2);
 }
 
 .ll3 .home .btn--primary:hover {
@@ -256,37 +198,43 @@
    ========================================================================== */
 
 .ll3 .home-sections {
-    padding: 10px 0 10px;
+    padding: clamp(8px, 1.5vw, 14px) 0 clamp(44px, 6vw, 78px);
 }
 
 .ll3 .home-sections__stack {
     display: grid;
-    gap: clamp(28px, 4vw, 42px);
+    gap: clamp(34px, 5vw, 58px);
+}
+
+.ll3 .section {
+    position: relative;
 }
 
 .ll3 .section__header {
     display: grid;
-    gap: 8px;
-    margin-bottom: 18px;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .ll3 .section__header--activity {
     grid-template-columns: 1fr auto;
     align-items: end;
-    gap: 16px;
+    gap: 18px;
 }
 
 .ll3 .section__title {
     margin: 0;
-    font-size: clamp(1.5rem, 1.5vw, 2rem);
+    font-size: clamp(1.55rem, 1.5vw, 2.05rem);
     line-height: 1.08;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
     font-weight: 900;
     color: var(--ll3-text-strong);
+    text-wrap: balance;
 }
 
 .ll3 .section__title--feature {
-    font-size: clamp(1.7rem, 2vw, 2.4rem);
+    max-width: 13ch;
+    font-size: clamp(1.8rem, 2vw, 2.45rem);
 }
 
 .ll3 .section__sub {
@@ -302,7 +250,7 @@
 }
 
 .ll3 .section__sub--activity {
-    margin-top: -2px;
+    margin-top: -4px;
     margin-bottom: 18px;
 }
 
@@ -319,13 +267,79 @@
     font-size: 13px;
     font-weight: 800;
     box-shadow: var(--ll3-shadow-xs);
-    transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    transition:
+        transform 120ms ease,
+        box-shadow 160ms ease,
+        border-color 160ms ease;
 }
 
 .ll3 .section__action-link:hover {
     transform: translateY(-1px);
     box-shadow: var(--ll3-shadow-sm);
     border-color: var(--ll3-border-strong);
+}
+
+.ll3 .panel {
+    background: var(--ll3-panel);
+    border: 1px solid var(--ll3-border);
+    border-radius: 26px;
+    box-shadow: var(--ll3-shadow-sm);
+    padding: clamp(22px, 2.6vw, 32px);
+}
+
+/* ==========================================================================
+   Hero banner
+   ========================================================================== */
+
+.ll3 .hero-banner {
+    margin-top: 0;
+}
+
+.ll3 .hero-banner__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.ll3 .hero-banner__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 104px;
+    padding: 18px 20px;
+    border: 1px solid var(--ll3-border);
+    border-radius: 20px;
+    background: var(--ll3-panel);
+    box-shadow: var(--ll3-shadow-xs);
+}
+
+.ll3 .hero-banner__icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--ll3-accent), var(--ll3-accent-strong));
+    box-shadow: 0 0 0 6px var(--ll3-accent-soft);
+    flex: 0 0 auto;
+}
+
+.ll3 .hero-banner__copy {
+    min-width: 0;
+}
+
+.ll3 .hero-banner__title {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.25;
+    font-weight: 850;
+    letter-spacing: -0.01em;
+    color: var(--ll3-text-strong);
+}
+
+.ll3 .hero-banner__desc {
+    margin: 6px 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ll3-muted);
 }
 
 /* ==========================================================================
@@ -344,13 +358,16 @@
     gap: 10px;
     min-height: 100%;
     padding: 18px;
-    border-radius: 20px;
+    border-radius: 22px;
     border: 1px solid var(--ll3-border);
     background: linear-gradient(180deg, var(--ll3-panel-strong), var(--ll3-panel));
     box-shadow: var(--ll3-shadow-sm);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
-    transition: transform 140ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    transition:
+        transform 140ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease;
 }
 
 .ll3 .activity-card:hover {
@@ -365,7 +382,7 @@
     justify-content: center;
     width: 38px;
     height: 38px;
-    border-radius: 12px;
+    border-radius: 13px;
     background: var(--ll3-accent-soft);
     color: var(--ll3-link);
     border: 1px solid color-mix(in srgb, var(--ll3-accent) 18%, transparent);
@@ -390,8 +407,8 @@
 
 .ll3 .activity-card__summary {
     margin: 0;
-    font-size: 0.96rem;
-    line-height: 1.66;
+    font-size: 0.95rem;
+    line-height: 1.65;
     color: var(--ll3-muted);
 }
 
@@ -425,22 +442,20 @@
 
 .ll3 .home-feature-band__grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: 18px;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(18px, 2.3vw, 28px);
     align-items: stretch;
 }
 
-.ll3 .panel {
-    background: var(--ll3-panel);
-    border: 1px solid var(--ll3-border);
-    border-radius: var(--ll3-r-lg);
-    box-shadow: var(--ll3-shadow-sm);
-    padding: clamp(20px, 2.4vw, 28px);
-}
-
 .ll3 .panel--feature-lead {
+    display: grid;
+    align-content: center;
+    gap: 18px;
+    min-height: 100%;
     background:
-        radial-gradient(circle at top left, color-mix(in srgb, var(--ll3-accent) 12%, transparent), transparent 28%),
+        radial-gradient(circle at top left,
+            color-mix(in srgb, var(--ll3-accent) 12%, transparent),
+            transparent 30%),
         linear-gradient(180deg, var(--ll3-panel-strong), var(--ll3-panel));
 }
 
@@ -451,14 +466,18 @@
 }
 
 .ll3 .feature-tile {
-    display: block;
-    min-height: 100%;
-    padding: 18px;
-    border-radius: 18px;
+    display: flex;
+    min-height: 190px;
+    padding: 20px;
+    border-radius: 22px;
     border: 1px solid var(--ll3-border);
     background: var(--ll3-panel);
     box-shadow: var(--ll3-shadow-xs);
-    transition: transform 140ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+    transition:
+        transform 140ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
 }
 
 .ll3 .feature-tile:hover {
@@ -469,21 +488,26 @@
 
 .ll3 .feature-tile--primary {
     background:
-        radial-gradient(circle at top left, color-mix(in srgb, var(--ll3-accent) 14%, transparent), transparent 34%),
-        linear-gradient(180deg, var(--ll3-accent), var(--ll3-accent-strong));
+        radial-gradient(circle at top left,
+            color-mix(in srgb, var(--ll3-accent) 12%, transparent),
+            transparent 36%),
+        linear-gradient(135deg, var(--ll3-accent), var(--ll3-accent-strong));
     border-color: transparent;
 }
 
 .ll3 .feature-tile__inner {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     gap: 10px;
     min-height: 100%;
+    width: 100%;
 }
 
 .ll3 .feature-tile__title {
     margin: 0;
-    font-size: 1rem;
-    line-height: 1.35;
+    font-size: 1.02rem;
+    line-height: 1.32;
     font-weight: 850;
     color: var(--ll3-text-strong);
 }
@@ -491,12 +515,14 @@
 .ll3 .feature-tile__desc {
     margin: 0;
     font-size: 0.94rem;
-    line-height: 1.68;
+    line-height: 1.62;
     color: var(--ll3-muted);
 }
 
 .ll3 .feature-tile__cta {
-    margin-top: 6px;
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 4px;
     font-size: 13px;
     font-weight: 850;
     color: var(--ll3-link);
@@ -511,22 +537,28 @@
 /* ==========================================================================
    Updates
    ========================================================================== */
+/* ==========================================================================
+   Updates
+   ========================================================================== */
 
 .ll3 .update-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
 }
 
 .ll3 .update-card {
     display: block;
-    min-height: 100%;
-    padding: 18px;
-    border-radius: 18px;
+    min-height: 170px;
+    padding: 20px;
+    border-radius: 22px;
     border: 1px solid var(--ll3-border);
     background: var(--ll3-panel);
     box-shadow: var(--ll3-shadow-xs);
-    transition: transform 140ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    transition:
+        transform 140ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease;
 }
 
 .ll3 .update-card:hover {
@@ -536,9 +568,9 @@
 }
 
 .ll3 .update-card__title {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     font-size: 1rem;
-    line-height: 1.35;
+    line-height: 1.32;
     font-weight: 850;
     color: var(--ll3-text-strong);
 }
@@ -546,7 +578,7 @@
 .ll3 .update-card__desc {
     margin: 0;
     font-size: 0.94rem;
-    line-height: 1.68;
+    line-height: 1.62;
     color: var(--ll3-muted);
 }
 
@@ -581,8 +613,12 @@
 
 .ll3 .roadmap__item {
     position: relative;
-    padding: 28px 18px 18px;
-    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 190px;
+    padding: 28px 18px 20px;
+    border-radius: 22px;
     border: 1px solid var(--ll3-border);
     background: var(--ll3-panel);
     box-shadow: var(--ll3-shadow-xs);
@@ -627,7 +663,7 @@
 .ll3 .roadmap__title {
     margin: 0 0 8px;
     font-size: 1rem;
-    line-height: 1.36;
+    line-height: 1.34;
     font-weight: 850;
     color: var(--ll3-text-strong);
 }
@@ -635,7 +671,7 @@
 .ll3 .roadmap__desc {
     margin: 0;
     font-size: 0.94rem;
-    line-height: 1.66;
+    line-height: 1.62;
     color: var(--ll3-muted);
 }
 
@@ -643,7 +679,7 @@
    Responsive
    ========================================================================== */
 
-@media (max-width: 1100px) {
+@media (max-width: 1180px) {
 
     .ll3 .hero__grid--home,
     .ll3 .home-feature-band__grid {
@@ -652,48 +688,15 @@
 
     .ll3 .hero__grid--home {
         min-height: auto;
-        gap: 14px;
-        padding-top: 8px;
+        gap: 20px;
+    }
+
+    .ll3 .hero__content--home {
+        max-width: 760px;
     }
 
     .ll3 .hero__art--home {
         display: none;
-    }
-
-    .ll3 .hero__content--home {
-        width: 100%;
-        max-width: 760px;
-        gap: 16px;
-        min-height: 420px;
-        align-content: start;
-    }
-
-    .ll3 .hero__title--home {
-        max-width: 10ch;
-        font-size: clamp(2.5rem, 6vw, 4.2rem);
-    }
-
-    .ll3 .hero__sub--home {
-        max-width: 42rem;
-        font-size: 1rem;
-        line-height: 1.68;
-    }
-
-    .ll3 .hero__lower {
-        margin-top: 2px;
-    }
-
-    .ll3 .hero__cta {
-        justify-content: center;
-    }
-
-    .ll3 .hero__cta .btn {
-        min-width: 240px;
-        justify-content: center;
-    }
-
-    .ll3 .hero-banner__grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .ll3 .activity-card-grid,
@@ -701,49 +704,66 @@
     .ll3 .roadmap__grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .ll3 .home-feature-band__cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ll3 .section__title--feature {
+        max-width: 18ch;
+    }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 760px) {
+
+    .ll3 .home::before,
+    .ll3 .home::after {
+        opacity: 0.55;
+    }
+
     .ll3 .hero--home {
-        padding-top: 18px;
-        padding-bottom: 8px;
+        padding: 24px 0 10px;
     }
 
     .ll3 .hero__content--home {
-        min-height: 540px;
-        align-content: center;
-        gap: 20px;
+        gap: 14px;
+        min-height: auto;
+        align-content: start;
     }
-
 
     .ll3 .hero__title--home {
         max-width: none;
-        font-size: clamp(2.2rem, 10vw, 3.4rem);
-        line-height: 1.15;
+        font-size: clamp(2.35rem, 11vw, 3.45rem);
+        line-height: 1.02;
+        letter-spacing: -0.055em;
     }
 
     .ll3 .hero__sub--home {
-        margin-top: 25px;
+        max-width: 44rem;
         font-size: 0.98rem;
+        line-height: 1.68;
     }
 
-    .ll3 .hero__lower {
-        margin-top: 35px;
-        gap: 14px;
-    }
-
-
-    .ll3 .hero__cta {
+    .ll3 .hero__cta--home {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
+        width: 100%;
         max-width: 360px;
-        justify-content: start;
+        margin-top: 4px;
     }
 
-    .ll3 .hero__cta .btn {
+    .ll3 .hero__cta--home .btn {
         width: 100%;
-        min-width: 0;
+        justify-content: center;
+    }
+
+    .ll3 .home-sections {
+        padding-top: 14px;
+    }
+
+    .ll3 .home-sections__stack {
+        gap: 34px;
     }
 
     .ll3 .hero-banner__grid,
@@ -754,12 +774,15 @@
         grid-template-columns: 1fr;
     }
 
-    .ll3 .hero-banner__item,
-    .ll3 .activity-card,
-    .ll3 .feature-tile,
-    .ll3 .update-card,
-    .ll3 .roadmap__item {
-        border-radius: 16px;
+    .ll3 .hero-banner__item {
+        min-height: auto;
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .ll3 .section__header {
+        gap: 8px;
+        margin-bottom: 16px;
     }
 
     .ll3 .section__header--activity {
@@ -767,27 +790,112 @@
         align-items: start;
     }
 
+    .ll3 .section__title {
+        font-size: clamp(1.45rem, 7vw, 1.9rem);
+    }
+
+    .ll3 .section__title--feature {
+        max-width: none;
+    }
+
+    .ll3 .section__sub {
+        font-size: 0.97rem;
+        line-height: 1.68;
+    }
+
+    .ll3 .panel {
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .ll3 .panel--feature-lead {
+        align-content: start;
+    }
+
+    .ll3 .activity-card,
+    .ll3 .feature-tile,
+    .ll3 .update-card,
+    .ll3 .roadmap__item {
+        min-height: auto;
+        border-radius: 20px;
+    }
+
+    .ll3 .feature-tile,
+    .ll3 .update-card {
+        padding: 18px;
+    }
+
+    .ll3 .feature-tile__inner {
+        justify-content: flex-start;
+    }
+
+    .ll3 .update-card {
+        align-items: flex-start;
+    }
+
+    .ll3 .roadmap {
+        padding-top: 0;
+    }
+
     .ll3 .roadmap__line {
         display: none;
     }
-}
 
-@media (max-width: 560px) {
-    .ll3 .hero__content--home {
-        min-height: 560px;
-        gap: 12px;
+    .ll3 .roadmap__item {
+        justify-content: flex-start;
+        padding-top: 22px;
     }
 
-    .ll3 .hero__eyebrow {
+    .ll3 .roadmap__dot {
+        top: 18px;
+        left: auto;
+        right: 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .ll3 .hero--home {
+        padding-top: 18px;
+    }
+
+    .ll3 .hero__eyebrow,
+    .ll3 .section__eyebrow {
+        min-height: 28px;
+        padding: 0 10px;
         font-size: 11px;
     }
 
     .ll3 .hero__title--home {
-        font-size: clamp(2rem, 11vw, 3rem);
+        font-size: clamp(2.15rem, 12vw, 3.05rem);
+    }
+
+    .ll3 .hero__sub--home {
+        font-size: 0.96rem;
     }
 
     .ll3 .hero-banner__item {
-        padding: 14px 15px;
+        align-items: flex-start;
+    }
+
+    .ll3 .hero-banner__icon {
+        margin-top: 6px;
+    }
+
+    .ll3 .activity-card {
+        padding: 16px;
+    }
+
+    .ll3 .activity-card__footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .ll3 .feature-tile__desc,
+    .ll3 .update-card__desc,
+    .ll3 .roadmap__desc,
+    .ll3 .activity-card__summary {
+        font-size: 0.93rem;
     }
 }
 

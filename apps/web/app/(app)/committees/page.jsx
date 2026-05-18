@@ -9,9 +9,6 @@ import {
     Layers3,
 } from "lucide-react";
 
-// import "@/app/styles/active/committees/ll3.committees.tokens.css";
-// import "@/app/styles/active/committees/ll3.committees.ui.css";
-// import "@/app/styles/active/committees/ll3.committees.directory.css";
 import "@/app/styles/active/committees/ll3.committees.css";
 
 

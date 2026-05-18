@@ -1,0 +1,374 @@
+/* ==========================================================================
+   LL3 Members Directory — bills-aligned mobile refinement pass
+   Append after existing members directory styles.
+   ========================================================================== */
+
+.ll3-memberRefineButton {
+    display: none;
+}
+
+/* Make the desktop filter block closer to the Bills page rhythm. */
+.ll3-directoryFilters {
+    position: relative;
+}
+
+.ll3-directoryFilters__header {
+    align-items: center;
+}
+
+.ll3-directoryFilters__intro .ll3-h2 {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.ll3-directoryFilters__intro .ll3-muted {
+    margin: 0;
+    color: var(--llm3-muted);
+}
+
+/* Slightly more compact state nav, but keep the members-specific rail. */
+.ll3-directorySidebar__nav {
+    gap: 5px;
+}
+
+.ll3-stateJump {
+    min-height: 38px;
+}
+
+/* Mobile member row metadata is hidden on desktop. */
+.ll3-memberRow__identity {
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+}
+
+.ll3-memberRow__mobileMeta {
+    display: none;
+}
+
+/* ==========================================================================
+   Mobile: content-first experience
+   ========================================================================== */
+
+@media (max-width: 720px) {
+    .ll3-membersDirectoryPage {
+        padding-inline: 14px;
+        padding-bottom: 86px;
+    }
+
+    .ll3-head {
+        padding-bottom: 8px;
+        margin-bottom: 4px;
+    }
+
+    .ll3-head__top {
+        gap: 10px;
+    }
+
+    .ll3-h1 {
+        font-size: 24px;
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+    }
+
+    .ll3-sub {
+        font-size: 14.5px;
+        line-height: 1.55;
+    }
+
+    .ll3-freshness {
+        font-size: 12px;
+    }
+
+    /*
+      Mobile filters become a compact command card.
+      Full form moves into the refine sheet.
+    */
+    .ll3-directoryFilters {
+        padding: 12px;
+        border-radius: 20px;
+        box-shadow: var(--llm3-shadow);
+    }
+
+    .ll3-directoryFilters__header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 0;
+    }
+
+    .ll3-directoryFilters__intro {
+        gap: 2px;
+    }
+
+    .ll3-directoryFilters__intro .ll3-h2 {
+        font-size: 15px;
+    }
+
+    .ll3-directoryFilters__intro .ll3-muted {
+        font-size: 12.5px;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ll3-directoryFilters > .ll3-directoryFilters__grid,
+    .ll3-directoryFilters > .ll3-directoryFilters__mobileCount,
+    .ll3-directoryFilters__summary {
+        display: none;
+    }
+
+    .ll3-memberRefineButton {
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 0 16px;
+        border-radius: 999px;
+        border: 1px solid color-mix(in srgb, var(--ll3-accent) 24%, var(--llm3-border));
+        background: var(--llm3-surface-soft);
+        color: var(--llm3-ink);
+        font-size: 14px;
+        font-weight: 850;
+        box-shadow: var(--llm3-btn-shadow);
+        cursor: pointer;
+    }
+
+    .ll3-mobileStateBarWrap {
+        position: sticky;
+        top: 72px;
+        z-index: 35;
+        margin-top: 6px;
+    }
+
+    .ll3-mobileStateBar {
+        align-items: end;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 20px;
+        box-shadow: var(--llm3-shadow);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+    }
+
+    .ll3-mobileStateBar__label {
+        font-size: 11.5px;
+    }
+
+    .ll3-mobileStateBar__topBtn {
+        min-height: 46px;
+        border-radius: 14px;
+    }
+
+    .ll3-directoryMain {
+        gap: 14px;
+    }
+
+    .ll3-stateSection {
+        gap: 18px;
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .ll3-stateSection__title {
+        font-size: 24px;
+    }
+
+    .ll3-compositionLine {
+        font-size: 13px;
+    }
+
+    .ll3-chamberBlock {
+        gap: 12px;
+    }
+
+    .ll3-chamberBlock__head {
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .ll3-chamberBlock__title {
+        font-size: 13px;
+        letter-spacing: 0.11em;
+    }
+
+    .ll3-memberTable {
+        border-radius: 18px;
+        background: transparent;
+    }
+
+    .ll3-memberTable__body {
+        display: grid;
+    }
+
+    .ll3-memberRow {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 12px;
+        min-height: 72px;
+    }
+
+    .ll3-memberRow__nameCell {
+        gap: 10px;
+    }
+
+    .ll3-memberRow__partyDot {
+        order: 0;
+        width: 10px;
+        height: 10px;
+        box-shadow: 0 0 0 5px color-mix(in srgb, var(--ll3-text) 5%, transparent);
+    }
+
+    .ll3-memberRow__nameLink {
+        font-size: 14.5px;
+        line-height: 1.25;
+    }
+
+    .ll3-memberRow__mobileMeta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        color: var(--llm3-muted);
+        font-size: 12.5px;
+        font-weight: 800;
+    }
+
+    .ll3-memberRow__mobileMeta .is-dem {
+        color: var(--llm3-party-D-text);
+    }
+
+    .ll3-memberRow__mobileMeta .is-rep {
+        color: var(--llm3-party-R-text);
+    }
+
+    .ll3-memberRow__mobileMeta .is-ind,
+    .ll3-memberRow__mobileMeta .is-vacant {
+        color: var(--llm3-party-I-text);
+    }
+
+    .ll3-memberRow__party,
+    .ll3-memberRow__district {
+        display: none;
+        padding-left: 0;
+    }
+
+    .ll3-memberRow__party::before,
+    .ll3-memberRow__district::before {
+        display: none;
+        content: none;
+    }
+
+    .ll3-memberRow__actionCell {
+        padding-left: 0;
+        justify-content: flex-end;
+    }
+
+    .ll3-memberRow__action {
+        width: auto;
+        min-height: 38px;
+        min-width: 42px;
+        padding: 0 12px;
+        justify-content: center;
+        border-radius: 999px;
+        background: var(--llm3-surface-soft);
+    }
+
+    .ll3-memberRow__actionText {
+        display: none;
+    }
+
+    .ll3-chamberExpand__summary {
+        width: 100%;
+        min-height: 42px;
+        border-radius: 16px;
+    }
+
+    /* Refine sheet */
+    .ll3-memberRefine {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: grid;
+        align-items: end;
+    }
+
+    .ll3-memberRefine__backdrop {
+        position: absolute;
+        inset: 0;
+        border: 0;
+        background: rgba(2, 8, 23, 0.42);
+        cursor: pointer;
+    }
+
+    .ll3-memberRefine__sheet {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 16px;
+        max-height: min(82vh, 720px);
+        overflow: auto;
+        padding: 18px;
+        border: 1px solid var(--llm3-border);
+        border-radius: 28px 28px 0 0;
+        background: linear-gradient(180deg, var(--llm3-surface-glass), var(--llm3-surface));
+        box-shadow: 0 -24px 60px rgba(2, 8, 23, 0.28);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+    }
+
+    .ll3-memberRefine__head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .ll3-memberRefine__title {
+        margin: 0;
+        color: var(--llm3-ink);
+        font-size: 20px;
+        line-height: 1.1;
+        font-weight: 950;
+        letter-spacing: -0.03em;
+    }
+
+    .ll3-memberRefine__sub {
+        margin: 6px 0 0;
+        color: var(--llm3-muted);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .ll3-memberRefine__close {
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        border: 1px solid var(--llm3-border);
+        background: var(--llm3-surface-soft);
+        color: var(--llm3-ink);
+        cursor: pointer;
+    }
+
+    .ll3-memberRefine .ll3-directoryFilters__grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .ll3-memberRefine__done {
+        min-height: 48px;
+        border-color: color-mix(in srgb, var(--ll3-accent) 28%, var(--llm3-border));
+        background: color-mix(in srgb, var(--ll3-accent) 14%, var(--llm3-surface-soft));
+    }
+}

@@ -1,23 +1,46 @@
 // lib/memberData.js
 import { normalizeMemberImageUrl } from "./memberImage";
+import { perfLog } from "@/lib/server/debug/perf";
+
 import {
     getMemberProfile,
     getMemberMonthlyStats,
     getMemberSponsoredLegislation,
     getMemberCosponsoredLegislation,
-    getHouseMemberVoteAlignment,
     getMemberKpis,
     getMemberMonthlyActivity,
     getMemberSubjects,
     getMemberBills,
-    getMemberVoteAlignment,
     getHouseMemberAlignmentPanelOverall,
     getHouseMemberAlignmentByPolicy,
-    getHouseMemberAlignmentTopDeviations
+    getHouseMemberAlignmentTopDeviations,
 } from "../server/routes/members";
 
+async function timed(label, fn, meta = {}) {
+    const start = performance.now();
+
+    try {
+        const result = await fn();
+
+        perfLog(`${label}: ${Math.round(performance.now() - start)}ms`, {
+            ...meta,
+        });
+
+        return result;
+    } catch (err) {
+        perfLog(`${label}:error:${Math.round(performance.now() - start)}ms`, {
+            message: err?.message,
+            code: err?.code,
+            ...meta,
+        });
+
+        throw err;
+    }
+}
 
 export async function fetchMemberData(bioguideId) {
+    const totalStart = performance.now();
+
     try {
         const [
             profileRaw,
@@ -34,19 +57,33 @@ export async function fetchMemberData(bioguideId) {
             subjects,
             bills,
         ] = await Promise.all([
-            getMemberProfile(bioguideId),
-            getMemberMonthlyStats(bioguideId),
-            getMemberSponsoredLegislation(bioguideId, { max: 250 }),
-            getMemberCosponsoredLegislation(bioguideId, { max: 250 }),
+            timed("memberData:getMemberProfile", () => getMemberProfile(bioguideId), { bioguideId }),
+            timed("memberData:getMemberMonthlyStats", () => getMemberMonthlyStats(bioguideId), { bioguideId }),
+            timed("memberData:getMemberSponsoredLegislation", () =>
+                getMemberSponsoredLegislation(bioguideId, { max: 250 }), { bioguideId }
+            ),
+            timed("memberData:getMemberCosponsoredLegislation", () =>
+                getMemberCosponsoredLegislation(bioguideId, { max: 250 }), { bioguideId }
+            ),
 
-            getHouseMemberAlignmentPanelOverall(bioguideId),
-            getHouseMemberAlignmentByPolicy(bioguideId, { minVotes: 10, sort: "votes" }),
-            getHouseMemberAlignmentTopDeviations(bioguideId, { minVotes: 10 }),
+            timed("memberData:getHouseMemberAlignmentPanelOverall", () =>
+                getHouseMemberAlignmentPanelOverall(bioguideId), { bioguideId }
+            ),
+            timed("memberData:getHouseMemberAlignmentByPolicy", () =>
+                getHouseMemberAlignmentByPolicy(bioguideId, { minVotes: 10, sort: "votes" }), { bioguideId }
+            ),
+            timed("memberData:getHouseMemberAlignmentTopDeviations", () =>
+                getHouseMemberAlignmentTopDeviations(bioguideId, { minVotes: 10 }), { bioguideId }
+            ),
 
-            getMemberKpis(bioguideId),
-            getMemberMonthlyActivity(bioguideId),
-            getMemberSubjects(bioguideId, { limit: 12 }),
-            getMemberBills(bioguideId, { limit: 50 }),
+            timed("memberData:getMemberKpis", () => getMemberKpis(bioguideId), { bioguideId }),
+            timed("memberData:getMemberMonthlyActivity", () => getMemberMonthlyActivity(bioguideId), { bioguideId }),
+            timed("memberData:getMemberSubjects", () =>
+                getMemberSubjects(bioguideId, { limit: 12 }), { bioguideId }
+            ),
+            timed("memberData:getMemberBills", () =>
+                getMemberBills(bioguideId, { limit: 50 }), { bioguideId }
+            ),
         ]);
 
         const profile = {
@@ -84,6 +121,11 @@ export async function fetchMemberData(bioguideId) {
             service: process.env.K_SERVICE || null,
             revision: process.env.K_REVISION || null,
         });
+
         throw err;
+    } finally {
+        perfLog(`memberData:total: ${Math.round(performance.now() - totalStart)}ms`, {
+            bioguideId,
+        });
     }
 }

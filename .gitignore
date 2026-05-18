@@ -50,3 +50,4 @@ pnpm-debug.log*
 
 # dev
 /development/
+apps/web/_archive/

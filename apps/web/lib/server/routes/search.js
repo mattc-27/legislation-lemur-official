@@ -267,22 +267,21 @@ export async function getMemberRecentChanges({ limit = 12 } = {}) {
   const sql = `
     SELECT
       detected_at AS "detectedAt",
-      bioguide_id AS "bioguideId",
-      name,
-      change_type AS "changeType",
+      ui_event_type AS "eventType",
       headline,
+      subheadline,
+      badge_label AS "badge",
       state_code AS "stateCode",
       district,
       chamber,
       district_id AS "districtId",
       is_vacant AS "isVacant",
-      seat_status AS "seatStatus"
-    FROM sandbox_lemur_app_views_v1.v_member_recent_changes_v3
+      special_election_date AS "specialElectionDate"
+    FROM sandbox_lemur_app_views_v1.v_member_recent_changes_v4
     ORDER BY detected_at DESC
     LIMIT $1;
   `;
 
   const { rows } = await q("members:getRecentChanges", sql, [limit]);
-  console.log(rows)
   return rows;
 }

@@ -19,14 +19,8 @@ export const ABOUT_WHY_PARAS = [
 
 export const ABOUT_FEATURES_TITLE = "Current features";
 
-export const ABOUT_FEATURES_ITEMS = [
-    "Find members by name or state, and open clean factual profiles",
-    "Explore bills, sponsors, and recent actions in a readable format",
-    "See vote activity and alignment signals designed for clarity (not spin)",
-];
 
-export const ABOUT_FEATURES_NOTE =
-    "Core legislative data is refreshed on a regular weekly cadence.";
+
 
 export const ABOUT_RECENT_BADGE = "Recently added";
 
@@ -66,8 +60,27 @@ export const ABOUT_STACK_NOTE =
 
 export const ABOUT_ROADMAP_TITLE = "Roadmap";
 
+export const ABOUT_FEATURES_ITEMS = [
+    "Find members by name or state, with clear factual profiles, including current status and vacancies",
+    "Explore bills, sponsors, and recent actions in a readable format",
+    "TL;DR summaries that simplify complex legislative text",
+    "Vote activity and alignment signals focused on clarity, not spin",
+];
+
+export const ABOUT_FEATURES_NOTE =
+    "Core legislative data is refreshed regularly. Summaries and derived insights are based on official sources, with an emphasis on clarity, traceability, and restraint.";
+
 export const ABOUT_ROADMAP_PARAS = [
-    `Legislation Lemur expands through “change-first” views and comparisons—kept neutral, readable, and grounded in sourced data.`,
+    `Legislation Lemur expands through “change-first” views and comparisons—helping users understand what happened, what changed, and why it matters, without added interpretation or opinion.`,
+    `New features are introduced with care to maintain speed, readability, and trust in the underlying data.`,
+];
+
+export const ABOUT_SUMMARIES_TITLE = "About bill summaries";
+
+export const ABOUT_SUMMARIES_PARAS = [
+    `Legislation Lemur includes simplified summaries to make complex legislative text easier to follow.`,
+    `Summaries are generated from official bill text and structured data, then shaped into short, consistent formats that highlight purpose, scope, and key changes.`,
+    `The goal is not to interpret or persuade—but to reduce friction so more people can engage with primary legislative information.`,
 ];
 
 /**

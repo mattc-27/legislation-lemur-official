@@ -157,6 +157,7 @@ export default function HomeSections() {
 
           <div className="roadmap">
             <div className="roadmap__line" aria-hidden="true" />
+
             <div className="roadmap__grid">
               {HOME_ROADMAP_ITEMS.map((item, idx) => (
                 <article className="roadmap__item" key={`${item.quarter}-${item.title}`}>
@@ -164,6 +165,7 @@ export default function HomeSections() {
                     className={`roadmap__dot roadmap__dot--${(idx % 4) + 1}`}
                     aria-hidden="true"
                   />
+
                   <div className="roadmap__quarter">{item.quarter}</div>
                   <h3 className="roadmap__title">{item.title}</h3>
                   <p className="roadmap__desc">{item.desc}</p>
