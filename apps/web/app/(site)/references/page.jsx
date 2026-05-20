@@ -1,4 +1,16 @@
+import { Suspense } from "react";
+
+import CongressCompositionSectionServer from "@/app/components/features/reference/CongressCompositionSectionServer";
+
+import CongressCompositionSkeleton from "@/app/components/features/reference/CongressCompositionSkeleton";
+
+import StateVotingLookup from "@/app/components/features/reference/StateVotingLookup";
+import stateVotingLinks from "@/lib/utils/eac-state-voting-links.json";
+
+import "@/app/styles/active/site/ll3.reference.voting.css";
+
 import "@/app/styles/active/site/ll3.reference.css";
+import "@/app/styles/active/site/ll3.reference.composition.css";
 
 const QUICK_LINKS = [
   {
@@ -81,6 +93,8 @@ const BILL_PREFIXES = [
 ];
 
 const TOC_LINKS = [
+  ["state-voting-lookup", "State voting resources"],
+  ["congress-composition", "Congress composition"],
   ["bill-prefixes", "Bill prefixes"],
   ["committee-types", "Committee types"],
   ["congress-number", "What is a Congress number?"],
@@ -179,6 +193,10 @@ export default function ReferencePage() {
           ))}
         </section>
 
+
+        <StateVotingLookup states={stateVotingLinks} />
+
+
         <section className="ll3-ref__resources" aria-labelledby="wk-resources">
           <div className="ll3-ref__section-head">
             <div className="ll3-ref__eyebrow">Practical resources</div>
@@ -257,6 +275,19 @@ export default function ReferencePage() {
             </nav>
 
             <div className="ll3-ref__content">
+              <article className="ll3-ref__panel ll3-ref__panel--wide">
+                <Anchor id="congress-composition">
+                  <h3 className="ll3-ref__content-title">Congress composition</h3>
+                  <p className="ll3-ref__content-copy">
+                    Explore the current partisan makeup of Congress by state delegation or by House seat.
+                    The map view summarizes each state’s House and Senate delegation, while the House view
+                    shows the chamber as a seat-level semicircle.
+                  </p>
+                  <Suspense fallback={<CongressCompositionSkeleton />}>
+                    <CongressCompositionSectionServer congress={119} />
+                  </Suspense>
+                </Anchor>
+              </article>
               <article className="ll3-ref__panel">
                 <Anchor id="bill-prefixes">
                   <h3 className="ll3-ref__content-title">Bill prefixes (H.R., S., H.Res., S.J.Res., etc.)</h3>
@@ -505,6 +536,6 @@ export default function ReferencePage() {
           </span>
         </footer>
       </div>
-    </main>
+    </main >
   );
 }
