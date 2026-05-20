@@ -53,8 +53,15 @@ function parseBillSlug(value) {
     return null;
 }
 
-export default async function BillPage({ params }) {
+export default async function BillPage({ params, searchParams }) {
     const resolvedParams = await params;
+    const resolvedSearchParams = await searchParams;
+
+    console.log("[BillPage] params:", resolvedParams);
+    console.log("[BillPage] searchParams:", resolvedSearchParams);
+    console.log("[BillPage] fromMember:", resolvedSearchParams?.fromMember);
+    console.log("[BillPage] fromMemberName:", resolvedSearchParams?.fromMemberName);
+
     const parsed = parseBillSlug(resolvedParams?.billId);
 
     if (!parsed) return notFound();
@@ -68,5 +75,20 @@ export default async function BillPage({ params }) {
 
     if (!bill) return notFound();
 
-    return <BillPanelDetail bill={bill} />;
+    const fromMember = resolvedSearchParams?.fromMember || null;
+    const fromMemberName = resolvedSearchParams?.fromMemberName || null;
+
+    return (
+        <BillPanelDetail
+            bill={bill}
+            sourceMember={
+                fromMember
+                    ? {
+                        bioguideId: fromMember,
+                        name: fromMemberName,
+                    }
+                    : null
+            }
+        />
+    );
 }

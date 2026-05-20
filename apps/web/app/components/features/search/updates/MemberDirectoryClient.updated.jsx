@@ -448,12 +448,45 @@ export default function MemberDirectoryClient({ initialData }) {
         return () => observer.disconnect();
     }, [filteredStates]);
 
-    function scrollToState(code) {
-        const node = sectionRefs.current[code];
+    /*    function scrollToState(code) {
+            const node = sectionRefs.current[code];
+            if (!node) return;
+            node.scrollIntoView({ behavior: "smooth", block: "start" });
+            setActiveState(code);
+        }
+    */
+    useEffect(() => {
+        const hash = String(window.location.hash || "")
+            .replace("#", "")
+            .toUpperCase();
+
+        if (hash) {
+            requestAnimationFrame(() => {
+                scrollToState(hash, { updateHash: false });
+            });
+        }
+    }, [filteredStates.length]);
+
+
+    function scrollToState(code, { updateHash = true } = {}) {
+        const normalized = String(code || "").toUpperCase();
+        const node = sectionRefs.current[normalized];
         if (!node) return;
+
         node.scrollIntoView({ behavior: "smooth", block: "start" });
-        setActiveState(code);
+        setActiveState(normalized);
+
+        if (updateHash) {
+            window.history.replaceState(null, "", `#${normalized.toLowerCase()}`);
+        }
     }
+
+    /* 
+    
+    <Link href={`/member/#${stateCode.toLowerCase()}`}>
+    View {stateCode} members
+</Link>
+*/
 
     function scrollToTop() {
         if (topRef.current) {
@@ -598,7 +631,8 @@ export default function MemberDirectoryClient({ initialData }) {
                                     sectionRefs.current[state.stateCode] = node;
                                 }}
                                 data-state-code={state.stateCode}
-                                id={`state-${state.stateCode}`}
+                                // id={`state-${state.stateCode}`}
+                                id={state.stateCode.toLowerCase()}
                                 className="ll3-stateSection"
                             >
                                 <div className="ll3-stateSection__head">

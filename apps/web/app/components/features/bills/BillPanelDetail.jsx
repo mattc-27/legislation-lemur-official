@@ -78,7 +78,7 @@ function getStatusTone(status = "") {
     return "introduced";
 }
 
-export default function BillPanelDetail({ bill, mode = "page" }) {
+export default function BillPanelDetail({ bill, mode = "page", sourceMember = null }) {
     const billCode = getBillCode(bill);
     const title = bill?.display_title || bill?.title || "Untitled legislation";
     const summary = getSummary(bill);
@@ -99,6 +99,11 @@ export default function BillPanelDetail({ bill, mode = "page" }) {
                 <nav className="llbp-breadcrumb" aria-label="Breadcrumb">
                     {mode === "panel" ? (
                         <BillPanelBackClient />
+                    ) : sourceMember?.bioguideId ? (
+                        <Link href={`/member/${sourceMember.bioguideId}`}>
+                            <ArrowLeft size={14} aria-hidden="true" />
+                            {sourceMember.name ? `Back to ${sourceMember.name}` : "Back to member profile"}
+                        </Link>
                     ) : (
                         <Link href="/bills">
                             <ArrowLeft size={14} aria-hidden="true" />
