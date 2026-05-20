@@ -666,3 +666,235 @@
         font-size: 11px;
     }
 }
+
+
+
+/* Paste this at the end of app/styles/active/members/ll3.members.tabs.css */
+
+.llmp3-page .llm3-tabs__topbar--split {
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.llmp3-page .llm3-tabs__roleTabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--llm3-border);
+    border-radius: 999px;
+    background: var(--llm3-surface-soft);
+}
+
+.llmp3-page .llm3-tabs__roleTab {
+    appearance: none;
+    border: 0;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--llm3-muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 850;
+    cursor: pointer;
+}
+
+.llmp3-page .llm3-tabs__roleTab:hover {
+    color: var(--llm3-ink);
+    background: color-mix(in srgb, var(--ll3-accent) 6%, transparent);
+}
+
+.llmp3-page .llm3-tabs__roleTab.is-active {
+    color: var(--llm3-ink);
+    background: var(--llm3-surface-glass);
+    box-shadow: var(--llm3-btn-shadow);
+}
+
+.llmp3-page .billtable__sectionSub {
+    margin: 2px 0 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--llm3-muted);
+    font-weight: 650;
+}
+
+.llmp3-page .billtable__table--enriched {
+    table-layout: fixed;
+}
+
+.llmp3-page .billtable__row--enriched td {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.llmp3-page .billtable__billStack {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+}
+
+.llmp3-page .billtable__titleLine {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
+}
+
+.llmp3-page .billtable__titleLine .billlink,
+.llmp3-page .billtable__titleLine>span {
+    -webkit-line-clamp: 3;
+    color: var(--llm3-ink);
+    font-size: 13.5px;
+    line-height: 1.28;
+    font-weight: 850;
+}
+
+.llmp3-page .billtable__external {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--llm3-border);
+    background: var(--llm3-surface-soft);
+    color: var(--llm3-muted);
+    text-decoration: none;
+}
+
+.llmp3-page .billtable__external:hover {
+    color: var(--ll3-link);
+    border-color: color-mix(in srgb, var(--ll3-link) 28%, var(--llm3-border));
+    background: var(--llm3-surface-glass);
+}
+
+.llmp3-page .billtable__summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin: 0;
+    max-width: 62ch;
+    color: var(--llm3-text);
+    font-size: 12.2px;
+    line-height: 1.45;
+    font-weight: 560;
+}
+
+.llmp3-page .billtable__summary svg {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: var(--ll3-link);
+}
+
+.llmp3-page .billtable__summary--muted {
+    color: var(--llm3-muted);
+}
+
+.llmp3-page .billtable__actions {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding-left: 16px;
+    color: var(--llm3-muted);
+    font-size: 11.8px;
+    line-height: 1.35;
+    font-weight: 650;
+}
+
+.llmp3-page .billtable__cell--topic {
+    text-align: left;
+}
+
+.llmp3-page .billtable__topicText {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.2;
+    color: var(--llm3-muted);
+    font-weight: 750;
+}
+
+.llmp3-page .billtable__status {
+    margin-top: 4px;
+    color: var(--llm3-muted);
+    font-size: 11px;
+    line-height: 1.25;
+    font-weight: 750;
+}
+
+@media (max-width: 760px) {
+    .llmp3-page .llm3-tabs__topbar--split {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .llmp3-page .llm3-tabs__roleTabs {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .llmp3-page .llm3-tabs__roleTab {
+        flex: 1 1 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .llmp3-page .billtable__scroller {
+        max-height: none !important;
+        overflow: visible !important;
+        border: 0;
+        background: transparent;
+    }
+
+    .llmp3-page .billtable__table--enriched,
+    .llmp3-page .billtable__table--enriched thead,
+    .llmp3-page .billtable__table--enriched tbody,
+    .llmp3-page .billtable__table--enriched tr,
+    .llmp3-page .billtable__table--enriched th,
+    .llmp3-page .billtable__table--enriched td {
+        display: block;
+        width: 100% !important;
+    }
+
+    .llmp3-page .billtable__table--enriched thead {
+        display: none;
+    }
+
+    .llmp3-page .billtable__row--enriched {
+        margin-bottom: 10px;
+        border: 1px solid var(--llm3-border);
+        border-radius: 14px;
+        background: var(--llm3-surface-glass);
+        overflow: hidden;
+        box-shadow: var(--llm3-btn-shadow);
+    }
+
+    .llmp3-page .billtable__row--enriched td {
+        border-bottom: 0;
+        padding: 10px 12px;
+    }
+
+    .llmp3-page .billtable__cell--topic {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+        padding-top: 0 !important;
+        color: var(--llm3-muted);
+    }
+
+    .llmp3-page .billtable__topicText {
+        margin-top: 0;
+    }
+
+    .llmp3-page .billtable__detailsStack {
+        align-items: center;
+        padding-top: 2px;
+        border-top: 1px solid var(--llm3-border-soft);
+    }
+
+    .llmp3-page .billtable__summary {
+        max-width: none;
+    }
+}

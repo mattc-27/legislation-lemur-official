@@ -2,13 +2,14 @@
 import Link from "next/link";
 
 import { getSectionFreshness } from "@/lib/domains/freshness/getSectionFreshness";
-import { fetchMemberData } from '@/lib/utils/memberData';
+// import { fetchMemberData } from '@/lib/utils/memberData';
+import { fetchMemberData } from '@/lib/utils/temp/memberData';
 import { getMemberVotes } from '@/lib/server/routes/votes';
 
 import SectionBoundary from '@/app/components/ui/system/SectionBoundary';
 
 import MemberAbout from "@/app/components/features/members/shared/MemberAbout";
-import MemberTabs from '@/app/components/features/members/shared/MemberTabs';
+import MemberTabs from '@/app/components/features/members/shared/temp/MemberTabs';
 import MemberTerms from '@/app/components/features/members/shared/MemberTerms';
 
 import SenateVotes from '@/app/components/features/members/senate-member/SenateVotes';
@@ -128,7 +129,7 @@ export default async function MemberPage({ params }) {
                 <section className="llmp3-intro">
                     <div className="llmp3-back">
                         <Link
-                            href={`/search?state=${encodeURIComponent(profile.stateCode || "")}`}
+                            href={`/member?state=${encodeURIComponent(profile.stateCode || "")}`}
                             className="llmp3-back__link"
                         >
                             <ArrowLeft size={16} aria-hidden="true" />

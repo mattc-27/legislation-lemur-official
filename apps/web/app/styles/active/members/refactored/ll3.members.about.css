@@ -618,3 +618,49 @@
         font-size: 12.5px;
     }
 }
+
+
+/* Paste this at the end of app/styles/active/members/ll3.members.about.css */
+
+@media (min-width: 761px) {
+
+    .llmp3-aboutCard__top,
+    .llmp3-head {
+        grid-template-columns: 144px minmax(0, 1fr);
+        gap: 18px 22px;
+        align-items: start;
+    }
+
+    .llmp3-aboutCard__avatar,
+    .llmp3-head__avatar {
+        width: 144px;
+        height: 144px;
+        min-width: 144px;
+        border-radius: 24px;
+    }
+
+    .llmp3-aboutCard__avatar img,
+    .llmp3-head__avatar img,
+    .llmp3-aboutCard__avatar .llmp3-head__ph,
+    .llmp3-head__ph {
+        width: 144px;
+        height: 144px;
+        border-radius: 24px;
+    }
+
+    .llmp3-profileView--panel .llmp3-aboutCard__top {
+        grid-template-columns: 128px minmax(0, 1fr);
+    }
+
+    .llmp3-profileView--panel .llmp3-aboutCard__avatar,
+    .llmp3-profileView--panel .llmp3-head__avatar,
+    .llmp3-profileView--panel .llmp3-aboutCard__avatar img,
+    .llmp3-profileView--panel .llmp3-head__avatar img,
+    .llmp3-profileView--panel .llmp3-aboutCard__avatar .llmp3-head__ph,
+    .llmp3-profileView--panel .llmp3-head__ph {
+        width: 128px;
+        height: 128px;
+        min-width: 128px;
+        border-radius: 22px;
+    }
+}

@@ -1,7 +1,5 @@
 import "@/app/styles/active/site/ll3.reference.css";
 
-const LAST_CHECKED = "Feb 28, 2026";
-
 const QUICK_LINKS = [
   {
     step: "Step 1",
@@ -13,16 +11,61 @@ const QUICK_LINKS = [
   {
     step: "Step 2",
     title: "State Deadlines & Rules",
-    desc: "Find your state’s election office, ID requirements, early voting, and mail voting options.",
+    desc: "Find your state election office, ID requirements, early voting, and mail voting options.",
     href: "https://www.nass.org/can-I-vote",
     cta: "Open Can I Vote",
   },
   {
     step: "Step 3",
     title: "Upcoming Elections & Ballots",
-    desc: "See what’s on your ballot and review major election dates.",
+    desc: "Review election dates, ballot measures, and candidate information before election day.",
     href: "https://ballotpedia.org/",
     cta: "Open Ballotpedia",
+  },
+];
+
+const RESOURCE_LINKS = [
+  {
+    label: "Federal registration portal",
+    title: "vote.gov",
+    desc: "Start registration, check registration options, and find official state-specific voting guidance.",
+    href: "https://vote.gov/",
+    cta: "Open vote.gov",
+  },
+  {
+    label: "Federal voting hub",
+    title: "USA.gov Voting & Elections",
+    desc: "Plain-language federal guidance for registration, voting, election process basics, and voter rights.",
+    href: "https://www.usa.gov/voting-and-elections",
+    cta: "Open USA.gov",
+  },
+  {
+    label: "Mail and absentee voting",
+    title: "USA.gov Absentee Voting",
+    desc: "Dedicated federal resource for absentee and mail voting basics, with links to state instructions.",
+    href: "https://www.usa.gov/absentee-voting",
+    cta: "Open absentee guide",
+  },
+  {
+    label: "State election offices",
+    title: "Can I Vote",
+    desc: "A state-by-state directory from the National Association of Secretaries of State.",
+    href: "https://www.nass.org/can-I-vote",
+    cta: "Open Can I Vote",
+  },
+  {
+    label: "State law comparisons",
+    title: "NCSL Elections & Campaigns",
+    desc: "State-by-state voting law resources, including election administration and policy comparisons.",
+    href: "https://www.ncsl.org/elections-and-campaigns",
+    cta: "Open NCSL",
+  },
+  {
+    label: "Federal legislation",
+    title: "Congress.gov",
+    desc: "The authoritative federal source for bill text, actions, sponsors, committees, and legislative status.",
+    href: "https://www.congress.gov/",
+    cta: "Open Congress.gov",
   },
 ];
 
@@ -37,6 +80,22 @@ const BILL_PREFIXES = [
   { prefix: "S.J.Res.", meaning: "Senate joint resolution", notes: "Same idea as H.J.Res., introduced in the Senate." },
 ];
 
+const TOC_LINKS = [
+  ["bill-prefixes", "Bill prefixes"],
+  ["committee-types", "Committee types"],
+  ["congress-number", "What is a Congress number?"],
+  ["how-long", "How long is a Congress?"],
+  ["reported", "What does “Reported” mean?"],
+  ["markup", "Markup"],
+  ["resolution", "What is a resolution?"],
+  ["cloture", "Cloture & filibuster"],
+  ["engrossed-enrolled", "Engrossed vs. Enrolled"],
+  ["pocket-veto", "Pocket veto"],
+  ["laid-on-table", "Laid on the table"],
+  ["reconciliation", "Reconciliation"],
+  ["bill-signals", "Impact & Trending signals"],
+];
+
 function Anchor({ id, children }) {
   return (
     <div id={id} className="ll3-ref__anchor">
@@ -47,43 +106,35 @@ function Anchor({ id, children }) {
 
 export default function ReferencePage() {
   return (
-    <main className="ll3-ref">
+    <main className="ll3-ref" id="top">
       <div className="container ll3-ref__wrap">
         <section className="ll3-ref__hero">
           <div className="ll3-ref__hero-grid">
             <div className="ll3-ref__hero-copy">
-              <div className="ll3-ref__eyebrow">Official voting resources</div>
+              <div className="ll3-ref__eyebrow">Voting resources & civic reference</div>
 
-              <h1 className="ll3-ref__title">Voting Resources</h1>
+              <h1 className="ll3-ref__title">Reference Center</h1>
 
               <p className="ll3-ref__subtitle">
-                Fast, official links for registration, deadlines, and polling information.
-                This page is designed as a neutral shortcut layer that sends you directly to
-                trusted sources like{" "}
-                <a className="ll3-ref__link" href="https://vote.gov/" target="_blank" rel="noreferrer">
-                  vote.gov
-                </a>{" "}
-                and{" "}
-                <a className="ll3-ref__link" href="https://www.nass.org/can-I-vote" target="_blank" rel="noreferrer">
-                  Can I Vote
-                </a>
-                .
+                Fast links to official voting resources, plus plain-language explanations for common congressional terms you’ll see across bills, committees, and status timelines.
+              </p>
+
+              <p className="ll3-ref__neutral-note">
+                Legislation Lemur does not endorse candidates or parties. This page links to official public resources and explains civic process terms in plain language.
               </p>
 
               <div className="ll3-ref__meta">
-                <span className="ll3-ref__pill">Nonpartisan • Official links only</span>
-                <span className="ll3-ref__checked">
-                  Last checked: <strong>{LAST_CHECKED}</strong>
-                </span>
+                <span className="ll3-ref__pill">Official public resources only</span>
+                <span className="ll3-ref__pill ll3-ref__pill--soft">No forms or sign-ups here</span>
               </div>
 
               <div className="ll3-ref__signals" aria-label="Page highlights">
                 <div className="ll3-ref__signal">
                   <span className="ll3-ref__signal-dot" aria-hidden="true" />
                   <div>
-                    <div className="ll3-ref__signal-title">No sign-ups here</div>
+                    <div className="ll3-ref__signal-title">Source-aware shortcuts</div>
                     <div className="ll3-ref__signal-copy">
-                      You’ll complete any registration or lookup directly on official sites.
+                      Use this as a starting point, then complete registration or lookups directly on official sites.
                     </div>
                   </div>
                 </div>
@@ -91,25 +142,26 @@ export default function ReferencePage() {
                 <div className="ll3-ref__signal">
                   <span className="ll3-ref__signal-dot" aria-hidden="true" />
                   <div>
-                    <div className="ll3-ref__signal-title">Built for direct access</div>
+                    <div className="ll3-ref__signal-title">Plain-language explanations</div>
                     <div className="ll3-ref__signal-copy">
-                      A quicker starting point for new or returning voters.
+                      Quick definitions for procedural terms that can make bill tracking confusing.
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="ll3-ref__hero-aside">
+            <aside className="ll3-ref__hero-aside" aria-label="Before you begin">
               <div className="ll3-ref__hero-card">
-                <div className="ll3-ref__hero-card-kicker">Use these first</div>
+                <div className="ll3-ref__hero-card-kicker">Before you begin</div>
                 <ul className="ll3-ref__hero-list">
-                  <li>Register or confirm status on vote.gov</li>
-                  <li>Check your state’s election office and deadlines</li>
-                  <li>Review what’s on your ballot before election day</li>
+                  <li>Have your current address ready.</li>
+                  <li>Some states may require ID verification.</li>
+                  <li>Deadlines and voting rules vary by state.</li>
+                  <li>For final instructions, always follow your state election office.</li>
                 </ul>
               </div>
-            </div>
+            </aside>
           </div>
         </section>
 
@@ -120,108 +172,61 @@ export default function ReferencePage() {
               <h2 className="ll3-ref__step-title">{item.title}</h2>
               <p className="ll3-ref__step-desc">{item.desc}</p>
 
-              <a
-                className="ll3-ref__step-cta"
-                href={item.href}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a className="ll3-ref__step-cta" href={item.href} target="_blank" rel="noreferrer">
                 {item.cta}
               </a>
             </article>
           ))}
         </section>
 
-        <section className="ll3-ref__lookup-band" aria-labelledby="wk-lookup">
-          <div className="ll3-ref__lookup-grid">
-            <div className="ll3-ref__lookup-copy">
-              <div className="ll3-ref__eyebrow">Quick state lookup</div>
-              <h2 className="ll3-ref__section-title" id="wk-lookup">
-                Jump to your state’s official page
-              </h2>
-              <p className="ll3-ref__section-sub">
-                Choose a state to go straight to its page on vote.gov. You’ll finish registration
-                or status lookup on the official site.
-              </p>
+        <section className="ll3-ref__resources" aria-labelledby="wk-resources">
+          <div className="ll3-ref__section-head">
+            <div className="ll3-ref__eyebrow">Practical resources</div>
+            <h2 className="ll3-ref__section-title" id="wk-resources">
+              Official links worth keeping handy
+            </h2>
+            <p className="ll3-ref__section-sub">
+              These links are useful now and do not depend on state-level scraper data. State-specific routing can be added later once the EAC link dataset is ready.
+            </p>
+          </div>
 
-              <div className="ll3-ref__selectWrap">
-                <div className="ll3-field">
-                  <label className="ll3-label" htmlFor="state">
-                    Choose your state or territory
-                  </label>
-                  <select id="state" className="ll3-input ll3-ref__select" defaultValue="">
-                    <option value="" disabled>
-                      — Select —
-                    </option>
-                    <option value="CO">Colorado</option>
-                    <option value="CA">California</option>
-                    <option value="NY">New York</option>
-                    <option value="TX">Texas</option>
-                    <option value="WA">Washington</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="ll3-ref__lookup-cards">
-              <article className="ll3-ref__mini-card ll3-ref__mini-card--primary">
-                <h3 className="ll3-ref__mini-title">vote.gov • Registration</h3>
-                <p className="ll3-ref__mini-desc">
-                  Official federal portal for registration and state-by-state voting information.
-                </p>
-                <button className="ll3-ref__mini-btn" type="button" disabled>
-                  Select a state
-                </button>
-              </article>
-
-              <article className="ll3-ref__mini-card">
-                <h3 className="ll3-ref__mini-title">Can I Vote • State Info</h3>
-                <p className="ll3-ref__mini-desc">
-                  Find your state election office, official FAQs, and additional voting guidance.
-                </p>
-                <a
-                  className="ll3-ref__mini-link"
-                  href="https://www.nass.org/can-I-vote"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open Can I Vote
+          <div className="ll3-ref__resource-grid">
+            {RESOURCE_LINKS.map((item) => (
+              <article className="ll3-ref__resource-card" key={item.href}>
+                <div className="ll3-ref__resource-label">{item.label}</div>
+                <h3 className="ll3-ref__resource-title">{item.title}</h3>
+                <p className="ll3-ref__resource-desc">{item.desc}</p>
+                <a className="ll3-ref__resource-link" href={item.href} target="_blank" rel="noreferrer">
+                  {item.cta}
                 </a>
               </article>
-            </div>
+            ))}
           </div>
         </section>
 
         <section className="ll3-ref__about" aria-labelledby="wk-about">
           <div className="ll3-ref__section-head">
-            <div className="ll3-ref__eyebrow">About these resources</div>
+            <div className="ll3-ref__eyebrow">About this page</div>
             <h2 className="ll3-ref__section-title" id="wk-about">
-              Why this page exists
+              A shortcut layer, not a replacement for official instructions
             </h2>
             <p className="ll3-ref__section-sub">
-              A simple, source-aware layer for getting to official election information faster.
+              This page is meant to reduce friction: find the right public source faster, understand the basic process, and then verify details with the official authority that owns the rule or record.
             </p>
           </div>
 
-          <div className="ll3-ref__faq-grid">
+          <div className="ll3-ref__faq-grid ll3-ref__faq-grid--compact">
             <div className="ll3-ref__faq-card">
               <h3 className="ll3-ref__faq-title">Where do these links go?</h3>
               <p className="ll3-ref__faq-copy">
-                They point to official, nonpartisan resources like vote.gov and Can I Vote so you get accurate, current information directly from election authorities.
+                To official or widely used public reference sources such as vote.gov, USA.gov, Congress.gov, NASS, NCSL, and state election offices.
               </p>
             </div>
 
             <div className="ll3-ref__faq-card">
-              <h3 className="ll3-ref__faq-title">Do you store any of my information?</h3>
+              <h3 className="ll3-ref__faq-title">Do you store my information?</h3>
               <p className="ll3-ref__faq-copy">
-                No. When you click through, any forms or lookups happen directly on the official sites.
-              </p>
-            </div>
-
-            <div className="ll3-ref__faq-card">
-              <h3 className="ll3-ref__faq-title">Is this legal advice?</h3>
-              <p className="ll3-ref__faq-copy">
-                No. This page is a convenience layer. For final instructions, always follow your state’s official election site.
+                No. Any registration, voter lookup, or form completion happens directly on the external official site you choose to open.
               </p>
             </div>
           </div>
@@ -241,15 +246,14 @@ export default function ReferencePage() {
           <div className="ll3-ref__wiki-layout">
             <nav className="ll3-ref__toc" aria-label="Table of contents">
               <div className="ll3-ref__toc-title">On this page</div>
-              <a className="ll3-ref__toc-link" href="#bill-prefixes">Bill prefixes</a>
-              <a className="ll3-ref__toc-link" href="#committee-types">Committee types</a>
-              <a className="ll3-ref__toc-link" href="#congress-number">What is a Congress number?</a>
-              <a className="ll3-ref__toc-link" href="#how-long">How long is a Congress?</a>
-              <a className="ll3-ref__toc-link" href="#reported">What does “Reported” mean?</a>
-              <a className="ll3-ref__toc-link" href="#resolution">What is a resolution?</a>
-              <a className="ll3-ref__toc-link" href="#laid-on-table">What does “laid on the table” mean?</a>
-              <a className="ll3-ref__toc-link" href="#reconciliation">What is reconciliation?</a>
-              <a className="ll3-ref__toc-link" href="#bill-signals">Impact & Trending signals</a>
+              {TOC_LINKS.map(([id, label]) => (
+                <a className="ll3-ref__toc-link" href={`#${id}`} key={id}>
+                  {label}
+                </a>
+              ))}
+              <a className="ll3-ref__toc-link ll3-ref__toc-link--top" href="#top">
+                ↑ Back to top
+              </a>
             </nav>
 
             <div className="ll3-ref__content">
@@ -308,7 +312,7 @@ export default function ReferencePage() {
                     <div className="ll3-ref__faq-card">
                       <h3 className="ll3-ref__faq-title">Select / Special</h3>
                       <p className="ll3-ref__faq-copy">
-                        Often created to investigate, study, or focus on issues that cross jurisdictions or don’t fit neatly into a standing committee.
+                        Often created to investigate, study, or focus on issues that cross jurisdictions or do not fit neatly into a standing committee.
                       </p>
                     </div>
 
@@ -367,6 +371,18 @@ export default function ReferencePage() {
               </article>
 
               <article className="ll3-ref__panel">
+                <Anchor id="markup">
+                  <h3 className="ll3-ref__content-title">What is a markup?</h3>
+                  <p className="ll3-ref__content-copy">
+                    A markup is a committee session where members debate, amend, and revise legislation before deciding whether to advance it.
+                  </p>
+                  <p className="ll3-ref__content-copy">
+                    Amendments adopted during markup can substantially change a bill before it reaches the full chamber.
+                  </p>
+                </Anchor>
+              </article>
+
+              <article className="ll3-ref__panel">
                 <Anchor id="resolution">
                   <h3 className="ll3-ref__content-title">What is a resolution?</h3>
                   <p className="ll3-ref__content-copy">
@@ -381,6 +397,48 @@ export default function ReferencePage() {
               </article>
 
               <article className="ll3-ref__panel">
+                <Anchor id="cloture">
+                  <h3 className="ll3-ref__content-title">What are cloture and the filibuster?</h3>
+                  <p className="ll3-ref__content-copy">
+                    In the Senate, debate on legislation can continue for an extended period unless senators agree to end debate. This extended debate is commonly referred to as a filibuster.
+                  </p>
+                  <p className="ll3-ref__content-copy">
+                    Cloture is the formal process used to end debate and move toward a vote. Most legislation requires a supermajority vote to invoke cloture.
+                  </p>
+                  <div className="ll3-ref__callout">
+                    <div className="ll3-ref__callout-title">Why it matters</div>
+                    <p className="ll3-ref__content-copy">
+                      Bills can have majority support but still stall if cloture cannot be invoked.
+                    </p>
+                  </div>
+                </Anchor>
+              </article>
+
+              <article className="ll3-ref__panel">
+                <Anchor id="engrossed-enrolled">
+                  <h3 className="ll3-ref__content-title">Engrossed vs. Enrolled bills</h3>
+                  <p className="ll3-ref__content-copy">
+                    An engrossed bill is an updated official version that includes amendments passed by one chamber.
+                  </p>
+                  <p className="ll3-ref__content-copy">
+                    An enrolled bill is the final version passed by both chambers in identical form and sent to the President.
+                  </p>
+                </Anchor>
+              </article>
+
+              <article className="ll3-ref__panel">
+                <Anchor id="pocket-veto">
+                  <h3 className="ll3-ref__content-title">What is a pocket veto?</h3>
+                  <p className="ll3-ref__content-copy">
+                    A pocket veto occurs when the President does not sign a bill and Congress adjourns before the bill can automatically become law.
+                  </p>
+                  <p className="ll3-ref__content-copy">
+                    Unlike a regular veto, Congress generally cannot override a pocket veto after adjournment.
+                  </p>
+                </Anchor>
+              </article>
+
+              <article className="ll3-ref__panel">
                 <Anchor id="laid-on-table">
                   <h3 className="ll3-ref__content-title">What does “laid on the table” mean?</h3>
                   <p className="ll3-ref__content-copy">
@@ -390,7 +448,7 @@ export default function ReferencePage() {
                   <div className="ll3-ref__callout ll3-ref__callout--warn">
                     <div className="ll3-ref__callout-title">Why it matters</div>
                     <p className="ll3-ref__content-copy">
-                      If you’re tracking momentum, this can signal that leadership is moving on from a measure, at least for the moment.
+                      If you are tracking momentum, this can signal that leadership is moving on from a measure, at least for the moment.
                     </p>
                   </div>
                 </Anchor>
@@ -442,7 +500,9 @@ export default function ReferencePage() {
         </section>
 
         <footer className="ll3-ref__footer">
-          <span className="ll3-ref__footer-copy">Nonpartisan info layer • Official links only</span>
+          <span className="ll3-ref__footer-copy">
+            Civic reference layer • Official public resources where possible • Not legal advice
+          </span>
         </footer>
       </div>
     </main>
