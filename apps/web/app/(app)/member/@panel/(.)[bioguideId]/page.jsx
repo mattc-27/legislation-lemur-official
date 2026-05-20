@@ -1,5 +1,6 @@
 // app/(app)/@memberPanel/(.)member/[bioguideId]/page.jsx
-import MemberProfileView from "@/app/components/features/members/profile/MemberProfileView";
+// import MemberProfileView from "@/app/components/features/members/profile/MemberProfileView";
+import MemberProfileView from "@/app/components/features/members/profile/MemberProfileViewTemp";
 import MemberProfilePanelShell from "@/app/components/features/members/profile/MemberProfilePanelShell";
 
 import "@/app/styles/active/members/refactored/ll3.members.tokens.css";
