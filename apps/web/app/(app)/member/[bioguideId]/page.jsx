@@ -39,9 +39,12 @@ import "@/app/styles/active/members/refactored/ll3.members.votes.css";
 import "@/app/styles/active/members/refactored/ll3.members.vote-alignment.css";
 
 
-export default async function MemberPage({ params }) {
-    const { bioguideId } = await params; // no await
-    //const bioguideId = params.id;
+export default async function MemberPage({ params, searchParams }) {
+    const { bioguideId } = await params;
+    const resolvedSearchParams = await searchParams;
+
+    const fromBill = resolvedSearchParams?.fromBill || null;
+    const fromBillLabel = resolvedSearchParams?.fromBillLabel || null;
 
     const {
         profile,
@@ -129,11 +132,15 @@ export default async function MemberPage({ params }) {
                 <section className="llmp3-intro">
                     <div className="llmp3-back">
                         <Link
-                            href={`/member?state=${encodeURIComponent(profile.stateCode || "")}`}
+                            href={fromBill ? `/bills/${fromBill}` : `/member?state=${encodeURIComponent(profile.stateCode || "")}`}
                             className="llmp3-back__link"
                         >
                             <ArrowLeft size={16} aria-hidden="true" />
-                            <span>Back to {stateLabel} results</span>
+                            <span>
+                                {fromBill
+                                    ? `Back to ${fromBillLabel || "bill"}`
+                                    : `Back to ${stateLabel} results`}
+                            </span>
                         </Link>
                     </div>
 
@@ -144,12 +151,6 @@ export default async function MemberPage({ params }) {
                         </div>
                     </SectionBoundary>
                 </section>
-                {/* KPIs 
-                <SectionBoundary where="KpiRow">
-                    <KpiRow kpis={kpis} />
-                </SectionBoundary>
-*/}
-                {/* Tabs                          <SectionBoundary where="MemberTabs">     </SectionBoundary> */}
 
                 <div className="llmp3-panel">
                     <MemberTabs
@@ -162,8 +163,6 @@ export default async function MemberPage({ params }) {
                         freshnessPerView={freshness.perView}
                     />
                 </div>
-
-
 
                 {/* Votes + viz */}
                 <SectionBoundary where="MemberVotesAndViz">

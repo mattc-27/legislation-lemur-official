@@ -1,0 +1,154 @@
+/* Cards / tables for Reference Hub */
+.ll3-refResourceCard,
+.ll3-refPanel,
+.ll3-refTermCard {
+  border: 1px solid var(--ref-line, rgba(15, 23, 42, .12));
+  background: var(--ref-surface, rgba(255, 255, 255, .86));
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .05);
+}
+
+.ll3-refResourceCard {
+  min-height: 150px;
+  padding: 22px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ll3-refResourceCard__topline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--ref-muted, #667085);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.ll3-refResourceCard__topline span {
+  color: var(--ref-ink, #080b1f);
+}
+
+.ll3-refResourceCard__topline em {
+  font-style: italic;
+}
+
+.ll3-refResourceCard h3 {
+  margin: 8px 0 10px;
+  color: var(--ref-ink, #080b1f);
+  font-size: 1.05rem;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  font-weight: 850;
+}
+
+.ll3-refResourceCard p {
+  margin: 0;
+  color: var(--ref-text, #1f2937);
+  font-size: .93rem;
+  line-height: 1.55;
+  font-weight: 520;
+}
+
+.ll3-refResourceCard a {
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--ref-ink, #080b1f);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ll3-refResourceCard a:hover {
+  text-decoration: underline;
+}
+
+.ll3-refPanel {
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.ll3-refPanel__title {
+  margin: 0 0 10px;
+  color: var(--ref-ink, #080b1f);
+  font-size: 1.38rem;
+  line-height: 1.18;
+  letter-spacing: -.03em;
+  font-weight: 850;
+}
+
+.ll3-refPanel__copy {
+  margin: 0 0 18px;
+  color: var(--ref-muted, #667085);
+  font-size: .96rem;
+  line-height: 1.62;
+}
+
+.ll3-refTermGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ll3-refTermCard {
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.ll3-refTermCard h4 {
+  margin: 0 0 8px;
+  color: var(--ref-ink, #080b1f);
+  font-size: 1rem;
+  line-height: 1.25;
+  font-weight: 850;
+}
+
+.ll3-refTermCard p {
+  margin: 0;
+  color: var(--ref-text, #1f2937);
+  font-size: .92rem;
+  line-height: 1.56;
+}
+
+.ll3-refTableWrap {
+  overflow: auto;
+  border: 1px solid var(--ref-line);
+  border-radius: 10px;
+}
+
+.ll3-refTable {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ll3-refTable th, .ll3-refTable td {
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--ref-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ll3-refTable th {
+  color: var(--ref-ink);
+  background: color-mix(in srgb, var(--ll3-accent, #6d5dfc) 7%, transparent);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ll3-refMono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 900;
+}
+
+@media (max-width: 700px) {
+  .ll3-refTermGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ll3-refPanel {
+    padding: 18px;
+  }
+}

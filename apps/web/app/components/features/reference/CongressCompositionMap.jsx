@@ -4,12 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
 import StateCompositionModal from "./StateCompositionModal";
 
+const DEBUG_MAP = true;
+
 const PARTY_CLASS = {
-    D: "is-dem",
-    R: "is-rep",
-    I: "is-ind",
-    split: "is-split",
-    unknown: "is-unknown",
+    D: "ll3-mapState--dem",
+    R: "ll3-mapState--rep",
+    I: "ll3-mapState--ind",
+    split: "ll3-mapState--split",
+    unknown: "ll3-mapState--unknown",
 };
 
 const STATE_NAME_TO_CODE = {
@@ -86,9 +88,15 @@ function getFeatureStateCode(feature) {
 function dominantParty(row) {
     const counts = row?.combined_counts || row?.combinedCounts || {};
 
-    const d = Number(counts.D ?? (Number(row?.house_d || 0) + Number(row?.senate_d || 0)));
-    const r = Number(counts.R ?? (Number(row?.house_r || 0) + Number(row?.senate_r || 0)));
-    const i = Number(counts.I ?? (Number(row?.house_i || 0) + Number(row?.senate_i || 0)));
+    const d = Number(
+        counts.D ?? Number(row?.house_d || 0) + Number(row?.senate_d || 0)
+    );
+    const r = Number(
+        counts.R ?? Number(row?.house_r || 0) + Number(row?.senate_r || 0)
+    );
+    const i = Number(
+        counts.I ?? Number(row?.house_i || 0) + Number(row?.senate_i || 0)
+    );
 
     const max = Math.max(d, r, i);
     if (!max) return "unknown";
@@ -123,16 +131,22 @@ export default function CongressCompositionMap({ states = [] }) {
 
         fetch("/maps/us-states.geojson")
             .then((res) => {
-                if (!res.ok) {
-                    throw new Error(`Failed to load map: ${res.status}`);
-                }
-
+                if (!res.ok) throw new Error(`Failed to load map: ${res.status}`);
                 return res.json();
             })
             .then((json) => {
+                if (DEBUG_MAP) {
+                    console.log("[CongressCompositionMap] GeoJSON loaded", {
+                        type: json?.type,
+                        featureCount: json?.features?.length,
+                        firstFeatureProps: json?.features?.[0]?.properties,
+                    });
+                }
+
                 if (alive) setGeo(json);
             })
-            .catch(() => {
+            .catch((error) => {
+                console.error("[CongressCompositionMap] Failed to load GeoJSON", error);
                 if (alive) setGeo(null);
             });
 
@@ -148,24 +162,61 @@ export default function CongressCompositionMap({ states = [] }) {
         svg.selectAll("*").remove();
 
         const width = wrapRef.current.clientWidth || 900;
-        const height = Math.max(420, Math.round(width * 0.58));
+        const height = Math.max(320, Math.round(width * 0.58));
 
         svg.attr("viewBox", `0 0 ${width} ${height}`);
+        svg.attr("preserveAspectRatio", "xMidYMid meet");
 
-        const projection = d3.geoAlbersUsa().fitSize([width, height], geo);
+        const featureDiagnostics = (geo.features || []).map((feature) => {
+            const code = getFeatureStateCode(feature);
+
+            return {
+                code,
+                included: Boolean(code && stateMap.has(code)),
+                properties: feature.properties,
+            };
+        });
+
+        const stateFeatures = (geo.features || []).filter((feature) => {
+            const code = getFeatureStateCode(feature);
+            return code && stateMap.has(code);
+        });
+
+        if (DEBUG_MAP) {
+            console.groupCollapsed("[CongressCompositionMap] Feature diagnostics");
+            console.log("stateMap keys", Array.from(stateMap.keys()));
+            console.log("all features", featureDiagnostics);
+            console.log(
+                "rejected features",
+                featureDiagnostics.filter((item) => !item.included)
+            );
+            console.log(
+                "accepted features",
+                featureDiagnostics.filter((item) => item.included)
+            );
+            console.groupEnd();
+        }
+
+        const featureCollection = {
+            type: "FeatureCollection",
+            features: stateFeatures,
+        };
+
+        const projection = d3.geoAlbersUsa().fitSize([width, height], featureCollection);
         const path = d3.geoPath(projection);
 
         svg.append("g")
             .attr("class", "ll3-mapStates")
             .selectAll("path")
-            .data(geo.features || [])
+            .data(stateFeatures)
             .join("path")
             .attr("d", path)
             .attr("class", (feature) => {
                 const code = getFeatureStateCode(feature);
                 const row = stateMap.get(code);
+                const party = dominantParty(row);
 
-                return `ll3-mapState ${PARTY_CLASS[dominantParty(row)] || PARTY_CLASS.unknown}`;
+                return `ll3-mapState ${PARTY_CLASS[party] || PARTY_CLASS.unknown}`;
             })
             .attr("tabindex", 0)
             .attr("role", "button")
@@ -179,6 +230,14 @@ export default function CongressCompositionMap({ states = [] }) {
                 const code = getFeatureStateCode(feature);
                 const row = stateMap.get(code);
 
+                if (DEBUG_MAP) {
+                    console.log("[CongressCompositionMap] clicked state", {
+                        code,
+                        row,
+                        properties: feature.properties,
+                    });
+                }
+
                 if (row) setSelectedState(row);
             })
             .on("keydown", (event, feature) => {
@@ -190,11 +249,6 @@ export default function CongressCompositionMap({ states = [] }) {
 
                 if (row) setSelectedState(row);
             });
-
-        svg.append("path")
-            .datum({ type: "Sphere" })
-            .attr("class", "ll3-mapFrame")
-            .attr("d", path);
     }, [geo, stateMap]);
 
     return (
@@ -215,7 +269,12 @@ export default function CongressCompositionMap({ states = [] }) {
 
             <div ref={wrapRef} className="ll3-mapShell">
                 {geo ? (
-                    <svg ref={svgRef} className="ll3-compositionMap" />
+                    <svg
+                        ref={svgRef}
+                        className="ll3-compositionMap"
+                        fill="none"
+                        aria-label="State delegation composition map"
+                    />
                 ) : (
                     <div className="ll3-mapFallback">Map data unavailable.</div>
                 )}

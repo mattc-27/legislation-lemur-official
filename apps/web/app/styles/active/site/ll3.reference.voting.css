@@ -1,315 +1,316 @@
-/* ll3.reference.voting.css
-   ==========================================================================
-   State voting lookup — Reference Center
-   ========================================================================== */
-
+/* ll3.reference.voting.css — featured state voting module */
 .ll3-voteLookup,
 .ll3-voteLookup *,
 .ll3-voteLookup *::before,
 .ll3-voteLookup *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .ll3-voteLookup {
-    margin-bottom: 34px;
-    padding: clamp(20px, 3vw, 28px);
-    border-radius: 28px;
-    background:
-        radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--ll3-accent) 9%, transparent), transparent 34%),
-        linear-gradient(180deg, var(--ll3-panel), var(--ll3-panel-solid));
-    border: 1px solid var(--ll3-border-soft);
-    box-shadow: var(--ll3-shadow-sm);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+  display: grid;
+  grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr);
+  gap: 34px;
+  align-items: start;
+  padding: 34px;
+  border: 1px solid var(--ref-line, rgba(15, 23, 42, .12));
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .54));
+  box-shadow: 0 18px 46px rgba(15, 23, 42, .055);
 }
 
-.ll3-voteLookup__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-    gap: clamp(18px, 3vw, 28px);
-    align-items: stretch;
+html[data-theme="dark"] .ll3-voteLookup {
+  background: rgba(20, 24, 34, .9);
 }
 
 .ll3-voteLookup__copy {
-    min-width: 0;
+  min-width: 0;
 }
 
-.ll3-voteLookup__field {
-    width: min(520px, 100%);
-    margin-top: 18px;
+.ll3-voteLookup__title {
+  margin: 0;
+  color: var(--ref-ink, #080b1f);
+  font-size: clamp(2rem, 4.2vw, 4.15rem);
+  line-height: .96;
+  letter-spacing: -.065em;
+  font-weight: 900;
+}
+
+.ll3-voteLookup__lead {
+  width: min(470px, 100%);
+  margin: 18px 0 26px;
+  color: var(--ref-text, #1f2937);
+  font-size: .98rem;
+  line-height: 1.62;
+  font-weight: 560;
 }
 
 .ll3-voteLookup__label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--ll3-text-strong);
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ref-ink, #080b1f);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 .ll3-voteLookup__select {
-    width: 100%;
-    min-height: 48px;
-    padding: 0 44px 0 14px;
-    border-radius: 15px;
-    border: 1px solid var(--ll3-border);
-    background-color: var(--ll3-panel-strong);
-    color: var(--ll3-text-strong);
-    font: inherit;
-    font-size: 14px;
-    font-weight: 750;
-    line-height: 1;
-    cursor: pointer;
-    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 7.5l4.5 4.7 4.5-4.7' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 18px 18px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 42px 0 13px;
+  border: 1px solid var(--ref-line, rgba(15, 23, 42, .14));
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--ref-ink, #080b1f);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 18px) 19px, calc(100% - 13px) 19px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
 }
 
 .ll3-voteLookup__select:focus {
-    outline: none;
-    border-color: var(--ll3-border-strong);
-    background-color: var(--ll3-panel-solid);
-    box-shadow:
-        0 0 0 4px var(--ll3-focus),
-        0 1px 0 rgba(15, 23, 42, 0.03);
+  outline: 2px solid color-mix(in srgb, var(--ll3-accent, #6d5dfc) 28%, transparent);
+  outline-offset: 2px;
 }
 
 .ll3-voteLookup__note {
-    max-width: 58ch;
-    margin: 14px 0 0;
-    color: var(--ll3-muted2);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    font-weight: 600;
+  margin: 12px 0 0;
+  color: var(--ref-muted, #667085);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .ll3-voteLookup__panel {
-    min-width: 0;
-    min-height: 282px;
-    padding: clamp(18px, 2.4vw, 22px);
-    border-radius: 24px;
-    background: var(--ll3-panel-solid);
-    border: 1px solid var(--ll3-border-soft);
-    box-shadow: var(--ll3-shadow-sm);
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--ref-line, rgba(15, 23, 42, .12));
+  border-radius: 10px;
+  background: var(--ref-surface, rgba(255, 255, 255, .86));
 }
 
-.ll3-voteLookup__empty {
-    display: grid;
-    align-content: center;
-    min-height: 234px;
+.ll3-voteLookup__panelHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--ref-line, rgba(15, 23, 42, .1));
 }
 
-.ll3-voteLookup__emptyKicker,
-.ll3-voteLookup__resultKicker,
-.ll3-voteLookup__supportTitle {
-    color: var(--ll3-link);
-    font-size: 11px;
-    line-height: 1;
-    font-weight: 900;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
+.ll3-voteLookup__panelHead h3 {
+  margin: 0;
+  color: var(--ref-ink, #080b1f);
+  font-size: clamp(1.6rem, 3vw, 2.45rem);
+  line-height: 1;
+  letter-spacing: -.055em;
+  font-weight: 900;
 }
 
-.ll3-voteLookup__emptyTitle {
-    margin: 12px 0 10px;
-    color: var(--ll3-text-strong);
-    font-size: clamp(1.25rem, 1rem + 0.8vw, 1.8rem);
-    line-height: 1.12;
-    letter-spacing: -0.035em;
-    font-weight: 900;
-}
-
-.ll3-voteLookup__emptyCopy {
-    max-width: 56ch;
-    margin: 0;
-    color: var(--ll3-text);
-    font-size: 0.95rem;
-    line-height: 1.7;
-    font-weight: 520;
-}
-
-.ll3-voteLookup__resultHead {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 14px;
-    padding-bottom: 16px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--ll3-border-soft);
-}
-
-.ll3-voteLookup__resultTitle {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 9px;
-    margin: 8px 0 0;
-    color: var(--ll3-text-strong);
-    font-size: clamp(1.35rem, 1.05rem + 0.9vw, 2rem);
-    line-height: 1.08;
-    letter-spacing: -0.04em;
-    font-weight: 950;
-}
-
-.ll3-voteLookup__resultTitle span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 26px;
-    padding: 0 9px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--ll3-accent) 9%, transparent);
-    border: 1px solid color-mix(in srgb, var(--ll3-accent) 16%, transparent);
-    color: var(--ll3-link);
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 900;
-    letter-spacing: 0.08em;
+.ll3-voteLookup__panelHead h3 span {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ll3-accent, #6d5dfc) 11%, transparent);
+  color: var(--ll3-link, #4f46e5);
+  font-size: 11px;
+  letter-spacing: .08em;
+  vertical-align: middle;
 }
 
 .ll3-voteLookup__source {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 34px;
-    white-space: nowrap;
-    padding: 0 12px;
-    border-radius: 999px;
-    color: var(--ll3-text-strong);
-    background: var(--ll3-surface-2);
-    border: 1px solid var(--ll3-border);
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 900;
+  white-space: nowrap;
+  padding: 8px 10px;
+  border: 1px solid var(--ref-line, rgba(15, 23, 42, .12));
+  border-radius: 999px;
+  color: var(--ref-ink, #080b1f);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 800;
 }
 
-.ll3-voteLookup__source:hover {
-    border-color: var(--ll3-border-strong);
-}
-
-.ll3-voteLookup__actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+.ll3-voteLookup__grid,
+.ll3-voteLookup__supportGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .ll3-voteLookup__action {
-    display: grid;
-    gap: 6px;
-    min-height: 92px;
-    padding: 15px;
-    border-radius: 18px;
-    text-decoration: none;
-    border: 1px solid var(--ll3-border-soft);
-    transition:
-        transform 140ms ease,
-        box-shadow 160ms ease,
-        border-color 160ms ease,
-        background-color 160ms ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 84px;
+  padding: 16px;
+  border: 1px solid var(--ref-line, rgba(15, 23, 42, .12));
+  border-radius: 8px;
+  color: var(--ref-ink, #080b1f);
+  text-decoration: none;
+  background: transparent;
 }
 
 .ll3-voteLookup__action:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--ll3-shadow-sm);
-    border-color: color-mix(in srgb, var(--ll3-accent) 20%, transparent);
+  border-color: color-mix(in srgb, var(--ll3-accent, #6d5dfc) 34%, var(--ref-line));
 }
 
-.ll3-voteLookup__action--primary {
-    background:
-        radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ll3-accent) 10%, transparent), transparent 34%),
-        var(--ll3-panel);
+.ll3-voteLookup__action strong {
+  display: block;
+  font-size: .96rem;
+  line-height: 1.25;
+  font-weight: 850;
 }
 
-.ll3-voteLookup__action--support {
-    min-height: 78px;
-    background: var(--ll3-surface-2);
+.ll3-voteLookup__action em {
+  display: block;
+  margin-top: 5px;
+  color: var(--ref-muted, #667085);
+  font-size: .84rem;
+  line-height: 1.4;
+  font-style: normal;
 }
 
-.ll3-voteLookup__actionLabel {
-    color: var(--ll3-text-strong);
-    font-size: 0.96rem;
-    line-height: 1.25;
-    font-weight: 900;
-}
-
-.ll3-voteLookup__actionDesc {
-    color: var(--ll3-text);
-    font-size: 0.84rem;
-    line-height: 1.45;
-    font-weight: 560;
+.ll3-voteLookup__action small {
+  color: var(--ll3-link, #4f46e5);
+  font-size: 15px;
+  font-weight: 900;
 }
 
 .ll3-voteLookup__support {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid var(--ll3-border-soft);
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ref-line, rgba(15, 23, 42, .1));
 }
 
-.ll3-voteLookup__supportGrid {
+.ll3-voteLookup__empty {
+  padding: 16px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-muted, #667085) 8%, transparent);
+  color: var(--ref-muted, #667085);
+  font-size: .94rem;
+  line-height: 1.5;
+  font-weight: 650;
+}
+
+@media (max-width: 900px) {
+  .ll3-voteLookup {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ll3-voteLookup__grid, .ll3-voteLookup__supportGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ll3-voteLookup__panelHead {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin-top: 12px;
+  }
+
+  .ll3-voteLookup__source {
+    width: fit-content;
+  }
 }
 
-.ll3-voteLookup__missing {
-    padding: 14px;
-    border-radius: 18px;
-    background: var(--ll3-surface-2);
-    border: 1px solid var(--ll3-border-soft);
-    color: var(--ll3-muted2);
-    font-size: 0.92rem;
-    line-height: 1.6;
-    font-weight: 650;
+/* V4 cleanup */
+.ll3-voteLookup {
+  grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr);
+  gap: clamp(28px, 4vw, 46px);
+  padding: clamp(28px, 4vw, 44px);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ll3-accent, #6d5dfc) 7%, transparent), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, .84), rgba(255, 255, 255, .62));
 }
 
-@media (max-width: 980px) {
-    .ll3-voteLookup__grid {
-        grid-template-columns: 1fr;
-    }
-
-    .ll3-voteLookup__panel {
-        min-height: unset;
-    }
-
-    .ll3-voteLookup__empty {
-        min-height: 180px;
-    }
+.ll3-voteLookup__title {
+  max-width: 9.5ch;
+  font-size: clamp(2.45rem, 4.6vw, 4.75rem);
 }
 
-@media (max-width: 680px) {
-    .ll3-voteLookup {
-        padding: 18px;
-        border-radius: 22px;
-        margin-bottom: 26px;
-    }
+.ll3-voteLookup__lead {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
 
-    .ll3-voteLookup__panel {
-        padding: 16px;
-        border-radius: 20px;
-    }
+.ll3-voteLookup__hintList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: min(500px, 100%);
+  margin: 0 0 24px;
+}
 
-    .ll3-voteLookup__resultHead {
-        display: grid;
-    }
+.ll3-voteLookup__hintList span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--ref-line, rgba(15, 23, 42, .12));
+  border-radius: 999px;
+  color: var(--ref-muted, #667085);
+  background: color-mix(in srgb, var(--ref-surface, #fff) 76%, transparent);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 720;
+}
 
-    .ll3-voteLookup__source {
-        width: fit-content;
-    }
+.ll3-voteLookup__panel {
+  border-radius: 14px;
+  padding: clamp(22px, 3vw, 30px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, .04);
+}
 
-    .ll3-voteLookup__actions,
-    .ll3-voteLookup__supportGrid {
-        grid-template-columns: 1fr;
-    }
+.ll3-voteLookup__panelHead {
+  align-items: center;
+  padding-bottom: 20px;
+  margin-bottom: 18px;
+}
 
-    .ll3-voteLookup__action {
-        min-height: unset;
-    }
+.ll3-voteLookup__sectionLabel {
+  margin: 0 0 10px;
+  color: var(--ref-muted, #667085);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.ll3-voteLookup__action {
+  min-height: 92px;
+  background: color-mix(in srgb, var(--ref-surface, #fff) 72%, transparent);
+  transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
+}
+
+.ll3-voteLookup__action:hover {
+  transform: translateY(-1px);
+  background: var(--ref-surface, #fff);
+  text-decoration: none;
+}
+
+.ll3-voteLookup__action--support {
+  min-height: 78px;
+}
+
+.ll3-voteLookup__source:hover {
+  text-decoration: none;
+  border-color: color-mix(in srgb, var(--ll3-accent, #6d5dfc) 30%, var(--ref-line));
+}
+
+@media (max-width: 900px) {
+  .ll3-voteLookup {
+    grid-template-columns: 1fr;
+  }
+
+  .ll3-voteLookup__title {
+    max-width: 12ch;
+  }
 }
