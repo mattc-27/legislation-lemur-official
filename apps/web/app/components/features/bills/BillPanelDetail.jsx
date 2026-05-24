@@ -1,6 +1,6 @@
 // /app/components/features/bills/BillPanelDetails.jsx
 import Link from "next/link";
-import { ArrowLeft, Gavel } from "lucide-react";
+import { ArrowLeft, Gavel, Info } from "lucide-react";
 
 import BillPanelActions from "./BillPanelActions";
 import BillPanelMetricCard from "./BillPanelMetricCard";
@@ -136,10 +136,53 @@ export default function BillPanelDetail({ bill, mode = "page", sourceMember = nu
                                         <div className="llbp-meta__value">{bill?.origin_chamber || "—"}</div>
                                     </div>
 
-                                    <div className="llbp-meta">
+                                    {/*<div className="llbp-meta">
                                         <div className="llbp-meta__label">Sponsor</div>
                                         <div className="llbp-meta__value">
                                             {bill?.sponsor_name || bill?.sponsor_bioguide_id || "—"}
+                                        </div>
+                                    </div>*/}
+                                    <div className="llbp-meta">
+                                        <div className="llbp-meta__label">Sponsor</div>
+
+                                        <div className="llbp-meta__value llbp-sponsorMeta">
+                                            {bill?.sponsor_bioguide_id ? (
+                                                <>
+                                                    <Link
+                                                        href={`/member/${bill.sponsor_bioguide_id}?fromBill=${encodeURIComponent(bill?.bill_id || "")}&fromBillLabel=${encodeURIComponent(billCode)}`}
+                                                        className="llbp-memberLink"
+                                                    >
+                                                        {bill?.sponsor_name || bill.sponsor_bioguide_id}
+                                                    </Link>
+
+                                                    <span className="llbp-sponsorTooltipWrap">
+                                                        <button
+                                                            type="button"
+                                                            className="llbp-sponsorTooltipBtn"
+                                                            aria-label="Sponsor details"
+                                                        >
+                                                            <Info size={12} strokeWidth={2.4} />
+                                                        </button>
+
+                                                        <span className="llbp-sponsorTooltip" role="tooltip">
+                                                            <span className="llbp-sponsorTooltip__name">
+                                                                {bill?.sponsor_name || bill.sponsor_bioguide_id}
+                                                            </span>
+
+                                                            <span className="llbp-sponsorTooltip__meta">
+                                                                {[
+                                                                    bill?.sponsor_party,
+                                                                    bill?.sponsor_state_name || bill?.sponsor_state,
+                                                                    bill?.origin_chamber,
+                                                                    bill?.sponsor_district ? `District ${bill.sponsor_district}` : null,
+                                                                ].filter(Boolean).join(" • ")}
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                bill?.sponsor_name || "—"
+                                            )}
                                         </div>
                                     </div>
 
