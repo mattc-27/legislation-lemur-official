@@ -110,3 +110,126 @@
         padding: 14px;
     }
 }
+
+.llbp-memberLink {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    font-weight: 900;
+}
+
+.llbp-memberLink:hover {
+    color: var(--ll3-link);
+}
+
+.llbp-memberMeta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.llbp-memberLink {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    font-weight: 900;
+}
+
+.llbp-memberLink:hover {
+    color: var(--ll3-link);
+}
+
+/* Remove/override prior sponsor tooltip rules */
+
+.llbp-sponsorMeta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    min-width: 0;
+}
+
+.llbp-sponsorTooltipWrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.llbp-sponsorTooltipBtn {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: currentColor;
+    opacity: 0.75;
+    cursor: help;
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+}
+
+.llbp-sponsorTooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+
+    min-width: 220px;
+    max-width: 280px;
+    padding: 12px 14px;
+    border-radius: 14px;
+
+    background: rgba(15, 23, 42, 0.98);
+    color: #fff;
+    box-shadow: 0 18px 48px rgba(2, 6, 23, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    white-space: normal;
+}
+
+.llbp-sponsorTooltipWrap:hover .llbp-sponsorTooltip,
+.llbp-sponsorTooltipWrap:focus-within .llbp-sponsorTooltip {
+    display: grid;
+    gap: 5px;
+}
+
+.llbp-sponsorTooltip__name {
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+.llbp-sponsorTooltip__meta {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.76);
+}
+
+.llbp-sponsorTooltip {
+    display: none !important;
+}
+
+.llbp-sponsorTooltipWrap:hover .llbp-sponsorTooltip,
+.llbp-sponsorTooltipWrap:focus-within .llbp-sponsorTooltip {
+    display: grid !important;
+}
+
+/* DEBUG: sponsor tooltip visibility
+
+.llbp-sponsorTooltip {
+    display: none !important;
+    outline: 3px solid red !important;
+}
+
+.llbp-sponsorTooltipWrap:hover .llbp-sponsorTooltip,
+.llbp-sponsorTooltipWrap:focus-within .llbp-sponsorTooltip {
+    display: grid !important;
+}
+    */
