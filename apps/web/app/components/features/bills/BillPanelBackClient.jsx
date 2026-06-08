@@ -1,4 +1,4 @@
-// 
+// @app/components/features/bills/BillPanelBackClient.jsx
 
 "use client";
 

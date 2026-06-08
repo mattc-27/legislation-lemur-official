@@ -5,7 +5,7 @@ export default function SiteFooter() {
 
   return (
     <footer className="site-footer">
-      <div className="container site-footer__outer">
+      <div className="site-footer__outer">
         <div className="site-footer__top">
           <div className="site-footer__brandblock">
             <div className="site-footer__brandmark">Legislation Lemur</div>
@@ -71,6 +71,6 @@ export default function SiteFooter() {
           </nav>
         </div>
       </div>
-    </footer>
+    </footer >
   );
 }

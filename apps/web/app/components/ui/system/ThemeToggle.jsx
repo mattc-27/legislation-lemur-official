@@ -3,65 +3,70 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
+const STORAGE_KEY = "ll3-theme";
+
 function getPreferredTheme() {
     if (typeof window === "undefined") return "light";
 
-    const saved = window.localStorage.getItem("ll3-theme");
+    const saved = window.localStorage.getItem(STORAGE_KEY);
     if (saved === "light" || saved === "dark") return saved;
 
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyTheme(theme) {
+    const root = document.documentElement;
+
+    root.setAttribute("data-theme", theme);
+    root.classList.toggle("dark", theme === "dark");
+    window.localStorage.setItem(STORAGE_KEY, theme);
 }
 
 export default function ThemeToggle() {
-    const [theme, setTheme] = useState("light");
-    const [mounted, setMounted] = useState(false);
+    const [theme, setTheme] = useState(null);
 
     useEffect(() => {
         const next = getPreferredTheme();
+        applyTheme(next);
         setTheme(next);
-        document.documentElement.setAttribute("data-theme", next);
-        setMounted(true);
     }, []);
 
     function toggleTheme() {
-        const next = theme === "dark" ? "light" : "dark";
+        const current =
+            theme ||
+            document.documentElement.getAttribute("data-theme") ||
+            getPreferredTheme();
+
+        const next = current === "dark" ? "light" : "dark";
+
+        applyTheme(next);
         setTheme(next);
-        document.documentElement.setAttribute("data-theme", next);
-        window.localStorage.setItem("ll3-theme", next);
     }
 
-    if (!mounted) {
-        return (
-            <button
-                type="button"
-                className="site-header__themeToggle"
-                aria-label="Toggle color theme"
-                title="Toggle color theme"
-            >
-                <Sun size={17} strokeWidth={2.2} />
-            </button>
-        );
-    }
+    const currentTheme = theme || "light";
+    const isDark = currentTheme === "dark";
 
-    const isDark = theme === "dark";
+    const nextLabel = isDark ? "Light" : "Dark";
+    const nextIcon = isDark ? Sun : Moon;
+    const Icon = nextIcon;
 
     return (
         <button
             type="button"
             className="site-header__themeToggle"
             onClick={toggleTheme}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={`Switch to ${nextLabel.toLowerCase()} mode`}
+            title={`Switch to ${nextLabel.toLowerCase()} mode`}
+            suppressHydrationWarning
         >
-            {isDark ? (
-                <Sun size={17} strokeWidth={2.2} />
-            ) : (
-                <Moon size={17} strokeWidth={2.2} />
-            )}
+            <span className="site-header__themeTrack" aria-hidden="true">
+                <span className="site-header__themeThumb">
+                    <Icon size={15} strokeWidth={2.2} />
+                </span>
+            </span>
+
             <span className="site-header__themeToggleText">
-                {isDark ? "Light" : "Dark"}
+                {nextLabel}
             </span>
         </button>
     );

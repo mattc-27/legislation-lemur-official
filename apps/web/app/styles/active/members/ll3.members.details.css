@@ -1,0 +1,111 @@
+/* app/styles/active/members/refactored/ll3.members.details.css
+   Member detail page/entity-specific styles only.
+   Shared wrapper, cards, panel, page background, gutters, and generic tables now
+   live in core/ll3.entity-detail.css.
+*/
+
+.llmp3-stack-24 {
+  display: grid;
+  gap: 24px;
+}
+
+.llmp3-stack-16 > * + * {
+  margin-top: 16px;
+}
+
+.llmp3-intro__stack {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+}
+
+.llmp3-back {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  min-width: 0;
+}
+
+.llmp3-back__link:hover span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.llmp3-back__link:active {
+  transform: translateY(1px);
+}
+
+.llmp3-back__link svg {
+  flex: 0 0 auto;
+  opacity: 0.82;
+}
+
+.llmp3-grid-2 {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .llmp3-grid-2 {
+    grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.llm3-headgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  min-width: 0;
+}
+
+@media (max-width: 920px) {
+  .llm3-headgrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.llmp3-intro .llmp3-card--hero,
+.llmp3-intro .llmp3-card--soft {
+  padding: 16px;
+}
+
+@media (min-width: 720px) {
+  .llmp3-intro .llmp3-card--hero,
+  .llmp3-intro .llmp3-card--soft {
+    padding: 18px;
+  }
+}
+
+.llmp3-page .llm3-tabs {
+  padding: 12px;
+  max-width: none;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .llmp3-back__link {
+    font-size: 0.92rem;
+    font-weight: 650;
+    gap: 6px;
+  }
+
+  .llmp3-back__link svg,
+  .llmp3-back--member svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .llmp3-page .llm3-tabs {
+    padding: 8px 6px;
+  }
+
+  .llmp3-page .llm3-tabsViz,
+  .llmp3-page .llm3-tabsTable {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}

@@ -1,223 +1,277 @@
-# Legislation Lemur — Web App (apps/web)
+# Legislation Lemur — Web App
 
-This is the **Next.js (App Router)** frontend for Legislation Lemur (LL3).
+This package contains the primary Legislation Lemur frontend built with Next.js App Router.
 
-The web app provides a neutral, structured interface for exploring U.S. Congressional data — including bills, members, committees, and legislative session context. It consumes materialized-view–backed API contracts designed for deterministic rendering and stable filtering behavior.
+The application provides a neutral, structured interface for exploring U.S. Congressional data through legislation, members, committees, votes, and related civic reference resources.
 
-The UI emphasizes:
-- Data neutrality
-- Explicit state synchronization
-- Stable refresh-aware rendering
-- Clear visual hierarchy via the LL3 design system
+The frontend emphasizes:
+
+* Discoverability
+* Clear information hierarchy
+* Consistent navigation patterns
+* Responsive exploration workflows
+* Neutral presentation of legislative data
 
 ---
 
-## High-Level Architecture
+## Purpose
+
+The web application serves as the primary user-facing experience for Legislation Lemur.
+
+Its role is to help users:
+
+* Discover legislation and legislative activity
+* Explore members of Congress
+* Navigate committee structures
+* Search across multiple entity types
+* Understand legislative relationships and context
+* Access civic information through a consistent interface
+
+The frontend presents structured information but does not provide political commentary or editorial analysis.
+
+---
+
+## Architecture
 
 ### Framework
-- Next.js 15+ (App Router)
-- TypeScript
-- Turborepo monorepo integration
 
-### Data Model
-The app consumes:
-- Materialized view–backed endpoints
-- Deterministic query-driven filtering
-- Explicit run-lifecycle–aligned payloads (backend-controlled)
+* Next.js (App Router)
+* React
+* JavaScript / JSX
+* Turborepo monorepo architecture
 
-The frontend does **not** contain business logic about legislative interpretation — only structured presentation.
+### Data Layer
+
+The application consumes:
+
+* PostgreSQL-backed application views
+* Materialized-view search indexes
+* Structured server-side data helpers
+* URL-driven filtering and navigation
+
+Business logic and data processing remain outside the presentation layer whenever practical.
 
 ---
 
-## Key Route Groups
+## Route Structure
 
-```
+```text
 app/
+├── (site)/
+│   ├── page.jsx
+│   ├── search/
+│   ├── about/
+│   └── reference/
+│
 ├── (app)/
 │   ├── bills/
-│   ├── members/
+│   ├── member/
 │   ├── committees/
 │   └── insights/
-├── (wiki)/
+│
+├── bills/@panel/
+├── member/@panel/
 └── layout.jsx
 ```
 
-Primary surface areas:
+Primary exploration areas:
 
-- **Bills**
-  - Search + filtering (URL-driven state)
-  - Bill detail pages
-- **Members**
-  - Directory
-  - Detail pages with service timelines
-- **Committees**
-  - Segmented directory (Standing / Select / Joint)
-- **Insights**
-  - Structured scrollytelling / editorial-style data exploration
+### Global Search
 
----
+Unified search experience for discovering:
 
-## UI & Styling System
+* Bills
+* Members
+* Committees
 
-The web app uses the **LL3 token system**.
+### Legislative Archive
 
-- Token files: `ll3.*.tokens.css`
-- Layout styles: `ll3.*.layout.css`
-- Feature-specific UI: `ll3.bills.*`, `ll3.members.*`, `ll3.committees.*`, etc.
+Legislation discovery, filtering, and detail views.
 
-Conventions:
-- Prefer token usage over inline styles
-- Maintain consistent typography hierarchy
-- Avoid one-off layout hacks
-- Favor predictable spacing + structural clarity
+### Member Directory
 
-The system is designed to scale without visual drift.
+Congressional member exploration and profile pages.
+
+### Committees
+
+Committee and subcommittee exploration.
+
+### Reference
+
+Supporting civic and legislative resources.
 
 ---
 
-## Search & Filter Architecture
+## Search Architecture
 
-Bills filtering is intentionally:
+Search is a primary navigation and discovery mechanism throughout the platform.
 
-- **URL-driven** (query params reflect full state)
-- **Breakpoint-stable** (desktop + mobile parity)
-- **Debounced and deterministic**
-- **Autocomplete-enhanced (subject-aware)**
+Current capabilities include:
 
-Pattern:
+* Homepage search experience
+* Search-as-you-type previews
+* Dedicated search results page
+* Entity-aware result grouping
+* Bill, member, and committee discovery
+* URL-preserved search state
 
-1. UI control updates query param
-2. Query param drives fetch
-3. Render based on canonical URL state
+Search principles:
 
-This prevents state desynchronization between mobile sheets and desktop panels.
+* Fast results
+* Explainable behavior
+* Consistent result presentation
+* Minimal user friction
+* Progressive enhancement toward natural-language search
 
----
-
-## Common Development Patterns
-
-### Add a New Bill Filter
-
-1. Add control component (UI layer)
-2. Wire to query param state
-3. Extend request builder to include param
-4. Confirm mobile filter sheet parity
-5. Verify SSR + client transitions remain stable
+The search experience should help users move from a question to relevant legislative information with as few steps as possible.
 
 ---
 
-### Add a New Data Field to Bill Cards
+## Information Architecture
 
-1. Confirm field exists in API/view contract
-2. Add formatting helper (if needed) in `lib/`
-3. Render in card component
-4. Add null-safe fallback behavior
+A major focus of the current platform generation is improving discoverability and reducing navigation complexity.
 
-Avoid rendering raw payload fields directly without formatting normalization.
+The application is organized around a small number of primary exploration experiences:
 
----
+* Global Search
+* Legislative Archive
+* Member Directory
+* Committees
+* Reference Resources
 
-### Add a New Page Panel / Section
+Pages should prioritize:
 
-1. Create section component
-2. Use LL3 layout primitives
-3. Maintain typographic scale consistency
-4. Ensure error boundary compatibility
-5. Avoid introducing layout shifts during hydration
+* Clear primary actions
+* Consistent hierarchy
+* Predictable navigation
+* Shared filtering patterns
+* Mobile parity
+* Reduced visual clutter
 
----
-
-## Error Handling Strategy
-
-- Page-level error boundaries
-- Section-level isolation where appropriate
-- Structured error metadata extraction
-- Controlled not-found rendering
-
-The goal is partial resilience — not full-page collapse.
+The goal is to make legislative information easier to find without requiring users to understand congressional structures beforehand.
 
 ---
 
-## Local Development (Web Only)
+## LL3 Design System
 
-From repo root:
+The frontend uses the LL3 design system and shared styling architecture.
+
+Core goals:
+
+* Consistency
+* Accessibility
+* Responsive behavior
+* Predictable spacing
+* Strong content hierarchy
+* Reusable interface patterns
+
+Shared systems include:
+
+* Typography
+* Forms
+* Buttons
+* Filters
+* Tables
+* Cards
+* Route panels
+* Layout primitives
+
+Guidelines:
+
+* Prefer shared styles over page-specific implementations
+* Reuse explorer layouts whenever possible
+* Avoid duplicate UI patterns
+* Maintain visual consistency across entity types
+* Favor structure and clarity over decoration
+
+---
+
+## Explorer Pattern
+
+Most major sections follow a shared explorer model:
+
+```text
+Page Header
+├── Search / Filters
+├── Results Table or Grid
+├── Detail Route Panel
+└── Related Navigation
+```
+
+Currently used by:
+
+* Legislative Archive
+* Member Directory
+* Committees
+* Search Results
+
+This pattern improves consistency while reducing maintenance overhead.
+
+---
+
+## Development Patterns
+
+### Adding a New Filter
+
+1. Add the UI control.
+2. Connect it to URL state.
+3. Extend server-side query handling.
+4. Verify desktop and mobile parity.
+5. Confirm state persistence across navigation.
+
+### Adding a New Searchable Entity
+
+1. Extend search document generation.
+2. Add result rendering support.
+3. Define route behavior.
+4. Update search grouping logic.
+5. Validate mobile and desktop experiences.
+
+### Adding New Data to Existing Views
+
+1. Confirm availability within the data contract.
+2. Normalize values where appropriate.
+3. Add null-safe rendering.
+4. Maintain layout consistency.
+
+---
+
+## Error Handling
+
+The application favors graceful degradation over complete page failure.
+
+Current patterns include:
+
+* Route-level error boundaries
+* Structured error handling
+* Not-found fallbacks
+* Empty-state experiences
+* Partial rendering when possible
+
+Users should receive useful feedback rather than application crashes.
+
+---
+
+## Development
+
+Run the web application:
 
 ```bash
 turbo dev --filter=web
 ```
 
-Default:
-```
-http://localhost:3000
-```
-
-Environment variables (example):
-
-```
-NEXT_PUBLIC_API_BASE_URL=...
-NEXT_PUBLIC_ENV=development
-```
-
-> Do not store secrets in `NEXT_PUBLIC_*`.
-
----
-
-## Build
-
-From repo root:
-
-```bash
-turbo build --filter=web
-```
-
-The output is deployed via Firebase Hosting (environment-targeted channels).
-
----
-
-## Deployment Notes (High Level)
-
-Environments:
-- dev
-- stage
-- production
-
-Deployment:
-- Turborepo build
-- Firebase hosting target per environment
-- Backend orchestration handled separately via Cloud Run + Workflows
-
-The web app assumes stable materialized-view contracts at runtime.
-
----
-
-## Recent UI Updates
-
-### 2026-02 — Committees Directory Layer
-
-- Segmented directory (Standing / Select / Joint)
-- Card-based navigation
-- LL3 token integration
-- Routing foundation for committee metrics expansion
-
----
-
-### 2026-02 — Bills Search Stabilization
-
-- Subject-aware autocomplete
-- Query synchronization improvements
-- Mobile filter sheet hardening
-- Rendering consistency fixes
+The application runs through the Turborepo workspace and shares common packages with the broader Legislation Lemur platform.
 
 ---
 
 ## Design Philosophy
 
-This frontend prioritizes:
+The frontend prioritizes:
 
-- Determinism over animation noise
-- Clarity over decoration
-- Neutrality over commentary
-- Explicit state over implicit behavior
-- Structural hierarchy over visual clutter
+* Clarity over decoration
+* Structure over complexity
+* Discoverability over novelty
+* Consistency over customization
+* Neutrality over commentary
 
-The goal is to make legislative data understandable without narrative framing.
+Every page should help users answer a question, discover information, or continue exploring congressional data with minimal friction.

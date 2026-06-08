@@ -1,0 +1,1 @@
+export default function ExplorerTable({ children, className="" }) { return <div className={["ll3-explorerTableWrap", className].filter(Boolean).join(" ")}><table className="ll3-explorerTable">{children}</table></div>; }

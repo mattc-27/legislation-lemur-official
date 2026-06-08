@@ -1,13 +1,13 @@
 // components/member/SenateVotes.jsx
 import { ExternalLink, Landmark } from "lucide-react";
 
-export default function SenateVotes({ groups = [] }) {
+export default function SenateVotes({ groups = [], mode = "page" }) {
     if (!groups || groups.length === 0) {
         return <p className="llm3-muted">No Senate votes found.</p>;
     }
 
     return (
-        <div className="llmp3-stack-16 llm3-senVotes">
+        <div className={`llmp3-stack-16 llm3-senVotes llm3-senVotes--${mode}`} data-view-mode={mode}>
             {groups.map((g, groupIndex) => {
                 const key = `${g.base_measure ?? "vote"}-${g.congress ?? "x"}-${groupIndex}`;
                 const title = g.title || g.base_measure || "Senate vote";

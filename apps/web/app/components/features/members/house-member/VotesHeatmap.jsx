@@ -5,15 +5,21 @@ import { CalendarDays, Vote, Flame } from "lucide-react";
 
 export default function VotesHeatmap({
     votes = [],
-    days = 90,
+    days = null,
+    weeks = null,
     height = 250,
     onSelectDay,
     selectedDate,
     title = "Voting activity",
     updatedLabel = null,
+    compactLegend = false,
+    showSummary = true,
+    mode = "page",
     debug = false,
 }) {
     const wrapRef = useRef(null);
+    const isPanel = mode === "panel";
+    const resolvedDays = Number.isFinite(Number(days)) ? Number(days) : weeks ? Number(weeks) * 7 : 90;
     const [box, setBox] = useState({ w: 640 });
 
     useEffect(() => {
@@ -42,12 +48,12 @@ export default function VotesHeatmap({
         avgActiveDay,
     } = useMemo(() => {
         return buildGrid(votes, {
-            days,
+            days: resolvedDays,
             width: box.w,
             height,
             selectedDate,
         });
-    }, [votes, days, box.w, height, selectedDate]);
+    }, [votes, resolvedDays, box.w, height, selectedDate]);
 
     useEffect(() => {
         if (!debug || typeof window === "undefined") return;
@@ -65,21 +71,25 @@ export default function VotesHeatmap({
     return (
         <section
             ref={wrapRef}
-            className="llm3-heatmapCard"
+            className={`llm3-heatmapCard ${isPanel ? "llm3-heatmapCard--panel" : ""} ${compactLegend ? "llm3-heatmapCard--compactLegend" : ""}`.trim()}
             aria-label="Voting activity heatmap"
         >
-            <div className="llm3-heatmapCard__head">
-                <div className="llm3-heatmapCard__titleBlock">
-                    <h3 className="llm3-heatmapCard__title">{title}</h3>
-                    <p className="llm3-heatmapCard__sub">
-                        Daily voting activity over the last {days} days. Darker squares indicate more votes on that day.
-                    </p>
-                </div>
+            {title !== null || updatedLabel ? (
+                <div className="llm3-heatmapCard__head">
+                    {title !== null ? (
+                        <div className="llm3-heatmapCard__titleBlock">
+                            <h3 className="llm3-heatmapCard__title">{title}</h3>
+                            <p className="llm3-heatmapCard__sub">
+                                Daily voting activity over the last {resolvedDays} days. Darker squares indicate more votes on that day.
+                            </p>
+                        </div>
+                    ) : <span />}
 
-                <div className="llm3-heatmapCard__meta">
-                    {updatedLabel ? `Last ${days} days • Updated ${updatedLabel}` : `Last ${days} days`}
+                    <div className="llm3-heatmapCard__meta">
+                        {updatedLabel ? `Last ${resolvedDays} days • Updated ${updatedLabel}` : `Last ${resolvedDays} days`}
+                    </div>
                 </div>
-            </div>
+            ) : null}
 
             <div className="llm3-heatmapCard__gridWrap">
                 <svg
@@ -174,33 +184,35 @@ export default function VotesHeatmap({
                 </div>
             </div>
 
-            <div className="llm3-heatmapCard__summary">
-                <div className="llm3-heatmapCard__summaryTitle">Summary</div>
+            {showSummary ? (
+                <div className="llm3-heatmapCard__summary">
+                    <div className="llm3-heatmapCard__summaryTitle">Summary</div>
 
-                <div className="llm3-heatmapCard__summaryStats">
-                    <div className="llm3-heatmapCard__summaryItem">
-                        <CalendarDays size={14} />
-                        <span>{talliedDays} active days</span>
+                    <div className="llm3-heatmapCard__summaryStats">
+                        <div className="llm3-heatmapCard__summaryItem">
+                            <CalendarDays size={14} />
+                            <span>{talliedDays} active days</span>
+                        </div>
+
+                        <div className="llm3-heatmapCard__summaryItem">
+                            <Vote size={14} />
+                            <span>{totalVotes} total votes</span>
+                        </div>
+
+                        <div className="llm3-heatmapCard__summaryItem">
+                            <Flame size={14} />
+                            <span>
+                                Busiest: {busiestDay ? `${busiestDay.label} (${busiestDay.count})` : "—"}
+                            </span>
+                        </div>
                     </div>
 
-                    <div className="llm3-heatmapCard__summaryItem">
-                        <Vote size={14} />
-                        <span>{totalVotes} total votes</span>
-                    </div>
-
-                    <div className="llm3-heatmapCard__summaryItem">
-                        <Flame size={14} />
-                        <span>
-                            Busiest: {busiestDay ? `${busiestDay.label} (${busiestDay.count})` : "—"}
-                        </span>
+                    <div className="llm3-heatmapCard__summaryMeta">
+                        Days with votes: {talliedDays} • Max/day: {maxDayCount} • Avg/active day: {avgActiveDay}
+                        {badDates ? ` • Unparsed: ${badDates}` : ""}
                     </div>
                 </div>
-
-                <div className="llm3-heatmapCard__summaryMeta">
-                    Days with votes: {talliedDays} • Max/day: {maxDayCount} • Avg/active day: {avgActiveDay}
-                    {badDates ? ` • Unparsed: ${badDates}` : ""}
-                </div>
-            </div>
+            ) : null}
         </section>
     );
 }

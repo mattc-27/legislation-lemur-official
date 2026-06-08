@@ -1,0 +1,246 @@
+/* apps/web/app/styles/active/members/search/ll3.members.directory.filters.css */
+.ll3-directoryFilters {
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  border-radius: 24px;
+  box-shadow: 0 12px 32px rgba(17, 24, 39, 0.06);
+  backdrop-filter: blur(14px);
+  padding: 16px;
+}
+
+.ll3-directoryFilters__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 2px 2px 14px;
+  flex-wrap: wrap;
+}
+
+.ll3-directoryFilters__intro {
+  min-width: 220px;
+  flex: 1 1 320px;
+}
+
+.ll3-h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  color: var(--llm3-ink, #111827);
+  font-weight: 950;
+  letter-spacing: -.02em;
+}
+
+.ll3-directoryFilters__summary {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.ll3-directoryCount {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 24, 39, .10);
+  background: rgba(79, 70, 229, .08);
+  color: #4f46e5;
+  font-size: 12.5px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ll3-directoryFilters__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, .9fr) minmax(0, .9fr) minmax(0, .9fr) 150px;
+  gap: 12px;
+  align-items: end;
+  min-width: 0;
+}
+
+.ll3-directoryFilters__search {
+  min-width: 0;
+}
+
+.ll3-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ll3-label {
+  font-size: 12px;
+  font-weight: 950;
+  color: var(--llm3-muted-2, #64748b);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.ll3-input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 13px;
+  border-radius: 14px;
+  border: 1px solid rgba(17, 24, 39, .10);
+  background: rgba(255, 255, 255, .90);
+  color: var(--llm3-ink, #111827);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+
+.ll3-input:focus {
+  border-color: rgba(79, 70, 229, .34);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, .13);
+}
+
+.ll3-directoryFilters__actions {
+  display: grid;
+}
+
+.ll3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid rgba(17, 24, 39, .10);
+  background: rgba(255, 255, 255, .82);
+  color: var(--llm3-ink, #111827);
+}
+
+.ll3-btn:hover {
+  border-color: rgba(17, 24, 39, .18);
+}
+
+.ll3-btn--ghost {
+  background: rgba(255, 255, 255, .74);
+}
+
+.ll3-btn--full {
+  width: 100%;
+}
+
+.ll3-directoryFilters__mobileCount,
+.ll3-mobileStateBarWrap,
+.ll3-mobileStateBar {
+  display: none;
+}
+
+.ll3-memberRefineButton {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  .ll3-directoryFilters__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ll3-directoryFilters__search, .ll3-directoryFilters__actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .ll3-directoryFilters {
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .ll3-directoryFilters__summary {
+    display: none;
+  }
+
+  .ll3-directoryFilters__grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .ll3-directoryFilters__search, .ll3-directoryFilters__actions {
+    grid-column: auto;
+  }
+
+  .ll3-directoryFilters__mobileCount {
+    display: block;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(17, 24, 39, .08);
+    color: rgba(17, 24, 39, .58);
+    font-size: 12.5px;
+    font-weight: 750;
+  }
+
+  .ll3-memberRefineButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(17, 24, 39, .10);
+    background: rgba(255, 255, 255, .80);
+    color: var(--llm3-ink, #111827);
+    font-weight: 900;
+  }
+
+  .ll3-mobileStateBarWrap {
+    display: block;
+    position: sticky;
+    top: 64px;
+    z-index: 40;
+    margin-top: 8px;
+    margin-bottom: 6px;
+  }
+
+  .ll3-mobileStateBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 1px solid rgba(17, 24, 39, .06);
+    border-bottom: 1px solid rgba(17, 24, 39, .06);
+    background: rgba(248, 251, 255, .90);
+    backdrop-filter: blur(8px);
+  }
+
+  .ll3-mobileStateBar__left {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  .ll3-mobileStateBar__label {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(17, 24, 39, .52);
+  }
+
+  .ll3-mobileStateBar__select {
+    min-height: 36px;
+  }
+
+  .ll3-mobileStateBar__topBtn {
+    min-height: 36px;
+    padding: 0 8px;
+    border: 0;
+    background: transparent;
+    color: rgba(17, 24, 39, .72);
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+}

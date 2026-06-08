@@ -1,5 +1,8 @@
 "use client";
+
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { ExternalLink, Sparkles } from "lucide-react";
 import { getCongressBillUrl } from "@/lib/utils/getCongressBillUrl";
 import {
     getTopicMeta,
@@ -9,32 +12,57 @@ import {
 
 const pick = (obj, keys) => keys.map((k) => obj?.[k]).find((v) => v != null);
 
-export default function BillTable({ groups = [], maxHeight = 420, selectedTopic }) {
+export default function BillTable({
+    groups = [],
+    maxHeight = 520,
+    selectedTopic,
+    mode = "page",
+    initialLimit = 8,
+    pageSize = 8,
+}) {
     const rows = useMemo(() => {
         const out = [];
+
         for (const g of groups || []) {
             const subject = normalizeTopicLabel(g?.subject);
+
             for (const it of g?.items || []) {
-                const id = pick(it, ["id", "bill_id", "href", "url", "title"]) || cryptoRandomId();
-                const title = pick(it, ["title", "displayTitle", "displayyTitle", "id"]) || String(id);
-                const type = (it?.type ? String(it.type).toUpperCase() : "") || "";
-                const introducedAt = pick(it, ["introducedAt", "introduced_date", "latest_action_date"]);
-                const date = introducedAt ? new Date(introducedAt) : null;
-                const kinds = Array.isArray(it?.kinds) ? it.kinds : [it?.kind ?? it?.__kind].filter(Boolean);
-                const href = resolveLink(it);
+                const billId = pick(it, ["bill_id", "id"]);
+                const id = billId || pick(it, ["href", "url", "title"]) || cryptoRandomId();
+                const title = pick(it, ["displayTitle", "display_title", "title", "displayyTitle", "id"]) || String(id);
+                const type = (pick(it, ["type", "bill_type"]) ? String(pick(it, ["type", "bill_type"])).toUpperCase() : "") || "";
+                const sortDateRaw = pick(it, ["latestActionDate", "latest_action_date", "introducedAt", "introduced_date", "date"]);
+                const date = sortDateRaw ? new Date(sortDateRaw) : null;
+                const introducedRaw = pick(it, ["introducedAt", "introduced_date"]);
+                const kinds = normalizeKinds(it);
+
+                const links = resolveLinks(it, billId);
+
+                const keyActions = normalizeKeyActions(pick(it, ["keyActions", "key_actions"]));
 
                 out.push({
                     subject,
                     id,
+                    billId,
                     title,
                     type,
+                    number: pick(it, ["number", "bill_number"]),
+                    statusLabel: pick(it, ["statusLabel", "status_label", "statusKey", "status_key"]),
+                    latestActionText: pick(it, ["latestActionText", "latest_action_text"]),
                     date,
-                    dateRaw: introducedAt ?? it?.date,
+                    dateRaw: sortDateRaw,
+                    introducedRaw,
                     kinds,
-                    href,
+                    links,
+                    summaryShort: pick(it, ["summaryShort", "summary_short"]),
+                    summaryTextPlain: pick(it, ["summaryTextPlain", "summary_text_plain"]),
+                    keyActions,
+                    hasAiSummary: Boolean(pick(it, ["hasAiSummary", "has_ai_summary"])),
+                    cosponsorsTotal: pick(it, ["cosponsorsTotal", "cosponsors_total", "cosponsorCount", "cosponsor_count"]),
                 });
             }
         }
+
         return out;
     }, [groups]);
 
@@ -45,7 +73,7 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
     const [sortDir, setSortDir] = useState("desc");
     const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
-
+    const [visibleLimit, setVisibleLimit] = useState(initialLimit);
     useEffect(() => {
         if (selectedTopic) setSubject(selectedTopic);
     }, [selectedTopic]);
@@ -79,6 +107,11 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
             });
     }, [rows, subject, sortKey, sortDir, from, to]);
 
+
+    useEffect(() => {
+        setVisibleLimit(initialLimit);
+    }, [initialLimit, subject, from, to, sortKey, sortDir, selectedTopic]);
+
     function toggleSort(nextKey) {
         if (sortKey === nextKey) {
             setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -88,10 +121,24 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
         setSortDir(nextKey === "subject" ? "asc" : "desc");
     }
 
+    const isPanel = mode === "panel";
+
+    const visibleRows = isPanel ? filtered.slice(0, visibleLimit) : filtered;
+    const hasMore = isPanel && filtered.length > visibleLimit;
+
+    function showMore() {
+        setVisibleLimit((n) => Math.min(filtered.length, n + pageSize));
+    }
+
+    function showFewer() {
+        setVisibleLimit(initialLimit);
+    }
+
     return (
-        <section className="billtable">
+        <section className={`billtable billtable--enriched ${isPanel ? "billtable--panel" : ""}`}>
             <div className="billtable__sectionHead">
-                <h3 className="billtable__sectionTitle">Recently cosponsored bills</h3>
+                <h3 className="billtable__sectionTitle">Recent bill activity</h3>
+                <p className="billtable__sectionSub">Open bills inside Legislation Lemur, with Congress.gov available as the source link.</p>
             </div>
 
             <div className="billtable__block">
@@ -138,124 +185,279 @@ export default function BillTable({ groups = [], maxHeight = 420, selectedTopic 
                     </div>
                 </div>
 
-                <div className="billtable__scroller" style={{ maxHeight, overflow: "auto" }}>
-                    <table className="billtable__table">
-                        <thead>
-                            <tr>
-                                <th style={{ width: "56%" }}>Title</th>
-                                <th className="sortable" style={{ width: "12%" }}>
-                                    <button
-                                        type="button"
-                                        className="billtable__sortBtn"
-                                        onClick={() => toggleSort("subject")}
-                                        aria-label={`Sort by topic ${sortKey === "subject" && sortDir === "asc" ? "descending" : "ascending"}`}
-                                    >
-                                        <span>Topic</span>
-                                        <span className="billtable__sortIcon">
-                                            {sortKey === "subject" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}
-                                        </span>
-                                    </button>
-                                </th>
-                                <th className="sortable" style={{ width: "32%" }}>
-                                    <button
-                                        type="button"
-                                        className="billtable__sortBtn"
-                                        onClick={() => toggleSort("date")}
-                                        aria-label={`Sort by date ${sortKey === "date" && sortDir === "desc" ? "ascending" : "descending"}`}
-                                    >
-                                        <span>Details</span>
-                                        <span className="billtable__sortIcon">
-                                            {sortKey === "date" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}
-                                        </span>
-                                    </button>
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {filtered.map((r) => {
+                {isPanel ? (
+                    <>
+                        <div className="billtable__cards" aria-label="Filtered bills">
+                            {visibleRows.map((r) => {
                                 const badge = computeBadge({ kinds: r.kinds });
                                 const swatch = colorMap.get(r.subject);
                                 const topicMeta = getTopicMeta(r.subject);
                                 const Icon = topicMeta.icon;
+                                const summary = r.summaryShort || r.summaryTextPlain;
 
                                 return (
-                                    <tr key={r.id} className="billtable__row">
-                                        <td className="billtable__cell--title">
-                                            {r.href ? (
-                                                <a
-                                                    href={r.href.url}
-                                                    target={r.href.isExternal ? "_blank" : undefined}
-                                                    rel={r.href.isExternal ? "noopener noreferrer" : undefined}
-                                                    className="billlink"
-                                                    title={r.title}
-                                                >
-                                                    {r.title}
-                                                </a>
-                                            ) : (
-                                                <span title={r.title}>{r.title}</span>
-                                            )}
-                                        </td>
-
-                                        <td className="billtable__cell--topic" title={r.subject}>
-                                            <Icon
-                                                className="billtable__topicIcon"
-                                                size={16}
-                                                strokeWidth={2}
-                                                aria-hidden="true"
-                                                style={{ color: swatch }}
-                                            />
-                                        </td>
-
-                                        <td className="billtable__cell--details">
-                                            <div className="billtable__detailsStack">
-                                                <div className="billtable__detailsMain">
-                                                    <div className="billtable__detailsType">{r.type || "—"}</div>
-                                                    <div className="billtable__detailsDate">
-                                                        {r.date
-                                                            ? r.date.toLocaleDateString(undefined, {
-                                                                month: "short",
-                                                                day: "numeric",
-                                                                year: "numeric",
-                                                            })
-                                                            : r.dateRaw || "—"}
-                                                    </div>
-                                                </div>
-
-                                                <div className="billtable__detailsBadge">
-                                                    {badge && (
-                                                        <span className={`chip ${badge.className}`} title={badge.title}>
-                                                            {badge.text}
-                                                        </span>
-                                                    )}
+                                    <article key={`${r.id}-${r.kinds.join("-")}`} className="billtableCard">
+                                        <div className="billtableCard__top">
+                                            <div className="billtableCard__titleWrap">
+                                                {r.links.appUrl ? (
+                                                    <Link href={r.links.appUrl} className="billtableCard__title" title={r.title}>
+                                                        {r.title}
+                                                    </Link>
+                                                ) : (
+                                                    <div className="billtableCard__title" title={r.title}>{r.title}</div>
+                                                )}
+                                                <div className="billtableCard__metaLine">
+                                                    <span>{formatBillCode(r)}</span>
+                                                    <span aria-hidden="true">•</span>
+                                                    <span>{r.date ? r.date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : r.dateRaw || "—"}</span>
+                                                    {r.statusLabel ? <><span aria-hidden="true">•</span><span>{r.statusLabel}</span></> : null}
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
+                                            <div className="billtableCard__actions">
+                                                {badge && <span className={`chip ${badge.className}`} title={badge.title}>{badge.text}</span>}
+                                                {r.links.externalUrl ? (
+                                                    <a href={r.links.externalUrl} target="_blank" rel="noopener noreferrer" className="billtable__external" title="Open this bill on Congress.gov" aria-label="Open this bill on Congress.gov">
+                                                        <ExternalLink size={14} aria-hidden="true" />
+                                                    </a>
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                        <div className="billtableCard__topic" title={r.subject}>
+                                            <Icon className="billtable__topicIcon" size={15} strokeWidth={2} aria-hidden="true" style={{ color: swatch }} />
+                                            <span>{topicMeta.short || r.subject}</span>
+                                        </div>
+                                        {summary ? (
+                                            <p className="billtableCard__summary">
+                                                {r.hasAiSummary ? <Sparkles size={13} aria-hidden="true" /> : null}
+                                                <span>{summary}</span>
+                                            </p>
+                                        ) : (
+                                            r.latestActionText ? <p className="billtableCard__summary billtableCard__summary--muted">{r.latestActionText}</p> : null
+                                        )}
+                                        {r.keyActions.length ? (
+                                            <ul className="billtableCard__actionsList" aria-label="Key actions">
+                                                {r.keyActions.slice(0, 2).map((action, idx) => (
+                                                    <li key={`${r.id}-action-${idx}`}>{action}</li>
+                                                ))}
+                                            </ul>
+                                        ) : null}
+                                    </article>
                                 );
                             })}
-
                             {filtered.length === 0 && (
-                                <tr>
-                                    <td colSpan={3} className="billtable__empty">
-                                        No bills match your filters.
-                                    </td>
-                                </tr>
+                                <div className="billtable__empty">No bills match your filters.</div>
                             )}
-                        </tbody>
-                    </table>
-                </div>
+                        </div>
+                        {filtered.length > initialLimit ? (
+                            <div className="billtable__footerActions">
+                                {hasMore ? (
+                                    <button type="button" className="ll3-disclosureBtn billtable__showMore" onClick={showMore}>
+                                        Show {Math.min(pageSize, filtered.length - visibleLimit)} more
+                                    </button>
+                                ) : (
+                                    <button type="button" className="ll3-disclosureBtn billtable__showMore" onClick={showFewer}>
+                                        Show fewer
+                                    </button>
+                                )}
+
+                                <span className="billtable__visibleCount">
+                                    Showing {visibleRows.length} of {filtered.length}
+                                </span>
+                            </div>
+                        ) : null}
+                    </>
+                ) : (
+                    <div className="billtable__scroller" style={{ maxHeight, overflow: "auto" }}>
+                        <table className="billtable__table billtable__table--enriched">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: "62%" }}>Bill</th>
+                                    <th className="sortable" style={{ width: "13%" }}>
+                                        <button
+                                            type="button"
+                                            className="billtable__sortBtn"
+                                            onClick={() => toggleSort("subject")}
+                                            aria-label={`Sort by topic ${sortKey === "subject" && sortDir === "asc" ? "descending" : "ascending"}`}
+                                        >
+                                            <span>Topic</span>
+                                            <span className="billtable__sortIcon">
+                                                {sortKey === "subject" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}
+                                            </span>
+                                        </button>
+                                    </th>
+                                    <th className="sortable" style={{ width: "25%" }}>
+                                        <button
+                                            type="button"
+                                            className="billtable__sortBtn"
+                                            onClick={() => toggleSort("date")}
+                                            aria-label={`Sort by date ${sortKey === "date" && sortDir === "desc" ? "ascending" : "descending"}`}
+                                        >
+                                            <span>Details</span>
+                                            <span className="billtable__sortIcon">
+                                                {sortKey === "date" ? (sortDir === "asc" ? "↑" : "↓") : "↕"}
+                                            </span>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {filtered.map((r) => {
+                                    const badge = computeBadge({ kinds: r.kinds });
+                                    const swatch = colorMap.get(r.subject);
+                                    const topicMeta = getTopicMeta(r.subject);
+                                    const Icon = topicMeta.icon;
+                                    const summary = r.summaryShort || r.summaryTextPlain;
+
+                                    return (
+                                        <tr key={`${r.id}-${r.kinds.join("-")}`} className="billtable__row billtable__row--enriched">
+                                            <td className="billtable__cell--title">
+                                                <div className="billtable__billStack">
+                                                    <div className="billtable__titleLine">
+                                                        {r.links.appUrl ? (
+                                                            <Link href={r.links.appUrl} className="billlink" title={r.title}>
+                                                                {r.title}
+                                                            </Link>
+                                                        ) : (
+                                                            <span title={r.title}>{r.title}</span>
+                                                        )}
+
+                                                        {r.links.externalUrl ? (
+                                                            <a
+                                                                href={r.links.externalUrl}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="billtable__external"
+                                                                title="Open this bill on Congress.gov"
+                                                                aria-label="Open this bill on Congress.gov"
+                                                            >
+                                                                <ExternalLink size={14} aria-hidden="true" />
+                                                            </a>
+                                                        ) : null}
+                                                    </div>
+
+                                                    {summary ? (
+                                                        <p className="billtable__summary">
+                                                            {r.hasAiSummary ? <Sparkles size={13} aria-hidden="true" /> : null}
+                                                            <span>{summary}</span>
+                                                        </p>
+                                                    ) : (
+                                                        r.latestActionText ? <p className="billtable__summary billtable__summary--muted">{r.latestActionText}</p> : null
+                                                    )}
+
+                                                    {r.keyActions.length ? (
+                                                        <ul className="billtable__actions" aria-label="Key actions">
+                                                            {r.keyActions.slice(0, 2).map((action, idx) => (
+                                                                <li key={`${r.id}-action-${idx}`}>{action}</li>
+                                                            ))}
+                                                        </ul>
+                                                    ) : null}
+                                                </div>
+                                            </td>
+
+                                            <td className="billtable__cell--topic" title={r.subject}>
+                                                <Icon
+                                                    className="billtable__topicIcon"
+                                                    size={16}
+                                                    strokeWidth={2}
+                                                    aria-hidden="true"
+                                                    style={{ color: swatch }}
+                                                />
+                                                <span className="billtable__topicText">{topicMeta.short || r.subject}</span>
+                                            </td>
+
+                                            <td className="billtable__cell--details">
+                                                <div className="billtable__detailsStack">
+                                                    <div className="billtable__detailsMain">
+                                                        <div className="billtable__detailsType">{formatBillCode(r)}</div>
+                                                        <div className="billtable__detailsDate">
+                                                            {r.date
+                                                                ? r.date.toLocaleDateString(undefined, {
+                                                                    month: "short",
+                                                                    day: "numeric",
+                                                                    year: "numeric",
+                                                                })
+                                                                : r.dateRaw || "—"}
+                                                        </div>
+                                                        {r.statusLabel ? <div className="billtable__status">{r.statusLabel}</div> : null}
+                                                    </div>
+
+                                                    <div className="billtable__detailsBadge">
+                                                        {badge && (
+                                                            <span className={`chip ${badge.className}`} title={badge.title}>
+                                                                {badge.text}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+
+                                {filtered.length === 0 && (
+                                    <tr>
+                                        <td colSpan={3} className="billtable__empty">
+                                            No bills match your filters.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
-        </section>
+        </section >
     );
 }
 
-function resolveLink(it) {
-    const raw = it?.href || it?.url || "";
-    const publicUrl = getCongressBillUrl(raw);
-    const url = publicUrl ?? it?.appHref ?? it?.href ?? it?.url ?? "#";
-    const isExternal = Boolean(publicUrl);
-    return { url, isExternal };
+function resolveLinks(it, billId) {
+    const memberId = pick(it, ["bioguideId", "bioguide_id"]);
+    const memberName = pick(it, ["memberName", "member_name", "name"]);
+
+    const params = new URLSearchParams();
+    if (memberId) params.set("fromMember", memberId);
+    if (memberName) params.set("fromMemberName", memberName);
+
+    const suffix = params.toString() ? `?${params.toString()}` : "";
+
+    const appUrl = billId ? `/bills/${billId}${suffix}` : null;
+
+    const rawExternal = pick(it, ["congressUrl", "congress_url", "url", "href"]);
+    const externalUrl = getCongressBillUrl(rawExternal) || null;
+
+    return { appUrl, externalUrl };
+}
+
+function normalizeKinds(it = {}) {
+    const raw = Array.isArray(it?.kinds) ? it.kinds : [it?.kind ?? it?.__kind ?? it?.memberRole ?? it?.member_role].filter(Boolean);
+    return Array.from(new Set(raw.map((k) => String(k).toLowerCase())));
+}
+
+function normalizeKeyActions(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.map(actionText).filter(Boolean);
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) return parsed.map(actionText).filter(Boolean);
+        } catch {
+            return [value].filter(Boolean);
+        }
+    }
+    return [];
+}
+
+function actionText(value) {
+    if (!value) return null;
+    if (typeof value === "string") return value;
+    if (typeof value === "object") return value.text || value.title || value.label || value.action || null;
+    return String(value);
+}
+
+function formatBillCode(r) {
+    const type = r.type || "—";
+    return r.number ? `${type} ${r.number}` : type;
 }
 
 function computeBadge(it = {}) {

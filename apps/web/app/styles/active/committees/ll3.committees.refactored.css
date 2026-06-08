@@ -1,0 +1,384 @@
+/* app/styles/active/committees/ll3.committees.css
+   ========================================================================== 
+   LL3 — Committees page-only styles
+   Core styles used here: tokens, type, buttons, forms, cards, filters, explorer shell.
+   ========================================================================== */
+
+.ll3-committees {
+    background:
+        radial-gradient(1000px 520px at 14% 0%, color-mix(in srgb, var(--ll3-accent) 10%, transparent), transparent 60%),
+        radial-gradient(900px 520px at 90% 10%, color-mix(in srgb, #06b6d4 7%, transparent), transparent 62%);
+}
+
+.ll3-committees__summaryGrid {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.58fr) minmax(180px, 0.58fr) minmax(0, 1.84fr);
+    gap: var(--ll3-gap);
+}
+
+.ll3-committeeMetric {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 18px;
+}
+
+.ll3-committeeMetric__icon {
+    width: 22px;
+    height: 22px;
+    color: var(--ll3-accent-strong);
+}
+
+.ll3-committeeMetric__label {
+    color: var(--ll3-muted);
+    font-size: 12.5px;
+    font-weight: 850;
+}
+
+.ll3-committeeMetric__value {
+    margin-top: 2px;
+    color: var(--ll3-ink);
+    font-size: 1.55rem;
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+}
+
+.ll3-committeeReferenceCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px;
+}
+
+.ll3-committeeControls,
+.ll3-committeesDirectory {
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+}
+
+.ll3-committeeControls__row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ll3-committeeSearch {
+    display: grid;
+    gap: 7px;
+    width: min(520px, 100%);
+}
+
+.ll3-committeeSearch__control {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.ll3-committeeChip {
+    color: var(--ll3-text);
+}
+
+.ll3-committeeChip__icon {
+    width: 14px;
+    height: 14px;
+    color: var(--ll3-accent-strong);
+    flex: 0 0 auto;
+}
+
+.ll3-committeesDirectory__header {
+    padding-bottom: 2px;
+}
+
+.ll3-committeeLanes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.ll3-committeeLane {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--ll3-border);
+    border-radius: 22px;
+    background: linear-gradient(180deg, var(--ll3-panel-strong), var(--ll3-panel));
+}
+
+.ll3-committeeLane::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: color-mix(in srgb, var(--ll3-text) 18%, transparent);
+}
+
+.ll3-committeeLane--house::before {
+    background: rgba(59, 130, 246, 0.48);
+}
+
+.ll3-committeeLane--senate::before {
+    background: rgba(99, 102, 241, 0.48);
+}
+
+.ll3-committeeLane--joint::before {
+    background: color-mix(in srgb, var(--ll3-text) 30%, transparent);
+}
+
+.ll3-committeeLane__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 4px 0;
+}
+
+.ll3-committeeLane__title {
+    margin: 0;
+    color: var(--ll3-ink);
+    font-size: 13px;
+    line-height: 1.1;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ll3-committeeLane__count {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border: 1px solid var(--ll3-border);
+    border-radius: var(--ll3-r-pill);
+    background: var(--ll3-panel-strong);
+    color: var(--ll3-text);
+    font-size: 12.5px;
+    font-weight: 900;
+}
+
+.ll3-committeeList,
+.ll3-committeeSublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ll3-committeeList {
+    display: grid;
+    gap: 12px;
+}
+
+.ll3-committeeCard {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 18px;
+    background: var(--ll3-panel-solid);
+    transition: transform 140ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.ll3-committeeCard:hover {
+    transform: translateY(-1px);
+    border-color: var(--ll3-border-strong);
+}
+
+.ll3-committeeCard__top {
+    display: grid;
+    gap: 9px;
+}
+
+.ll3-committeeCard__titleRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ll3-committeeCard__name {
+    color: var(--ll3-ink);
+    font-size: 17px;
+    line-height: 1.25;
+    font-weight: 950;
+    letter-spacing: -0.015em;
+}
+
+.ll3-committeeCard__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: color-mix(in srgb, var(--ll3-text) 86%, transparent);
+    font-size: 12.5px;
+    font-weight: 650;
+}
+
+.ll3-committeeBadge,
+.ll3-committeeTag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: var(--ll3-r-pill);
+    border: 1px solid var(--ll3-border);
+    background: var(--ll3-panel-strong);
+    color: color-mix(in srgb, var(--ll3-text) 90%, transparent);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.ll3-committeeBadge--house {
+    border-color: rgba(59, 130, 246, 0.22);
+}
+
+.ll3-committeeBadge--senate {
+    border-color: rgba(99, 102, 241, 0.24);
+}
+
+.ll3-committeeBadge--joint {
+    border-color: color-mix(in srgb, var(--ll3-text) 14%, transparent);
+}
+
+.ll3-committeeCode code,
+.ll3-committeeSubitem code {
+    color: var(--ll3-ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12.5px;
+    font-weight: 850;
+}
+
+.ll3-committeeUpdated {
+    color: var(--ll3-muted2);
+    font-size: 12.5px;
+    font-weight: 720;
+}
+
+.ll3-committeeDetails {
+    display: grid;
+    gap: 10px;
+}
+
+.ll3-committeeDetails__summary {
+    width: 100%;
+    min-width: 0;
+    border-radius: 13px;
+    background: var(--ll3-surface-2);
+    color: color-mix(in srgb, var(--ll3-text) 88%, transparent);
+}
+
+.ll3-committeeDetails__summary::-webkit-details-marker {
+    display: none;
+}
+
+.ll3-committeeDetails__chev {
+    opacity: 0.75;
+    transition: transform 160ms ease;
+}
+
+.ll3-committeeDetails[open] .ll3-committeeDetails__chev {
+    transform: rotate(90deg);
+}
+
+.ll3-committeeSublist {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--ll3-border);
+    border-radius: 16px;
+    background: var(--ll3-surface-2);
+}
+
+.ll3-committeeSubitem {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--ll3-border);
+    border-radius: 12px;
+    background: var(--ll3-panel-strong);
+}
+
+.ll3-committeeSubitem__name {
+    min-width: 0;
+    color: color-mix(in srgb, var(--ll3-ink) 92%, transparent);
+    line-height: 1.25;
+    font-weight: 900;
+}
+
+.ll3-committeeSubitem__code {
+    color: var(--ll3-muted);
+    font-weight: 750;
+}
+
+.ll3-committeesEmpty {
+    padding: 18px;
+    border: 1px dashed var(--ll3-border-strong);
+    border-radius: 14px;
+    background: var(--ll3-panel-strong);
+    color: color-mix(in srgb, var(--ll3-text) 88%, transparent);
+    font-weight: 750;
+}
+
+html[data-theme="dark"] .ll3-committeeCard,
+html[data-theme="dark"] .ll3-committeeSubitem {
+    background: color-mix(in srgb, var(--ll3-panel-solid) 88%, #0b1220);
+}
+
+html[data-theme="dark"] .ll3-committeeLane,
+html[data-theme="dark"] .ll3-committeeControls,
+html[data-theme="dark"] .ll3-committeesDirectory {
+    border-color: color-mix(in srgb, var(--ll3-border) 80%, white 4%);
+}
+
+@media (max-width: 1100px) {
+
+    .ll3-committees__summaryGrid,
+    .ll3-committeeLanes {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-committeeReferenceCard {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 720px) {
+
+    .ll3-committees__summaryGrid,
+    .ll3-committeeControls,
+    .ll3-committeesDirectory {
+        gap: 14px;
+    }
+
+    .ll3-committeeReferenceCard,
+    .ll3-committeeControls__row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ll3-committeeSearch__control,
+    .ll3-committeeSubitem {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-committeeCard {
+        padding: 14px;
+        border-radius: 17px;
+    }
+
+    .ll3-committeeCard__titleRow {
+        align-items: flex-start;
+    }
+
+    .ll3-committeeCard__name {
+        font-size: 16px;
+    }
+}

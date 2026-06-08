@@ -1,295 +1,149 @@
-import {
-    Search,
-    LayoutGrid,
-    ScrollText,
-    BarChart3,
-    Mail,
-    Sparkles,
-    ArrowRight,
-} from "lucide-react";
+import Link from "next/link";
+import { BarChart3, BookOpenText, Database, Layers3, RefreshCw, Search, ShieldCheck } from "lucide-react";
+import { ABOUT_CONTENT } from "@/lib/content/aboutContent";
 
-import "@/app/styles/active/site/ll3.about.updated.css";
-
-import {
-    ABOUT_TITLE,
-    ABOUT_INTRO_PARAS,
-    ABOUT_WHY_TITLE,
-    ABOUT_WHY_PARAS,
-    ABOUT_FEATURES_TITLE,
-    ABOUT_FEATURES_ITEMS,
-    ABOUT_FEATURES_NOTE,
-    ABOUT_RECENT_TITLE,
-    ABOUT_RECENT_SUB,
-    ABOUT_RECENT_BADGE,
-    ABOUT_RECENT_ITEMS,
-    ABOUT_HOW_TITLE,
-    ABOUT_HOW_ITEMS,
-    ABOUT_STACK_NOTE,
-    ABOUT_SUMMARIES_TITLE,
-    ABOUT_SUMMARIES_PARAS,
-    ABOUT_ROADMAP_TITLE,
-    ABOUT_ROADMAP_PARAS,
-    ABOUT_ROADMAP_ITEMS,
-    ABOUT_LAST_UPDATED,
-} from "../../../lib/content/aboutContent";
+import "@/app/styles/active/core/ll3.tokens.css";
+import "@/app/styles/active/core/ll3.type.css";
+import "@/app/styles/active/core/ll3.buttons.css";
+import "@/app/styles/active/core/ll3.forms.css";
+import "@/app/styles/active/core/ll3.cards.css";
+import "@/app/styles/active/core/ll3.filters.css";
+import "@/app/styles/active/core/ll3.layout.css";
+//import "@/app/styles/active/core/ll3.ui.css";
+import "@/app/styles/active/site/ll3.about.css";
 
 export const metadata = {
     title: "About • Legislation Lemur",
-    description: "What Legislation Lemur is, why it exists, and where it’s headed.",
+    description: "What Legislation Lemur is, why it exists, how it works, and where it is headed.",
 };
 
-const featureIcons = [Search, LayoutGrid, ScrollText, BarChart3];
+const featureIcons = [Search, Layers3, BookOpenText, BarChart3, Database, ShieldCheck, RefreshCw];
+const processIcons = [Database, Layers3, RefreshCw, BarChart3, BookOpenText];
+
+function Paragraphs({ items, className = "ll3-type-body about__copy" }) {
+    return (
+        <div className={className}>
+            {items.map((text) => (
+                <p key={text}>{text}</p>
+            ))}
+        </div>
+    );
+}
+
+function IconList({ items, icons = [] }) {
+    return (
+        <ul className="about__iconList">
+            {items.map((item, index) => {
+                const Icon = icons[index] || ShieldCheck;
+                return (
+                    <li key={item} className="about__iconListItem">
+                        <span className="about__iconListMark" aria-hidden="true">
+                            <Icon size={18} strokeWidth={2.25} />
+                        </span>
+                        <span>{item}</span>
+                    </li>
+                );
+            })}
+        </ul>
+    );
+}
+
+function TextPanel({ eyebrow, title, paragraphs, children, note }) {
+    return (
+        <section className="ll3-card about__panel">
+            <div className="ll3-eyebrow">{eyebrow}</div>
+            <h2 className="ll3-sectionTitle about__sectionTitle">{title}</h2>
+            {paragraphs?.length ? <Paragraphs items={paragraphs} /> : null}
+            {children}
+            {note ? <p className="ll3-type-small about__note">{note}</p> : null}
+        </section>
+    );
+}
 
 export default function AboutPage() {
+    const { hero, why, features, summaries, how, roadmap, lastUpdated } = ABOUT_CONTENT;
+
     return (
-        <div className="container about">
-            <div className="about__stack">
-                <section className="section about__hero">
-                    <div className="about__hero-grid">
-                        <div className="about__hero-copy" data-anim="fade-up" style={{ "--i": 0 }}>
-                            <div className="section__eyebrow">About the platform</div>
-                            <h1 className="section__title about__hero-title">{ABOUT_TITLE}</h1>
+        <main className="about">
+            <section className="about__hero">
+                <div className="ll3-pageShell about__heroGrid">
+                    <div className="about__heroCopy">
+                        <div className="ll3-eyebrow">{hero.eyebrow}</div>
+                        <h1 className="ll3-pageTitle about__heroTitle">{hero.title}</h1>
+                        <Paragraphs items={hero.paragraphs} className="ll3-type-lede about__heroText" />
+                    </div>
 
-                            <div className="about__hero-body">
-                                {ABOUT_INTRO_PARAS.map((text, i) => (
-                                    <p key={i} className="section__sub about__lede reg">
-                                        {text}
-                                    </p>
-                                ))}
+                    <aside className="ll3-card about__heroCard" aria-label="Platform principles">
+                        <div className="about__principle">
+                            <span className="about__principleDot" />
+                            <div>
+                                <h2>Clarity</h2>
+                                <p>Readable interfaces for dense congressional information.</p>
                             </div>
                         </div>
-
-                        <div className="about__hero-visual" data-anim="fade-up" style={{ "--i": 1 }}>
-                            <img
-                                src="https://storage.googleapis.com/legislation-lemur-images/lemur_illustration.png"
-                                alt="Legislation Lemur brand illustration"
-                                className="about__hero-img"
-                                loading="lazy"
-                            />
+                        <div className="about__principle">
+                            <span className="about__principleDot" />
+                            <div>
+                                <h2>Neutrality</h2>
+                                <p>Fact-first presentation without partisan framing.</p>
+                            </div>
                         </div>
+                        <div className="about__principle">
+                            <span className="about__principleDot" />
+                            <div>
+                                <h2>Traceability</h2>
+                                <p>Built around official sources and structured public data.</p>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <div className="ll3-pageShell about__stack">
+                <TextPanel eyebrow={why.eyebrow} title={why.title} paragraphs={why.paragraphs} />
+
+                <section className="about__split">
+                    <div className="ll3-card about__panel about__panel--featureLead">
+                        <div className="ll3-eyebrow">{features.eyebrow}</div>
+                        <h2 className="ll3-sectionTitle about__sectionTitle">{features.title}</h2>
+                        <IconList items={features.items} icons={featureIcons} />
                     </div>
+
+                    <aside className="ll3-card about__callout">
+                        <h3>Feature note</h3>
+                        <p>{features.note}</p>
+                        <Link href="/references" className="ll3-btn ll3-btn--secondary about__calloutLink">
+                            Open Reference / Wiki
+                        </Link>
+                    </aside>
                 </section>
 
-                <section className="section about__feature-band" aria-label="Current features">
-                    <div className="about__feature-band-grid">
-                        <div className="panel about__feature-lead" data-anim="fade-up" style={{ "--i": 0 }}>
-                            <div className="section__eyebrow">Current capabilities</div>
-                            <h2 className="section__title about__section-title">{ABOUT_FEATURES_TITLE}</h2>
+                <section className="about__twoCol">
+                    <TextPanel eyebrow={summaries.eyebrow} title={summaries.title} paragraphs={summaries.paragraphs} />
 
-                            <ul className="icon-list">
-                                {ABOUT_FEATURES_ITEMS.map((item, i) => {
-                                    const Icon = featureIcons[i] ?? Sparkles;
-
-                                    return (
-                                        <li key={item} className="icon-list__item">
-                                            <Icon className="icon-list__icon" size={19} />
-                                            <span>{item}</span>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-
-                            {ABOUT_FEATURES_NOTE ? (
-                                <p className="text-dim about__small">{ABOUT_FEATURES_NOTE}</p>
-                            ) : null}
-                        </div>
-
-                        <div className="about__feature-cards" data-anim="fade-up" style={{ "--i": 1 }}>
-                            <article className="about-tile about-tile--primary">
-                                <div className="about-tile__inner">
-                                    <h3 className="about-tile__title">Clean exploration</h3>
-                                    <p className="about-tile__desc">
-                                        Browse people, bills, and activity in a more readable interface built
-                                        around scanning, context, and clarity.
-                                    </p>
-                                    <span className="about-tile__cta">Explore the platform</span>
-                                </div>
-                            </article>
-
-                            <article className="about-tile">
-                                <div className="about-tile__inner">
-                                    <h3 className="about-tile__title">Source-aware structure</h3>
-                                    <p className="about-tile__desc">
-                                        Legislative data is organized into views and summaries that are easier
-                                        to revisit than raw government pages and PDFs.
-                                    </p>
-                                </div>
-                            </article>
-
-                            <article className="about-tile">
-                                <div className="about-tile__inner">
-                                    <h3 className="about-tile__title">Neutral presentation</h3>
-                                    <p className="about-tile__desc">
-                                        The goal is not spin, persuasion, or outrage — just clearer access to
-                                        what is happening and where it comes from.
-                                    </p>
-                                </div>
-                            </article>
-
-                            <article className="about-tile">
-                                <div className="about-tile__inner">
-                                    <h3 className="about-tile__title">Iterative by design</h3>
-                                    <p className="about-tile__desc">
-                                        The platform is still evolving, with refinements to readability,
-                                        navigation, and data coverage happening over time.
-                                    </p>
-                                </div>
-                            </article>
-                        </div>
-                    </div>
+                    <TextPanel eyebrow={how.eyebrow} title={how.title} note={how.note}>
+                        <IconList items={how.items} icons={processIcons} />
+                    </TextPanel>
                 </section>
 
-                <section className="section">
-                    <div className="panel about__panel" data-anim="fade-up" style={{ "--i": 0 }}>
-                        <div className="about__recent-head">
-                            <span className="badge badge--new">{ABOUT_RECENT_BADGE}</span>
-                            <h2 className="section__title about__section-title">{ABOUT_RECENT_TITLE}</h2>
-                        </div>
-
-                        {ABOUT_RECENT_SUB ? <p className="about__lede reg">{ABOUT_RECENT_SUB}</p> : null}
-
-                        <ul className="checklist about__lede">
-                            {ABOUT_RECENT_ITEMS.map((item) => (
-                                <li key={item.label}>
-                                    {item.href ? (
-                                        <a className="about-inline-link" href={item.href}>
-                                            {item.label}
-                                        </a>
-                                    ) : (
-                                        item.label
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
+                <section className="ll3-card about__panel about__roadmap">
+                    <div className="about__roadmapIntro">
+                        <div className="ll3-eyebrow">{roadmap.eyebrow}</div>
+                        <h2 className="ll3-sectionTitle about__sectionTitle">{roadmap.title}</h2>
+                        <Paragraphs items={roadmap.paragraphs} />
                     </div>
-                </section>
 
-                <section className="section">
-                    <div className="panel about__panel" data-anim="fade-up" style={{ "--i": 0 }}>
-                        <div className="section__eyebrow">Why it exists</div>
-                        <h2 className="section__title about__section-title">{ABOUT_WHY_TITLE}</h2>
-
-                        <div className="about__copy">
-                            {ABOUT_WHY_PARAS.map((text, i) => (
-                                <p key={i} className="about__lede reg">
-                                    {text}
-                                </p>
-                            ))}
-                        </div>
-
-                        <p className="about__small">{ABOUT_LAST_UPDATED}</p>
-                    </div>
-                </section>
-
-                <section className="section">
-                    <div className="panel about__panel" data-anim="fade-up" style={{ "--i": 0 }}>
-                        <div className="section__eyebrow">Bill summaries</div>
-                        <h2 className="section__title about__section-title">{ABOUT_SUMMARIES_TITLE}</h2>
-
-                        <div className="about__copy">
-                            {ABOUT_SUMMARIES_PARAS.map((text, i) => (
-                                <p key={i} className="about__lede reg">
-                                    {text}
-                                </p>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section className="section">
-                    <div className="panel about__panel" data-anim="fade-up" style={{ "--i": 0 }}>
-                        <div className="section__eyebrow">How it works</div>
-                        <h2 className="section__title about__section-title">{ABOUT_HOW_TITLE}</h2>
-
-                        <ol className="about__steps">
-                            {ABOUT_HOW_ITEMS.map((item) => (
-                                <li key={item}>{item}</li>
-                            ))}
-                        </ol>
-
-                        {ABOUT_STACK_NOTE ? <p className="text-dim about__small">{ABOUT_STACK_NOTE}</p> : null}
-                    </div>
-                </section>
-
-                <section className="section">
-                    <div className="panel about__panel" data-anim="fade-up" style={{ "--i": 0 }}>
-                        <div className="section__eyebrow">Roadmap</div>
-                        <h2 className="section__title about__section-title">{ABOUT_ROADMAP_TITLE}</h2>
-
-                        {ABOUT_ROADMAP_PARAS?.map((text, i) => (
-                            <p key={i} className="about__lede reg">
-                                {text}
-                            </p>
+                    <ul className="about__roadmapGrid">
+                        {roadmap.items.map((item) => (
+                            <li key={item} className="about__roadmapItem">
+                                {item}
+                            </li>
                         ))}
-
-                        <div className="about-roadmap">
-                            <div className="about-roadmap__col">
-                                <div className="about-roadmap__head">
-                                    <div className="about-roadmap__kicker">Now</div>
-                                    <div className="about-roadmap__hint">Core pages + clarity</div>
-                                </div>
-                                <ul className="about-roadmap__list">
-                                    {ABOUT_ROADMAP_ITEMS.slice(0, 2).map((item) => (
-                                        <li key={item} className="about-roadmap__item">
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <div className="about-roadmap__col">
-                                <div className="about-roadmap__head">
-                                    <div className="about-roadmap__kicker">Next</div>
-                                    <div className="about-roadmap__hint">Comparisons + dashboards</div>
-                                </div>
-                                <ul className="about-roadmap__list">
-                                    {ABOUT_ROADMAP_ITEMS.slice(2, 4).map((item) => (
-                                        <li key={item} className="about-roadmap__item">
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <div className="about-roadmap__col">
-                                <div className="about-roadmap__head">
-                                    <div className="about-roadmap__kicker">Later</div>
-                                    <div className="about-roadmap__hint">Personalization + elections</div>
-                                </div>
-                                <ul className="about-roadmap__list">
-                                    {ABOUT_ROADMAP_ITEMS.slice(4).map((item) => (
-                                        <li key={item} className="about-roadmap__item">
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div className="about__roadmap-icons" aria-hidden="true">
-                            <span className="about__roadmap-icon"><Mail size={16} /></span>
-                            <span className="about__roadmap-icon"><Sparkles size={16} /></span>
-                        </div>
-                    </div>
+                    </ul>
                 </section>
 
-                <section className="section">
-                    <div className="panel about__panel about__contact" data-anim="fade-up" style={{ "--i": 0 }}>
-                        <div>
-                            <div className="section__eyebrow">Contact</div>
-                            <h2 className="section__title about__section-title">Questions or corrections</h2>
-                            <p className="section__sub about__contact-copy">
-                                Questions, corrections, or data issues? Send a message and I’ll take a look.
-                            </p>
-                        </div>
-
-                        <a className="about__contact-link" href="mailto:a.dev@gmail.com">
-                            Send me a message
-                            <ArrowRight size={15} strokeWidth={2} />
-                        </a>
-                    </div>
-                </section>
+                <p className="ll3-type-small about__updated">{lastUpdated}</p>
             </div>
-        </div>
+        </main>
     );
 }

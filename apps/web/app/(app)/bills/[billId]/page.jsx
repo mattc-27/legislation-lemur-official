@@ -1,12 +1,21 @@
+// @app/bills/[billId]/page.jsx
+
 import { notFound } from "next/navigation";
 
 import { getBillPanelDetail } from "@/lib/server/bills/indexV2";
-import BillPanelDetail from "@/app/components/features/bills/BillPanelDetail";
 
-import "@/app/styles/active/bills/bill-details/ll3.bills.tokens.css";
-import "@/app/styles/active/bills/bill-details/ll3.bills.ui.css";
-import "@/app/styles/active/bills/bill-details/ll3.bills.details.css";
-import "@/app/styles/active/bills/bill-details/ll3.bill-panel.css";
+import BillPanelDetail from "@/app/components/features/bills/BillPanelDetail";
+import EntityDetailShell from "@/app/components/ui/EntityDetailShell";
+
+import "@/app/styles/active/bills//ll3.bills.tokens.css";
+import "@/app/styles/active/bills/ll3.bills.ui.css";
+
+
+import "@/app/styles/active/core/ll3.entity-detail.css";
+import "@/app/styles/active/core/ll3.entity-ui.css";
+
+import "@/app/styles/active/bills/ll3.bills.details.css";
+import "@/app/styles/active/bills/ll3.bill-panel.css";
 
 export const revalidate = 600;
 
@@ -57,10 +66,10 @@ export default async function BillPage({ params, searchParams }) {
     const resolvedParams = await params;
     const resolvedSearchParams = await searchParams;
 
-    console.log("[BillPage] params:", resolvedParams);
-    console.log("[BillPage] searchParams:", resolvedSearchParams);
-    console.log("[BillPage] fromMember:", resolvedSearchParams?.fromMember);
-    console.log("[BillPage] fromMemberName:", resolvedSearchParams?.fromMemberName);
+    //  console.log("[BillPage] params:", resolvedParams);
+    // console.log("[BillPage] searchParams:", resolvedSearchParams);
+    // console.log("[BillPage] fromMember:", resolvedSearchParams?.fromMember);
+    //console.log("[BillPage] fromMemberName:", resolvedSearchParams?.fromMemberName);
 
     const parsed = parseBillSlug(resolvedParams?.billId);
 
@@ -79,16 +88,19 @@ export default async function BillPage({ params, searchParams }) {
     const fromMemberName = resolvedSearchParams?.fromMemberName || null;
 
     return (
-        <BillPanelDetail
-            bill={bill}
-            sourceMember={
-                fromMember
-                    ? {
-                        bioguideId: fromMember,
-                        name: fromMemberName,
-                    }
-                    : null
-            }
-        />
+        <EntityDetailShell entity="bill" variant="default" className="llbd3-page">
+            <BillPanelDetail
+                bill={bill}
+                mode="page"
+                sourceMember={
+                    fromMember
+                        ? {
+                            bioguideId: fromMember,
+                            name: fromMemberName,
+                        }
+                        : null
+                }
+            />
+        </EntityDetailShell>
     );
 }

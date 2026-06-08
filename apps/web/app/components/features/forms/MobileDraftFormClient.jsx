@@ -12,9 +12,8 @@ export default function MobileDraftFormClient({ children, debug = false }) {
     const form = wrap.querySelector("form");
     if (!form) return;
 
-    const onSubmit = (e) => {
-      // ✅ SubmitEvent.submitter (NOT nativeEvent)
-      const submitter = e.submitter;
+    const onSubmit = (event) => {
+      const submitter = event.submitter;
 
       const isApply =
         submitter?.dataset?.apply === "true" ||
@@ -22,11 +21,12 @@ export default function MobileDraftFormClient({ children, debug = false }) {
         submitter?.id === "ll3-apply-filters";
 
       if (debug) {
-        // eslint-disable-next-line no-console
         console.log("[MobileDraftFormClient] submit", { submitter, isApply });
       }
 
-      if (!isApply) e.preventDefault();
+      if (!isApply) {
+        event.preventDefault();
+      }
     };
 
     form.addEventListener("submit", onSubmit);

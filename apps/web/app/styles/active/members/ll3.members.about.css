@@ -1,0 +1,697 @@
+/* app/styles/active/members/ll3.members.about.css
+   ======================================================================
+   LL3 — Member About
+   ====================================================================== */
+
+.ll3-members .llm3-about,
+.llmp3-page .llm3-about {
+    padding: 16px;
+}
+
+.llmp3-aboutCard,
+.llmp3-termsCard {
+    box-shadow: none;
+    border-color: rgba(17, 24, 39, 0.10);
+}
+
+
+.llmp3-aboutCard {
+    padding: 14px 18px 16px;
+}
+
+
+.ll3-members .llm3-about__top,
+.llmp3-page .llm3-about__top,
+.llmp3-aboutCard__top,
+.llmp3-head {
+    display: grid;
+    grid-template-columns: var(--llm3-avatar) minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+}
+
+.llmp3-aboutCard__top {
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 16px;
+}
+
+.ll3-members .llm3-avatar,
+.llmp3-page .llm3-avatar,
+.llmp3-aboutCard__avatar,
+.llmp3-head__avatar {
+    width: var(--llm3-avatar);
+    height: var(--llm3-avatar);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.05);
+    display: grid;
+    place-items: center;
+}
+
+.llmp3-aboutCard__avatar,
+.llmp3-head__avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
+}
+
+.ll3-members .llm3-avatar__img,
+.llmp3-page .llm3-avatar__img,
+.llmp3-head__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ll3-members .llm3-avatar__ph,
+.llmp3-page .llm3-avatar__ph,
+.llmp3-head__ph {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    color: rgba(17, 24, 39, 0.70);
+    letter-spacing: 0.06em;
+}
+
+.llmp3-head__ph {
+    font-size: 1.4rem;
+    color: #94a3b8;
+}
+
+.llmp3-aboutCard__main {
+    min-width: 0;
+}
+
+.llmp3-aboutCard__name {
+    margin: 0;
+    font-size: clamp(2rem, 2.2vw, 2.55rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+}
+
+.llmp3-aboutCard__meta,
+.llmp3-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.llmp3-meta {
+    gap: 7px 12px;
+    margin-top: 6px;
+}
+
+.llmp3-aboutCard__blurb,
+.llmp3-blurb {
+    margin: 14px 0 0;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: rgba(17, 24, 39, 0.78);
+    max-width: 78ch;
+}
+
+.llmp3-blurb {
+    color: #475569;
+    max-width: 85ch;
+}
+
+.llmp3-kv {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.86rem;
+    color: #0f172a;
+}
+
+.llmp3-kv__label {
+    color: #64748b;
+    font-weight: 700;
+}
+
+.llmp3-kv__value {
+    font-weight: 800;
+}
+
+
+.llmp3-aboutCard__top {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 14px 18px;
+    align-items: start;
+}
+
+.llmp3-aboutCard__avatar {
+    width: 88px;
+    min-width: 88px;
+}
+
+.llmp3-aboutCard__avatar img,
+.llmp3-aboutCard__avatar .llmp3-head__ph {
+    width: 88px;
+    height: 88px;
+    border-radius: 14px;
+    object-fit: cover;
+    display: block;
+}
+
+.llmp3-aboutCard__name {
+    margin: 0;
+    font-size: clamp(2.25rem, 3.2vw, 3.2rem);
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+    color: var(--llm3-ink, #18233a);
+    font-family: inherit;
+}
+
+/* tighten badge/name row slightly */
+.llmp3-aboutCard__identity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin-bottom: 6px;
+}
+
+.llmp3-aboutCard__avatar img {
+    object-position: center top;
+}
+
+@media (max-width: 760px) {
+    .llmp3-aboutCard {
+        padding: 15px;
+    }
+
+    .llmp3-aboutCard__top {
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+    }
+
+    .llmp3-aboutCard__avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+    }
+
+    .llmp3-aboutCard__name {
+        font-size: clamp(1.7rem, 7vw, 2.2rem);
+    }
+
+    .llmp3-aboutCard__meta {
+        gap: 7px 12px;
+        margin-top: 7px;
+    }
+
+    .llmp3-aboutCard .llmp3-kv {
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+    }
+
+    .llmp3-aboutCard__blurb {
+        font-size: 0.96rem;
+        margin-top: 12px;
+    }
+
+    .llmp3-aboutCard {
+        padding: 16px 16px 14px;
+    }
+
+    .llmp3-aboutCard__top {
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 12px 14px;
+    }
+
+    .llmp3-aboutCard__avatar {
+        width: 76px;
+        min-width: 76px;
+    }
+
+    .llmp3-aboutCard__avatar img,
+    .llmp3-aboutCard__avatar .llmp3-head__ph {
+        width: 76px;
+        height: 76px;
+        border-radius: 14px;
+    }
+
+    .llmp3-aboutCard__name {
+        font-size: clamp(1.95rem, 8vw, 2.7rem);
+        line-height: 0.98;
+        font-weight: 800;
+    }
+}
+
+@media (max-width: 560px) {
+
+    .ll3-members .llm3-about__top,
+    .llmp3-page .llm3-about__top {
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+}
+
+@media (max-width: 520px) {
+    .llmp3-head {
+        grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    .llmp3-head__avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+    }
+}
+
+
+/* ======================================================================
+   Member About + Terms + Legislation section heading cleanup
+   ====================================================================== */
+
+/* spacing between top cards */
+.llmp3-aboutCard {
+    margin-bottom: 18px;
+}
+
+.llmp3-termsCard {
+    margin-top: 0;
+}
+
+/* --- About card --- */
+
+.llmp3-aboutCard {
+    padding: 16px 18px 16px;
+}
+
+.llmp3-aboutCard__top {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 14px 16px;
+    align-items: start;
+}
+
+.llmp3-aboutCard__avatar {
+    width: 72px;
+    min-width: 72px;
+}
+
+.llmp3-aboutCard__avatar img,
+.llmp3-aboutCard__avatar .llmp3-head__ph {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.llmp3-aboutCard__main {
+    min-width: 0;
+}
+
+.llmp3-aboutCard__identity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin-bottom: 8px;
+}
+
+.llmp3-aboutCard__name {
+    margin: 0;
+    font-size: clamp(2rem, 3vw, 3.1rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    font-weight: 900;
+    color: var(--llm3-ink, #18233a);
+    font-family: inherit;
+}
+
+.llmp3-aboutCard__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+}
+
+.llmp3-aboutCard .llmp3-kv {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: rgba(17, 24, 39, 0.88);
+}
+
+.llmp3-aboutCard .llmp3-kv svg {
+    flex: 0 0 auto;
+    color: rgba(17, 24, 39, 0.7);
+}
+
+.llmp3-aboutCard .llmp3-kv__label {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: rgba(17, 24, 39, 0.86);
+}
+
+.llmp3-aboutCard .llmp3-kv__value {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.56);
+}
+
+.llmp3-aboutCard__blurb,
+.llmp3-aboutCard .llmp3-blurb {
+    margin: 14px 0 0;
+    max-width: 70ch;
+    font-size: 13px;
+    line-height: 1.55;
+    font-weight: 500;
+    color: rgba(17, 24, 39, 0.7);
+}
+
+
+
+
+/* --- Mobile --- */
+
+@media (max-width: 760px) {
+    .llmp3-aboutCard {
+        padding: 16px 16px 14px;
+        margin-bottom: 20px;
+    }
+
+    .llmp3-aboutCard__top {
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 12px 14px;
+        align-items: start;
+    }
+
+    .llmp3-aboutCard__identity {
+        margin-bottom: 6px;
+    }
+
+    .llmp3-aboutCard__name {
+        font-size: clamp(1.9rem, 8vw, 2.8rem);
+        line-height: 0.98;
+    }
+
+    .llmp3-aboutCard__meta {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        padding-top: 2px;
+    }
+
+    .llmp3-aboutCard__blurb,
+    .llmp3-aboutCard .llmp3-blurb {
+        margin-top: 14px;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+
+}
+
+@media (max-width: 560px) {
+    .llmp3-aboutCard__top {
+        grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    .llmp3-aboutCard__meta {
+        width: 100%;
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+    }
+
+    .llmp3-aboutCard .llmp3-kv {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .llmp3-aboutCard .llmp3-kv__label,
+    .llmp3-aboutCard .llmp3-kv__value {
+        font-size: 12.5px;
+    }
+}
+
+/* app/styles/active/members/ll3.members.about.css */
+
+.llmp3-aboutCard,
+.llmp3-termsCard {
+    box-shadow: none;
+    border-color: var(--llm3-border);
+}
+
+.llmp3-aboutCard {
+    padding: 16px 18px 16px;
+    margin-bottom: 18px;
+}
+
+.llmp3-aboutCard__top,
+.llmp3-head {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 14px 16px;
+    align-items: start;
+}
+
+.llmp3-aboutCard__avatar,
+.llmp3-head__avatar {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--llm3-border);
+    background: var(--llm3-surface-soft);
+    box-shadow: var(--llm3-soft-shadow);
+    display: grid;
+    place-items: center;
+}
+
+.llmp3-aboutCard__avatar img,
+.llmp3-head__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.llmp3-head__ph {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--llm3-muted-2);
+    letter-spacing: 0.05em;
+}
+
+.llmp3-aboutCard__main {
+    min-width: 0;
+}
+
+.llmp3-aboutCard__identity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin-bottom: 8px;
+}
+
+.llmp3-aboutCard__name {
+    margin: 0;
+    font-size: clamp(2rem, 3vw, 3.1rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    font-weight: 900;
+    color: var(--llm3-ink);
+}
+
+.llmp3-aboutCard__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+}
+
+.llmp3-kv {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--llm3-text);
+    font-size: 0.86rem;
+}
+
+.llmp3-kv svg {
+    flex: 0 0 auto;
+    color: var(--llm3-muted);
+}
+
+.llmp3-kv__label {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--llm3-ink);
+}
+
+.llmp3-kv__value {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--llm3-muted);
+}
+
+.llmp3-aboutCard__blurb,
+.llmp3-aboutCard .llmp3-blurb {
+    margin: 14px 0 0;
+    max-width: 70ch;
+    font-size: 13px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--llm3-text);
+}
+
+@media (max-width: 760px) {
+    .llmp3-aboutCard {
+        padding: 16px 16px 14px;
+        margin-bottom: 20px;
+    }
+
+    .llmp3-aboutCard__top {
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 12px 14px;
+    }
+
+    .llmp3-aboutCard__identity {
+        margin-bottom: 6px;
+    }
+
+    .llmp3-aboutCard__name {
+        font-size: clamp(1.9rem, 8vw, 2.8rem);
+        line-height: 0.98;
+    }
+
+    .llmp3-aboutCard__meta {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        padding-top: 2px;
+    }
+
+    .llmp3-aboutCard__blurb,
+    .llmp3-aboutCard .llmp3-blurb {
+        margin-top: 14px;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+}
+
+@media (max-width: 560px) {
+    .llmp3-aboutCard__meta {
+        width: 100%;
+        grid-column: 1 / -1;
+        gap: 8px 12px;
+    }
+
+    .llmp3-kv {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .llmp3-kv__label,
+    .llmp3-kv__value {
+        font-size: 12.5px;
+    }
+}
+
+
+/* Paste this at the end of app/styles/active/members/ll3.members.about.css */
+
+@media (min-width: 761px) {
+
+    .llmp3-aboutCard__top,
+    .llmp3-head {
+        grid-template-columns: 144px minmax(0, 1fr);
+        gap: 18px 22px;
+        align-items: start;
+    }
+
+    .llmp3-aboutCard__avatar,
+    .llmp3-head__avatar {
+        width: 144px;
+        height: 144px;
+        min-width: 144px;
+        border-radius: 24px;
+    }
+
+    .llmp3-aboutCard__avatar img,
+    .llmp3-head__avatar img,
+    .llmp3-aboutCard__avatar .llmp3-head__ph,
+    .llmp3-head__ph {
+        width: 144px;
+        height: 144px;
+        border-radius: 24px;
+    }
+
+    .llmp3-profileView--panel .llmp3-aboutCard__top {
+        grid-template-columns: 128px minmax(0, 1fr);
+    }
+
+    .llmp3-profileView--panel .llmp3-aboutCard__avatar,
+    .llmp3-profileView--panel .llmp3-head__avatar,
+    .llmp3-profileView--panel .llmp3-aboutCard__avatar img,
+    .llmp3-profileView--panel .llmp3-head__avatar img,
+    .llmp3-profileView--panel .llmp3-aboutCard__avatar .llmp3-head__ph,
+    .llmp3-profileView--panel .llmp3-head__ph {
+        width: 128px;
+        height: 128px;
+        min-width: 128px;
+        border-radius: 22px;
+    }
+}
+
+
+
+[data-theme="dark"] .llmp3-aboutCard,
+.dark .llmp3-aboutCard {
+    color: var(--llm3-text);
+}
+
+[data-theme="dark"] .llmp3-aboutCard__name,
+[data-theme="dark"] .llmp3-aboutCard .llmp3-kv__label,
+.dark .llmp3-aboutCard__name,
+.dark .llmp3-aboutCard .llmp3-kv__label {
+    color: var(--llm3-ink);
+}
+
+[data-theme="dark"] .llmp3-aboutCard__blurb,
+[data-theme="dark"] .llmp3-aboutCard .llmp3-blurb,
+[data-theme="dark"] .llmp3-aboutCard .llmp3-kv,
+.dark .llmp3-aboutCard__blurb,
+.dark .llmp3-aboutCard .llmp3-blurb,
+.dark .llmp3-aboutCard .llmp3-kv {
+    color: var(--llm3-text);
+}
+
+[data-theme="dark"] .llmp3-aboutCard .llmp3-kv__value,
+[data-theme="dark"] .llmp3-aboutCard .llmp3-kv svg,
+.dark .llmp3-aboutCard .llmp3-kv__value,
+.dark .llmp3-aboutCard .llmp3-kv svg {
+    color: var(--llm3-muted);
+}

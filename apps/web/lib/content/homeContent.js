@@ -1,92 +1,67 @@
-export const HOME_HERO_EYEBROW = "Transparency first";
+// app/lib/content/homeContent.js
 
-export const HOME_HERO_TITLE = "Civic data, made more human.";
+export const HOME_CONTENT = {
+    hero: {
+        eyebrow: "Transparency first",
+        title: "Civic data, made more human.",
+        subtitle:
+            "Explore Congress through readable bill summaries, member profiles, voting activity, and legislative context—all presented through a neutral, fact-first experience.",
+        searchPlaceholder:
+            "Search bills, members, committees, topics, or legislation...",
+        browseActions: [
+            { label: "Find Representatives", href: "/search?entity=members" },
+            { label: "Browse Bills", href: "/bills" },
+            { label: "Browse Committees", href: "/committees" },
+        ],
+        popularSearches: [],
+    },
 
-export const HOME_HERO_SUB =
-    "Navigate Congress with clearer profiles, readable bill activity, and a neutral interface designed to prioritize context over noise.";
+    recentActivity: {
+        eyebrow: "Live activity",
+        title: "Recent Congressional Activity",
+        description:
+            "Follow the latest actions from Congress, including newly introduced legislation, committee activity, votes, and major legislative developments.",
+        cta: {
+            label: "View All Activity",
+            href: "/bills",
+        },
+    },
 
-export const HOME_HERO_PRIMARY_CTA = {
-    label: "Find your representative",
-    href: "/search",
+    why: {
+        eyebrow: "Why Legislation Lemur?",
+        title: "Why Legislation Lemur?",
+        description:
+            "Legislation Lemur helps make congressional information easier to explore without adding commentary, opinion, or partisan framing. The goal is simple: reduce complexity while preserving the underlying facts.",
+        cards: [
+            {
+                title: "Representative Profiles",
+                desc: "Browse representatives and senators through clear profiles that combine service history, committee assignments, legislative activity, and voting context.",
+                href: "/search?entity=members",
+                cta: "Explore profiles",
+            },
+            {
+                title: "Bill Tracking",
+                desc: "Understand proposed legislation faster with readable bill summaries, sponsors, recent actions, and key legislative milestones.",
+                href: "/bills",
+                cta: "Explore bills",
+            },
+            {
+                title: "Committee Explorer",
+                desc: "Navigate congressional committees, jurisdictions, and leadership without digging through scattered government directories.",
+                href: "/committees",
+                cta: "Explore committees",
+            },
+        ],
+    },
 };
 
-export const HOME_HERO_SECONDARY_CTA = {
-    label: "Browse bills",
-    href: "/bills",
-};
+export const HOME_HERO = HOME_CONTENT.hero;
+export const HOME_RECENT_ACTIVITY = HOME_CONTENT.recentActivity;
+export const HOME_WHY = HOME_CONTENT.why;
 
-export const HOME_INTRO_TITLE = "Tools for the modern citizen";
-
-export const HOME_INTRO_PARAS = [
-    `Legislation Lemur is a neutral, data-driven way to explore the U.S. Congress. The platform brings together members of Congress, sponsored and co-sponsored bills, floor votes, and high-level session composition into a fast, readable interface built for clarity—not spin.`,
-    `Search by member or state, open clean factual profiles, and follow bills and activity without digging through dense tables or PDFs. Core legislative data is refreshed on a regular basis, with an emphasis on readability, stability, and source-aware presentation.`,
-];
-
-export const HOME_FEATURE_CARDS = [
-    {
-        title: "Representative profiles",
-        desc: "Browse members by state or name and open clean snapshots of service, activity, and legislative context.",
-        href: "/search",
-        accent: "primary",
-    },
-    {
-        title: "Bill tracking",
-        desc: "Follow sponsored bills, recent actions, and legislative movement in a more readable interface.",
-        href: "/bills",
-    },
-    {
-        title: "Committee navigation",
-        desc: "Explore committee structure, types, and coverage without getting lost in government directory sprawl.",
-        href: "/committees",
-    },
-    {
-        title: "Reference / Wiki",
-        desc: "Get straightforward explanations of core congressional concepts, data sources, and terminology.",
-        href: "/references",
-    },
-];
-
-export const HOME_RECENTLY_ADDED_BADGE = "Recently added";
-
-export const HOME_RECENTLY_ADDED_ITEMS = [
-    {
-        label: "Member vote alignment insights",
-        desc: "Issue-level patterns and context to help make member voting behavior easier to interpret.",
-    },
-    {
-        label: "Committees directory + overview page",
-        desc: "Committee types, counts, and easier site-wide navigation.",
-        href: "/committees",
-    },
-    {
-        label: "Reference / Wiki pages",
-        desc: "Background pages for congressional concepts, sources, and platform context.",
-        href: "/references",
-    },
-    {
-        label: "Readability improvements across core pages",
-        desc: "Ongoing layout, spacing, and scanning updates across member, bill, and supporting views.",
-    },
-];
-export const HOME_ROADMAP_ITEMS = [
-    {
-        quarter: "Q2 2026",
-        title: "Expanded bill summaries",
-        desc: "Ongoing improvements to TL;DR summaries, topic extraction, and clarity signals.",
-    },
-    {
-        quarter: "Q3 2026",
-        title: "Email updates",
-        desc: "Weekly digests by saved location and tracked members, with activity highlights and what changed comparisons.",
-    },
-    {
-        quarter: "Q4 2026",
-        title: "Insights & Explore dashboards",
-        desc: "Congress-wide views with filters and change-over-time comparisons across bills, votes, and committees.",
-    },
-    {
-        quarter: "Q1 2027",
-        title: "Colorado election tools",
-        desc: "Neutral voter guides and ballot measure breakdowns based on available public data.",
-    },
-];
+// Compatibility exports for older homepage imports.
+export const HOME_HERO_EYEBROW = HOME_HERO.eyebrow;
+export const HOME_HERO_TITLE = HOME_HERO.title;
+export const HOME_HERO_SUB = HOME_HERO.subtitle;
+export const HOME_HERO_PRIMARY_CTA = HOME_HERO.browseActions[0];
+export const HOME_HERO_SECONDARY_CTA = HOME_HERO.browseActions[1];

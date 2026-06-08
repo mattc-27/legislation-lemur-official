@@ -2,7 +2,7 @@
 import React from "react";
 import { MapPin, Landmark, BadgeCheck } from "lucide-react";
 
-export default function MemberAbout({ profile }) {
+export default function MemberAbout({ profile, mode = "page" }) {
   if (!profile) return null;
 
   const {
@@ -36,7 +36,7 @@ export default function MemberAbout({ profile }) {
   const partyTone = party === "D" ? "D" : party === "R" ? "R" : "I";
 
   return (
-    <section className="llmp3-card llmp3-card--hero llmp3-aboutCard">
+    <section className={`llmp3-card llmp3-card--hero llmp3-aboutCard llmp3-aboutCard--${mode}`} data-view-mode={mode}>
       <div className="llmp3-aboutCard__top">
         <div className="llmp3-head__avatar llmp3-aboutCard__avatar">
           {imageUrl ? (

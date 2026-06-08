@@ -94,174 +94,177 @@ export default function BillPanelDetail({ bill, mode = "page", sourceMember = nu
             : getPrimaryTextUrl(bill);
 
     return (
-        <main className="llbd3-page llbp-page">
-            <div className="llbp-wrap">
-                <nav className="llbp-breadcrumb" aria-label="Breadcrumb">
-                    {mode === "panel" ? (
-                        <BillPanelBackClient />
-                    ) : sourceMember?.bioguideId ? (
-                        <Link href={`/member/${sourceMember.bioguideId}`}>
-                            <ArrowLeft size={14} aria-hidden="true" />
-                            {sourceMember.name ? `Back to ${sourceMember.name}` : "Back to member profile"}
-                        </Link>
-                    ) : (
-                        <Link href="/bills">
-                            <ArrowLeft size={14} aria-hidden="true" />
-                            Legislation
-                        </Link>
-                    )}
 
-                    <span aria-hidden="true">›</span>
-                    <span>{billCode} - Policy Detail</span>
-                </nav>
+        <div
+            className={`llbp-detail llbp-detail--${mode} llbd3-page llbd3-page--${mode}`}
+            data-view-mode={mode}
+        >
+            <nav className="llbp-breadcrumb" aria-label="Breadcrumb">
+                {mode === "panel" ? (
+                    <BillPanelBackClient />
+                ) : sourceMember?.bioguideId ? (
+                    <Link href={`/member/${sourceMember.bioguideId}`}>
+                        <ArrowLeft size={14} aria-hidden="true" />
+                        {sourceMember.name ? `Back to ${sourceMember.name}` : "Back to member profile"}
+                    </Link>
+                ) : (
+                    <Link href="/bills">
+                        <ArrowLeft size={14} aria-hidden="true" />
+                        Legislation
+                    </Link>
+                )}
 
-                <article className="llbp-panel">
-                    <header className="llbp-panel__header">
-                        <div className="llbp-headerGrid">
-                            <div className="llbp-titleBlock">
-                                <div className="llbp-kicker">
-                                    <span className="llbp-billCode">{billCode}</span>
+                <span aria-hidden="true">›</span>
+                <span>{billCode} - Policy Detail</span>
+            </nav>
 
-                                    <span className={`llbd3-status llbd3-status--${statusTone}`}>
-                                        <span className="llbd3-status__dot" aria-hidden="true" />
-                                        <span className="llbd3-status__label">{statusLabel}</span>
-                                    </span>
+            <article className="llbp-panel">
+                <header className="llbp-panel__header">
+                    <div className="llbp-headerGrid">
+                        <div className="llbp-titleBlock">
+                            <div className="llbp-kicker">
+                                <span className="llbp-billCode">{billCode}</span>
+
+                                <span className={`llbd3-status llbd3-status--${statusTone}`}>
+                                    <span className="llbd3-status__dot" aria-hidden="true" />
+                                    <span className="llbd3-status__label">{statusLabel}</span>
+                                </span>
+                            </div>
+
+                            <h1 className="llbp-title">{title}</h1>
+
+                            <div className="llbp-metaGrid">
+                                <div className="llbp-meta">
+                                    <div className="llbp-meta__label">Chamber</div>
+                                    <div className="llbp-meta__value">{bill?.origin_chamber || "—"}</div>
                                 </div>
 
-                                <h1 className="llbp-title">{title}</h1>
-
-                                <div className="llbp-metaGrid">
-                                    <div className="llbp-meta">
-                                        <div className="llbp-meta__label">Chamber</div>
-                                        <div className="llbp-meta__value">{bill?.origin_chamber || "—"}</div>
-                                    </div>
-
-                                    {/*<div className="llbp-meta">
+                                {/*<div className="llbp-meta">
                                         <div className="llbp-meta__label">Sponsor</div>
                                         <div className="llbp-meta__value">
                                             {bill?.sponsor_name || bill?.sponsor_bioguide_id || "—"}
                                         </div>
                                     </div>*/}
-                                    <div className="llbp-meta">
-                                        <div className="llbp-meta__label">Sponsor</div>
+                                <div className="llbp-meta">
+                                    <div className="llbp-meta__label">Sponsor</div>
 
-                                        <div className="llbp-meta__value llbp-sponsorMeta">
-                                            {bill?.sponsor_bioguide_id ? (
-                                                <>
-                                                    <Link
-                                                        href={`/member/${bill.sponsor_bioguide_id}?fromBill=${encodeURIComponent(bill?.bill_id || "")}&fromBillLabel=${encodeURIComponent(billCode)}`}
-                                                        className="llbp-memberLink"
+                                    <div className="llbp-meta__value llbp-sponsorMeta">
+                                        {bill?.sponsor_bioguide_id ? (
+                                            <>
+                                                <Link
+                                                    href={`/member/${bill.sponsor_bioguide_id}?fromBill=${encodeURIComponent(bill?.bill_id || "")}&fromBillLabel=${encodeURIComponent(billCode)}`}
+                                                    className="llbp-memberLink"
+                                                >
+                                                    {bill?.sponsor_name || bill.sponsor_bioguide_id}
+                                                </Link>
+
+                                                <span className="llbp-sponsorTooltipWrap">
+                                                    <button
+                                                        type="button"
+                                                        className="llbp-sponsorTooltipBtn"
+                                                        aria-label="Sponsor details"
                                                     >
-                                                        {bill?.sponsor_name || bill.sponsor_bioguide_id}
-                                                    </Link>
+                                                        <Info size={12} strokeWidth={2.4} />
+                                                    </button>
 
-                                                    <span className="llbp-sponsorTooltipWrap">
-                                                        <button
-                                                            type="button"
-                                                            className="llbp-sponsorTooltipBtn"
-                                                            aria-label="Sponsor details"
-                                                        >
-                                                            <Info size={12} strokeWidth={2.4} />
-                                                        </button>
+                                                    <span className="llbp-sponsorTooltip" role="tooltip">
+                                                        <span className="llbp-sponsorTooltip__name">
+                                                            {bill?.sponsor_name || bill.sponsor_bioguide_id}
+                                                        </span>
 
-                                                        <span className="llbp-sponsorTooltip" role="tooltip">
-                                                            <span className="llbp-sponsorTooltip__name">
-                                                                {bill?.sponsor_name || bill.sponsor_bioguide_id}
-                                                            </span>
-
-                                                            <span className="llbp-sponsorTooltip__meta">
-                                                                {[
-                                                                    bill?.sponsor_party,
-                                                                    bill?.sponsor_state_name || bill?.sponsor_state,
-                                                                    bill?.origin_chamber,
-                                                                    bill?.sponsor_district ? `District ${bill.sponsor_district}` : null,
-                                                                ].filter(Boolean).join(" • ")}
-                                                            </span>
+                                                        <span className="llbp-sponsorTooltip__meta">
+                                                            {[
+                                                                bill?.sponsor_party,
+                                                                bill?.sponsor_state_name || bill?.sponsor_state,
+                                                                bill?.origin_chamber,
+                                                                bill?.sponsor_district ? `District ${bill.sponsor_district}` : null,
+                                                            ].filter(Boolean).join(" • ")}
                                                         </span>
                                                     </span>
-                                                </>
-                                            ) : (
-                                                bill?.sponsor_name || "—"
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="llbp-meta">
-                                        <div className="llbp-meta__label">Introduced</div>
-                                        <div className="llbp-meta__value">{fmtDate(bill?.introduced_date)}</div>
+                                                </span>
+                                            </>
+                                        ) : (
+                                            bill?.sponsor_name || "—"
+                                        )}
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="llbp-scoreGrid">
-                                <BillPanelMetricCard
-                                    type="impact"
-                                    value={bill?.impact_score}
-                                    label="Impact Score"
-                                />
-
-                                <BillPanelMetricCard
-                                    type="momentum"
-                                    value={bill?.trending_score}
-                                    label="Momentum"
-                                />
+                                <div className="llbp-meta">
+                                    <div className="llbp-meta__label">Introduced</div>
+                                    <div className="llbp-meta__value">{fmtDate(bill?.introduced_date)}</div>
+                                </div>
                             </div>
                         </div>
-                    </header>
 
-                    <div className="llbp-panel__body">
-                        <section className="llbp-section" aria-labelledby="bill-summary-heading">
-                            <div id="bill-summary-heading" className="llbp-section__label">
-                                Summary
+                        <div className="llbp-scoreGrid">
+                            <BillPanelMetricCard
+                                type="impact"
+                                value={bill?.impact_score}
+                                label="Impact Score"
+                            />
+
+                            <BillPanelMetricCard
+                                type="momentum"
+                                value={bill?.trending_score}
+                                label="Momentum"
+                            />
+                        </div>
+                    </div>
+                </header>
+
+                <div className="llbp-panel__body">
+                    <section className="llbp-section" aria-labelledby="bill-summary-heading">
+                        <div id="bill-summary-heading" className="llbp-section__label">
+                            Summary
+                        </div>
+
+                        <div className={summary ? "llbp-summary" : "llbp-summary llbd3-muted"}>
+                            {summary || "Summary not available yet."}
+                        </div>
+                    </section>
+
+                    {keyActions.length ? (
+                        <section className="llbp-keyActions" aria-labelledby="bill-actions-heading">
+                            <div id="bill-actions-heading" className="llbp-keyActions__head">
+                                <Gavel size={14} aria-hidden="true" />
+                                What this does
                             </div>
 
-                            <div className={summary ? "llbp-summary" : "llbp-summary llbd3-muted"}>
-                                {summary || "Summary not available yet."}
+                            <ul className="llbp-keyActions__list">
+                                {keyActions.slice(0, 8).map((action, index) => (
+                                    <li className="llbp-keyActions__item" key={`${bill?.bill_id}-action-${index}`}>
+                                        <span className="llbp-keyActions__dot" aria-hidden="true" />
+                                        <span>{action}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    ) : null}
+
+                    {bill?.latest_action_text ? (
+                        <section className="llbp-section" aria-labelledby="latest-action-heading">
+                            <div id="latest-action-heading" className="llbp-section__label">
+                                Latest action
+                            </div>
+
+                            <div className="llbp-summary">
+                                <strong>{fmtDate(bill?.latest_action_date)}</strong>
+                                {" — "}
+                                {bill.latest_action_text}
                             </div>
                         </section>
+                    ) : null}
 
-                        {keyActions.length ? (
-                            <section className="llbp-keyActions" aria-labelledby="bill-actions-heading">
-                                <div id="bill-actions-heading" className="llbp-keyActions__head">
-                                    <Gavel size={14} aria-hidden="true" />
-                                    What this does
-                                </div>
+                    <BillPanelActions
+                        bill={bill}
+                        congressUrl={bill?.congress_url || bill?.url}
+                        primaryTextUrl={primaryTextUrl}
+                        amendmentsUrl={bill?.amendments_url}
+                        amendmentCount={bill?.amendment_count}
+                    />
+                </div>
+            </article>
+        </div>
 
-                                <ul className="llbp-keyActions__list">
-                                    {keyActions.slice(0, 8).map((action, index) => (
-                                        <li className="llbp-keyActions__item" key={`${bill?.bill_id}-action-${index}`}>
-                                            <span className="llbp-keyActions__dot" aria-hidden="true" />
-                                            <span>{action}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-                        ) : null}
-
-                        {bill?.latest_action_text ? (
-                            <section className="llbp-section" aria-labelledby="latest-action-heading">
-                                <div id="latest-action-heading" className="llbp-section__label">
-                                    Latest action
-                                </div>
-
-                                <div className="llbp-summary">
-                                    <strong>{fmtDate(bill?.latest_action_date)}</strong>
-                                    {" — "}
-                                    {bill.latest_action_text}
-                                </div>
-                            </section>
-                        ) : null}
-
-                        <BillPanelActions
-                            bill={bill}
-                            congressUrl={bill?.congress_url || bill?.url}
-                            primaryTextUrl={primaryTextUrl}
-                            amendmentsUrl={bill?.amendments_url}
-                            amendmentCount={bill?.amendment_count}
-                        />
-                    </div>
-                </article>
-            </div>
-        </main>
     );
 }

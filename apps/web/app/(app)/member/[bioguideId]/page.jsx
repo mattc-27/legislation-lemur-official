@@ -6,10 +6,16 @@ import { getSectionFreshness } from "@/lib/domains/freshness/getSectionFreshness
 import { fetchMemberData } from '@/lib/utils/temp/memberData';
 import { getMemberVotes } from '@/lib/server/routes/votes';
 
+import EntityDetailShell from "@/app/components/ui/EntityDetailShell";
 import SectionBoundary from '@/app/components/ui/system/SectionBoundary';
+import {
+    EntityBackLink,
+    EntityCard,
+    EntitySection,
+} from "@/app/components/ui/entity";
 
 import MemberAbout from "@/app/components/features/members/shared/MemberAbout";
-import MemberTabs from '@/app/components/features/members/shared/temp/MemberTabs';
+import MemberTabs from '@/app/components/features/members/shared/MemberTabs';
 import MemberTerms from '@/app/components/features/members/shared/MemberTerms';
 
 import SenateVotes from '@/app/components/features/members/senate-member/SenateVotes';
@@ -22,22 +28,27 @@ import {
     ArrowLeft
 } from "lucide-react";
 
-import "@/app/styles/active/members/refactored/ll3.members.tokens.css";
-import "@/app/styles/active/members/refactored/ll3.members.ui.css";
 
-import "@/app/styles/active/members/refactored/ll3.members.details.css";
-import "@/app/styles/active/members/refactored/ll3.members.about.css";
+import "@/app/styles/active/core/ll3.entity-detail.css";
+import "@/app/styles/active/core/ll3.entity-ui.css";
 
-import "@/app/styles/active/members/refactored/ll3.members.terms.css";
+// import "@/app/styles/active/members/refactored/ll3.members.tokens.css";
+// import "@/app/styles/active/members/refactored/ll3.members.ui.css";
 
-import "@/app/styles/active/members/refactored/ll3.members.badges.css";
-import "@/app/styles/active/members/refactored/ll3.members.tabs.css";
-import "@/app/styles/active/members/refactored/ll3.members.heatmap.css";
+// import "@/app/styles/active/members/refactored/ll3.members.details.css";
+import "@/app/styles/active/members/ll3.members.details.css";
+import "@/app/styles/active/members/ll3.members.about.css";
+import "@/app/styles/active/members/ll3.members.terms.css";
+import "@/app/styles/active/members/ll3.members.badges.css";
+import "@/app/styles/active/members/ll3.members.tabs.css";
+import "@/app/styles/active/members/ll3.members.heatmap.css";
+import "@/app/styles/active/members/ll3.members.viz.css";
+import "@/app/styles/active/members/ll3.members.votes.css";
+import "@/app/styles/active/members/ll3.members.vote-alignment.css";
 
-import "@/app/styles/active/members/refactored/ll3.members.viz.css";
-import "@/app/styles/active/members/refactored/ll3.members.votes.css";
-import "@/app/styles/active/members/refactored/ll3.members.vote-alignment.css";
 
+// import "@/app/styles/active/bills/bill-details/ll3.bills.details.css";
+// import "@/app/styles/active/bills/bill-details/ll3.bill-panel.css";
 
 export default async function MemberPage({ params, searchParams }) {
     const { bioguideId } = await params;
@@ -51,14 +62,7 @@ export default async function MemberPage({ params, searchParams }) {
         monthly,
         sponsoredRes,
         cosponsoredRes,
-        //recentVotes,
-        // alignment,
-        // kpis,
         alignmentPanel,
-        //  monthlyActivity,
-        //  subjects,
-        //  bills,
-
     } = await fetchMemberData(bioguideId);
 
 
@@ -127,118 +131,56 @@ export default async function MemberPage({ params, searchParams }) {
 
     return (
         // page.jsx (fragment)
-        <div className="llmp3-page">
-            <div className="llmp3-wrap llmp3-stack-24">
-                <section className="llmp3-intro">
-                    <div className="llmp3-back">
-                        <Link
-                            href={fromBill ? `/bills/${fromBill}` : `/member?state=${encodeURIComponent(profile.stateCode || "")}`}
-                            className="llmp3-back__link"
-                        >
-                            <ArrowLeft size={16} aria-hidden="true" />
-                            <span>
-                                {fromBill
-                                    ? `Back to ${fromBillLabel || "bill"}`
-                                    : `Back to ${stateLabel} results`}
-                            </span>
-                        </Link>
-                    </div>
-
-                    <SectionBoundary where="MemberHeader">
-                        <div className="llmp3-intro__stack">
-                            <MemberAbout profile={profile} />
-                            <MemberTerms terms={profile.terms} />
-                        </div>
-                    </SectionBoundary>
-                </section>
-
-                <div className="llmp3-panel">
-                    <MemberTabs
-                        title="Recent bills by topic"
-                        groupsSponsored={sponsoredRes}
-                        groupsCosponsored={cosponsoredRes}
-                        monthly={monthly}
-                        sourceLabel="Includes sponsored + co-sponsored bills"
-                        freshnessAsOf={freshness.asOf}
-                        freshnessPerView={freshness.perView}
-                    />
+        <EntityDetailShell entity="member" variant="wide" className="llmp3-page">
+            <EntitySection className="llmp3-intro">
+                <div className="llmp3-back">
+                    <EntityBackLink
+                        href={
+                            fromBill
+                                ? `/bills/${fromBill}`
+                                : `/member?state=${encodeURIComponent(profile.stateCode || "")}`
+                        }
+                    >
+                        {fromBill
+                            ? `Back to ${fromBillLabel || "bill"}`
+                            : `Back to ${stateLabel} results`}
+                    </EntityBackLink>
                 </div>
-
-                {/* Votes + viz */}
-                <SectionBoundary where="MemberVotesAndViz">
-                    <div className="llmp3-panel">
-                        {isSenate ? (
-                            <SenateVotes groups={allVotes} />
-                        ) : (
-                            <>
-                                <VotesSplitSection
-                                    alignmentPanel={alignmentPanel}
-                                    votes={allVotes}
-                                    tableInitialLimit={20}
-                                    votesFreshnessAsOf={votesFreshness.asOf}
-                                    chamberLabel={isSenate ? "Senate" : "House"}
-                                    heatmapWeeks={13}
-                                />
-                            </>
-                        )}
+                <SectionBoundary where="MemberHeader">
+                    <div className="llmp3-intro__stack">
+                        <MemberAbout profile={profile} />
+                        <MemberTerms terms={profile.terms} />
                     </div>
                 </SectionBoundary>
+            </EntitySection>
+            <EntityCard variant="panel" className="llmp3-panel">
+                <MemberTabs
+                    title="Recent bills by topic"
+                    groupsSponsored={sponsoredRes}
+                    groupsCosponsored={cosponsoredRes}
+                    monthly={monthly}
+                    sourceLabel="Includes sponsored + co-sponsored bills"
+                    freshnessAsOf={freshness.asOf}
+                    freshnessPerView={freshness.perView}
+                />
+            </EntityCard>
 
-            </div>
-        </div>
-        /*         <MemberAbout profile={profile} />
-        <MemberTerms terms={profile.terms} />
-
-
-
-        <KpiRow kpis={kpis} />
-
-
- <ErrorBoundary where="MemberTabs">
-         <ErrorBoundary where="KpiRow">
-                  <ErrorBoundary where="MemberHeader">
-        </ErrorBoundary>
-   
-
-        <div className="llmp3-panel">
-            <MemberTabs
-                title="Recent bills by topic"
-                groupsSponsored={sponsoredRes}
-                groupsCosponsored={cosponsoredRes}
-                monthly={monthly}
-                sourceLabel="Includes sponsored + co-sponsored bills"
-                freshnessAsOf={freshness.asOf}
-                freshnessPerView={freshness.perView}
-            />
-        </div>
-
-        {/*    <ErrorBoundary where="MemberVotesAndViz"> 
-        </ErrorBoundary>
-   
-        <div className="llmp3-panel">
-            {isSenate ? (
-                <SenateVotes groups={allVotes} />
-            ) : (
-                <>
-                    <div className="llmp3-grid-2">
-                        <VoteAlignmentPanel value={alignment} />
-                        <div className="llmp3-card">
-                            <VotesSection votes={allVotes} tableInitialLimit={20} freshnessAsOf={votesFreshness.asOf} />
-                        </div>
-                    </div>
-
-                    <div className="llmp3-card llmp3-card--soft">
-                        <ActivityTimeline
-                            data={monthly}
-                            freshnessAsOf={freshness.perView?.member_monthly_activity_v1 ?? freshness.asOf}
+            <SectionBoundary where="MemberVotesAndViz">
+                <EntityCard variant="panel" className="llmp3-panel">
+                    {isSenate ? (
+                        <SenateVotes groups={allVotes} />
+                    ) : (
+                        <VotesSplitSection
+                            alignmentPanel={alignmentPanel}
+                            votes={allVotes}
+                            tableInitialLimit={20}
+                            votesFreshnessAsOf={votesFreshness.asOf}
+                            chamberLabel={isSenate ? "Senate" : "House"}
+                            heatmapWeeks={13}
                         />
-                    </div>
-                </>
-            )}
-        </div>
-
-    </div>
-</div>  */
-
+                    )}
+                </EntityCard>
+            </SectionBoundary>
+        </EntityDetailShell>
     );
 }
