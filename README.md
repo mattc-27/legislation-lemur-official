@@ -1,309 +1,170 @@
-# Legislation Lemur (LL3)
+# Legislation Lemur
 
-**Legislation Lemur** is a neutral, data-driven platform for exploring U.S. Congressional activity — including members, bills, votes, committees, composition trends, and legislative flow — through a structured, stable, and deterministic interface.
+**Legislation Lemur** is a neutral civic data platform for exploring the United States Congress through legislation, members, committees, votes, and legislative activity.
 
-This repository is built on a Turborepo monorepo foundation and integrates:
+The platform is designed to make congressional data easier to discover, navigate, and understand through structured search, modern information architecture, and transparent data presentation.
 
-* A highly structured Next.js frontend (LL3 design system)
-* A schema-versioned Postgres control plane
-* Cloud Run Job + Workflow–orchestrated ETL
-* Materialized-view–driven search and metrics
-* Deterministic refresh lifecycle management
+Rather than focusing on news, commentary, or political narratives, Legislation Lemur focuses on the underlying legislative record.
 
 ---
 
-# 🎯 Project Mission
+## Mission
 
-Legislation Lemur exists to:
+Legislation Lemur exists to help people:
 
-* Present legislative data without commentary or narrative framing
-* Surface structural and behavioral patterns
-* Provide deterministic, traceable data refresh lifecycles
-* Avoid opinion, sensationalism, and algorithmic bias
+* Discover legislation and legislative activity
+* Explore Congress through members, committees, and votes
+* Understand how bills move through the legislative process
+* Identify trends and patterns within congressional data
+* Access legislative information through a neutral, structured interface
 
-This is not a news site.
-It is a structured civic data interface.
+The goal is not to tell users what to think.
 
----
-
-# 🆕 Recent Platform Updates
-
-## 2026-02 — Committees Directory & Navigation Layer
-
-* Built committees directory page with chamber + type segmentation:
-
-  * Standing
-  * Select / Special
-  * Joint
-* Introduced directory UI tokens (`ll3.committees.*`)
-* Structured card-based navigation
-* Committee card routing foundation established
-* Preparing metrics layer for committee-level analysis
-
-**Impact:**
-Committees are now first-class navigable entities in LL.
+The goal is to help users find information.
 
 ---
 
-## 2026-02 — Bills Search & Filtering Enhancements
+## Current Features
 
-* Subject-aware autocomplete
-* Filter state stabilization (desktop + mobile)
-* Mobile filter sheet behavior hardened
-* Deterministic query parameter synchronization
-* Rendering consistency fixes across breakpoints
-* Search panel spacing + UI token refinements
+### Global Search
 
-**Impact:**
-Cleaner filtering UX. Reduced state drift. Stronger mobile parity.
+The new Legislation Lemur search experience provides a unified way to discover content across the platform.
 
----
+Features include:
 
-## 2026-02 — Error System & Rendering Stabilization
+* Search-as-you-type suggestions
+* Dedicated search results experience
+* Bill, member, and committee discovery
+* Entity-aware result grouping
+* Improved navigation and content discovery
+* Foundation for future natural-language search capabilities
 
-* Refactored page-level + section-level error boundaries
-* Centralized structured error helpers
-* Error metadata extraction utilities
-* Improved not-found handling
-* Header layout refinement (full-width system)
-* Continued LL3 CSS token cleanup
+Example searches:
 
-**Impact:**
-Improved observability. Safer partial failures. More resilient UI rendering.
+* AI regulation
+* veterans benefits
+* border security
+* judiciary committee
+* Colorado senator
 
 ---
 
-## 2026-02 — ETL & Control Plane Alignment
+### Legislative Archive
 
-* Postgres schema updates:
+Explore congressional legislation through a searchable archive of bills.
 
-  * `sandbox_ops_control_v1`
-  * `sandbox_ops_sched_v1`
-* Explicit run-group lifecycle tracking
-* Enum-driven execution status modeling
-* Refresh queue tied directly to run groups
-* Safe V3 refresh worker contract alignment
-* Cloud Run Jobs + Workflows orchestration stabilization
+Features include:
 
-**Impact:**
-Deterministic execution tracking. Explicit lifecycle management. Safer refresh sequencing.
-
----
-
-# 🧠 Backend & Orchestration
-
-The orchestration layer is the most architecturally evolved component of LL.
-
-### Key Characteristics
-
-* Schema-versioned control plane
-* Enum-based run execution tracking
-* Explicit run-group lifecycle states
-* Refresh queue leasing model
-* Materialized view dependency sequencing
-* Safe worker contract (v3)
-* Workflow-based orchestration control
-
-Primary components:
-
-* `ops_refresh_worker`
-* Cloud Run Jobs
-* GCP Workflows
-* Database functions & migrations
-* Supabase Postgres schemas
-* Environment-based execution guards
-
-The frontend consumes stable, materialized-view-backed contracts.
-
----
-
-# 🏛 Current Feature Surface
-
-## Members
-
-* Member directory
-* Detail pages
-* Term timeline visualization
-* Party & chamber context
-* Session-level metadata
-
-## Bills
-
-* Search (autocomplete + subject-aware)
-* Deterministic filtering
-* Responsive filter UI
+* Search and filtering
+* Chamber and status filters
+* Subject and policy area discovery
 * Bill detail pages
-* Metrics-backed views
-
-## Committees
-
-* Directory segmented by type
-* Card-based navigation
-* Structured routing
-* Metrics expansion planned
-
-## Insights (Scrollytelling Layer)
-
-* Structured editorial-style analysis pages
-* Data-visual sections
-* LL3 layout system integration
-* Designed for neutral legislative pattern exploration
+* Legislative history and activity tracking
+* Responsive desktop and mobile experience
 
 ---
 
-# 🗺 Upcoming / Planned Features
+### Member Directory
 
-## 🔎 District & Address Lookup
+Browse members of Congress through a structured directory experience.
 
-* GIS boundary integration (Congressional districts)
-* Address-to-district resolution
-* Privacy-preserving client-side safeguards
-* Notification scaffolding foundation
+Features include:
 
----
-
-## 📊 Committee Metrics Expansion
-
-* Bill referral counts
-* Throughput metrics
-* Session-level activity trends
-* Subcommittee breakdowns
+* Member search
+* State and chamber filtering
+* Committee membership information
+* Member detail pages
+* Recent legislative activity
+* Historical and current representation data
 
 ---
 
-## 📈 Insight Engine Evolution
+### Committees
 
-* Session trend comparisons
-* Cross-chamber flow visualization
-* Bill lifecycle analytics
-* Committee influence mapping
+Explore congressional committees and subcommittees.
 
----
+Features include:
 
-## 📬 Notification System (Planned)
-
-* User-defined tracking (member / committee / bill)
-* Weekly digest model
-* Deterministic event generation
-* Minimal PII storage
+* Committee directory
+* Chamber segmentation
+* Committee detail pages
+* Leadership and membership information
+* Committee activity and jurisdiction context
 
 ---
 
-## 🧭 Observability Enhancements
+## Information Architecture
 
-* Structured refresh logs
-* Run-group diagnostics
-* Control-plane admin visibility
-* Workflow state tracing improvements
+A major focus of the current platform generation is improving discoverability.
 
----
+Recent work includes:
 
-# 🏗 Monorepo Structure
+* Unified search experience
+* Simplified navigation patterns
+* Consistent explorer layouts
+* Shared filtering systems
+* Improved content hierarchy
+* Responsive mobile-first refinements
 
-## Apps
-
-* `web` — Main Legislation Lemur frontend (Next.js 15+)
-* `docs` — Documentation site (Next.js)
-
-## Shared Packages
-
-* `@repo/ui` — Shared LL3 UI primitives
-* `@repo/eslint-config`
-* `@repo/typescript-config`
-
-All packages are fully TypeScript.
+The goal is to reduce friction between a user's question and the information needed to answer it.
 
 ---
 
-# 🛠 Development
+## Platform Principles
 
-## Install
+Legislation Lemur is built around several core principles:
 
-```bash
-npm install
-```
+### Neutrality
 
-## Run All Apps
+Information is presented without political endorsement, commentary, or narrative framing.
 
-```bash
-turbo dev
-```
+### Transparency
 
-## Run Specific App
+Legislative data should be traceable back to official congressional sources.
 
-```bash
-turbo dev --filter=web
-```
+### Discoverability
 
----
+Users should be able to quickly find relevant legislation, members, and committees.
 
-# 🏗 Build
+### Consistency
 
-## Build All
+Shared design patterns and information architecture should work across the entire platform.
 
-```bash
-turbo build
-```
+### Accessibility
 
-## Build Specific App
-
-```bash
-turbo build --filter=web
-```
+Legislative information should be approachable for both casual visitors and power users.
 
 ---
 
-# ☁️ Remote Caching (Optional)
+## Roadmap
 
-```bash
-turbo login
-turbo link
-```
+Current areas of focus include:
 
-Enables shared build artifacts across CI and local machines.
-
----
-
-# 🧩 Architectural Principles
-
-Legislation Lemur prioritizes:
-
-* Data neutrality
-* Deterministic refresh lifecycles
-* Explicit control-plane state tracking
-* Schema-version alignment
-* Stable materialized-view contracts
-* Strong error boundaries
-* Structured UI hierarchy
-* Minimal algorithmic manipulation
-* Observability over opacity
+* Natural-language legislative search
+* Search interpretation and filter chips
+* Enhanced bill summaries and discovery tools
+* Legislative trend exploration
+* Committee activity analytics
+* Vote exploration and visualization
+* Civic reference resources
+* Personalized tracking and notification capabilities
 
 ---
 
-# 🧪 Reviewer Guidance
+## Technology
 
-## Frontend Review Focus
+Legislation Lemur is built using:
 
-* LL3 layout consistency
-* Search & filter determinism
-* Error boundary behavior
-* Mobile rendering stability
-* Committees navigation structure
+* Next.js
+* React
+* PostgreSQL
+* Supabase
+* Google Cloud Platform
 
-## Backend Review Focus
-
-* Control schema alignment
-* Run-group lifecycle enforcement
-* Refresh queue leasing logic
-* Enum correctness
-* Workflow orchestration integrity
-* MV dependency sequencing
+The platform uses materialized views, structured search indexes, and deterministic data refresh pipelines to provide a fast and reliable exploration experience.
 
 ---
 
-# 📚 Turborepo References
+## Status
 
-* [https://turborepo.com/docs/crafting-your-repository/running-tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-* [https://turborepo.com/docs/crafting-your-repository/caching](https://turborepo.com/docs/crafting-your-repository/caching)
-* [https://turborepo.com/docs/reference/configuration](https://turborepo.com/docs/reference/configuration)
-* [https://turborepo.com/docs/reference/command-line-reference](https://turborepo.com/docs/reference/command-line-reference)
+Legislation Lemur is an actively developed civic data platform focused on making congressional information more searchable, discoverable, and understandable.

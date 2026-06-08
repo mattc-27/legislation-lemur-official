@@ -5,15 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 export default function ResizableSelectClient({
     id,
     name,
-    options = [], // [{ value, label }] OR [{ committee_system_code, committee_name, bill_count }]
+    options = [],
     defaultValue = [],
     placeholder = "Select…",
     minRows = 2,
     maxRows = 12,
-    rowsStep = 2,
-    className = "ll3-input",
+    className = "ll3-multiSelect",
     hint = "Tip: hold ⌘/Ctrl to select multiple.",
-    // map helpers (optional)
     getValue,
     getLabel,
 }) {
@@ -24,10 +22,8 @@ export default function ResizableSelectClient({
     }, [defaultValue]);
 
     const [rows] = useState(() => Math.min(Math.max(minRows, 7), maxRows));
-
     const [value, setValue] = useState(normalizeDefault);
 
-    // Keep internal state in sync if defaultValue changes (rare, but safe)
     useEffect(() => {
         setValue(normalizeDefault);
     }, [normalizeDefault]);
@@ -39,43 +35,22 @@ export default function ResizableSelectClient({
 
     const optLabel = (o) => {
         if (getLabel) return String(getLabel(o) ?? "");
-        // committee dictionary shape
+
         if (o.committee_name) {
             const c = o.bill_count != null ? ` (${o.bill_count})` : "";
             return `${o.committee_name}${c}`;
         }
-        // generic shape
+
         return String(o.label ?? o.value ?? "");
     };
 
     return (
-        <div className="ll3-resize">
-            <div className="ll3-resize__top">
-                <div className="ll3-resize__hint">{hint}</div>
-
-                {/* 
-              
-                <div className="ll3-resize__controls" aria-label="Resize controls">
-                    <button
-                        type="button"
-                        className="ll3-resize__btn"
-                        onClick={() => setRows((r) => Math.max(minRows, r - rowsStep))}
-                        aria-label="Show fewer rows"
-                    >
-                        −
-                    </button>
-                    <button
-                        type="button"
-                        className="ll3-resize__btn"
-                        onClick={() => setRows((r) => Math.min(maxRows, r + rowsStep))}
-                        aria-label="Show more rows"
-                    >
-                        +
-                    </button>
+        <div className="ll3-multiSelectBox">
+            {hint ? (
+                <div className="ll3-multiSelectBox__top">
+                    <div className="ll3-multiSelectBox__hint">{hint}</div>
                 </div>
-                
-                */}
-            </div>
+            ) : null}
 
             <select
                 id={id}
@@ -83,11 +58,13 @@ export default function ResizableSelectClient({
                 multiple
                 value={value}
                 onChange={(e) => {
-                    const selected = Array.from(e.target.selectedOptions).map((o) => o.value);
+                    const selected = Array.from(e.target.selectedOptions).map(
+                        (o) => o.value
+                    );
                     setValue(selected);
                 }}
                 size={rows}
-                className={`${className} ll3-resize__select`}
+                className={`${className} ll3-multiSelectBox__control`}
             >
                 {options.length === 0 ? (
                     <option value="" disabled>

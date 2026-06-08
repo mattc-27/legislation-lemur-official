@@ -1,6 +1,6 @@
 import BillPanelOverlayClient from "@/app/components/features/bills/BillPanelOverlayClient";
 
-import "@/app/styles/active/bills/bill-details/ll3.bill-panel.css";
+import "@/app/styles/active/bills/ll3.bill-panel.css";
 
 export default function LoadingBillPanel() {
     return (

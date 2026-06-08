@@ -1,0 +1,105 @@
+/* app/styles/active/shared/ll3.explorer-links.css
+   Shared top hero links for Smart Search / Archive / Members / Committees.
+   Patch notes:
+   - Removed prefers-color-scheme styling so OS dark mode does not force dark pills while LL is in Light mode.
+   - Dark styling now keys off explicit app dark selectors only.
+   - Reduced shadow, removed hover underline, and softened active/hover border treatment. */
+
+.ll3-explorerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ll3-explorerLink {
+  --_accent: var(--ll3-accent, #6257f5);
+  --_surface: var(--llm3-surface-glass, var(--ll3-panel, rgba(255, 255, 255, 0.86)));
+  --_border: var(--llm3-border, var(--ll3-border, rgba(17, 24, 39, 0.12)));
+  --_text: var(--llm3-ink, var(--ll3-text-strong, #111827));
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--_border) 82%, transparent);
+  background: color-mix(in srgb, var(--_surface) 88%, transparent);
+  color: var(--_text);
+  font-size: 12.5px;
+  line-height: 1;
+  font-weight: 850;
+  text-decoration: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) inset, 0 5px 12px rgba(15, 23, 42, 0.035);
+  transition:
+    transform 150ms ease,
+    border-color 170ms ease,
+    background 170ms ease,
+    box-shadow 170ms ease,
+    color 170ms ease;
+}
+
+.ll3-explorerLink,
+.ll3-explorerLink:hover,
+.ll3-explorerLink:focus,
+.ll3-explorerLink:visited {
+  text-decoration: none;
+}
+
+.ll3-explorerLink::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--_accent);
+  transform: scaleX(0);
+  transform-origin: center;
+  opacity: 0;
+  transition: transform 170ms ease, opacity 170ms ease;
+}
+
+.ll3-explorerLink:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--_accent) 24%, var(--_border));
+  background: color-mix(in srgb, var(--_accent) 5%, var(--_surface));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.36) inset, 0 8px 16px rgba(15, 23, 42, 0.055);
+}
+
+.ll3-explorerLink:hover::after,
+.ll3-explorerLink.is-active::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.ll3-explorerLink.is-active {
+  color: var(--_accent);
+  border-color: color-mix(in srgb, var(--_accent) 34%, var(--_border));
+  background: color-mix(in srgb, var(--_accent) 8%, var(--_surface));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.32) inset, 0 6px 14px rgba(15, 23, 42, 0.045);
+}
+
+:where(html.dark, body.dark, .dark, html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], [data-color-mode="dark"]) .ll3-explorerLink {
+  --_accent: var(--ll3-accent, #9b95ff);
+  --_surface: var(--llm3-surface-glass, rgba(20, 31, 47, 0.78));
+  --_border: var(--llm3-border, rgba(226, 232, 240, 0.14));
+  --_text: var(--llm3-ink, #f8fafc);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 7px 16px rgba(0, 0, 0, 0.16);
+}
+
+:where(html.dark, body.dark, .dark, html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], [data-color-mode="dark"]) .ll3-explorerLink:hover {
+  border-color: color-mix(in srgb, var(--_accent) 28%, var(--_border));
+  background: color-mix(in srgb, var(--_accent) 10%, var(--_surface));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 9px 18px rgba(0, 0, 0, 0.18);
+}
+
+:where(html.dark, body.dark, .dark, html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], [data-color-mode="dark"]) .ll3-explorerLink.is-active {
+  color: color-mix(in srgb, var(--_accent) 78%, #ffffff);
+  border-color: color-mix(in srgb, var(--_accent) 34%, var(--_border));
+  background: color-mix(in srgb, var(--_accent) 14%, var(--_surface));
+}

@@ -2,15 +2,16 @@
 
 import { useCallback } from "react";
 
-function isMobileBp() {
-    return window.matchMedia("(max-width: 900px)").matches;
-}
+const REFINE_MOBILE_QUERY = "(max-width: 980px)";
 
+function isMobileBp() {
+    return window.matchMedia(REFINE_MOBILE_QUERY).matches;
+}
 export default function ModifyRefineButtonClient({
     desktopTargetId = "ll3-refine-desktop",
     mobileTargetId = "ll3-open-refine",
     children = "Modify",
-    className = "ll3-btn ll3-btn--ghost ll3-btn--sm ll3-modifyRefineBtn",
+    className = "",
 }) {
     const onClick = useCallback(() => {
         if (typeof window === "undefined") return;
@@ -34,7 +35,17 @@ export default function ModifyRefineButtonClient({
     }, [desktopTargetId, mobileTargetId]);
 
     return (
-        <button type="button" className={className} onClick={onClick}>
+        <button
+            type="button"
+            className={[
+                "ll3-btn",
+                "ll3-btn--ghost",
+                "ll3-btn--sm",
+                "ll3-modifyRefineBtn",
+                className,
+            ].filter(Boolean).join(" ")}
+            onClick={onClick}
+        >
             {children}
         </button>
     );

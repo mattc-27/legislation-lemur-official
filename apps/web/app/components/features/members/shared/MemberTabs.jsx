@@ -1,4 +1,5 @@
 "use client";
+
 import { useMemo, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
@@ -7,6 +8,10 @@ const BillTable = dynamic(() => import("./BillTable"), {
     ssr: false,
     loading: () => <div className="llm3-muted">Loading bills…</div>,
 });
+
+function cx(...parts) {
+    return parts.filter(Boolean).join(" ");
+}
 
 const labelFromSubject = (subj) =>
     typeof subj === "string"
@@ -30,27 +35,28 @@ function fmtFreshness(ts) {
 }
 
 export default function MemberTabs({
-    title = "Recent bills by topic",
+    title = "Legislative focus",
     groups,
     groupsSponsored,
     groupsCosponsored,
     monthly = [],
-    sourceLabel = "Includes sponsored + co-sponsored bills",
+    sourceLabel = "Includes sponsored + cosponsored bills",
     freshnessAsOf = null,
     freshnessPerView = null,
     showPerViewFreshness = false,
+    mode = "page",
 }) {
+    const isPanel = mode === "panel";
     const [selectedTopic, setSelectedTopic] = useState(null);
     const [subjectKind, setSubjectKind] = useState("policy_area");
+    const [roleView, setRoleView] = useState("all");
 
-    const sponsoredGroups =
-        groupsSponsored?.groups?.[subjectKind] ?? groupsSponsored?.legacy ?? [];
-    const cosponsoredGroups =
-        groupsCosponsored?.groups?.[subjectKind] ?? groupsCosponsored?.legacy ?? [];
+    const sponsoredGroups = groupsSponsored?.groups?.[subjectKind] ?? groupsSponsored?.legacy ?? groups ?? [];
+    const cosponsoredGroups = groupsCosponsored?.groups?.[subjectKind] ?? groupsCosponsored?.legacy ?? [];
 
     useEffect(() => {
         setSelectedTopic(null);
-    }, [subjectKind]);
+    }, [subjectKind, roleView]);
 
     const mergedGroups = useMemo(() => {
         const sets = [
@@ -62,6 +68,8 @@ export default function MemberTabs({
 
         const bySubject = new Map();
         for (const { set, kind } of sets) {
+            if (roleView !== "all" && roleView !== kind) continue;
+
             for (const g of set) {
                 const key = labelFromSubject(g?.subject);
                 const prev = bySubject.get(key) || { subject: key, items: [] };
@@ -81,39 +89,41 @@ export default function MemberTabs({
                 const next = [...prev.items, ...withKind];
                 const dedup = new Map();
                 for (const it of next) {
-                    const id = it.id || it.url || it.href || it.title;
+                    const id = it.id || it.billId || it.bill_id || it.appHref || it.url || it.href || it.title;
                     if (!dedup.has(id)) dedup.set(id, { ...it });
                     else {
                         const cur = dedup.get(id);
-                        const union = Array.from(
-                            new Set([...(cur?.kinds || []), ...(it?.kinds || [])])
-                        );
-                        dedup.set(id, { ...cur, kinds: union });
+                        const union = Array.from(new Set([...(cur?.kinds || []), ...(it?.kinds || [])]));
+                        dedup.set(id, { ...cur, ...it, kinds: union });
                     }
                 }
                 bySubject.set(key, { subject: key, items: Array.from(dedup.values()) });
             }
         }
 
-        return Array.from(bySubject.values()).map((g) => ({
-            ...g,
-            count: g.items.length,
-        }));
-    }, [sponsoredGroups, cosponsoredGroups]);
+        return Array.from(bySubject.values())
+            .map((g) => ({ ...g, count: g.items.length }))
+            .filter((g) => g.count > 0);
+    }, [sponsoredGroups, cosponsoredGroups, roleView]);
 
     if (!mergedGroups.length && !(Array.isArray(monthly) && monthly.length)) return null;
 
     const freshnessLine = fmtFreshness(freshnessAsOf);
 
     return (
-        <section className="llmp3-card llm3-tabs">
+        <section
+            className={cx(
+                "llmp3-card llm3-tabs llm3-tabs--legislationFocus",
+                isPanel ? "llm3-tabs--panel" : "llm3-tabs--page"
+            )}
+            data-entity-mode={mode}
+            data-view-mode={mode}
+        >
             <div className="llm3-tabs__sectionHead">
                 <div className="llm3-tabs__sectionTitleBlock">
-                    <h2 className="llmp3-h2 llm3-tabs__sectionTitle">
-                        Sponsored and cosponsored legislation
-                    </h2>
+                    <h2 className="llmp3-h2 llm3-tabs__sectionTitle">{title}</h2>
                     <div className="llm3-tabs__sectionDesc">
-                        Explore the policy areas and legislative topics that appear most often across this member’s sponsored and cosponsored bills.
+                        See the policy areas this member works on most often, then review recent sponsored and cosponsored bills with summaries and status context.
                     </div>
                 </div>
 
@@ -125,37 +135,29 @@ export default function MemberTabs({
                 </div>
             </div>
 
-
-            <div className="llm3-tabs__topbar">
+            <div className="llm3-tabs__topbar llm3-tabs__topbar--split">
                 <div className="llm3-tabs__modeTabs" role="tablist" aria-label="Topic mode">
-                    <button
-                        type="button"
-                        role="tab"
-                        aria-selected={subjectKind === "policy_area"}
-                        className={`llm3-tabs__modeTab ${subjectKind === "policy_area" ? "is-active" : ""}`}
-                        onClick={() => setSubjectKind("policy_area")}
-                    >
+                    <button type="button" role="tab" aria-selected={subjectKind === "policy_area"} className={cx("llm3-tabs__modeTab", subjectKind === "policy_area" && "is-active")} onClick={() => setSubjectKind("policy_area")}>
                         Policy Areas
                     </button>
-
-                    <button
-                        type="button"
-                        role="tab"
-                        aria-selected={subjectKind === "legislative"}
-                        className={`llm3-tabs__modeTab ${subjectKind === "legislative" ? "is-active" : ""}`}
-                        onClick={() => setSubjectKind("legislative")}
-                    >
+                    <button type="button" role="tab" aria-selected={subjectKind === "legislative"} className={cx("llm3-tabs__modeTab", subjectKind === "legislative" && "is-active")} onClick={() => setSubjectKind("legislative")}>
                         Legislative Topics
                     </button>
+                </div>
+
+                <div className="llm3-tabs__roleTabs" role="tablist" aria-label="Bill role filter">
+                    {[["all", "All"], ["sponsored", "Sponsored"], ["cosponsored", "Cosponsored"]].map(([key, label]) => (
+                        <button key={key} type="button" role="tab" aria-selected={roleView === key} className={cx("llm3-tabs__roleTab", roleView === key && "is-active")} onClick={() => setRoleView(key)}>
+                            {label}
+                        </button>
+                    ))}
                 </div>
             </div>
 
             {showPerViewFreshness && freshnessPerView && (
                 <div className="llm3-muted llm3-tabs__perView">
                     {Object.entries(freshnessPerView).map(([name, ts]) => (
-                        <div key={name}>
-                            {name}: {fmtFreshness(ts) ?? "—"}
-                        </div>
+                        <div key={name}>{name}: {fmtFreshness(ts) ?? "—"}</div>
                     ))}
                 </div>
             )}
@@ -163,10 +165,7 @@ export default function MemberTabs({
             <div className="llm3-tabsRow">
                 <div className="llm3-tabsViz">
                     <div className="llm3-tabsViz__frame">
-                        <TopicDonut
-                            groups={mergedGroups}
-                            onSelectTopic={setSelectedTopic}
-                        />
+                        <TopicDonut groups={mergedGroups} onSelectTopic={setSelectedTopic} mode={mode} />
                     </div>
                 </div>
 
@@ -174,8 +173,11 @@ export default function MemberTabs({
                     <div className="llm3-tabsTable">
                         <BillTable
                             groups={mergedGroups}
-                            maxHeight={420}
+                            maxHeight={isPanel ? 640 : 520}
                             selectedTopic={selectedTopic}
+                            mode={mode}
+                            initialLimit={isPanel ? 8 : 18}
+                            pageSize={isPanel ? 8 : 18}
                         />
                     </div>
                 )}

@@ -2,7 +2,7 @@
 
 import { CheckCircle2, XCircle, CircleSlash } from "lucide-react";
 
-export default function VotesTable({ votes = [] }) {
+export default function VotesTable({ votes = [], mode = "page" }) {
   if (!votes || votes.length === 0) {
     return (
       <p className="llm3-muted votes-table__empty">
@@ -12,7 +12,7 @@ export default function VotesTable({ votes = [] }) {
   }
 
   return (
-    <div className="votes-list">
+    <div className={`votes-list votes-list--${mode}`}>
       {votes.map((v) => {
         const row = normalizeVote(v);
 

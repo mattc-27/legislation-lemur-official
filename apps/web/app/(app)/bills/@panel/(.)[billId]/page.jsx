@@ -1,11 +1,14 @@
-// /bills/@pane/(.)[billId]/page.jsx
+// app/bills/@panel/(.)[billId]/page.jsx
 import { notFound } from "next/navigation";
 
 import { getBillPanelDetail } from "@/lib/server/bills/indexV2";
 import BillPanelDetail from "@/app/components/features/bills/BillPanelDetail";
 import BillPanelOverlayClient from "@/app/components/features/bills/BillPanelOverlayClient";
 
-import "@/app/styles/active/bills/bill-details/ll3.bill-panel.css";
+
+import "@/app/styles/active/bills/ll3.bills.details.css";
+import "@/app/styles/active/core/ll3.route-panel.css";
+import "@/app/styles/active/bills/ll3.bill-panel.css";
 
 function parseBillSlug(value) {
     const slug = decodeURIComponent((value ?? "").toString().trim()).toLowerCase();

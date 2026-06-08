@@ -1,0 +1,657 @@
+/* ==========================================================================
+   LL3 — Shared Entity Presentation Layer
+
+   Purpose:
+   Shared presentation primitives for bill/member detail pages and route panels.
+
+   Intended replacements:
+   - llmp3-card / llbd3-card
+   - llmp3-panel / llbd3-panel
+   - llmp3-card__head / llbd3-card__head / llm3-cardHead
+   - llm3-tableFrame / bill table frames
+   - llbd3-body / llbd3-main / llbd3-side / llmp3-grid-2
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Sections / stack
+   -------------------------------------------------------------------------- */
+
+.ll3-entitySection {
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.ll3-entitySection--gap-sm {
+  gap: 12px;
+}
+
+.ll3-entitySection--gap-md {
+  gap: 16px;
+}
+
+.ll3-entitySection--gap-lg {
+  gap: 24px;
+}
+
+.ll3-entitySection--gap-xl {
+  gap: 32px;
+}
+
+/* --------------------------------------------------------------------------
+   Cards / panels
+   -------------------------------------------------------------------------- */
+
+.ll3-entityCard {
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-lg);
+  background: var(--ll3-panel-strong);
+  color: var(--ll3-text);
+  box-shadow: var(--ll3-shadow-sm);
+}
+
+.ll3-entityCard>* {
+  min-width: 0;
+}
+
+.ll3-entityCard--panel {
+  background: var(--ll3-panel);
+  box-shadow: var(--ll3-shadow);
+  -webkit-backdrop-filter: saturate(1.08) blur(12px);
+  backdrop-filter: saturate(1.08) blur(12px);
+  overflow: hidden;
+}
+
+.ll3-entityCard--hero {
+  background:
+    linear-gradient(180deg, var(--ll3-panel-strong), var(--ll3-panel-solid));
+  border-color: var(--ll3-border);
+  box-shadow: var(--ll3-shadow);
+}
+
+.ll3-entityCard--soft {
+  background: var(--ll3-panel);
+  box-shadow: var(--ll3-shadow-xs);
+  -webkit-backdrop-filter: saturate(1.05) blur(10px);
+  backdrop-filter: saturate(1.05) blur(10px);
+}
+
+.ll3-entityCard--flat {
+  background: var(--ll3-panel-solid);
+  box-shadow: none;
+}
+
+.ll3-entityCard--flush {
+  padding: 0;
+}
+
+.ll3-entityCard--tone-accent {
+  border-color: var(--ll3-accent-border);
+  background: color-mix(in srgb, var(--ll3-accent) 7%, var(--ll3-panel-strong));
+}
+
+/* --------------------------------------------------------------------------
+   Card header
+   -------------------------------------------------------------------------- */
+
+.ll3-entityCardHeader {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ll3-entityCardHeader__main {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.ll3-entityCardHeader__aside {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.ll3-entityCardHeader__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ll3-accent-strong);
+  font-size: 11.5px;
+  font-weight: 950;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.ll3-entityCardHeader__titleRow {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ll3-entityCardHeader__icon {
+  display: inline-flex;
+  color: var(--ll3-accent-strong);
+}
+
+.ll3-entityCardHeader__title {
+  margin: 0;
+  color: var(--ll3-ink);
+  font-size: clamp(1.02rem, 0.35vw + 0.96rem, 1.22rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+}
+
+.ll3-entityCardHeader__description {
+  margin: 0;
+  max-width: 82ch;
+  color: color-mix(in srgb, var(--ll3-text) 84%, transparent);
+  font-size: 14px;
+  line-height: 1.58;
+  font-weight: 520;
+}
+
+.ll3-entityCardHeader__meta {
+  color: var(--ll3-muted);
+  font-size: 12.5px;
+  line-height: 1.35;
+  font-weight: 760;
+  text-align: right;
+}
+
+.ll3-entityCardHeader__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Backwards-compatible aliases for existing markup */
+.llmp3-card__head,
+.llbd3-card__head,
+.llm3-cardHead {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   Main/sidebar content layout
+   -------------------------------------------------------------------------- */
+
+.ll3-entityContentLayout {
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+
+.ll3-entityContentLayout__main,
+.ll3-entityContentLayout__sidebar {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 980px) {
+  .ll3-entityContentLayout--hasSidebar {
+    grid-template-columns: minmax(0, 2.15fr) minmax(320px, 0.95fr);
+  }
+
+  .ll3-entityContentLayout--sidebar-sm.ll3-entityContentLayout--hasSidebar {
+    grid-template-columns: minmax(0, 2.35fr) minmax(280px, 0.75fr);
+  }
+
+  .ll3-entityContentLayout--sidebar-md.ll3-entityContentLayout--hasSidebar {
+    grid-template-columns: minmax(0, 2.15fr) minmax(320px, 0.95fr);
+  }
+
+  .ll3-entityContentLayout--sidebar-lg.ll3-entityContentLayout--hasSidebar {
+    grid-template-columns: minmax(0, 1.75fr) minmax(360px, 1fr);
+  }
+
+  .ll3-entityContentLayout--sidebarLeft.ll3-entityContentLayout--hasSidebar {
+    grid-template-columns: minmax(320px, 0.95fr) minmax(0, 2.15fr);
+  }
+
+  .ll3-entityContentLayout--sidebarLeft .ll3-entityContentLayout__sidebar {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .ll3-entityContentLayout--sidebarLeft .ll3-entityContentLayout__main {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+/* Backwards-compatible aliases for existing layout classes */
+.llbd3-body {
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+
+.llbd3-main,
+.llbd3-side {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.llmp3-grid-2 {
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 980px) {
+  .llbd3-body {
+    grid-template-columns: minmax(0, 2.15fr) minmax(320px, 0.95fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .llmp3-grid-2 {
+    grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tables
+   -------------------------------------------------------------------------- */
+
+.ll3-entityTableFrame {
+  min-width: 0;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-md);
+  background: var(--ll3-panel-strong);
+  overflow: hidden;
+}
+
+.ll3-entityTableFrame--tight .ll3-entityTableFrame__body {
+  padding: 0;
+}
+
+.ll3-entityTableFrame--scroll .ll3-entityTableFrame__body {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ll3-entityTableFrame__body {
+  min-width: 0;
+}
+
+.ll3-entityTableFrame table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ll3-entityTableFrame th {
+  text-align: left;
+  color: var(--ll3-muted2);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 900;
+  padding: 10px;
+  border-bottom: 1px solid var(--ll3-border);
+}
+
+.ll3-entityTableFrame td {
+  padding: 10px;
+  border-bottom: 1px solid var(--ll3-border-soft);
+  color: var(--ll3-text);
+  font-weight: 620;
+  vertical-align: top;
+}
+
+.ll3-entityTableFrame tr:hover td {
+  background: color-mix(in srgb, var(--ll3-accent) 4%, transparent);
+}
+
+/* Backwards-compatible aliases for existing table frames */
+.llm3-tableFrame,
+.llbd3-frame {
+  min-width: 0;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-md);
+  background: var(--ll3-panel-strong);
+  overflow: hidden;
+}
+
+.llm3-tableFrame--tight,
+.llbd3-frame--tight {
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Metric cards
+   -------------------------------------------------------------------------- */
+
+.ll3-entityMetricGrid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 12px;
+}
+
+.ll3-entityMetricGrid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ll3-entityMetricGrid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ll3-entityMetricGrid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ll3-entityMetricCard {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--ll3-border-soft);
+  border-radius: var(--ll3-r-md);
+  background: var(--ll3-surface-2);
+  color: var(--ll3-text);
+}
+
+.ll3-entityMetricCard--vertical {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  text-align: center;
+  padding: 18px;
+  border-radius: var(--ll3-r-xl);
+}
+
+.ll3-entityMetricCard__icon {
+  display: inline-flex;
+  color: var(--ll3-accent-strong);
+}
+
+.ll3-entityMetricCard__body {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.ll3-entityMetricCard__label {
+  color: var(--ll3-muted2);
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ll3-entityMetricCard__value {
+  color: var(--ll3-ink);
+  font-size: 1.05rem;
+  line-height: 1.1;
+  font-weight: 950;
+  letter-spacing: -0.025em;
+}
+
+.ll3-entityMetricCard__hint {
+  color: var(--ll3-muted);
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.ll3-entityMetricCard--good {
+  border-color: color-mix(in srgb, #10b981 24%, var(--ll3-border));
+  background: color-mix(in srgb, #10b981 9%, var(--ll3-surface-2));
+}
+
+.ll3-entityMetricCard--bad {
+  border-color: color-mix(in srgb, #ef4444 24%, var(--ll3-border));
+  background: color-mix(in srgb, #ef4444 8%, var(--ll3-surface-2));
+}
+
+.ll3-entityMetricCard--warn {
+  border-color: color-mix(in srgb, #f59e0b 28%, var(--ll3-border));
+  background: color-mix(in srgb, #f59e0b 9%, var(--ll3-surface-2));
+}
+
+.ll3-entityMetricCard--neutral {
+  border-color: var(--ll3-border-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Empty states
+   -------------------------------------------------------------------------- */
+
+.ll3-entityEmptyState {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+  padding: 26px 18px;
+  color: var(--ll3-muted);
+}
+
+.ll3-entityEmptyState__icon {
+  display: inline-flex;
+  color: var(--ll3-muted2);
+}
+
+.ll3-entityEmptyState__body {
+  display: grid;
+  gap: 4px;
+}
+
+.ll3-entityEmptyState__title {
+  color: var(--ll3-ink);
+  font-size: 0.95rem;
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.ll3-entityEmptyState__description {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--ll3-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  font-weight: 580;
+}
+
+.ll3-entityEmptyState__action {
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Back link
+   -------------------------------------------------------------------------- */
+
+.ll3-entityBackLink {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 38px;
+  max-width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-pill);
+  background: color-mix(in srgb, var(--ll3-panel-strong) 78%, transparent);
+  color: var(--ll3-ink);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: var(--ll3-shadow-xs);
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease;
+}
+
+.ll3-entityBackLink:hover {
+  transform: translateY(-1px);
+  border-color: var(--ll3-border-strong);
+  background: var(--ll3-panel-strong);
+  color: var(--ll3-link-hover);
+  box-shadow: var(--ll3-shadow-sm);
+}
+
+.ll3-entityBackLink:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px var(--ll3-focus),
+    var(--ll3-shadow-sm);
+}
+
+.ll3-entityBackLink svg {
+  flex: 0 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Compatibility bridge: existing bill/member classes can opt into new look
+   -------------------------------------------------------------------------- */
+
+.llmp3-card,
+.llbd3-card {
+  min-width: 0;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-lg);
+  background: var(--ll3-panel-strong);
+  color: var(--ll3-text);
+  box-shadow: var(--ll3-shadow-sm);
+}
+
+.llmp3-panel,
+.llbd3-panel {
+  min-width: 0;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-lg);
+  background: var(--ll3-panel);
+  color: var(--ll3-text);
+  box-shadow: var(--ll3-shadow);
+  -webkit-backdrop-filter: saturate(1.08) blur(12px);
+  backdrop-filter: saturate(1.08) blur(12px);
+  overflow: hidden;
+}
+
+.llmp3-card>*,
+.llbd3-card>*,
+.llmp3-panel>*,
+.llbd3-panel>* {
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ll3-entityCard {
+    padding: 15px;
+  }
+
+  .ll3-entityCardHeader {
+    gap: 10px;
+  }
+
+  .ll3-entityCardHeader__aside {
+    width: 100%;
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .ll3-entityMetricGrid--3,
+  .ll3-entityMetricGrid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .ll3-entityCard {
+    padding: 14px;
+    border-radius: var(--ll3-r-md);
+  }
+
+  .ll3-entityMetricGrid,
+  .ll3-entityMetricGrid--2,
+  .ll3-entityMetricGrid--3,
+  .ll3-entityMetricGrid--4 {
+    grid-template-columns: 1fr;
+  }
+
+  .ll3-entityBackLink {
+    min-height: 36px;
+    padding-inline: 10px;
+    font-size: 0.86rem;
+  }
+}
+
+/* ==========================================================================
+   Pass 1 — shared mode hooks for member detail content
+   These do not redesign components yet; they provide stable selectors for
+   follow-up panel/page density work.
+   ========================================================================== */
+
+[data-view-mode="panel"] :where(.llmp3-card, .llmp3-panel, .ll3-entityCard) {
+  --ll3-entity-density: compact;
+}
+
+.llmp3-aboutCard--page,
+.llmp3-termsCard--page,
+.llm3-tabs--page,
+.llm3-votesSplit--page,
+.llm3-va--page,
+.llm3-heatmapCard--page,
+.votes-list--page,
+.llm3-senVotes--page {
+  --ll3-component-mode: page;
+}
+
+.llmp3-aboutCard--panel,
+.llmp3-termsCard--panel,
+.llm3-tabs--panel,
+.llm3-votesSplit--panel,
+.llm3-va--panel,
+.llm3-heatmapCard--panel,
+.votes-list--panel,
+.llm3-senVotes--panel {
+  --ll3-component-mode: panel;
+}
+
+/* Panel defaults only. Deeper visual sizing happens in later passes. */
+.ll3-routePanel[data-entity="member"] .llmp3-intro {
+  margin-bottom: 14px;
+}
+
+.ll3-routePanel[data-entity="member"] .llmp3-panel,
+.ll3-routePanel[data-entity="member"] .llmp3-card {
+  box-shadow: var(--ll3-shadow-sm);
+}

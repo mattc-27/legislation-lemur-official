@@ -1,36 +1,48 @@
-// app/(app)/@memberPanel/(.)member/[bioguideId]/page.jsx
-// import MemberProfileView from "@/app/components/features/members/profile/MemberProfileView";
-import MemberProfileView from "@/app/components/features/members/profile/MemberProfileViewTemp";
-import MemberProfilePanelShell from "@/app/components/features/members/profile/MemberProfilePanelShell";
+// app/member/@panel/(.)[bioguideId]/page.jsx
+import { notFound } from "next/navigation";
 
-import "@/app/styles/active/members/refactored/ll3.members.tokens.css";
-import "@/app/styles/active/members/refactored/ll3.members.ui.css";
-import "@/app/styles/active/members/refactored/ll3.members.details.css";
-import "@/app/styles/active/members/refactored/ll3.members.about.css";
-import "@/app/styles/active/members/refactored/ll3.members.terms.css";
-import "@/app/styles/active/members/refactored/ll3.members.badges.css";
-import "@/app/styles/active/members/refactored/ll3.members.tabs.css";
-import "@/app/styles/active/members/refactored/ll3.members.heatmap.css";
-import "@/app/styles/active/members/refactored/ll3.members.viz.css";
-import "@/app/styles/active/members/refactored/ll3.members.votes.css";
-import "@/app/styles/active/members/refactored/ll3.members.vote-alignment.css";
-import "@/app/styles/active/members/updates/ll3.members.profile-panel.css";
+//import { fetchMemberData } from "@/lib/memberData";
+import MemberProfilePanelShell from "@/app/components/features/members/MemberProfilePanelShell";
+import MemberProfileView from "@/app/components/features/members/shared/MemberProfileView";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+import "@/app/styles/active/members/ll3.members.tokens.css";
+import "@/app/styles/active/members/ll3.members.ui.css";
 
-export default async function MemberPanelPage({ params }) {
+import "@/app/styles/active/members/ll3.members.details.css";
+import "@/app/styles/active/members/ll3.members.about.css";
+import "@/app/styles/active/members/ll3.members.terms.css";
+import "@/app/styles/active/members/ll3.members.badges.css";
+import "@/app/styles/active/members/ll3.members.tabs.css";
+import "@/app/styles/active/members/ll3.members.heatmap.css";
+import "@/app/styles/active/members/ll3.members.viz.css";
+import "@/app/styles/active/members/ll3.members.votes.css";
+import "@/app/styles/active/members/ll3.members.vote-alignment.css";
+
+
+import "@/app/styles/active/core/ll3.route-panel.css";
+import "@/app/styles/active/members/ll3.members.profile-panel.css";
+
+import "@/app/styles/active/members/ll3.members.page.css";
+
+
+export default async function MemberPanelRoute({ params }) {
+    // const resolvedParams = await params;
+    //const bioguideId = decodeURIComponent((resolvedParams?.bioguideId ?? "").toString().trim()).toUpperCase();
     const { bioguideId } = await params;
+
+    // if (!bioguideId) return notFound();
+
+    // const data = await fetchMemberData(bioguideId);
+
+    //if (!data?.profile) return notFound();
 
     return (
         <MemberProfilePanelShell>
-            <div className="llmp3-page llmp3-page--panel">
-                <MemberProfileView
-                    bioguideId={bioguideId}
-                    variant="panel"
-                    showBackLink={false}
-                />
-            </div>
+            <MemberProfileView //{...data} mode="panel" 
+                bioguideId={bioguideId}
+                variant="panel"
+                showBackLink={false}
+            />
         </MemberProfilePanelShell>
     );
 }
