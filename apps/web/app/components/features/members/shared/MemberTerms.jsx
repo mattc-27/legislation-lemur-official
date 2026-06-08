@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { History, CalendarClock, ChevronDown } from "lucide-react";
 
-export default function MemberTerms({ terms = [], compact = false }) {
+export default function MemberTerms({ terms = [], compact = false, mode = "page" }) {
   const [expanded, setExpanded] = useState(false);
 
   const byChamber = useMemo(() => {
@@ -45,7 +45,7 @@ export default function MemberTerms({ terms = [], compact = false }) {
   }, [byChamber]);
 
   return (
-    <section className="llmp3-card llmp3-card--soft llmp3-termsCard">
+    <section className={`llmp3-card llmp3-card--soft llmp3-termsCard llmp3-termsCard--${mode}`} data-view-mode={mode}>
       {!compact && (
         <div className="llmp3-card__head llmp3-termsCard__head">
           <h2 className="llmp3-h2 llmp3-termsCard__title">

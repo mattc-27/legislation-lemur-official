@@ -1,0 +1,462 @@
+/* ========================================
+   Search page responsive styles
+   Refactored from mobile-styles(1).css
+   Notes:
+   - Duplicate breakpoint blocks have been merged.
+   - Later/bottom declarations were treated as authoritative.
+   - Narrower breakpoints remain after wider ones so the cascade is preserved.
+======================================== */
+
+/* ----------------------------------------
+   <= 980px
+---------------------------------------- */
+@media (max-width: 980px) {
+
+    .ll3-bestMatches__grid,
+    .ll3-searchExploreGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-searchPage.is-results .ll3-searchHero {
+        padding: 16px 0 8px;
+    }
+}
+
+/* ----------------------------------------
+   <= 900px
+---------------------------------------- */
+@media (max-width: 900px) {
+    .ll3-searchExploreGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ----------------------------------------
+   <= 768px
+---------------------------------------- */
+@media (max-width: 768px) {
+    .ll3-searchToolbar {
+        gap: 14px;
+    }
+
+    .ll3-searchMeta {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .ll3-searchActionsRow {
+        justify-content: flex-end;
+    }
+}
+
+/* ----------------------------------------
+   <= 680px
+---------------------------------------- */
+@media (max-width: 680px) {
+    .ll3-searchPage.is-results {
+        --ll3-search-edge-pad: 18px;
+    }
+
+    .ll3-searchHero .container,
+    .ll3-searchBody {
+        width: calc(100% - (var(--ll3-search-edge-pad) * 2));
+    }
+
+    .ll3-searchPage,
+    .ll3-bestMatches,
+    .ll3-searchSection,
+    .ll3-searchResult {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .ll3-searchBody {
+        gap: 16px;
+    }
+
+    .ll3-searchHero {
+        padding-top: 18px;
+    }
+
+    .ll3-searchPage.is-results .ll3-searchHero {
+        padding-top: 14px;
+    }
+
+    .ll3-searchPage.is-results .ll3-bestMatches {
+        display: none;
+    }
+
+    .ll3-searchPage.is-results .ll3-globalSearch--workspace {
+        margin-bottom: .15rem;
+    }
+
+    .ll3-searchPage.is-results .ll3-globalSearch--workspace .ll3-globalSearch__form {
+        min-height: 52px;
+        border-radius: 18px;
+    }
+
+    .ll3-searchPage.is-results .ll3-globalSearch--workspace .ll3-globalSearch__button {
+        width: 58px;
+        min-width: 58px;
+        height: 42px;
+        border-radius: 15px;
+    }
+
+    /* Hero link rows */
+    .ll3-searchHero__links {
+        margin-top: -6px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+
+    .ll3-searchHero__links::-webkit-scrollbar {
+        display: none;
+    }
+
+    .ll3-searchHero__links .ll3-explorerLinks {
+        flex-wrap: nowrap;
+        gap: 14px;
+    }
+
+    .ll3-searchHero__linksRow {
+        margin-top: -0.2rem;
+        overflow: hidden;
+    }
+
+    .ll3-searchHero__linksRow .ll3-explorerLinks {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 0;
+        scrollbar-width: none;
+    }
+
+    .ll3-searchHero__linksRow .ll3-explorerLinks::-webkit-scrollbar {
+        display: none;
+    }
+
+    .ll3-searchHero__linksRow .ll3-explorerLink {
+        flex: 0 0 auto;
+        font-size: 12px;
+    }
+
+    .ll3-searchHero__directoryLinks .ll3-explorerLinks {
+        gap: 14px;
+    }
+
+    .ll3-searchHero__directoryLinks .ll3-explorerLink {
+        min-height: auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        color: var(--ll3-muted);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .ll3-searchHero__directoryLinks .ll3-explorerLink.is-active {
+        color: var(--ll3-accent-strong);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .ll3-searchHero__clearLink {
+        flex: 0 0 auto;
+        font-size: 12.5px;
+    }
+
+    /* Toolbar */
+    .ll3-searchToolbar {
+        gap: 10px;
+        padding: 10px 0 14px;
+    }
+
+    .ll3-searchToolbar__controls {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ll3-searchTabs,
+    .ll3-searchTypes,
+    .ll3-searchTypeScroller {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 8px;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .ll3-searchTabs::-webkit-scrollbar,
+    .ll3-searchTypes::-webkit-scrollbar,
+    .ll3-searchTypeScroller::-webkit-scrollbar {
+        display: none;
+    }
+
+    .ll3-searchTypeScroller>* {
+        flex: 0 0 auto;
+    }
+
+    .ll3-searchTabs .ll3-pill--entity:not(.is-active) {
+        display: none;
+    }
+
+    .ll3-searchTabs .ll3-pill--entity.is-active::before {
+        content: "Type:";
+        color: var(--ll3-muted);
+        font-weight: 850;
+        margin-right: 2px;
+    }
+
+    .ll3-pill--entity {
+        flex: 0 0 auto;
+        min-height: 33px;
+        padding-inline: 11px;
+        gap: 7px;
+        border-radius: 999px;
+        font-size: 12.25px;
+    }
+
+    .ll3-pill--entity .ll3-searchTab__count {
+        height: 19px;
+        min-width: 19px;
+        padding-inline: 5px;
+        font-size: 11px;
+    }
+
+    .ll3-searchToolbar__actions {
+        display: contents;
+        justify-content: flex-end;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .ll3-searchToolbar__actions .ll3-btn {
+        min-height: 36px;
+        padding-inline: 12px;
+        font-size: 12.5px;
+    }
+
+    .ll3-searchToolbar__actions .ll3-btn--clear {
+        display: none;
+    }
+
+    .ll3-searchToolbar__actions .ll3-btn--dark,
+    .ll3-searchToolbar__controls>.ll3-btn--dark {
+        min-height: 36px;
+        padding-inline: 13px;
+        border-radius: 13px;
+    }
+
+    .ll3-searchFilterBtn {
+        min-height: 36px;
+        padding-inline: 13px;
+        border-radius: 13px;
+    }
+
+    .ll3-searchMetaRow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .ll3-searchMeta {
+        order: 2;
+        padding-top: 0;
+        font-size: 13.5px;
+    }
+
+    .ll3-searchClearLink {
+        font-size: 12.5px;
+    }
+
+    .ll3-searchTypeRow,
+    .ll3-searchFilterRow {
+        margin-top: 12px;
+    }
+
+    .ll3-searchFilterRow,
+    .ll3-searchActionsRow {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Result sections */
+    .ll3-searchSection {
+        gap: 12px;
+    }
+
+    .ll3-searchSection__head {
+        align-items: center;
+        padding-inline: 2px;
+    }
+
+    .ll3-searchSection__head h2 {
+        font-size: 26px;
+    }
+
+    .ll3-searchSection__count {
+        min-width: 30px;
+        height: 26px;
+        font-size: 13px;
+    }
+
+    .ll3-searchSection__list {
+        gap: 12px;
+    }
+
+    .ll3-searchResult {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 11px;
+        padding: 17px 16px 15px;
+        border-radius: 20px;
+        border-bottom: 1px solid var(--ll3-border);
+    }
+
+    .ll3-searchResult__stripe {
+        width: 4px;
+    }
+
+    .ll3-searchResult__icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+    }
+
+    .ll3-searchResult__type {
+        font-size: 10px;
+    }
+
+    .ll3-searchResult__title {
+        font-size: 15px;
+        line-height: 1.3;
+    }
+
+    .ll3-searchResult__meta,
+    .ll3-searchResult__facts {
+        font-size: 12.75px;
+        line-height: 1.35;
+    }
+
+    .ll3-searchResult__snippet {
+        font-size: 13.25px;
+        line-height: 1.48;
+    }
+
+    .ll3-searchResult__arrow {
+        grid-column: 1 / -1;
+        justify-self: start;
+        align-self: end;
+        padding-top: 0;
+        margin-top: 2px;
+    }
+
+    /* Empty state */
+    .ll3-searchPage.is-empty {
+        --ll3-search-edge-pad: 16px;
+    }
+
+    .ll3-searchPage.is-empty .ll3-searchHero {
+        padding-top: 24px;
+    }
+
+    .ll3-searchPage.is-empty .ll3-searchBody {
+        padding-top: 10px;
+    }
+
+    .ll3-searchEmptyWorkspace {
+        gap: .8rem;
+    }
+
+    .ll3-searchPage.is-empty .ll3-searchEmptyWorkspace {
+        gap: 14px;
+        padding-bottom: 64px;
+    }
+
+    .ll3-searchPromptCard,
+    .ll3-searchGuide,
+    .ll3-searchExploreCard {
+        border-radius: 20px;
+        padding: 1rem;
+    }
+
+    .ll3-searchPromptCard {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 20px 18px;
+        border-radius: 24px;
+    }
+
+    .ll3-searchPromptCard__icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+    }
+
+    .ll3-searchPromptCard__copy h2 {
+        font-size: 1.45rem;
+        line-height: 1.14;
+    }
+
+    .ll3-searchPromptCard__copy p,
+    .ll3-searchGuide p,
+    .ll3-searchExploreCard__copy span {
+        font-size: .94rem;
+    }
+
+    .ll3-searchPromptCard__copy p {
+        font-size: .95rem;
+    }
+
+    .ll3-chipGroup--searchPrompt {
+        grid-column: auto;
+        gap: 8px;
+    }
+
+    .ll3-pill--search {
+        min-height: 32px;
+        padding-inline: 12px;
+        font-size: 12px;
+    }
+
+    .ll3-searchExploreGrid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .ll3-searchExploreCard {
+        min-height: auto;
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .ll3-searchGuide {
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .ll3-searchBrowseLabel {
+        margin-top: 0;
+        font-size: 11.5px;
+    }
+}
+
+/* ----------------------------------------
+   <= 420px
+---------------------------------------- */
+@media (max-width: 420px) {
+    .ll3-searchPage.is-results {
+        --ll3-search-edge-pad: 14px;
+    }
+}

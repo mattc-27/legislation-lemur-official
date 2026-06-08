@@ -1,0 +1,228 @@
+/* =======================================================================
+   LL3 — Shared intercepted-route detail panel shell
+   Used by bill/member overlay routes. Entity detail content stays separate.
+   ======================================================================= */
+
+.ll3-routePanel {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: grid;
+    grid-template-columns: minmax(220px, 0.26fr) minmax(760px, 1fr);
+    background: rgba(2, 6, 23, 0.22);
+}
+
+.ll3-routePanel__scrim {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background: rgba(2, 6, 23, 0.46);
+    -webkit-backdrop-filter: blur(9px) saturate(1.05);
+    backdrop-filter: blur(9px) saturate(1.05);
+}
+
+.ll3-routePanel__panel {
+    min-width: 0;
+    height: 100dvh;
+    overflow: hidden;
+    border-left: 1px solid var(--llm3-border, var(--ll3-border));
+    background:
+        radial-gradient(900px 520px at 18% 0%, color-mix(in srgb, var(--ll3-accent) 14%, transparent), transparent 60%),
+        radial-gradient(760px 500px at 92% 12%, color-mix(in srgb, #06b6d4 8%, transparent), transparent 64%),
+        var(--ll3-bg, #fff);
+    box-shadow: -28px 0 80px rgba(2, 6, 23, 0.24);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    animation: ll3RoutePanelIn 180ms ease-out;
+}
+
+.ll3-routePanel__bar {
+    min-height: 58px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border-bottom: 1px solid var(--llm3-border-soft, var(--ll3-border));
+    background: color-mix(in srgb, var(--llm3-surface-glass, var(--ll3-card)) 84%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.08);
+    backdrop-filter: blur(14px) saturate(1.08);
+}
+
+.ll3-routePanel__back,
+.ll3-routePanel__close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--llm3-ink, var(--ll3-ink));
+    cursor: pointer;
+    font: inherit;
+}
+
+.ll3-routePanel__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 4px;
+    font-size: 14px;
+    font-weight: 850;
+}
+
+.ll3-routePanel__back:hover {
+    color: var(--ll3-link, var(--ll3-accent));
+}
+
+.ll3-routePanel__close {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--llm3-border, var(--ll3-border));
+    background: var(--llm3-surface-soft, var(--ll3-card));
+    box-shadow: var(--llm3-btn-shadow, 0 10px 24px rgba(15, 23, 42, 0.10));
+}
+
+.ll3-routePanel__close:hover {
+    border-color: var(--llm3-border-strong, var(--ll3-border));
+    background: var(--llm3-surface-glass, var(--ll3-card));
+}
+
+.ll3-routePanel__back:focus-visible,
+.ll3-routePanel__close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--llm3-focus, color-mix(in srgb, var(--ll3-accent) 24%, transparent));
+}
+
+.ll3-panelWrap,
+.ll3-routePanel__body {
+    min-width: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 22px 36px;
+}
+
+.ll3-routePanel__body--flush {
+    padding: 0;
+}
+
+@keyframes ll3RoutePanelIn {
+    from {
+        transform: translateX(28px);
+        opacity: 0.72;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (min-width: 1280px) {
+    .ll3-routePanel {
+        grid-template-columns: minmax(280px, 0.28fr) minmax(860px, 1fr);
+    }
+
+    .ll3-panelWrap,
+    .ll3-routePanel__body {
+        padding: 22px 28px 40px;
+    }
+
+    .ll3-routePanel__body--flush {
+        padding: 0;
+    }
+}
+
+@media (max-width: 1100px) {
+    .ll3-routePanel {
+        grid-template-columns: minmax(110px, 0.16fr) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 820px) {
+    .ll3-routePanel {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-routePanel__scrim {
+        display: none;
+    }
+
+    .ll3-routePanel__panel {
+        height: 100dvh;
+        border-left: 0;
+        box-shadow: none;
+    }
+
+    .ll3-routePanel__bar {
+        min-height: 56px;
+        padding: 10px 14px;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    .ll3-panelWrap,
+    .ll3-routePanel__body {
+        padding: 16px 12px 30px;
+    }
+
+    .ll3-routePanel__body--flush {
+        padding: 0;
+    }
+}
+
+@media (max-width: 560px) {
+
+    .ll3-panelWrap,
+    .ll3-routePanel__body {
+        padding: 14px 10px 26px;
+    }
+
+    .ll3-routePanel__body--flush {
+        padding: 0;
+    }
+}
+
+/* Pass 1 — entity/mode hooks */
+.ll3-routePanel--panel,
+.ll3-routePanel[data-view-mode="panel"] {
+    --ll3-route-panel-mode: panel;
+}
+
+.ll3-routePanel--member {
+    --ll3-route-panel-entity: member;
+}
+
+.ll3-routePanel__body--member {
+    min-width: 0;
+}
+
+
+/* ==========================================================================
+   Panel wrap contract
+   ========================================================================== */
+
+.ll3-panelWrap {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+.ll3-panelWrap>* {
+    min-width: 0;
+}
+
+.ll3-routePanel--member .ll3-panelWrap,
+.ll3-routePanel[data-entity="member"] .ll3-panelWrap,
+.ll3-routePanel--bill .ll3-panelWrap,
+.ll3-routePanel[data-entity="bill"] .ll3-panelWrap {
+    --ll3-detail-max: none;
+}
+
+.ll3-routePanel__panel>.ll3-panelWrap {
+    align-self: stretch;
+}

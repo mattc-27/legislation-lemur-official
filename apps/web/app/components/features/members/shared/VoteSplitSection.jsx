@@ -33,10 +33,10 @@ function getVoteDateKey(v) {
 }
 
 /**
- * ✅ Drop-in replacement for VotesSplitSection (STACKED rows)
+ * Member votes + visualization section.
  *
- * Row 1: Alignment (full width)
- * Row 2: Voting activity + Recent votes (full width, heatmap filters table)
+ * mode="page" keeps the full direct-page layout.
+ * mode="panel" uses a compact drawer-friendly heatmap, alignment panel, and vote list.
  */
 export default function VotesSplitSection({
     alignment, // legacy
@@ -46,13 +46,21 @@ export default function VotesSplitSection({
     votesFreshnessAsOf = null,
     chamberLabel = "",
     heatmapWeeks = 13,
+    mode = "page",
 }) {
+    const isPanel = mode === "panel";
+    const effectiveInitialLimit = isPanel
+        ? Math.min(tableInitialLimit || 20, 12)
+        : tableInitialLimit || 20;
+    const heatmapDays = isPanel ? Math.min(heatmapWeeks * 7, 70) : heatmapWeeks <= 13 ? 90 : 365;
+    const heatmapHeight = isPanel ? 188 : 260;
+
     const [selectedDate, setSelectedDate] = useState(null);
-    const [tableLimit, setTableLimit] = useState(tableInitialLimit);
+    const [tableLimit, setTableLimit] = useState(effectiveInitialLimit);
 
     useEffect(() => {
-        setTableLimit(tableInitialLimit || 20);
-    }, [tableInitialLimit]);
+        setTableLimit(effectiveInitialLimit);
+    }, [effectiveInitialLimit]);
 
     const vizVotes = votes ?? [];
     const asOfLabel = fmtAsOf(votesFreshnessAsOf);
@@ -65,12 +73,11 @@ export default function VotesSplitSection({
 
     const tableVotes = useMemo(() => {
         if (selectedDate) return filteredVotes;
-        const limit = tableLimit || tableInitialLimit || 20;
+        const limit = tableLimit || effectiveInitialLimit;
         return filteredVotes.slice(0, limit);
-    }, [filteredVotes, selectedDate, tableLimit, tableInitialLimit]);
+    }, [filteredVotes, selectedDate, tableLimit, effectiveInitialLimit]);
 
-    const canShowMore =
-        !selectedDate && filteredVotes.length > (tableLimit || tableInitialLimit || 20);
+    const canShowMore = !selectedDate && filteredVotes.length > (tableLimit || effectiveInitialLimit);
 
     const selectedLabel = useMemo(() => {
         if (!selectedDate) return null;
@@ -84,13 +91,15 @@ export default function VotesSplitSection({
     }, [selectedDate]);
 
     return (
-        <section className="llm3-votesSplit llm3-votesSplit--stacked" aria-label="Votes overview">
-            {/* ROW 1: Alignment */}
+        <section
+            className={`llm3-votesSplit llm3-votesSplit--stacked llm3-votesSplit--${mode}`}
+            data-mode={mode}
+            aria-label="Votes overview"
+        >
             <div className="llm3-votesSplit__row llm3-votesSplit__row--alignment">
-                <VoteAlignmentPanel value={alignmentValue} chamber={chamberLabel} />
+                <VoteAlignmentPanel value={alignmentValue} chamber={chamberLabel} mode={mode} />
             </div>
 
-            {/* ROW 2: Activity + table */}
             <div className="llm3-votesSplit__row llm3-votesSplit__row--activity llmp3-card">
                 <div className="llmp3-card__head llm3-cardHead llm3-votesSplit__rightHead">
                     <div className="llm3-votesSplit__titleBlock">
@@ -111,14 +120,14 @@ export default function VotesSplitSection({
                                     </button>
                                 </>
                             ) : (
-                                "Daily voting activity over the last 90 days. Darker squares indicate more votes on that day."
+                                `Daily voting activity over the last ${heatmapDays} days. Darker squares indicate more votes on that day.`
                             )}
                         </div>
                     </div>
 
                     <div className="llm3-votesSplit__metaBlock">
                         <div className="llm3-votesSplit__metaText">
-                            {heatmapWeeks <= 13 ? "Last 90 days" : "Last year"}
+                            {isPanel ? `Last ${heatmapDays} days` : heatmapWeeks <= 13 ? "Last 90 days" : "Last year"}
                             {asOfLabel ? ` • Updated ${asOfLabel}` : ""}
                         </div>
                     </div>
@@ -127,15 +136,17 @@ export default function VotesSplitSection({
                 <div className="llm3-votesSplit__heatWrap">
                     <VotesHeatmap
                         votes={vizVotes}
-                        weeks={heatmapWeeks}
-                        height={260}
-                        heatmapRatio={0.87}
+                        days={heatmapDays}
+                        height={heatmapHeight}
+                        mode={mode}
                         onSelectDay={(key) => {
                             setSelectedDate((prev) => (prev === key ? null : key));
                         }}
                         selectedDate={selectedDate}
                         title={null}
-                        compactLegend
+                        updatedLabel={null}
+                        compactLegend={isPanel}
+                        showSummary={!isPanel}
                     />
                 </div>
 
@@ -150,20 +161,20 @@ export default function VotesSplitSection({
                     </div>
                 </div>
 
-                <div className="llm3-tableFrame llm3-tableFrame--tight">
-                    <VotesTable votes={tableVotes} />
+                <div className="llm3-tableFrame llm3-tableFrame--tight llm3-votesSplit__tableFrame">
+                    <VotesTable votes={tableVotes} mode={mode} />
                 </div>
 
                 {canShowMore && (
-                    <button
-                        className="ll3-linkbtn llm3-moreBtn"
-                        type="button"
-                        onClick={() =>
-                            setTableLimit((n) => (n || tableInitialLimit || 20) + (tableInitialLimit || 20))
-                        }
-                    >
-                        Show more votes
-                    </button>
+                    <div className="llm3-votesSplit__footer">
+                        <button
+                            className="ll3-linkbtn llm3-moreBtn"
+                            type="button"
+                            onClick={() => setTableLimit((n) => (n || effectiveInitialLimit) + effectiveInitialLimit)}
+                        >
+                            Show more votes
+                        </button>
+                    </div>
                 )}
             </div>
         </section>

@@ -20,7 +20,7 @@ import '@/app/styles/active/core/ll3.layout.css';
 import '@/app/styles/active/core/ll3.primitives.css';
 import '@/app/styles/active/core/ll3.utilities.css';
 import '@/app/styles/active/core/ll3.shell.css';
-
+import "@/app/styles/active/core/ll3.global-search.css";
 import '@/app/styles/active/error-pages.ll3.css';
 
 
@@ -60,6 +60,7 @@ const themeInitScript = `
       ? saved
       : (systemDark ? "dark" : "light");
     root.setAttribute("data-theme", theme);
+    root.classList.toggle("dark", theme === "dark");
   } catch (e) {}
 })();
 `;

@@ -1,3 +1,4 @@
+// app/components/features/home/RecentActivitySection.jsx
 import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { getHomepageRecentBills } from "@/lib/server/routes/homepage";
@@ -5,6 +6,7 @@ import {
   getTopicMeta,
   normalizeTopicLabel,
 } from "@/lib/utils/member-info-topics";
+import { HOME_RECENT_ACTIVITY } from "@/lib/content/homeContent";
 
 export const revalidate = 900;
 
@@ -78,13 +80,13 @@ function formatBillMeta(bill) {
 function getBillTopicLabel(bill) {
   return normalizeTopicLabel(
     bill?.policy_area_name ??
-      bill?.policyAreaName ??
-      bill?.policy_area ??
-      bill?.policyArea ??
-      bill?.subject ??
-      bill?.topic ??
-      bill?.primary_subject ??
-      bill?.primarySubject
+    bill?.policyAreaName ??
+    bill?.policy_area ??
+    bill?.policyArea ??
+    bill?.subject ??
+    bill?.topic ??
+    bill?.primary_subject ??
+    bill?.primarySubject
   );
 }
 
@@ -121,8 +123,10 @@ function normalizeBill(b, i) {
 export default async function RecentActivitySection({
   maxItems = 3,
   showHeader = true,
-  title = "Recent Congressional Activity",
-  sub = "New bills and major actions, surfaced in a cleaner, more readable format.",
+  eyebrow = HOME_RECENT_ACTIVITY.eyebrow,
+  title = HOME_RECENT_ACTIVITY.title,
+  sub = HOME_RECENT_ACTIVITY.description,
+  cta = HOME_RECENT_ACTIVITY.cta,
 }) {
   let data = { rows: [] };
 
@@ -149,44 +153,48 @@ export default async function RecentActivitySection({
   }));
 
   return (
-    <section className="section section--home-activity">
+    <section className="ll3-homeSection ll3-homeActivity" aria-labelledby="home-activity-title">
       {showHeader && (
-        <div className="section__header section__header--activity">
+        <div className="ll3-homeSection__header ll3-homeSection__header--split">
           <div>
-            <div className="section__eyebrow">Live activity</div>
-            <h2 className="section__title">{title}</h2>
+            <div className="ll3-homeEyebrow">{eyebrow}</div>
+            <h2 className="ll3-homeSection__title" id="home-activity-title">
+              {title}
+            </h2>
           </div>
 
-          <Link className="section__action-link" href="/bills">
-            View latest bills
-          </Link>
+          {cta?.href && cta?.label ? (
+            <Link className="ll3-homeSection__action" href={cta.href}>
+              {cta.label}
+            </Link>
+          ) : null}
         </div>
       )}
 
-      {sub ? <p className="section__sub section__sub--activity">{sub}</p> : null}
+      {sub ? <p className="ll3-homeSection__sub ll3-homeActivity__sub">{sub}</p> : null}
 
       {cards.length ? (
-        <div className="activity-card-grid">
+        <div className="ll3-activityGrid">
           {cards.map((card) => {
             const TopicIcon = getSafeTopicIcon(card.topic);
 
             return (
-              <Link className="activity-card" href={card.href} key={card.id}>
+              <Link className="ll3-activityCard" href={card.href} key={card.id}>
                 <div
-                  className="activity-card__iconchip"
+                  className="ll3-activityCard__icon"
                   aria-hidden="true"
                   title={card.topic || "Topic"}
                 >
                   <TopicIcon size={18} strokeWidth={2} />
                 </div>
 
-                <div className="activity-card__kind">{card.kind}</div>
-                <h3 className="activity-card__title">{card.title}</h3>
-                <p className="activity-card__summary">{card.summary}</p>
+                <div className="ll3-activityCard__kind">{card.kind}</div>
+                <h3 className="ll3-activityCard__title">{card.title}</h3>
+                <p className="ll3-activityCard__summary">{card.summary}</p>
 
-                <div className="activity-card__footer">
-                  <span className="activity-card__meta">{card.meta}</span>
-                  <span className="activity-card__open">
+                <div className="ll3-activityCard__footer">
+                  <span className="ll3-activityCard__meta">{card.meta}</span>
+                  <span className="ll3-activityCard__open">
                     Open
                     <ArrowRight size={14} strokeWidth={2} />
                   </span>
@@ -196,7 +204,7 @@ export default async function RecentActivitySection({
           })}
         </div>
       ) : (
-        <div className="panel panel--activity-empty">
+        <div className="ll3-homePanel ll3-homePanel--empty">
           <p className="text-dim">
             Nothing to show just yet — activity cards will appear here as soon as
             new bills and major actions are ingested.

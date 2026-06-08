@@ -1,0 +1,389 @@
+.ll3-filterShell {
+    width: 100%;
+    min-width: 0;
+}
+
+.ll3-filterShell--sidebar {
+    display: block;
+}
+
+.ll3-filterShell--drawer {
+    display: block;
+}
+
+.ll3-filterPanel {
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+}
+
+.ll3-filterPanel__head {
+    display: grid;
+    gap: 6px;
+    padding: 0 0 14px;
+    margin: 0 0 4px;
+    border-bottom: 1px solid var(--ll3-border-soft);
+}
+
+.ll3-filterPanel__title {
+    margin: 0;
+    color: var(--ll3-ink);
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: -.02em;
+}
+
+.ll3-filterPanel__description {
+    margin: 0;
+    color: var(--ll3-muted);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.ll3-filterSections {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
+.ll3-filterSection, .ll3-fsection, .ll3-searchFilterSection {
+    width: 100%;
+    min-width: 0;
+    border-top: 1px solid var(--ll3-border-soft);
+}
+
+.ll3-filterSections .ll3-filterSection:first-child, .ll3-filterSections .ll3-fsection:first-child, .ll3-filterSections .ll3-searchFilterSection:first-child {
+    border-top: 0;
+}
+
+.ll3-filterSection>summary, .ll3-fsection__summary, .ll3-searchFilterSection__summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 10px 2px;
+    border-radius: 12px;
+    color: var(--ll3-ink);
+    transition: background 160ms ease;
+}
+
+.ll3-filterSection>summary::-webkit-details-marker, .ll3-fsection__summary::-webkit-details-marker, .ll3-searchFilterSection__summary::-webkit-details-marker {
+    display: none;
+}
+
+.ll3-filterSection>summary:hover, .ll3-fsection__summary:hover, .ll3-searchFilterSection__summary:hover {
+    background: color-mix(in srgb, var(--ll3-accent) 5%, transparent);
+}
+
+.ll3-filterSection__titleWrap, .ll3-fsection__titleWrap, .ll3-searchFilterSection__titleWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.ll3-filterSection__icon, .ll3-fsection__icon, .ll3-searchFilterSection__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border-radius: 9px;
+    color: var(--ll3-muted);
+    background: color-mix(in srgb, var(--ll3-text) 5%, transparent);
+}
+
+.ll3-filterSection__title, .ll3-fsection__title, .ll3-searchFilterSection__titleWrap>span:last-child {
+    min-width: 0;
+    color: var(--ll3-ink);
+    font-size: 13.5px;
+    font-weight: 900;
+    letter-spacing: -.01em;
+}
+
+.ll3-filterSection__hint, .ll3-fsection__hint, .ll3-searchFilterSection__hint {
+    justify-self: end;
+    max-width: 92px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ll3-muted2);
+    font-size: 9.5px;
+    line-height: 1.1;
+    font-weight: 950;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.ll3-filterSection__body, .ll3-fsection__body, .ll3-searchFilterSection__body {
+    width: 100%;
+    min-width: 0;
+    padding: 2px 0 14px;
+}
+
+.ll3-filterGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 13px;
+    width: 100%;
+    min-width: 0;
+}
+
+.ll3-filterActions, .ll3-actions {
+    display: grid;
+    gap: 9px;
+    width: 100%;
+    padding-top: 12px;
+    margin-top: 2px;
+    border-top: 1px solid var(--ll3-border-soft);
+}
+
+.ll3-filterDrawer, .ll3-searchDrawer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+}
+
+.ll3-filterDrawer__backdrop, .ll3-searchDrawer__backdrop {
+    border: 0;
+    background: rgba(15, 23, 42, .42);
+    backdrop-filter: blur(4px);
+}
+
+.ll3-filterDrawer__panel, .ll3-searchDrawer__panel {
+    height: 100vh;
+    overflow: auto;
+    padding: 1.25rem;
+    background: var(--ll3-bg);
+    border-left: 1px solid var(--ll3-border);
+    box-shadow: -18px 0 50px rgba(15, 23, 42, .14);
+}
+
+.ll3-filterDrawer__head, .ll3-searchDrawer__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--ll3-border);
+}
+
+.ll3-filterDrawer__head h2, .ll3-searchDrawer__head h2 {
+    margin: 0;
+    color: var(--ll3-ink);
+    font-size: 1.55rem;
+    font-weight: 950;
+    letter-spacing: -.04em;
+}
+
+.ll3-filterDrawer__head p, .ll3-searchDrawer__head p {
+    margin: .35rem 0 0;
+    color: var(--ll3-muted);
+    line-height: 1.45;
+}
+
+.ll3-filterDrawer__close, .ll3-searchDrawer__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--ll3-border);
+    background: var(--ll3-panel-strong);
+    color: var(--ll3-ink);
+    cursor: pointer;
+}
+
+
+
+
+
+@media (max-width: 640px) {
+    .ll3-filterDrawer, .ll3-searchDrawer {
+        grid-template-columns: 1fr;
+    }
+
+    .ll3-filterDrawer__backdrop, .ll3-searchDrawer__backdrop {
+        display: none;
+    }
+
+    .ll3-filterDrawer__panel, .ll3-searchDrawer__panel {
+        border-left: 0;
+    }
+}
+
+
+/* Shared Explorer side panel: Bills filters, Member state rail, future rails */
+.ll3-sidePanel {
+    width: 100%;
+    min-width: 0;
+    align-self: start;
+    position: sticky;
+    top: 18px;
+}
+
+.ll3-sidePanel__inner {
+    display: grid;
+    gap: 14px;
+    max-height: calc(100vh - 44px);
+    overflow: auto;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+    padding: 20px;
+    border: 1px solid var(--ll3-border);
+    border-radius: 22px;
+    background: linear-gradient(180deg,
+            var(--ll3-panel-strong),
+            var(--ll3-panel-solid));
+    box-shadow: var(--ll3-shadow);
+    backdrop-filter: blur(14px);
+}
+
+.ll3-sidePanel__head {
+    display: grid;
+    gap: 6px;
+    padding: 0 0 14px;
+    margin: 0 0 2px;
+    border-bottom: 1px solid var(--ll3-border-soft);
+}
+
+.ll3-sidePanel__title {
+    margin: 0;
+    color: var(--ll3-ink);
+    font-size: 1.05rem;
+    line-height: 1.15;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+}
+
+.ll3-sidePanel__description {
+    margin: 0;
+    color: var(--ll3-muted);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.ll3-sidePanel__sectionLabel {
+    margin: 0;
+    padding: 0 2px;
+    color: var(--ll3-muted2);
+    font-size: 11px;
+    line-height: 1.15;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.ll3-sidePanel__body {
+    min-width: 0;
+}
+
+@media (max-width: 980px) {
+    .ll3-sidePanel {
+        display: none;
+    }
+}
+
+/* Segmented/pill form controls: chamber, bill type, search scopes */
+/* Compact pill controls used inside tighter filter/sidebar panels */
+.ll3-filterPanel .ll3-pill,
+.ll3-filterPanel .ll3-pillBtn,
+.ll3-sidePanel .ll3-pill,
+.ll3-sidePanel .ll3-pillBtn {
+    min-height: 31px;
+    padding-inline: 10px;
+    font-size: 12.25px;
+}
+
+.ll3-filterPanel .ll3-multiSelectBox__hint,
+.ll3-sidePanel .ll3-multiSelectBox__hint {
+    font-size: 12px;
+}
+
+.ll3-filterPanel .ll3-multiSelect,
+.ll3-filterPanel .ll3-multiSelectBox__control,
+.ll3-sidePanel .ll3-multiSelect,
+.ll3-sidePanel .ll3-multiSelectBox__control {
+    min-height: 126px;
+    font-size: 12.75px;
+}
+
+/* Shared scrollable rail behavior: Bills filters, Member state rail */
+.ll3-sidePanel__inner,
+.ll3-explorerRail__inner,
+.ll3-filterDrawer__panel,
+.ll3-searchDrawer__panel {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--ll3-muted2) 48%, transparent) transparent;
+}
+
+.ll3-sidePanel__inner::-webkit-scrollbar,
+.ll3-explorerRail__inner::-webkit-scrollbar,
+.ll3-filterDrawer__panel::-webkit-scrollbar,
+.ll3-searchDrawer__panel::-webkit-scrollbar {
+    width: 10px;
+}
+
+.ll3-sidePanel__inner::-webkit-scrollbar-track,
+.ll3-explorerRail__inner::-webkit-scrollbar-track,
+.ll3-filterDrawer__panel::-webkit-scrollbar-track,
+.ll3-searchDrawer__panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ll3-sidePanel__inner::-webkit-scrollbar-thumb,
+.ll3-explorerRail__inner::-webkit-scrollbar-thumb,
+.ll3-filterDrawer__panel::-webkit-scrollbar-thumb,
+.ll3-searchDrawer__panel::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+    background-color: color-mix(in srgb, var(--ll3-muted2) 52%, transparent);
+}
+
+.ll3-sidePanel__inner::-webkit-scrollbar-thumb:hover,
+.ll3-explorerRail__inner::-webkit-scrollbar-thumb:hover,
+.ll3-filterDrawer__panel::-webkit-scrollbar-thumb:hover,
+.ll3-searchDrawer__panel::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--ll3-muted2) 72%, transparent);
+}
+
+.ll3-sidePanel__inner,
+.ll3-explorerRail__inner {
+    position: relative;
+    mask-image: linear-gradient(to bottom,
+            transparent 0,
+            black 18px,
+            black calc(100% - 18px),
+            transparent 100%);
+}
+
+/* Mobile/sheet filter density */
+.ll3-filters--sheet .ll3-pill,
+.ll3-filters--sheet .ll3-pillBtn {
+    min-height: 32px;
+    padding-inline: 11px;
+    font-size: 12.25px;
+    font-weight: 800;
+}
+
+.ll3-filters--sheet .ll3-label {
+    font-size: 11px;
+}
+
+.ll3-filters--sheet .ll3-input,
+.ll3-filters--sheet .ll3-select {
+    min-height: 48px;
+    font-size: 15px;
+}

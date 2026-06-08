@@ -1,223 +1,194 @@
-/* core/ll3.tokens.css
-   Design tokens only. Dark-ready semantic theme system.
+/* app/styles/active/core/ll3.tokens.css
+   ==========================================================================
+   LL3 Core Tokens
+   Shared theme, layout, color, radius, shadow, and component primitives.
+   ========================================================================== */
+
+:root {
+  /* Typography */
+  --ll3-font-sans: var(--font-roboto, "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  --ll3-font-serif: var(--font-roboto-slab, Georgia, "Times New Roman", serif);
+
+  /* Layout */
+  --ll3-container: 1380px;
+  --ll3-container-header: 1480px;
+  --ll3-pad-x: clamp(16px, 3vw, 32px);
+
+  --ll3-page-max: 1380px;
+  --ll3-page-pad-x: 16px;
+  --ll3-page-pad-y: 28px;
+  --ll3-sidebar-w: 324px;
+  --ll3-sidebar-w-wide: 340px;
+  --ll3-gap: 18px;
+
+  --ll3-header-h: 72px;
+  --ll3-header-h-mobile: 64px;
+  --ll3-header-blur: blur(18px);
+  --ll3-header-sat: saturate(1.08);
+
+  /* Base colors */
+  --ll3-bg: #f8fbff;
+  --ll3-bg-soft: #eef5ff;
+  --ll3-ink: #111827;
+  --ll3-text: #334155;
+  --ll3-text-strong: #253246;
+  --ll3-muted: #64748b;
+  --ll3-muted2: #8a96a8;
+
+  --ll3-link: #4f46e5;
+  --ll3-link-hover: #4338ca;
+
+  /* Accent */
+  --ll3-accent: #6257f5;
+  --ll3-accent-strong: #4f46e5;
+  --ll3-accent-soft: rgba(99, 102, 241, 0.10);
+  --ll3-accent-soft-2: rgba(99, 102, 241, 0.16);
+  --ll3-accent-border: rgba(99, 102, 241, 0.24);
+
+  /* Intent / secondary actions */
+  --ll3-clear-bg: rgba(251, 146, 60, 0.085);
+  --ll3-clear-bg-hover: rgba(251, 146, 60, 0.14);
+  --ll3-clear-border: rgba(120, 53, 15, 0.16);
+  --ll3-clear-text: rgba(120, 53, 15, 0.82);
+
+  /* Surfaces */
+  --ll3-panel: rgba(255, 255, 255, 0.78);
+  --ll3-panel-solid: #ffffff;
+  --ll3-panel-strong: rgba(255, 255, 255, 0.92);
+  --ll3-surface-2: #f8fafc;
+  --ll3-surface-3: #f1f5f9;
+
+  /* Borders / focus */
+  --ll3-border: rgba(15, 23, 42, 0.10);
+  --ll3-border-soft: rgba(15, 23, 42, 0.07);
+  --ll3-border-strong: rgba(15, 23, 42, 0.16);
+  --ll3-focus: rgba(99, 102, 241, 0.20);
+
+  /* Header-specific surfaces */
+  --ll3-header-bg: color-mix(in srgb, var(--ll3-bg) 94%, transparent);
+  --ll3-header-bg-scrolled: var(--ll3-bg);
+  --ll3-header-bg-open: var(--ll3-bg);
+
+  /* Radius */
+  --ll3-r-xs: 8px;
+  --ll3-r-sm: 10px;
+  --ll3-r-md: 14px;
+  --ll3-r-lg: 18px;
+  --ll3-r-xl: 22px;
+  --ll3-r-2xl: 28px;
+  --ll3-r-pill: 999px;
+
+  /* Shadows */
+  --ll3-shadow-xs: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --ll3-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.05);
+  --ll3-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  --ll3-shadow-float: 0 24px 70px rgba(15, 23, 42, 0.16);
+
+  /* Form / button tokens */
+  --ll3-btn-h: 40px;
+  --ll3-btn-h-sm: 34px;
+  --ll3-btn-r: 14px;
+  --ll3-btn-r-sm: 12px;
+  --ll3-btn-pad-x: 14px;
+  --ll3-btn-font: 13px;
+  --ll3-btn-weight: 850;
+
+  --ll3-input-h: 44px;
+  --ll3-input-r: 14px;
+  --ll3-input-pad-x: 14px;
+  --ll3-input-bg: var(--ll3-panel-solid);
+  --ll3-input-border: var(--ll3-border);
+
+  /* Status */
+  --ll3-status-introduced: #3b82f6;
+  --ll3-status-committee: #8b5cf6;
+  --ll3-status-reported: #f59e0b;
+  --ll3-status-passed: #10b981;
+  --ll3-status-final: #06b6d4;
+  --ll3-status-law: #22c55e;
+  --ll3-status-veto: #ef4444;
+
+  /* Parties */
+  --ll3-party-d-bg: rgba(37, 99, 235, 0.12);
+  --ll3-party-d-text: #2563eb;
+  --ll3-party-r-bg: rgba(239, 68, 68, 0.12);
+  --ll3-party-r-text: #dc2626;
+  --ll3-party-i-bg: rgba(100, 116, 139, 0.14);
+  --ll3-party-i-text: #475569;
+}
+
+/* IMPORTANT:
+   The app applies .ll3 and data-theme="dark" to <html>.
+   Keep this selector specific enough to override :root variables.
 */
+html[data-theme="dark"].ll3,
+html.dark.ll3 {
+  --ll3-bg: #07111f;
+  --ll3-bg-soft: #0b1424;
+  --ll3-ink: #f4f7fb;
+  --ll3-text: #d6e0ef;
+  --ll3-text-strong: #f8fafc;
+  --ll3-muted: #9fb0c6;
+  --ll3-muted2: #7f91aa;
 
-.ll3 {
-    color-scheme: light dark;
+  --ll3-link: #a9b3ff;
+  --ll3-link-hover: #c6ccff;
 
-    /* Fonts */
-    --ll3-font-sans: var(--font-roboto,
-            system-ui,
-            -apple-system,
-            "Segoe UI",
-            Roboto,
-            Helvetica,
-            Arial,
-            "Apple Color Emoji",
-            "Segoe UI Emoji");
-    --ll3-font-serif: var(--font-roboto-slab,
-            ui-serif,
-            Georgia,
-            Cambria,
-            "Times New Roman",
-            Times,
-            serif);
+  --ll3-accent: #9b95ff;
+  --ll3-accent-strong: #7c86ff;
+  --ll3-accent-soft: rgba(155, 149, 255, 0.14);
+  --ll3-accent-soft-2: rgba(155, 149, 255, 0.20);
+  --ll3-accent-border: rgba(155, 149, 255, 0.28);
 
-    /* Layout */
-    --ll3-container: 1160px;
-    --ll3-container-header: 1320px;
-    --ll3-pad-x: clamp(16px, 2.6vw, 34px);
+  --ll3-clear-bg: rgba(251, 146, 60, 0.12);
+  --ll3-clear-bg-hover: rgba(251, 146, 60, 0.18);
+  --ll3-clear-border: rgba(251, 191, 36, 0.22);
+  --ll3-clear-text: #f6c177;
 
-    /* Radii */
-    --ll3-r-lg: 20px;
-    --ll3-r-md: 14px;
-    --ll3-r-sm: 10px;
-    --ll3-r-pill: 999px;
+  --ll3-panel: rgba(16, 27, 45, 0.78);
+  --ll3-panel-solid: #101b2d;
+  --ll3-panel-strong: rgba(20, 31, 47, 0.92);
+  --ll3-surface-2: #132036;
+  --ll3-surface-3: #18283f;
 
-    /* Accent */
-    --ll3-accent: #6366f1;
-    --ll3-accent-strong: #4f46e5;
-    --ll3-accent-soft: rgba(99, 102, 241, 0.12);
-    --ll3-accent-soft-2: rgba(99, 102, 241, 0.18);
-    --ll3-link: #4f46e5;
-    --ll3-link-hover: #4338ca;
+  --ll3-border: rgba(226, 232, 240, 0.12);
+  --ll3-border-soft: rgba(226, 232, 240, 0.08);
+  --ll3-border-strong: rgba(226, 232, 240, 0.20);
+  --ll3-focus: rgba(155, 149, 255, 0.24);
 
-    /* Focus */
-    --ll3-focus: rgba(99, 102, 241, 0.28);
-    --ll3-focus-strong: rgba(99, 102, 241, 0.42);
+  --ll3-header-bg: #07111f;
+  --ll3-header-bg-scrolled: #07111f;
+  --ll3-header-bg-open: #07111f;
 
-    /* Header sizing */
-    --ll3-header-h: 74px;
-    --ll3-header-h-mobile: 62px;
+  --ll3-shadow-xs: 0 2px 8px rgba(0, 0, 0, 0.16);
+  --ll3-shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.22);
+  --ll3-shadow: 0 16px 40px rgba(0, 0, 0, 0.30);
+  --ll3-shadow-float: 0 24px 70px rgba(0, 0, 0, 0.42);
 
-    /* Light theme */
-    --ll3-bg: #f5f7fb;
-    --ll3-bg-elevated: #ffffff;
-    --ll3-panel: rgba(255, 255, 255, 0.82);
-    --ll3-panel-strong: rgba(255, 255, 255, 0.94);
-    --ll3-panel-solid: #ffffff;
-    --ll3-surface-2: rgba(248, 250, 252, 0.88);
-    --ll3-surface-3: rgba(241, 245, 249, 0.95);
-
-    --ll3-text: #0f172a;
-    --ll3-text-strong: #020617;
-    --ll3-muted: #475569;
-    --ll3-muted2: #64748b;
-    --ll3-muted3: #94a3b8;
-
-    --ll3-border: rgba(15, 23, 42, 0.10);
-    --ll3-border-strong: rgba(15, 23, 42, 0.16);
-    --ll3-border-soft: rgba(15, 23, 42, 0.06);
-
-    --ll3-input-bg: rgba(255, 255, 255, 0.9);
-    --ll3-input-border: rgba(15, 23, 42, 0.11);
-
-    --ll3-shadow-xs: 0 6px 18px rgba(15, 23, 42, 0.04);
-    --ll3-shadow-sm: 0 10px 22px rgba(15, 23, 42, 0.06);
-    --ll3-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
-    --ll3-shadow-float: 0 16px 36px rgba(15, 23, 42, 0.12);
-
-    --ll3-hero-orb-1: rgba(99, 102, 241, 0.16);
-    --ll3-hero-orb-2: rgba(14, 165, 233, 0.12);
-    --ll3-hero-orb-3: rgba(168, 85, 247, 0.10);
-
-    --ll3-header-bg: rgba(255, 255, 255, 0.74);
-    --ll3-header-bg-scrolled: rgba(255, 255, 255, 0.90);
-    --ll3-header-bg-open: rgba(255, 255, 255, 0.94);
-    --ll3-header-blur: blur(16px);
-    --ll3-header-sat: saturate(1.08);
-
-    --ll3-footer-bg:
-        radial-gradient(circle at top left, rgba(79, 70, 229, 0.14), transparent 28%),
-        linear-gradient(180deg, #0b1120, #0f172a 55%, #111827);
-    --ll3-footer-text: rgba(255, 255, 255, 0.82);
-    --ll3-footer-muted: rgba(255, 255, 255, 0.58);
-    --ll3-footer-border: rgba(99, 102, 241, 0.10);
-
-    --ll3-main-top: calc(var(--ll3-header-h) + 10px);
-
-    /* Compatibility aliases */
-    --ll3-ink: var(--ll3-text);
-    --ll3-card: var(--ll3-panel-solid);
-    --ll3-radius: var(--ll3-r-lg);
-    --ll3-radius-sm: var(--ll3-r-md);
-    --ll3-shadow2: var(--ll3-shadow-float);
-    --ll3-focus-ring: var(--ll3-focus);
+  --ll3-input-bg: var(--ll3-panel-solid);
+  --ll3-input-border: var(--ll3-border);
 }
 
-/* Manual dark mode hook */
-html.ll3[data-theme="dark"] {
-    --ll3-bg: #08101c;
-    --ll3-bg-elevated: #0c1627;
-    --ll3-panel: rgba(13, 23, 38, 0.74);
-    --ll3-panel-strong: rgba(15, 25, 41, 0.9);
-    --ll3-panel-solid: #0f1b2d;
-    --ll3-surface-2: rgba(17, 29, 46, 0.86);
-    --ll3-surface-3: rgba(24, 37, 56, 0.96);
-
-    --ll3-text: #e5edf8;
-    --ll3-text-strong: #f8fbff;
-    --ll3-muted: #a7b4c8;
-    --ll3-muted2: #8ea0b8;
-    --ll3-muted3: #73849d;
-
-    --ll3-border: rgba(148, 163, 184, 0.16);
-    --ll3-border-strong: rgba(148, 163, 184, 0.24);
-    --ll3-border-soft: rgba(148, 163, 184, 0.10);
-
-    --ll3-input-bg: rgba(12, 22, 36, 0.88);
-    --ll3-input-border: rgba(148, 163, 184, 0.16);
-
-    --ll3-shadow-xs: 0 8px 20px rgba(2, 6, 23, 0.28);
-    --ll3-shadow-sm: 0 12px 28px rgba(2, 6, 23, 0.34);
-    --ll3-shadow: 0 20px 48px rgba(2, 6, 23, 0.42);
-    --ll3-shadow-float: 0 22px 56px rgba(2, 6, 23, 0.52);
-
-    --ll3-accent: #8b92ff;
-    --ll3-accent-strong: #a5b4fc;
-    --ll3-accent-soft: rgba(129, 140, 248, 0.16);
-    --ll3-accent-soft-2: rgba(129, 140, 248, 0.24);
-    --ll3-link: #a5b4fc;
-    --ll3-link-hover: #c7d2fe;
-
-    --ll3-focus: rgba(129, 140, 248, 0.24);
-    --ll3-focus-strong: rgba(129, 140, 248, 0.38);
-
-    --ll3-hero-orb-1: rgba(99, 102, 241, 0.18);
-    --ll3-hero-orb-2: rgba(6, 182, 212, 0.14);
-    --ll3-hero-orb-3: rgba(168, 85, 247, 0.14);
-
-    --ll3-header-bg: rgba(6, 12, 23, 0.62);
-    --ll3-header-bg-scrolled: rgba(8, 15, 28, 0.84);
-    --ll3-header-bg-open: rgba(10, 18, 31, 0.94);
-
-    --ll3-footer-bg:
-        radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 26%),
-        linear-gradient(180deg, #040813, #060d18 45%, #09101c);
-    --ll3-footer-text: rgba(231, 238, 248, 0.86);
-    --ll3-footer-muted: rgba(171, 185, 203, 0.6);
-    --ll3-footer-border: rgba(129, 140, 248, 0.16);
-}
-
-/* System dark mode fallback */
-@media (prefers-color-scheme: dark) {
-    html.ll3:not([data-theme="light"]) {
-        --ll3-bg: #08101c;
-        --ll3-bg-elevated: #0c1627;
-        --ll3-panel: rgba(13, 23, 38, 0.74);
-        --ll3-panel-strong: rgba(15, 25, 41, 0.9);
-        --ll3-panel-solid: #0f1b2d;
-        --ll3-surface-2: rgba(17, 29, 46, 0.86);
-        --ll3-surface-3: rgba(24, 37, 56, 0.96);
-
-        --ll3-text: #e5edf8;
-        --ll3-text-strong: #f8fbff;
-        --ll3-muted: #a7b4c8;
-        --ll3-muted2: #8ea0b8;
-        --ll3-muted3: #73849d;
-
-        --ll3-border: rgba(148, 163, 184, 0.16);
-        --ll3-border-strong: rgba(148, 163, 184, 0.24);
-        --ll3-border-soft: rgba(148, 163, 184, 0.10);
-
-        --ll3-input-bg: rgba(12, 22, 36, 0.88);
-        --ll3-input-border: rgba(148, 163, 184, 0.16);
-
-        --ll3-shadow-xs: 0 8px 20px rgba(2, 6, 23, 0.28);
-        --ll3-shadow-sm: 0 12px 28px rgba(2, 6, 23, 0.34);
-        --ll3-shadow: 0 20px 48px rgba(2, 6, 23, 0.42);
-        --ll3-shadow-float: 0 22px 56px rgba(2, 6, 23, 0.52);
-
-        --ll3-accent: #8b92ff;
-        --ll3-accent-strong: #a5b4fc;
-        --ll3-accent-soft: rgba(129, 140, 248, 0.16);
-        --ll3-accent-soft-2: rgba(129, 140, 248, 0.24);
-        --ll3-link: #a5b4fc;
-        --ll3-link-hover: #c7d2fe;
-
-        --ll3-focus: rgba(129, 140, 248, 0.24);
-        --ll3-focus-strong: rgba(129, 140, 248, 0.38);
-
-        --ll3-hero-orb-1: rgba(99, 102, 241, 0.18);
-        --ll3-hero-orb-2: rgba(6, 182, 212, 0.14);
-        --ll3-hero-orb-3: rgba(168, 85, 247, 0.14);
-
-        --ll3-header-bg: rgba(6, 12, 23, 0.62);
-        --ll3-header-bg-scrolled: rgba(8, 15, 28, 0.84);
-        --ll3-header-bg-open: rgba(10, 18, 31, 0.94);
-
-        --ll3-footer-bg:
-            radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 26%),
-            linear-gradient(180deg, #040813, #060d18 45%, #09101c);
-        --ll3-footer-text: rgba(231, 238, 248, 0.86);
-        --ll3-footer-muted: rgba(171, 185, 203, 0.6);
-        --ll3-footer-border: rgba(129, 140, 248, 0.16);
-    }
-}
-
-@media (max-width: 860px) {
-    .ll3 {
-        --ll3-header-h: var(--ll3-header-h-mobile);
-        --ll3-main-top: calc(var(--ll3-header-h-mobile) + 8px);
-    }
+/* Legacy variable bridge for older page-specific sheets. */
+.ll3-explorerPage,
+.ll3-bills,
+.ll3-members,
+.ll3-searchPage,
+.llmp3-page,
+.llbd3-page {
+  --llm3-ink: var(--ll3-ink);
+  --llm3-text: var(--ll3-text);
+  --llm3-muted: var(--ll3-muted);
+  --llm3-muted-2: var(--ll3-muted2);
+  --llm3-border: var(--ll3-border);
+  --llm3-border-soft: var(--ll3-border-soft);
+  --llm3-border-strong: var(--ll3-border-strong);
+  --llm3-surface: var(--ll3-panel-solid);
+  --llm3-surface-soft: var(--ll3-surface-2);
+  --llm3-surface-glass: var(--ll3-panel-strong);
+  --llm3-shadow: var(--ll3-shadow);
+  --llm3-shadow2: var(--ll3-shadow-float);
+  --llm3-soft-shadow: var(--ll3-shadow-sm);
+  --llm3-btn-shadow: var(--ll3-shadow-xs);
+  --llm3-focus: var(--ll3-focus);
 }

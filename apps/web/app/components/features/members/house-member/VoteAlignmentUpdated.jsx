@@ -16,8 +16,9 @@ import {
     ExternalLink,
 } from "lucide-react";
 
-export default function VoteAlignmentUpdated({ value, className = "", chamber = "" }) {
+export default function VoteAlignmentUpdated({ value, className = "", chamber = "", mode = "page" }) {
     const isPanel = !!value && typeof value === "object" && !!value.overall;
+    const isCompact = mode === "panel";
     const overall = isPanel ? value.overall : value;
 
     const alignment = pickNum(overall, ["alignment_pct", "alignmentPct", "value"]);
@@ -47,6 +48,11 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
     const [detailsOpen, setDetailsOpen] = useState(false);
 
     useEffect(() => {
+        if (isCompact) {
+            setDetailsOpen(false);
+            return;
+        }
+
         if (typeof window === "undefined") return;
         const mq = window.matchMedia("(min-width: 901px)");
         const apply = () => setDetailsOpen(mq.matches);
@@ -57,7 +63,7 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
         }
         mq.addListener(apply);
         return () => mq.removeListener(apply);
-    }, []);
+    }, [isCompact]);
 
     const rawByPolicy = isPanel ? (Array.isArray(value.byPolicy) ? value.byPolicy : []) : [];
 
@@ -127,7 +133,7 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
     const deviationsLine = topDeviations.length ? topDeviations : null;
 
     return (
-        <section className={`llmp3-card llm3-va ${className}`} aria-label="Vote alignment">
+        <section className={`llmp3-card llm3-va llm3-va--${mode} ${isCompact ? "llm3-va--compact" : ""} ${className}`} aria-label="Vote alignment">
             <header className="llmp3-card__head llm3-va__head">
                 <div className="llm3-va__title">
                     <div className="llm3-va__titleRow">
@@ -207,13 +213,15 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
                             tone={toneForDelta(alignmentVsMedian)}
                             hint="Difference from the chamber median, in percentage points"
                         />
-                        <StatCard
-                            icon={<BarChart3 size={16} />}
-                            label="Alignment percentile"
-                            value={Number.isFinite(alignmentPctile) ? fmtPercentileLabel(alignmentPctile) : "—"}
-                            tone="neutral"
-                            hint="Relative standing among members in the chamber"
-                        />
+                        {!isCompact ? (
+                            <StatCard
+                                icon={<BarChart3 size={16} />}
+                                label="Alignment percentile"
+                                value={Number.isFinite(alignmentPctile) ? fmtPercentileLabel(alignmentPctile) : "—"}
+                                tone="neutral"
+                                hint="Relative standing among members in the chamber"
+                            />
+                        ) : null}
                         <StatCard
                             icon={Number.isFinite(attendanceVsMedian) && attendanceVsMedian < 0 ? <TrendingDown size={16} /> : <TrendingUp size={16} />}
                             label={`Attendance vs ${chamberNoun}`}
@@ -221,13 +229,15 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
                             tone={toneForDelta(attendanceVsMedian)}
                             hint="Difference in attendance from the chamber median, in percentage points"
                         />
-                        <StatCard
-                            icon={<BarChart3 size={16} />}
-                            label="Attendance percentile"
-                            value={Number.isFinite(attendancePctile) ? fmtPercentileLabel(attendancePctile) : "—"}
-                            tone="neutral"
-                            hint="Relative standing among members in the chamber"
-                        />
+                        {!isCompact ? (
+                            <StatCard
+                                icon={<BarChart3 size={16} />}
+                                label="Attendance percentile"
+                                value={Number.isFinite(attendancePctile) ? fmtPercentileLabel(attendancePctile) : "—"}
+                                tone="neutral"
+                                hint="Relative standing among members in the chamber"
+                            />
+                        ) : null}
                     </div>
                 </div>
 
@@ -246,7 +256,7 @@ export default function VoteAlignmentUpdated({ value, className = "", chamber = 
                     </div>
                 ) : null}
 
-                {isPanel ? (
+                {isPanel && !isCompact ? (
                     <details className="llm3-va__details" open={detailsOpen}>
                         <summary
                             className="llm3-va__summary"

@@ -1,0 +1,320 @@
+.ll3-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ll3-field--span2 {
+  grid-column: span 2;
+}
+
+.ll3-label {
+  display: block;
+  margin: 0;
+  padding: 0 2px;
+  color: var(--ll3-muted2);
+  font-size: 11px;
+  line-height: 1.15;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.ll3-label__hint {
+  margin-left: 6px;
+  color: var(--ll3-muted);
+  font-weight: 700;
+  font-size: .92em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ll3-input, .ll3-select, .ll3-textInput, .ll3-dateInput, .ll3-multiSelect, input.ll3-input, select.ll3-input {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--ll3-input-h);
+  padding: 0 var(--ll3-input-pad-x);
+  border-radius: var(--ll3-input-r);
+  border: 1px solid var(--ll3-border);
+  background: var(--ll3-panel-strong);
+  color: var(--ll3-ink);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  box-shadow: var(--ll3-shadow-xs);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.ll3-input::placeholder {
+  color: var(--ll3-muted2);
+}
+
+.ll3-input:hover, .ll3-select:hover {
+  border-color: var(--ll3-border-strong);
+}
+
+.ll3-input:focus, .ll3-select:focus, .ll3-textInput:focus, .ll3-dateInput:focus, .ll3-multiSelect:focus {
+  border-color: color-mix(in srgb, var(--ll3-accent) 42%, var(--ll3-border));
+  box-shadow: 0 0 0 4px var(--ll3-focus);
+}
+
+select.ll3-input, .ll3-select {
+  appearance: none;
+  padding-right: 40px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ll3-muted2) 50%), linear-gradient(135deg, var(--ll3-muted2) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.ll3-multiSelect {
+  height: auto;
+  min-height: 128px;
+  padding: 8px;
+  overflow: auto;
+}
+
+.ll3-multiSelect option {
+  padding: 7px 8px;
+  border-radius: 8px;
+}
+
+.ll3-checkRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--ll3-border);
+  background: var(--ll3-surface-2);
+  color: var(--ll3-text);
+  cursor: pointer;
+}
+
+.ll3-checkRow__input, .ll3-checkbox {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ll3-accent);
+}
+
+.ll3-checkRow__body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ll3-checkRow__label {
+  color: var(--ll3-ink);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.ll3-checkRow__hint {
+  color: var(--ll3-muted);
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.ll3-chipGroup, .ll3-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ll3-chip, .chip--pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: var(--ll3-r-pill);
+  border: 1px solid var(--ll3-border);
+  background: var(--ll3-panel-strong);
+  color: var(--ll3-ink);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.chip__x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: var(--ll3-r-pill);
+  background: transparent;
+  color: var(--ll3-muted);
+  cursor: pointer;
+}
+
+.chip__x:hover {
+  background: color-mix(in srgb, var(--ll3-text) 7%, transparent);
+  color: var(--ll3-ink);
+}
+
+
+/* Segmented / pill form controls: chamber, bill type, search scopes, quick-search chips */
+.ll3-seg,
+.ll3-pills,
+.ll3-chipGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ll3-seg {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ll3-pill,
+.ll3-pillBtn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-pill);
+  background: color-mix(in srgb, var(--ll3-panel-strong) 92%, transparent);
+  color: var(--ll3-ink);
+  font-family: inherit;
+  font-size: 12.75px;
+  line-height: 1;
+  font-weight: 850;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--ll3-shadow-xs);
+  transition:
+    transform 120ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease;
+}
+
+.ll3-pill:hover,
+.ll3-pillBtn:hover {
+  transform: translateY(-1px);
+  border-color: var(--ll3-border-strong);
+  background: var(--ll3-panel-strong);
+  box-shadow: var(--ll3-shadow-sm);
+}
+
+.ll3-pill.is-active,
+.ll3-pillBtn.is-active,
+.ll3-pill[aria-pressed="true"],
+.ll3-pillBtn[aria-pressed="true"] {
+  border-color: var(--ll3-accent-border);
+  background: linear-gradient(135deg, var(--ll3-accent), var(--ll3-accent-strong));
+  color: #fff;
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--ll3-accent) 20%, transparent);
+}
+
+.ll3-pill:focus-visible,
+.ll3-pillBtn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px var(--ll3-focus),
+    var(--ll3-shadow-sm);
+}
+
+.ll3-seg .ll3-pill,
+.ll3-seg .ll3-pillBtn {
+  flex: 0 0 auto;
+}
+
+/* Multi-select list control */
+.ll3-multiSelectBox {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ll3-multiSelectBox__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ll3-multiSelectBox__hint {
+  color: var(--ll3-muted);
+  font-size: 12.5px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.ll3-multiSelect,
+.ll3-multiSelectBox__control {
+  width: 100%;
+  min-width: 0;
+  min-height: 132px;
+  padding: 7px;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-input-r);
+  background: var(--ll3-panel-strong);
+  color: var(--ll3-ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.35;
+  box-shadow: var(--ll3-shadow-xs);
+  outline: none;
+  overflow: auto;
+}
+
+.ll3-multiSelect:hover,
+.ll3-multiSelectBox__control:hover {
+  border-color: var(--ll3-border-strong);
+}
+
+.ll3-multiSelect:focus,
+.ll3-multiSelectBox__control:focus {
+  border-color: color-mix(in srgb, var(--ll3-accent) 42%, var(--ll3-border));
+  box-shadow: 0 0 0 4px var(--ll3-focus);
+}
+
+.ll3-multiSelect option,
+.ll3-multiSelectBox__control option {
+  padding: 7px 8px;
+  border-radius: 9px;
+  color: var(--ll3-ink);
+}
+
+.ll3-multiSelect option:checked,
+.ll3-multiSelectBox__control option:checked {
+  background: color-mix(in srgb, var(--ll3-accent) 18%, var(--ll3-panel-strong));
+  color: var(--ll3-ink);
+}
+
+.ll3-multiSelectBox__hint {
+  color: var(--ll3-muted);
+  font-size: 12.5px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.ll3-multiSelect,
+.ll3-multiSelectBox__control {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.ll3-filters--sheet .ll3-multiSelect,
+.ll3-filters--sheet .ll3-multiSelectBox__control {
+  min-height: 148px;
+  font-size: 14px;
+}

@@ -1,8 +1,8 @@
-import MemberProfilePanelShell from "@/app/components/features/members/profile/MemberProfilePanelShell";
+import MemberProfilePanelShell from "@/app/components/features/members/MemberProfilePanelShell";
 
-import "@/app/styles/active/members/refactored/ll3.members.tokens.css";
-import "@/app/styles/active/members/refactored/ll3.members.ui.css";
-import "@/app/styles/active/members/updates/ll3.members.profile-panel.css";
+import "@/app/styles/active/members/ll3.members.tokens.css";
+import "@/app/styles/active/members/ll3.members.ui.css";
+import "@/app/styles/active/members/ll3.members.profile-panel.css";
 
 export default function LoadingMemberPanel() {
     return (

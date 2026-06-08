@@ -1,0 +1,368 @@
+/* app/styles/active/site/ll3.about.css
+   ========================================================================== 
+   About page — page-specific layout only
+   ========================================================================== */
+
+.ll3 .about {
+  position: relative;
+  isolation: isolate;
+  padding-bottom: clamp(64px, 8vw, 112px);
+  color: var(--ll3-text);
+  background:
+    radial-gradient(900px 520px at 12% 0%, color-mix(in srgb, var(--ll3-accent) 11%, transparent), transparent 62%),
+    radial-gradient(760px 460px at 92% 6%, color-mix(in srgb, #06b6d4 8%, transparent), transparent 64%),
+    var(--ll3-bg);
+}
+
+.ll3 .about__hero {
+  padding-block: clamp(48px, 6vw, 86px) clamp(26px, 4vw, 48px);
+}
+
+.ll3 .about__heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.62fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+}
+
+.ll3 .about__heroCopy {
+  max-width: 820px;
+}
+
+.ll3 .about__heroTitle {
+  max-width: 12ch;
+  margin-top: 14px;
+}
+
+.ll3 .about__heroText {
+  display: grid;
+  gap: 12px;
+  max-width: 72ch;
+  margin-top: 20px;
+}
+
+.ll3 .about__heroText p,
+.ll3 .about__copy p {
+  margin: 0;
+}
+
+.ll3 .about__heroCard {
+  display: grid;
+  gap: 18px;
+  padding: clamp(22px, 3vw, 32px);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--ll3-accent) 9%, transparent), transparent 34%),
+    var(--ll3-panel);
+}
+
+.ll3 .about__principle {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.ll3 .about__principleDot {
+  width: 10px;
+  height: 10px;
+  margin-top: 7px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--ll3-accent), var(--ll3-accent-strong));
+  box-shadow: 0 0 0 7px var(--ll3-accent-soft);
+}
+
+.ll3 .about__principle h2 {
+  margin: 0 0 5px;
+  color: var(--ll3-text-strong);
+  font-size: 1rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.ll3 .about__principle p {
+  margin: 0;
+  color: var(--ll3-muted);
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+.ll3 .about__stack {
+  display: grid;
+  gap: clamp(24px, 4vw, 44px);
+}
+
+.ll3 .about__panel {
+  padding: clamp(22px, 3vw, 34px);
+  border-radius: 28px;
+}
+
+.ll3 .about__sectionTitle {
+  max-width: 18ch;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.ll3 .about__copy {
+  display: grid;
+  gap: 13px;
+  max-width: 84ch;
+}
+
+.ll3 .about__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: clamp(18px, 3vw, 28px);
+  align-items: stretch;
+}
+
+.ll3 .about__panel--featureLead {
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--ll3-accent) 10%, transparent), transparent 32%),
+    linear-gradient(180deg, var(--ll3-panel-strong), var(--ll3-panel));
+}
+
+.ll3 .about__callout {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  padding: clamp(22px, 3vw, 30px);
+  border-radius: 28px;
+}
+
+.ll3 .about__callout h3 {
+  margin: 0;
+  color: var(--ll3-text-strong);
+  font-size: 1.15rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.ll3 .about__callout p {
+  margin: 0;
+  color: var(--ll3-muted);
+  line-height: 1.68;
+}
+
+.ll3 .about__calloutLink {
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.ll3 .about__twoCol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 28px);
+  align-items: stretch;
+}
+
+.ll3 .about__iconList {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ll3 .about__iconListItem {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  align-items: start;
+  color: var(--ll3-text);
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.ll3 .about__iconListMark {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: var(--ll3-link);
+  background: var(--ll3-accent-soft);
+}
+
+.ll3 .about__note {
+  max-width: 74ch;
+  margin: 18px 0 0;
+  color: var(--ll3-muted2);
+}
+
+.ll3 .about__roadmap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: clamp(20px, 4vw, 48px);
+  align-items: start;
+}
+
+.ll3 .about__roadmapIntro {
+  min-width: 0;
+}
+
+.ll3 .about__roadmapGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ll3 .about__roadmapItem {
+  position: relative;
+  min-height: 94px;
+  padding: 18px 18px 18px 38px;
+  border-radius: 20px;
+  border: 1px solid var(--ll3-border);
+  background: var(--ll3-panel-solid);
+  color: var(--ll3-text);
+  font-weight: 700;
+  line-height: 1.5;
+  box-shadow: var(--ll3-shadow-xs);
+}
+
+.ll3 .about__roadmapItem::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 25px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ll3-accent);
+  box-shadow: 0 0 0 5px var(--ll3-accent-soft);
+}
+
+.ll3 .about__updated {
+  margin: 0;
+  color: var(--ll3-muted2);
+}
+
+@media (max-width: 1080px) {
+  .ll3 .about__heroGrid,
+  .ll3 .about__split,
+  .ll3 .about__roadmap {
+    grid-template-columns: 1fr;
+  }
+
+  .ll3 .about__heroCard {
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 820px) {
+  .ll3 .about__hero {
+    padding-block: 36px 24px;
+  }
+
+  .ll3 .about__twoCol,
+  .ll3 .about__roadmapGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ll3 .about__panel,
+  .ll3 .about__heroCard,
+  .ll3 .about__callout {
+    border-radius: 24px;
+    padding: 20px;
+  }
+
+  .ll3 .about__sectionTitle {
+    max-width: none;
+  }
+
+  .ll3 .about__calloutLink {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .ll3 .about__hero {
+    padding-block: 28px 18px;
+  }
+
+  .ll3 .about__stack {
+    gap: 20px;
+  }
+
+  .ll3 .about__panel,
+  .ll3 .about__heroCard,
+  .ll3 .about__callout {
+    border-radius: 20px;
+    padding: 18px;
+  }
+
+  .ll3 .about__iconListItem {
+    grid-template-columns: 24px 1fr;
+    gap: 10px;
+  }
+
+  .ll3 .about__iconListMark {
+    width: 24px;
+    height: 24px;
+  }
+
+  .ll3 .about__roadmapItem {
+    min-height: auto;
+  }
+}
+
+
+/* About page containment fix */
+.ll3 .about .ll3-pageShell {
+  width: min(1360px, calc(100vw - 56px));
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+}
+
+.ll3 .about__hero {
+  padding-block: clamp(64px, 8vw, 104px) clamp(34px, 5vw, 58px);
+}
+
+.ll3 .about__heroText {
+  max-width: 66ch;
+  font-size: clamp(1.02rem, 1.08vw, 1.16rem);
+  line-height: 1.68;
+}
+
+.ll3 .about__copy {
+  max-width: 76ch;
+  font-size: 0.98rem;
+  line-height: 1.68;
+}
+
+@media (max-width: 820px) {
+  .ll3 .about .ll3-pageShell {
+    width: min(100%, calc(100vw - 32px));
+  }
+
+  .ll3 .about__heroGrid {
+    gap: 24px;
+  }
+
+  .ll3 .about__heroTitle {
+    max-width: 10ch;
+  }
+
+  .ll3 .about__heroText {
+    font-size: 1rem;
+    line-height: 1.62;
+  }
+}
+
+@media (max-width: 520px) {
+  .ll3 .about .ll3-pageShell {
+    width: min(100%, calc(100vw - 24px));
+  }
+
+  .ll3 .about__heroText {
+    gap: 10px;
+  }
+
+  .ll3 .about__heroText p:nth-child(n + 3) {
+    display: none;
+  }
+}

@@ -1,0 +1,381 @@
+/* core/ll3.entity-detail.css
+   Shared direct detail page shell for bill/member/entity detail pages.
+   Owns the outside-in page wrapper, gutters, main/aside layout, and generic
+   card/panel shells. Entity-specific styles stay in their feature sheets.
+*/
+
+/* ==========================================================================
+   Detail wrap contract
+   ========================================================================== */
+
+:root {
+  --ll3-detail-max-narrow: 960px;
+  --ll3-detail-max: 1180px;
+  --ll3-detail-max-wide: 1240px;
+  --ll3-detail-gutter: 32px;
+  --ll3-detail-gutter-sm: 20px;
+  --ll3-detail-pad-y: 22px;
+  --ll3-detail-pad-bottom: 34px;
+}
+
+.ll3-entityDetail,
+.llbd3-page,
+.llmp3-page {
+  min-width: 0;
+  min-height: 100%;
+  overflow-x: clip;
+  color: var(--ll3-text);
+  background:
+    radial-gradient(1000px 520px at 14% 0%, color-mix(in srgb, var(--ll3-accent) 12%, transparent), transparent 60%),
+    radial-gradient(900px 520px at 90% 10%, color-mix(in srgb, #06b6d4 8%, transparent), transparent 62%);
+}
+
+.ll3-entityDetail *,
+.ll3-entityDetail *::before,
+.ll3-entityDetail *::after,
+.llbd3-page *,
+.llbd3-page *::before,
+.llbd3-page *::after,
+.llmp3-page *,
+.llmp3-page *::before,
+.llmp3-page *::after {
+  box-sizing: border-box;
+}
+
+.ll3-detailWrap,
+.ll3-entityDetail__wrap,
+.llbd3-wrap,
+.llmp3-wrap {
+  width: min(100% - var(--ll3-detail-gutter), var(--ll3-detail-max));
+  max-width: none;
+  margin-inline: auto;
+  padding-block: var(--ll3-detail-pad-y) var(--ll3-detail-pad-bottom);
+  padding-inline: 0;
+  color: inherit;
+}
+
+.ll3-detailWrap--default,
+.ll3-entityDetail__wrap--default {
+  --ll3-detail-max: 1180px;
+}
+
+.ll3-detailWrap--narrow,
+.ll3-entityDetail__wrap--narrow {
+  --ll3-detail-max: var(--ll3-detail-max-narrow);
+}
+
+.ll3-detailWrap--wide,
+.ll3-entityDetail__wrap--wide,
+.llmp3-wrap {
+  --ll3-detail-max: var(--ll3-detail-max-wide);
+}
+
+.ll3-detailWrap--full,
+.ll3-entityDetail__wrap--full {
+  --ll3-detail-max: var(--ll3-page-max);
+}
+
+.ll3-entityDetail__top,
+.llbd3-top,
+.llmp3-intro {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  min-width: 0;
+}
+
+.ll3-entityDetail__topRow,
+.llbd3-top__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.ll3-entityDetail__head,
+.llbd3-head {
+  max-width: 86ch;
+  min-width: 0;
+}
+
+.ll3-entityDetail__body,
+.llbd3-body {
+  margin-top: 16px;
+  display: grid;
+  gap: 18px;
+  align-items: start;
+  min-width: 0;
+}
+
+@media (min-width: 980px) {
+
+  .ll3-entityDetail__body,
+  .llbd3-body {
+    grid-template-columns: minmax(0, 2.15fr) minmax(320px, 0.95fr);
+  }
+}
+
+.ll3-entityDetail__main,
+.ll3-entityDetail__aside,
+.llbd3-main,
+.llbd3-side {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.ll3-entityDetailPanel,
+.llbd3-panel,
+.llmp3-panel {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 16px;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-lg);
+  background: var(--ll3-panel-strong);
+  color: inherit;
+  box-shadow: var(--ll3-shadow);
+  -webkit-backdrop-filter: saturate(1.08) blur(12px);
+  backdrop-filter: saturate(1.08) blur(12px);
+}
+
+.ll3-entityDetailCard,
+.llbd3-card,
+.llmp3-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--ll3-border);
+  border-radius: var(--ll3-r-lg);
+  background: var(--ll3-panel-solid);
+  color: inherit;
+  box-shadow: var(--ll3-shadow-sm);
+}
+
+.ll3-entityDetailCard--soft,
+.llbd3-card--soft,
+.llmp3-card--soft {
+  background: var(--ll3-panel);
+  box-shadow: var(--ll3-shadow-sm);
+  -webkit-backdrop-filter: saturate(1.08) blur(10px);
+  backdrop-filter: saturate(1.08) blur(10px);
+}
+
+.ll3-entityDetailCard--hero,
+.llmp3-card--hero {
+  background: linear-gradient(180deg, var(--ll3-panel-strong), var(--ll3-panel));
+  -webkit-backdrop-filter: saturate(1.08) blur(10px);
+  backdrop-filter: saturate(1.08) blur(10px);
+}
+
+.ll3-entityDetailPanel>*,
+.ll3-entityDetailCard>*,
+.llbd3-main>*,
+.llbd3-side>*,
+.llbd3-card>*,
+.llmp3-panel>*,
+.llmp3-card>* {
+  min-width: 0;
+}
+
+.ll3-entityDetailCard__head,
+.llbd3-card__head,
+.llmp3-card__head,
+.llm3-cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.ll3-entityDetail :where(h1, h2, h3),
+.llbd3-page :where(h1, h2, h3),
+.llmp3-page :where(h1, h2, h3) {
+  color: var(--ll3-ink);
+  letter-spacing: -0.01em;
+}
+
+.ll3-entityBack,
+.llbd3-back,
+.llmp3-back__btn,
+.llmp3-back__members,
+.llmp3-back--member {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--ll3-r-pill);
+  border: 1px solid var(--ll3-border);
+  background: var(--ll3-panel);
+  color: var(--ll3-ink);
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: var(--ll3-shadow-xs);
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 120ms ease, color 160ms ease;
+}
+
+.ll3-entityBack:hover,
+.llbd3-back:hover,
+.llmp3-back__btn:hover,
+.llmp3-back__members:hover,
+.llmp3-back--member:hover {
+  transform: translateY(-1px);
+  background: var(--ll3-panel-strong);
+  border-color: var(--ll3-border-strong);
+  box-shadow: var(--ll3-shadow-sm);
+}
+
+.ll3-entityBack--simple,
+.llbd3-back--simple,
+.llmp3-back__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ll3-ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ll3-entityBack--simple:hover,
+.llbd3-back--simple:hover,
+.llmp3-back__link:hover {
+  color: var(--ll3-link);
+  transform: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ll3-entityDetail table,
+.llmp3-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ll3-entityDetail th,
+.llmp3-page th {
+  padding: 10px;
+  border-bottom: 1px solid var(--ll3-border);
+  color: var(--ll3-muted2);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.ll3-entityDetail td,
+.llmp3-page td {
+  padding: 10px;
+  border-bottom: 1px solid var(--ll3-border-soft);
+  color: var(--ll3-text);
+  font-weight: 600;
+  vertical-align: top;
+}
+
+.ll3-entityDetail tr:hover td,
+.llmp3-page tr:hover td {
+  background: color-mix(in srgb, var(--ll3-accent) 4%, transparent);
+}
+
+@media (max-width: 760px) {
+
+  .ll3-entityDetailPanel,
+  .ll3-entityDetailCard,
+  .llbd3-card,
+  .llbd3-panel,
+  .llmp3-card,
+  .llmp3-panel {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+
+  .ll3-detailWrap,
+  .ll3-entityDetail__wrap,
+  .llbd3-wrap,
+  .llmp3-wrap {
+    width: min(100% - var(--ll3-detail-gutter-sm), var(--ll3-detail-max));
+    padding-block: 18px 28px;
+  }
+
+  .ll3-entityDetailPanel,
+  .ll3-entityDetailCard,
+  .llbd3-card,
+  .llbd3-panel,
+  .llmp3-card,
+  .llmp3-panel {
+    padding: 14px;
+  }
+
+  .ll3-entityBack,
+  .llbd3-back,
+  .llmp3-back__btn,
+  .llmp3-back__members,
+  .llmp3-back--member {
+    min-height: 36px;
+    padding-inline: 10px;
+    gap: 6px;
+    font-weight: 700;
+  }
+}
+
+/* ==========================================================================
+   Pass 1 — page/panel mode hooks
+   ========================================================================== */
+
+.ll3-entityDetail--page,
+.ll3-entityDetail[data-view-mode="page"] {
+  --ll3-view-mode: page;
+}
+
+.ll3-entityDetail--panel,
+.ll3-entityDetail[data-view-mode="panel"] {
+  --ll3-view-mode: panel;
+}
+
+.ll3-routePanel[data-entity="member"] .ll3-routePanel__body {
+  --ll3-view-mode: panel;
+}
+
+.ll3-routePanel[data-entity="member"] :where(.llmp3-page, .ll3-entityDetail) {
+  min-height: auto;
+  background: transparent;
+}
+
+.ll3-routePanel[data-entity="member"] :where(.llmp3-wrap, .ll3-entityDetail__wrap) {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+
+/* ==========================================================================
+   Detail/panel wrapper bridge
+   ========================================================================== */
+
+.ll3-routePanel[data-view-mode="panel"] :where(.ll3-entityDetail, .llbd3-page, .llmp3-page) {
+  min-height: auto;
+  overflow-x: clip;
+  background: transparent;
+}
+
+.ll3-routePanel[data-view-mode="panel"] :where(.ll3-detailWrap, .ll3-entityDetail__wrap, .llbd3-wrap, .llmp3-wrap) {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
