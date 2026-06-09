@@ -2,52 +2,63 @@
 
 import "server-only";
 import { q } from "@/lib/server/db/instrumented-query";
+import { detectStateIntent } from "./inferSearchIntent";
 
 const ENTITY_TYPES = new Set(["bill", "member", "seat", "committee"]);
 const SORTS = new Set(["relevance", "updated", "introduced", "latest_action"]);
 
 function cleanText(v) {
-    const s = String(v ?? "").trim();
-    return s || null;
+  const s = String(v ?? "").trim();
+  return s || null;
 }
 
 function cleanArray(v, allowed = null) {
-    const arr = Array.isArray(v) ? v : v ? [v] : [];
-    const cleaned = arr.map((x) => String(x).trim()).filter(Boolean);
-    return allowed ? cleaned.filter((x) => allowed.has(x)) : cleaned;
+  const arr = Array.isArray(v) ? v : v ? [v] : [];
+  const cleaned = arr.map((x) => String(x).trim()).filter(Boolean);
+  return allowed ? cleaned.filter((x) => allowed.has(x)) : cleaned;
 }
 
 function cleanLimit(v, fallback = 20) {
-    const n = Number(v ?? fallback);
-    return Math.min(Math.max(Number.isFinite(n) ? n : fallback, 1), 50);
+  const n = Number(v ?? fallback);
+  return Math.min(Math.max(Number.isFinite(n) ? n : fallback, 1), 50);
 }
 
 function cleanOffset(v) {
-    const n = Number(v ?? 0);
-    return Math.max(Number.isFinite(n) ? n : 0, 0);
+  const n = Number(v ?? 0);
+  return Math.max(Number.isFinite(n) ? n : 0, 0);
 }
 
 function normalizeInput(input = {}) {
-    return {
-        q: cleanText(input.q),
-        entityTypes: cleanArray(input.entityTypes, ENTITY_TYPES),
-        chamber: cleanText(input.chamber),
-        stateCode: cleanText(input.stateCode)?.toUpperCase() ?? null,
-        statusCode: cleanText(input.statusCode),
-        policyAreaId: input.policyAreaId ? Number(input.policyAreaId) : null,
-        hasSummary: input.hasSummary === true || input.hasSummary === "true",
-        sort: SORTS.has(input.sort) ? input.sort : "relevance",
-        limit: cleanLimit(input.limit),
-        offset: cleanOffset(input.offset),
-    };
+  const intent = detectStateIntent(input.q);
+
+  const inferredStateCode = input.stateCode || (["state_district", "state_senators", "state_house"].includes(intent?.kind) ? intent.stateCode : null);
+  const inferredChamber = input.chamber || (["state_district", "state_senators", "state_house"].includes(intent?.kind) ? intent.chamber : null);
+  const inferredEntityTypes = input.entityTypes?.length
+    ? input.entityTypes
+    : (["state_district", "state_senators", "state_house"].includes(intent?.kind) ? intent.preferredEntityTypes : input.entityTypes);
+
+  return {
+    q: cleanText(["state_district", "state_senators", "state_house"].includes(intent?.kind) ? null : input.q),
+    entityTypes: cleanArray(inferredEntityTypes, ENTITY_TYPES),
+    chamber: cleanText(inferredChamber),
+    stateCode: cleanText(inferredStateCode)?.toUpperCase() ?? null,
+    statusCode: cleanText(input.statusCode),
+    policyAreaId: input.policyAreaId ? Number(input.policyAreaId) : null,
+    hasSummary: input.hasSummary === true || input.hasSummary === "true",
+    sort: SORTS.has(input.sort) ? input.sort : "relevance",
+    limit: cleanLimit(input.limit),
+    offset: cleanOffset(input.offset),
+    district: intent?.kind === "state_district" ? intent.district : null,
+    intent,
+  };
 }
 
 function sortSql(sort) {
-    if (sort === "updated") return `d.updated_at DESC NULLS LAST`;
-    if (sort === "introduced") return `d.introduced_date DESC NULLS LAST`;
-    if (sort === "latest_action") return `d.latest_action_date DESC NULLS LAST`;
+  if (sort === "updated") return `d.updated_at DESC NULLS LAST`;
+  if (sort === "introduced") return `d.introduced_date DESC NULLS LAST`;
+  if (sort === "latest_action") return `d.latest_action_date DESC NULLS LAST`;
 
-    return `
+  return `
     relevance_score DESC,
     full_rank DESC,
     entity_rank DESC,
@@ -58,9 +69,9 @@ function sortSql(sort) {
 }
 
 export async function searchGlobal(input = {}) {
-    const filters = normalizeInput(input);
+  const filters = normalizeInput(input);
 
-   const sql = `
+  const sql = `
   WITH params AS (
     SELECT
       $1::text AS raw_q,
@@ -77,7 +88,8 @@ export async function searchGlobal(input = {}) {
       $4::text AS state_code,
       $5::text AS status_code,
       $6::integer AS policy_area_id,
-      $7::boolean AS has_summary
+      $7::boolean AS has_summary,
+      $10::integer AS district
   ),
   ranked AS (
     SELECT
@@ -139,6 +151,7 @@ export async function searchGlobal(input = {}) {
       AND (p.status_code IS NULL OR d.status_code = p.status_code)
       AND (p.policy_area_id IS NULL OR d.policy_area_id = p.policy_area_id)
       AND (p.has_summary IS FALSE OR d.has_summary IS TRUE)
+      AND (p.district IS NULL OR COALESCE(d.district, 0) = p.district)
   ),
   scored AS (
     SELECT
@@ -195,41 +208,42 @@ export async function searchGlobal(input = {}) {
   FROM limited;
 `;
 
-    const params = [
-        filters.q,
-        filters.entityTypes.length ? filters.entityTypes : null,
-        filters.chamber,
-        filters.stateCode,
-        filters.statusCode,
-        filters.policyAreaId,
-        filters.hasSummary,
-        filters.limit,
-        filters.offset,
-    ];
+  const params = [
+    filters.q,
+    filters.entityTypes.length ? filters.entityTypes : null,
+    filters.chamber,
+    filters.stateCode,
+    filters.statusCode,
+    filters.policyAreaId,
+    filters.hasSummary,
+    filters.limit,
+    filters.offset,
+    filters.district,
+  ];
 
-    const { rows } = await q("search:global", sql, params);
+  const { rows } = await q("search:global", sql, params);
 
-    const safeRows = rows ?? [];
+  const safeRows = rows ?? [];
 
-    const grouped = {
-        bills: [],
-        members: [],
-        committees: [],
-        seats: [],
-    };
+  const grouped = {
+    bills: [],
+    members: [],
+    committees: [],
+    seats: [],
+  };
 
-    for (const row of safeRows) {
-        if (row.entity_type === "bill") grouped.bills.push(row);
-        else if (row.entity_type === "member") grouped.members.push(row);
-        else if (row.entity_type === "committee") grouped.committees.push(row);
-        else if (row.entity_type === "seat") grouped.seats.push(row);
-    }
+  for (const row of safeRows) {
+    if (row.entity_type === "bill") grouped.bills.push(row);
+    else if (row.entity_type === "member") grouped.members.push(row);
+    else if (row.entity_type === "committee") grouped.committees.push(row);
+    else if (row.entity_type === "seat") grouped.seats.push(row);
+  }
 
-    return {
-        filters,
-        rows: safeRows,
-        grouped,
-    };
+  return {
+    filters,
+    rows: safeRows,
+    grouped,
+  };
 }
 
 
