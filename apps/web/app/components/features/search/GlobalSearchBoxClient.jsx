@@ -126,7 +126,7 @@ export default function GlobalSearchBoxClient({
     const rows = results?.rows || [];
     const groups = [];
 
-    for (const type of ["bill", "member", "committee", "seat"]) {
+    for (const type of ["state", "member", "committee", "seat", "bill"]) {
       const items = rows.filter((row) => row.entity_type === type);
       if (items.length) groups.push({ type, items });
     }

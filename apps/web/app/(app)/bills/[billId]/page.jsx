@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 
 import { getBillPanelDetail } from "@/lib/server/bills/indexV2";
 
-import BillPanelDetail from "@/app/components/features/bills/BillPanelDetail";
+// import BillPanelDetail from "@/app/components/features/bills/BillPanelDetail";
+import BillPanelDetail from "@/app/components/features/bills/BillPanelDetail.updated";
 import EntityDetailShell from "@/app/components/ui/EntityDetailShell";
 
 import "@/app/styles/active/bills//ll3.bills.tokens.css";
