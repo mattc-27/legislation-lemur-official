@@ -50,7 +50,7 @@ function createStateNavigationResult(intent, counts = {}) {
     summary: isHouse
       ? `View House members from ${intent.stateName}.`
       : `View senators and representatives from ${intent.stateName}.`,
-    url: `/member?${params.toString()}`,
+    url: `/member?${params.toString()}#${intent.stateCode.toLowerCase()}`,
     state_code: intent.stateCode,
     chamber: isHouse ? "House" : null,
     metadata: {

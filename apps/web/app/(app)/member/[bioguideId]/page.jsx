@@ -2,8 +2,7 @@
 import Link from "next/link";
 
 import { getSectionFreshness } from "@/lib/domains/freshness/getSectionFreshness";
-// import { fetchMemberData } from '@/lib/utils/memberData';
-import { fetchMemberData } from '@/lib/utils/temp/memberData';
+import { fetchMemberData } from '@/lib/utils/memberData';
 import { getMemberVotes } from '@/lib/server/routes/votes';
 
 import EntityDetailShell from "@/app/components/ui/EntityDetailShell";
@@ -91,14 +90,20 @@ export default async function MemberPage({ params, searchParams }) {
 
 
     const freshness = await getSectionFreshness({
-        schemaName: "sandbox_lemur_views_v1",
-        viewNames: ["member_legislation_v1", "member_monthly_activity_v1"],
+        schemaName: "sandbox_lemur_app_views_v1",
+        viewNames: [
+            "mv_member_legislation_v2",
+            "mv_member_bill_activity_v2",
+            "member_monthly_activity_v1",
+        ],
         cacheKey: `member:${bioguideId}:tabsFreshness`,
     });
 
     const votesFreshness = await getSectionFreshness({
         schemaName: "sandbox_lemur_app_views_v1",
-        viewNames: ["mv_member_votes_v2", "mv_member_vote_agg_v1"],
+        viewNames: isSenate
+            ? ["mv_member_votes_v2", "mv_senate_vote_party_majorities_v1"]
+            : ["mv_member_votes_v2", "mv_member_vote_agg_v1"],
         cacheKey: `member:${bioguideId}:votesFreshness`,
     });
 
