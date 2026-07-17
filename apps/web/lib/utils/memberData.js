@@ -1,10 +1,13 @@
-// lib/memberData.js
+// Canonical: lib/utils/memberData.js
+// Bill activity is loaded through lib/server/routes/members.js, which reads
+// sandbox_lemur_app_views_v1.mv_member_bill_activity_v2.
+import "server-only";
+
 import { normalizeMemberImageUrl } from "./memberImage";
 import { perfLog } from "@/lib/server/debug/perf";
 
 import {
     getMemberProfile,
-    getMemberMonthlyStats,
     getMemberSponsoredLegislation,
     getMemberCosponsoredLegislation,
     getMemberKpis,
@@ -38,62 +41,120 @@ async function timed(label, fn, meta = {}) {
     }
 }
 
-export async function fetchMemberData(bioguideId) {
+function toMonthlyStats(monthlyActivity = []) {
+    return [...monthlyActivity]
+        .reverse()
+        .map((row) => ({
+            month: row.month,
+            sponsored: row.sponsored_count ?? 0,
+            cosponsored: row.cosponsored_count ?? 0,
+        }));
+}
+
+export async function fetchMemberData(
+    bioguideId,
+    {
+        congress = 119,
+        billLimit = 50,
+        legislationLimit = 250,
+        subjectLimit = 12,
+        policyMinVotes = 10,
+    } = {}
+) {
     const totalStart = performance.now();
 
     try {
         const [
             profileRaw,
-            monthly,
             sponsoredRes,
             cosponsoredRes,
-
             alignOverall,
             alignByPolicy,
             alignDeviations,
-
             kpis,
             monthlyActivity,
             subjects,
             bills,
         ] = await Promise.all([
-            timed("memberData:getMemberProfile", () => getMemberProfile(bioguideId), { bioguideId }),
-            timed("memberData:getMemberMonthlyStats", () => getMemberMonthlyStats(bioguideId), { bioguideId }),
-            timed("memberData:getMemberSponsoredLegislation", () =>
-                getMemberSponsoredLegislation(bioguideId, { max: 250 }), { bioguideId }
+            timed(
+                "memberData:getMemberProfile",
+                () => getMemberProfile(bioguideId),
+                { bioguideId }
             ),
-            timed("memberData:getMemberCosponsoredLegislation", () =>
-                getMemberCosponsoredLegislation(bioguideId, { max: 250 }), { bioguideId }
+            timed(
+                "memberData:getMemberSponsoredLegislation",
+                () =>
+                    getMemberSponsoredLegislation(bioguideId, {
+                        max: legislationLimit,
+                    }),
+                { bioguideId, legislationLimit }
             ),
-
-            timed("memberData:getHouseMemberAlignmentPanelOverall", () =>
-                getHouseMemberAlignmentPanelOverall(bioguideId), { bioguideId }
+            timed(
+                "memberData:getMemberCosponsoredLegislation",
+                () =>
+                    getMemberCosponsoredLegislation(bioguideId, {
+                        max: legislationLimit,
+                    }),
+                { bioguideId, legislationLimit }
             ),
-            timed("memberData:getHouseMemberAlignmentByPolicy", () =>
-                getHouseMemberAlignmentByPolicy(bioguideId, { minVotes: 10, sort: "votes" }), { bioguideId }
+            timed(
+                "memberData:getHouseMemberAlignmentPanelOverall",
+                () => getHouseMemberAlignmentPanelOverall(bioguideId),
+                { bioguideId }
             ),
-            timed("memberData:getHouseMemberAlignmentTopDeviations", () =>
-                getHouseMemberAlignmentTopDeviations(bioguideId, { minVotes: 10 }), { bioguideId }
+            timed(
+                "memberData:getHouseMemberAlignmentByPolicy",
+                () =>
+                    getHouseMemberAlignmentByPolicy(bioguideId, {
+                        minVotes: policyMinVotes,
+                        sort: "votes",
+                    }),
+                { bioguideId, policyMinVotes }
             ),
-
-            timed("memberData:getMemberKpis", () => getMemberKpis(bioguideId), { bioguideId }),
-            timed("memberData:getMemberMonthlyActivity", () => getMemberMonthlyActivity(bioguideId), { bioguideId }),
-            timed("memberData:getMemberSubjects", () =>
-                getMemberSubjects(bioguideId, { limit: 12 }), { bioguideId }
+            timed(
+                "memberData:getHouseMemberAlignmentTopDeviations",
+                () =>
+                    getHouseMemberAlignmentTopDeviations(bioguideId, {
+                        minVotes: policyMinVotes,
+                    }),
+                { bioguideId, policyMinVotes }
             ),
-            timed("memberData:getMemberBills", () =>
-                getMemberBills(bioguideId, { limit: 50 }), { bioguideId }
+            timed(
+                "memberData:getMemberKpis",
+                () => getMemberKpis(bioguideId),
+                { bioguideId }
+            ),
+            timed(
+                "memberData:getMemberMonthlyActivity",
+                () => getMemberMonthlyActivity(bioguideId),
+                { bioguideId }
+            ),
+            timed(
+                "memberData:getMemberSubjects",
+                () => getMemberSubjects(bioguideId, { limit: subjectLimit }),
+                { bioguideId, subjectLimit }
+            ),
+            timed(
+                "memberData:getMemberBills",
+                () =>
+                    getMemberBills(bioguideId, {
+                        congress,
+                        limit: billLimit,
+                    }),
+                { bioguideId, congress, billLimit }
             ),
         ]);
 
-        const profile = {
-            ...profileRaw,
-            imageUrl: normalizeMemberImageUrl(profileRaw?.imageUrl),
-        };
+        const profile = profileRaw
+            ? {
+                ...profileRaw,
+                imageUrl: normalizeMemberImageUrl(profileRaw.imageUrl),
+            }
+            : null;
 
         return {
             profile,
-            monthly,
+            monthly: toMonthlyStats(monthlyActivity),
             sponsoredRes,
             cosponsoredRes,
 
@@ -101,7 +162,7 @@ export async function fetchMemberData(bioguideId) {
                 overall: alignOverall,
                 byPolicy: alignByPolicy,
                 topDeviations: alignDeviations,
-                minVotes: 10,
+                minVotes: policyMinVotes,
                 sortDefault: "votes",
             },
 
@@ -124,8 +185,9 @@ export async function fetchMemberData(bioguideId) {
 
         throw err;
     } finally {
-        perfLog(`memberData:total: ${Math.round(performance.now() - totalStart)}ms`, {
-            bioguideId,
-        });
+        perfLog(
+            `memberData:total: ${Math.round(performance.now() - totalStart)}ms`,
+            { bioguideId }
+        );
     }
 }

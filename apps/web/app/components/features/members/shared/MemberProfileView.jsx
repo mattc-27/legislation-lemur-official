@@ -14,6 +14,24 @@ import MemberTerms from "@/app/components/features/members/shared/MemberTerms";
 import SenateVotes from "@/app/components/features/members/senate-member/SenateVotes";
 import VotesSplitSection from "@/app/components/features/members/shared/VoteSplitSection";
 
+const APP_VIEW_SCHEMA = "sandbox_lemur_app_views_v1";
+
+const MEMBER_TABS_FRESHNESS_VIEWS = [
+  "mv_member_legislation_v2",
+  "mv_member_bill_activity_v2",
+  "member_monthly_activity_v1",
+];
+
+const HOUSE_VOTE_FRESHNESS_VIEWS = [
+  "mv_member_votes_v2",
+  "mv_member_vote_agg_v1",
+];
+
+const SENATE_VOTE_FRESHNESS_VIEWS = [
+  "mv_member_votes_v2",
+  "mv_senate_vote_party_majorities_v1",
+];
+
 function stateBackLabel(profile) {
   return profile?.state_name || profile?.state || profile?.stateCode || profile?.state_code || "members";
 }
@@ -48,7 +66,10 @@ export default async function MemberProfileView({
 
   if (!profile) {
     return (
-      <div className={`llmp3-page llmp3-page--${mode} llmp3-profileView llmp3-profileView--${mode}`} data-view-mode={mode}>
+      <div
+        className={`llmp3-page llmp3-page--${mode} llmp3-profileView llmp3-profileView--${mode}`}
+        data-view-mode={mode}
+      >
         <div className="llmp3-panel llmp3-panel--empty">
           <p className="llm3-muted">Member not found.</p>
         </div>
@@ -59,20 +80,23 @@ export default async function MemberProfileView({
   const isSenate = profile?.chamber === "Senate";
   const stateLabel = stateBackLabel(profile);
   const stateHref = `/search?state=${encodeURIComponent(stateQueryValue(profile))}`;
+  const voteFreshnessViews = isSenate ? SENATE_VOTE_FRESHNESS_VIEWS : HOUSE_VOTE_FRESHNESS_VIEWS;
 
   const [allVotes, freshness, votesFreshness] = await Promise.all([
-    timed("member:getMemberVotes", () => getMemberVotes(bioguideId, { limit: mode === "panel" ? 40 : 50 })),
+    timed("member:getMemberVotes", () =>
+      getMemberVotes(bioguideId, { limit: mode === "panel" ? 40 : 50 })
+    ),
     timed("member:tabsFreshness", () =>
       getSectionFreshness({
-        schemaName: "sandbox_lemur_views_v1",
-        viewNames: ["member_legislation_v1", "member_monthly_activity_v1"],
+        schemaName: APP_VIEW_SCHEMA,
+        viewNames: MEMBER_TABS_FRESHNESS_VIEWS,
         cacheKey: `member:${bioguideId}:tabsFreshness`,
       })
     ),
     timed("member:votesFreshness", () =>
       getSectionFreshness({
-        schemaName: "sandbox_lemur_app_views_v1",
-        viewNames: ["mv_member_votes_v2", "mv_member_vote_agg_v1"],
+        schemaName: APP_VIEW_SCHEMA,
+        viewNames: voteFreshnessViews,
         cacheKey: `member:${bioguideId}:votesFreshness`,
       })
     ),
@@ -112,6 +136,8 @@ export default async function MemberProfileView({
             sourceLabel="Includes sponsored + co-sponsored bills"
             freshnessAsOf={freshness.asOf}
             freshnessPerView={freshness.perView}
+            freshnessDetails={freshness.details}
+            freshnessMissingObjects={freshness.missingObjects}
           />
         </div>
       </SectionBoundary>
@@ -127,6 +153,8 @@ export default async function MemberProfileView({
               votes={allVotes}
               tableInitialLimit={mode === "panel" ? 12 : 20}
               votesFreshnessAsOf={votesFreshness.asOf}
+              votesFreshnessPerView={votesFreshness.perView}
+              votesFreshnessDetails={votesFreshness.details}
               chamberLabel={isSenate ? "Senate" : "House"}
               heatmapWeeks={mode === "panel" ? 10 : 13}
             />

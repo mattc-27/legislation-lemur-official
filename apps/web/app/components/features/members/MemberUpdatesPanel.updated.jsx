@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Clock3 } from "lucide-react";
+import { Clock3, ListMinus, ListPlus } from "lucide-react";
+
+const DESKTOP_INITIAL_VISIBLE_COUNT = 3;
 
 function formatDate(date) {
     if (!date) return "";
+
     return new Date(date).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -16,8 +19,10 @@ function formatDate(date) {
 function hrefFor(change) {
     if (change.isVacant) {
         const params = new URLSearchParams();
+
         if (change.stateCode) params.set("state", change.stateCode);
         if (change.district != null) params.set("district", change.district);
+
         params.set("seatStatus", "vacant");
         return `/search?${params.toString()}`;
     }
@@ -25,56 +30,236 @@ function hrefFor(change) {
     return "/member";
 }
 
-export default function MemberUpdatesPanel({ changes = [] }) {
-    const [isOpen, setIsOpen] = useState(false);
+function keyFor(change, index) {
+    return [
+        change.eventType,
+        change.districtId || change.stateCode,
+        change.detectedAt,
+        change.headline,
+        index,
+    ]
+        .filter((value) => value != null && value !== "")
+        .join(":");
+}
 
-    if (!changes.length) return null;
+function badgeClassFor(badge) {
+    const modifier = String(badge || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    return modifier ? `ll3-badge ll3-badge--${modifier}` : "ll3-badge";
+}
+
+function districtLabel(change) {
+    if (!change.stateCode) return "";
+
+    if (change.district == null) {
+        return change.stateCode;
+    }
+
+    return `${change.stateCode}-${change.district === 0 ? "AL" : change.district}`;
+}
+
+function MemberUpdateCard({ change }) {
+    const locationLabel = districtLabel(change);
 
     return (
-        <section className="ll3-memberUpdates">
-            <details className="ll3-memberUpdates__details" open={isOpen} onToggle={(event) => setIsOpen(event.currentTarget.open)}>
-                <summary className="ll3-memberUpdates__summary">
-                    <span className="ll3-memberUpdates__toggle" aria-hidden="true">
-                        <ChevronDown size={16} strokeWidth={2.4} />
-                    </span>
+        <article className="ll3-memberUpdateCard">
+            <div className="ll3-memberUpdateCard__body">
+                <div className="ll3-memberUpdateCard__top">
+                    <h3 className="ll3-memberUpdateCard__headline">{change.headline}</h3>
 
-                    <div className="ll3-memberUpdates__summaryText">
+                    {change.badge ? (
+                        <span className={badgeClassFor(change.badge)}>{change.badge}</span>
+                    ) : null}
+                </div>
+
+                {change.subheadline ? (
+                    <p className="ll3-memberUpdateCard__sub">{change.subheadline}</p>
+                ) : null}
+
+                <div className="ll3-memberUpdateCard__meta">
+                    {locationLabel ? <span>{locationLabel}</span> : null}
+
+                    {locationLabel && change.detectedAt ? (
+                        <span className="ll3-metaSep" aria-hidden="true">
+                            •
+                        </span>
+                    ) : null}
+
+                    {change.detectedAt ? (
+                        <>
+                            <Clock3 size={13} aria-hidden="true" />
+                            <span>{formatDate(change.detectedAt)}</span>
+                        </>
+                    ) : null}
+                </div>
+
+                <Link href={hrefFor(change)} className="ll3-memberUpdateCard__link">
+                    View details →
+                </Link>
+            </div>
+        </article>
+    );
+}
+
+export default function MemberUpdatesPanel({ changes = [] }) {
+    const [showAllDesktop, setShowAllDesktop] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const desktopListId = useId();
+    const mobileListId = useId();
+
+    const safeChanges = Array.isArray(changes) ? changes : [];
+
+    if (!safeChanges.length) return null;
+
+    const hiddenDesktopCount = Math.max(
+        safeChanges.length - DESKTOP_INITIAL_VISIBLE_COUNT,
+        0,
+    );
+
+    const desktopChanges = showAllDesktop
+        ? safeChanges
+        : safeChanges.slice(0, DESKTOP_INITIAL_VISIBLE_COUNT);
+
+    const updateCountLabel = `${safeChanges.length} update${safeChanges.length === 1 ? "" : "s"
+        }`;
+
+    return (
+        <section className="ll3-memberUpdates" aria-label="Recent member changes">
+            <div className="ll3-memberUpdates__desktop">
+                <header className="ll3-memberUpdates__header">
+                    <div className="ll3-memberUpdates__headerText">
                         <h2 className="ll3-memberUpdates__title">Recent Changes</h2>
-                        <p className="ll3-memberUpdates__sub">Live updates on House vacancies and member activity.</p>
+                        <p className="ll3-memberUpdates__sub">
+                            Live updates on House vacancies and member activity.
+                        </p>
                     </div>
 
                     <span className="ll3-memberUpdates__summaryPill">
-                        {changes.length} update{changes.length === 1 ? "" : "s"}
+                        {updateCountLabel}
                     </span>
-                </summary>
+                </header>
 
-                <div className="ll3-memberUpdates__list">
-                    {changes.slice(0, 3).map((c, i) => (
-                        <article key={`${c.districtId || c.stateCode}-${i}`} className="ll3-memberUpdateCard">
-                            <div className="ll3-memberUpdateCard__body">
-                                <div className="ll3-memberUpdateCard__top">
-                                    <h3 className="ll3-memberUpdateCard__headline">{c.headline}</h3>
-                                    {c.badge ? <span className={`ll3-badge ll3-badge--${c.badge.toLowerCase()}`}>{c.badge}</span> : null}
-                                </div>
-
-                                {c.subheadline ? <p className="ll3-memberUpdateCard__sub">{c.subheadline}</p> : null}
-
-                                <div className="ll3-memberUpdateCard__meta">
-                                    <span>
-                                        {c.stateCode}
-                                        {c.district != null ? `-${c.district === 0 ? "AL" : c.district}` : ""}
-                                    </span>
-                                    <span className="ll3-metaSep">•</span>
-                                    <Clock3 size={13} />
-                                    <span>{formatDate(c.detectedAt)}</span>
-                                </div>
-
-                                <Link href={hrefFor(c)} className="ll3-memberUpdateCard__link">View details →</Link>
-                            </div>
-                        </article>
+                <div id={desktopListId} className="ll3-memberUpdates__list">
+                    {desktopChanges.map((change, index) => (
+                        <MemberUpdateCard key={keyFor(change, index)} change={change} />
                     ))}
                 </div>
-            </details>
+
+                {hiddenDesktopCount > 0 ? (
+                    <div className="ll3-memberUpdates__footer">
+                        <button
+                            type="button"
+                            className="ll3-memberUpdates__moreButton"
+                            aria-expanded={showAllDesktop}
+                            aria-controls={desktopListId}
+                            onClick={() => setShowAllDesktop((current) => !current)}
+                        >
+                            <span>
+                                {showAllDesktop
+                                    ? "Show fewer"
+                                    : `View ${hiddenDesktopCount} more update${hiddenDesktopCount === 1 ? "" : "s"
+                                    }`}
+                            </span>
+
+                            {showAllDesktop ? (
+                                <ListMinus
+                                    className="ll3-memberUpdates__moreIcon"
+                                    size={16}
+                                    strokeWidth={2.2}
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <ListPlus
+                                    className="ll3-memberUpdates__moreIcon"
+                                    size={16}
+                                    strokeWidth={2.2}
+                                    aria-hidden="true"
+                                />
+                            )}
+                        </button>
+                    </div>
+                ) : null}
+            </div>
+
+            <div className="ll3-memberUpdates__mobile">
+                <div className="ll3-memberUpdates__mobileHeader">
+                    <div className="ll3-memberUpdates__mobileHeaderTop">
+                        <div className="ll3-memberUpdates__headerText">
+                            <h2 className="ll3-memberUpdates__title">Recent Changes</h2>
+                            <p className="ll3-memberUpdates__sub">
+                                Live updates on vacancies and member activity.
+                            </p>
+                        </div>
+
+                        <span className="ll3-memberUpdates__summaryPill">
+                            {updateCountLabel}
+                        </span>
+                    </div>
+
+                    <button
+                        type="button"
+                        className="ll3-memberUpdates__mobileToggle"
+                        aria-expanded={mobileOpen}
+                        aria-controls={mobileListId}
+                        onClick={() => setMobileOpen((current) => !current)}
+                    >
+                        <span className="ll3-memberUpdates__mobileToggleIconWrap">
+                            {mobileOpen ? (
+                                <ListMinus
+                                    className="ll3-memberUpdates__mobileToggleIcon"
+                                    size={19}
+                                    strokeWidth={2.2}
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <ListPlus
+                                    className="ll3-memberUpdates__mobileToggleIcon"
+                                    size={19}
+                                    strokeWidth={2.2}
+                                    aria-hidden="true"
+                                />
+                            )}
+                        </span>
+
+                        <span className="ll3-memberUpdates__mobileToggleCopy">
+                            <span className="ll3-memberUpdates__mobileToggleLabel">
+                                {mobileOpen ? "Hide recent changes" : "Browse recent changes"}
+                            </span>
+                            <span className="ll3-memberUpdates__mobileToggleMeta">
+                                {mobileOpen
+                                    ? "Collapse this section"
+                                    : `${updateCountLabel} · swipe or scroll to browse`}
+                            </span>
+                        </span>
+                    </button>
+                </div>
+
+                <div
+                    id={mobileListId}
+                    className="ll3-memberUpdates__mobileContent"
+                    hidden={!mobileOpen}
+                >
+                    <p className="ll3-memberUpdates__mobileHint">
+                        Swipe or scroll to browse.
+                    </p>
+
+                    <div
+                        className="ll3-memberUpdates__scroller"
+                        role="region"
+                        aria-label="Recent member change cards"
+                        tabIndex={0}
+                    >
+                        {safeChanges.map((change, index) => (
+                            <MemberUpdateCard key={keyFor(change, index)} change={change} />
+                        ))}
+                    </div>
+                </div>
+            </div>
         </section>
     );
 }

@@ -368,32 +368,49 @@ export async function getMemberVoteAlignment(bioguideId) {
 
 export async function getMemberChamber(bioguideId) {
   const sql = `
+    WITH candidates AS (
+      SELECT
+        m.chamber::text AS chamber,
+        CASE WHEN m.is_current IS TRUE THEN 1 ELSE 2 END AS priority,
+        m.updated_at AS sort_ts,
+        NULL::int AS sort_year
+      FROM sandbox_public_v2.members m
+      WHERE m.bioguide_id = $1
+        AND m.chamber IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        cs.chamber::text AS chamber,
+        3 AS priority,
+        NULL::timestamptz AS sort_ts,
+        cs.serving_since::int AS sort_year
+      FROM sandbox_lemur_app_views_v1.mv_current_chamber_since_v1 cs
+      WHERE cs.bioguide_id = $1
+        AND cs.chamber IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        t.chamber::text AS chamber,
+        CASE WHEN t.end_year IS NULL THEN 4 ELSE 5 END AS priority,
+        NULL::timestamptz AS sort_ts,
+        t.start_year::int AS sort_year
+      FROM sandbox_public_v2.member_terms t
+      WHERE t.member_id = $1
+        AND t.chamber IS NOT NULL
+    )
     SELECT chamber
-    FROM sandbox_public_v2.members
-    WHERE bioguide_id = $1
+    FROM candidates
+    ORDER BY priority ASC, sort_year DESC NULLS LAST, sort_ts DESC NULLS LAST
     LIMIT 1;
   `;
 
-  let r = await timed("votes:getMemberChamber:query", () =>
+  const r = await timed("votes:getMemberChamber:query", () =>
     q("member:getChamber", sql, [bioguideId]), {
     bioguideId,
   }
   );
 
-  if (r.rows.length) return r.rows[0].chamber;
-
-  const fallback = `
-    SELECT 1
-    FROM sandbox_public_v2.senate_member_id_ref
-    WHERE bioguide_id = $1
-    LIMIT 1;
-  `;
-
-  r = await timed("votes:getMemberChamber:fallback", () =>
-    q("member:getChamberFallback", fallback, [bioguideId]), {
-    bioguideId,
-  }
-  );
-
-  return r.rows.length ? "Senate" : "House";
+  return r.rows?.[0]?.chamber ?? null;
 }
