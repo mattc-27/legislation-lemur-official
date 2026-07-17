@@ -285,3 +285,4 @@ export async function getMemberRecentChanges({ limit = 12 } = {}) {
   const { rows } = await q("members:getRecentChanges", sql, [limit]);
   return rows;
 }
+

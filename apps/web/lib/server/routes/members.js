@@ -1,57 +1,14 @@
-// lib/server/routes/members.js
+// Canonical: lib/server/routes/members.js
 import "server-only";
-import { pool } from "../db/db";
 import { q } from "../db/instrumented-query";
 import { perfLog } from "@/lib/server/debug/perf";
 
 const ACTIVE_VIEW_SCHEMA = "sandbox_lemur_app_views_v1";
 const ACTIVE_DATA_SCHEMA = "sandbox_public_v2";
+const MEMBER_BILL_ACTIVITY_VIEW = "mv_member_bill_activity_v2";
 
-/*
-const freshness = await getSectionFreshness({
-    schemaName: "sandbox_lemur_app_views_v1",
-    viewNames: ["mv_member_legislation_v1", "member_monthly_activity_v1"],
-    cacheKey: `member:${bioguideId}:tabsFreshness`,
-});
-
-const votesFreshness = await getSectionFreshness({
-    schemaName: "sandbox_lemur_app_views_v1",
-    viewNames: ["mv_member_votes_v1", "mv_member_vote_agg_v1"],
-    cacheKey: `member:${bioguideId}:votesFreshness`,
-});
- */
-
-
-
-/* ------------------------------------------
-Set to public schema, 11/25/2025
-----
-MATERAILIZED VIEWS using public schema tables 
-For stage, remove the `_v1` 
---------------------------------------------- */
-
-/* 
-async function qWithSentry(label, sql, params = [], extra = {}) {
-    try {
-        return await q(label, sql, params);
-    } catch (err) {
-        Sentry.captureException(err, {
-            tags: {
-                area: "congress",
-                queryLabel: label,
-            },
-            extra: {
-                label,
-                params,
-                ...extra,
-            },
-        });
-        throw err; 
-    }
-}
-*/
-
-// -- 
+// Canonical member data access. Bill activity is read from the app-facing v2
+// matview, which is backed by mv_member_legislation_v2.
 
 async function timed(label, fn, extra = {}) {
     const start = performance.now();
@@ -109,20 +66,163 @@ function groupBySubjectWithCounts(rows, kind) {
     });
 }
 
-function toItem(r, kind) {
+function toItem(r, kind = null) {
+    const roleCode = r.my_role || kind || null;
+    const memberRole =
+        r.member_role ||
+        (roleCode === "s" ? "sponsored" : roleCode === "c" ? "cosponsored" : null);
+
+    const appHref = r.app_href || `/bills/${r.bill_id}`;
+    const congressUrl = r.congress_url || r.url || null;
+
+    // mv_member_bill_activity_v2 defines cosponsor_count as a compatibility
+    // alias for total cosponsors. Active and withdrawn counts remain explicit.
+    const cosponsorsTotal = Number(
+        r.cosponsor_count ?? r.cosponsors_total ?? 0
+    );
+    const cosponsorsActive = Number(r.cosponsors_active ?? 0);
+    const cosponsorsWithdrawn = Number(r.cosponsors_withdrawn ?? 0);
+
     return {
+        ...r,
+
         id: r.bill_id,
+        billId: r.bill_id,
+        bill_id: r.bill_id,
+
+        displayTitle: r.display_title || r.title,
+        display_title: r.display_title || r.title,
         title: r.title,
-        type: r.type,
-        number: r.number,
+
+        type: r.type || r.bill_type,
+        billType: r.bill_type || r.type,
+        bill_type: r.bill_type || r.type,
+        number: r.number || r.bill_number,
+        billNumber: r.bill_number || r.number,
+        bill_number: r.bill_number || r.number,
+
         introducedAt: r.introduced_date,
+        introduced_date: r.introduced_date,
         latestActionDate: r.latest_action_date,
+        latest_action_date: r.latest_action_date,
         latestActionText: r.latest_action_text,
-        url: r.url,
-        appHref: `/bill/${r.bill_id}`,
-        kinds: kind ? [kind] : [],
+        latest_action_text: r.latest_action_text,
+
+        url: congressUrl,
+        congressUrl,
+        congress_url: congressUrl,
+        appHref,
+        app_href: appHref,
+
+        bioguideId: r.bioguide_id,
+        bioguide_id: r.bioguide_id,
+
+        policyArea: r.policy_area || r.policy_area_name || null,
+        policy_area: r.policy_area || r.policy_area_name || null,
+        policyAreaId: r.policy_area_id,
+        policy_area_id: r.policy_area_id,
+        policyAreaSlug: r.policy_area_slug,
+        policy_area_slug: r.policy_area_slug,
+        policyAreaName: r.policy_area_name || r.policy_area || null,
+        policy_area_name: r.policy_area_name || r.policy_area || null,
+
+        legislativeTopic: r.legislative_topic,
+        legislative_topic: r.legislative_topic,
+        legislativeTopics: r.legislative_topics || [],
+        legislative_topics: r.legislative_topics || [],
+
+        statusId: r.status_id,
+        status_id: r.status_id,
+        statusKey: r.status_key,
+        status_key: r.status_key,
+        statusLabel: r.status_label,
+        status_label: r.status_label,
+        originChamber: r.origin_chamber,
+        origin_chamber: r.origin_chamber,
+
+        cosponsorCount: cosponsorsTotal,
+        cosponsor_count: cosponsorsTotal,
+        cosponsorsTotal,
+        cosponsors_total: cosponsorsTotal,
+        cosponsorsActive,
+        cosponsors_active: cosponsorsActive,
+        cosponsorsWithdrawn,
+        cosponsors_withdrawn: cosponsorsWithdrawn,
+
+        hasAiSummary: Boolean(r.has_ai_summary),
+        has_ai_summary: Boolean(r.has_ai_summary),
+        hasSummary: Boolean(r.has_summary),
+        has_summary: Boolean(r.has_summary),
+        hasOfficialSummary: Boolean(r.has_official_summary),
+        has_official_summary: Boolean(r.has_official_summary),
+        summaryShort: r.summary_short,
+        summary_short: r.summary_short,
+        summaryTextPlain: r.summary_text_plain,
+        summary_text_plain: r.summary_text_plain,
+        keyActions: Array.isArray(r.key_actions) ? r.key_actions : [],
+        key_actions: Array.isArray(r.key_actions) ? r.key_actions : [],
+
+        impactScore: r.impact_score,
+        impact_score: r.impact_score,
+        trendingScore: r.trending_score,
+        trending_score: r.trending_score,
+
+        memberRole,
+        member_role: memberRole,
+        roleCode,
+        my_role: roleCode,
+        kinds: roleCode ? [roleCode] : [],
     };
 }
+
+
+const MEMBER_BILL_ACTIVITY_SELECT = `
+      bill_id,
+      congress,
+      bioguide_id,
+      my_role,
+      member_role,
+      type,
+      number,
+      title,
+      display_title,
+      introduced_date,
+      latest_action_date,
+      latest_action_text,
+      url,
+      policy_area,
+      legislative_topic,
+      legislative_topics,
+      bill_type,
+      bill_number,
+      origin_chamber,
+      origin_chamber_code,
+      status_code,
+      status_id,
+      status_key,
+      status_label,
+      policy_area_id,
+      policy_area_slug,
+      policy_area_name,
+      cosponsor_count,
+      cosponsors_total,
+      cosponsors_active,
+      cosponsors_withdrawn,
+      has_ai_summary,
+      summary_short,
+      summary_text_plain,
+      key_actions,
+      summary_generated_at,
+      summary_updated_at,
+      generation_status,
+      summary_generation_type,
+      has_summary,
+      has_official_summary,
+      impact_score,
+      trending_score,
+      app_href,
+      congress_url
+`;
 
 export async function getMemberProfile(bioguideId) {
     const totalStart = performance.now();
@@ -262,34 +362,51 @@ function ordinal(n) {
 
 export async function getMemberChamber(bioguideId) {
     const sql = `
+    WITH candidates AS (
+      SELECT
+        m.chamber::text AS chamber,
+        CASE WHEN m.is_current IS TRUE THEN 1 ELSE 2 END AS priority,
+        m.updated_at AS sort_ts,
+        NULL::int AS sort_year
+      FROM ${ACTIVE_DATA_SCHEMA}.members m
+      WHERE m.bioguide_id = $1
+        AND m.chamber IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        cs.chamber::text AS chamber,
+        3 AS priority,
+        NULL::timestamptz AS sort_ts,
+        cs.serving_since::int AS sort_year
+      FROM ${ACTIVE_VIEW_SCHEMA}.mv_current_chamber_since_v1 cs
+      WHERE cs.bioguide_id = $1
+        AND cs.chamber IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        t.chamber::text AS chamber,
+        CASE WHEN t.end_year IS NULL THEN 4 ELSE 5 END AS priority,
+        NULL::timestamptz AS sort_ts,
+        t.start_year::int AS sort_year
+      FROM ${ACTIVE_DATA_SCHEMA}.member_terms t
+      WHERE t.member_id = $1
+        AND t.chamber IS NOT NULL
+    )
     SELECT chamber
-    FROM ${ACTIVE_DATA_SCHEMA}.members
-    WHERE bioguide_id = $1
+    FROM candidates
+    ORDER BY priority ASC, sort_year DESC NULLS LAST, sort_ts DESC NULLS LAST
     LIMIT 1;
   `;
 
-    let r = await timed(
+    const r = await timed(
         "memberRoute:getMemberChamber:query",
         () => q("member:getChamber", sql, [bioguideId]),
         { bioguideId }
     );
 
-    if (r.rows.length) return r.rows[0].chamber;
-
-    const fallback = `
-    SELECT 1
-    FROM ${ACTIVE_DATA_SCHEMA}.senate_member_id_ref
-    WHERE bioguide_id = $1
-    LIMIT 1;
-  `;
-
-    r = await timed(
-        "memberRoute:getMemberChamber:fallback",
-        () => q("member:getChamberFallback", fallback, [bioguideId]),
-        { bioguideId }
-    );
-
-    return r.rows.length ? "Senate" : "House";
+    return r.rows?.[0]?.chamber ?? null;
 }
 
 export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
@@ -350,9 +467,8 @@ export async function getMemberBills(
     { limit = 50, offset = 0, congress = 119 } = {}
 ) {
     const sql = `
-    SELECT bill_id, type, number, title, latest_action_date, latest_action_text, url,
-           my_role, cosponsor_count
-    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_legislation_v1
+    SELECT ${MEMBER_BILL_ACTIVITY_SELECT}
+    FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
     WHERE bioguide_id = $1 AND congress = $2
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $3 OFFSET $4;
@@ -360,20 +476,19 @@ export async function getMemberBills(
 
     const { rows } = await timed(
         "memberRoute:getMemberBills:query",
-        () => q("member:getBills:mv", sql, [bioguideId, congress, limit, offset]),
+        () => q("member:getBills:mvBillActivityV2", sql, [bioguideId, congress, limit, offset]),
         { bioguideId, congress, limit, offset }
     );
 
-    return rows;
+    return rows.map((row) => toItem(row));
 }
 
 export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = {}) {
     const totalStart = performance.now();
 
     const sql = `
-    SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
-           policy_area, legislative_topic, legislative_topics, cosponsor_count
-    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_legislation_v1
+    SELECT ${MEMBER_BILL_ACTIVITY_SELECT}
+    FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
     WHERE bioguide_id = $1 AND my_role = 's'
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
@@ -383,7 +498,7 @@ export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = 
 
     const { rows } = await timed(
         "memberRoute:getMemberSponsoredLegislation:query",
-        () => q("member:getSponsored:mv", sql, [bioguideId, queryLimit]),
+        () => q("member:getSponsored:mvBillActivityV2", sql, [bioguideId, queryLimit]),
         { bioguideId, max, queryLimit }
     );
 
@@ -412,7 +527,7 @@ export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = 
             ),
         },
         legacy: groupBySubjectWithCounts(normalized, "s"),
-        items: normalized,
+        items: normalized.map((r) => toItem(r, "s")),
     };
 
     perfLog(`memberRoute:getMemberSponsoredLegislation:group: ${Math.round(performance.now() - groupStart)}ms`, {
@@ -435,9 +550,8 @@ export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } 
     const totalStart = performance.now();
 
     const sql = `
-    SELECT bill_id, type, number, title, introduced_date, latest_action_date, latest_action_text, url,
-           policy_area, legislative_topic, legislative_topics, cosponsor_count
-    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_legislation_v1
+    SELECT ${MEMBER_BILL_ACTIVITY_SELECT}
+    FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
     WHERE bioguide_id = $1 AND my_role = 'c'
     ORDER BY latest_action_date DESC NULLS LAST, bill_id
     LIMIT $2;
@@ -447,7 +561,7 @@ export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } 
 
     const { rows } = await timed(
         "memberRoute:getMemberCosponsoredLegislation:query",
-        () => q("member:getCosponsored:mv", sql, [bioguideId, queryLimit]),
+        () => q("member:getCosponsored:mvBillActivityV2", sql, [bioguideId, queryLimit]),
         { bioguideId, max, queryLimit }
     );
 
@@ -476,7 +590,7 @@ export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } 
             ),
         },
         legacy: groupBySubjectWithCounts(normalized, "c"),
-        items: normalized,
+        items: normalized.map((r) => toItem(r, "c")),
     };
 
     perfLog(`memberRoute:getMemberCosponsoredLegislation:group: ${Math.round(performance.now() - groupStart)}ms`, {
@@ -528,7 +642,7 @@ export async function getMemberVoteAgg(bioguideId) {
 }
 
 export async function getMemberVoteAlignment(bioguideId) {
-    await getHouseMemberVoteAlignment(bioguideId);
+    return getHouseMemberVoteAlignment(bioguideId);
 }
 
 export async function getMemberKpis(bioguideId) {
