@@ -5,10 +5,11 @@ import { perfLog } from "@/lib/server/debug/perf";
 
 const ACTIVE_VIEW_SCHEMA = "sandbox_lemur_app_views_v1";
 const ACTIVE_DATA_SCHEMA = "sandbox_public_v2";
-const MEMBER_BILL_ACTIVITY_VIEW = "mv_member_bill_activity_v2";
+const MEMBER_BILL_ACTIVITY_VIEW = "mv_member_bill_activity_v3";
 
-// Canonical member data access. Bill activity is read from the app-facing v2
-// matview, which is backed by mv_member_legislation_v2.
+// Canonical member data access. Browser-facing legislation reads only from
+// mv_member_bill_activity_v3. mv_member_legislation_v3 remains an internal
+// foundational object and is not queried directly by this route.
 
 async function timed(label, fn, extra = {}) {
     const start = performance.now();
@@ -66,47 +67,76 @@ function groupBySubjectWithCounts(rows, kind) {
     });
 }
 
-function toItem(r, kind = null) {
-    const roleCode = r.my_role || kind || null;
+function roleCodeFor(row, fallback = null) {
+    if (fallback === "s" || fallback === "c") return fallback;
+    if (row?.my_role === "s" || row?.my_role === "c") return row.my_role;
+    if (row?.member_role === "sponsored") return "s";
+    if (row?.member_role === "cosponsored") return "c";
+    return null;
+}
+
+function toItem(row, fallbackRole = null) {
+    const roleCode = roleCodeFor(row, fallbackRole);
     const memberRole =
-        r.member_role ||
+        row.member_role ||
         (roleCode === "s" ? "sponsored" : roleCode === "c" ? "cosponsored" : null);
 
-    const appHref = r.app_href || `/bills/${r.bill_id}`;
-    const congressUrl = r.congress_url || r.url || null;
+    const legislativeTopics = Array.isArray(row.legislative_topics)
+        ? row.legislative_topics
+        : [];
+    const primaryLegislativeTopic = legislativeTopics[0] || null;
+    const policyAreaName = row.policy_area_name || null;
+    const appHref = row.app_href || `/bills/${row.bill_id}`;
+    const congressUrl = row.congress_url || null;
+    const associationIsActive = row.association_is_active !== false;
+    const associationStatusLabel =
+        row.association_status_label ||
+        (roleCode === "s"
+            ? "Sponsored"
+            : associationIsActive
+                ? "Cosponsored"
+                : "Cosponsorship withdrawn");
 
-    // mv_member_bill_activity_v2 defines cosponsor_count as a compatibility
-    // alias for total cosponsors. Active and withdrawn counts remain explicit.
-    const cosponsorsTotal = Number(
-        r.cosponsor_count ?? r.cosponsors_total ?? 0
-    );
-    const cosponsorsActive = Number(r.cosponsors_active ?? 0);
-    const cosponsorsWithdrawn = Number(r.cosponsors_withdrawn ?? 0);
+    const cosponsorsTotal = Number(row.cosponsors_total ?? 0);
+    const cosponsorsActive = Number(row.cosponsors_active ?? 0);
+    const cosponsorsWithdrawn = Number(row.cosponsors_withdrawn ?? 0);
 
     return {
-        ...r,
+        id: row.bill_id,
+        billId: row.bill_id,
+        bill_id: row.bill_id,
+        congress: Number(row.congress),
 
-        id: r.bill_id,
-        billId: r.bill_id,
-        bill_id: r.bill_id,
+        displayTitle: row.display_title || row.title,
+        display_title: row.display_title || row.title,
+        title: row.title,
 
-        displayTitle: r.display_title || r.title,
-        display_title: r.display_title || r.title,
-        title: r.title,
+        type: row.bill_type,
+        billType: row.bill_type,
+        bill_type: row.bill_type,
+        number: row.bill_number,
+        billNumber: row.bill_number,
+        bill_number: row.bill_number,
 
-        type: r.type || r.bill_type,
-        billType: r.bill_type || r.type,
-        bill_type: r.bill_type || r.type,
-        number: r.number || r.bill_number,
-        billNumber: r.bill_number || r.number,
-        bill_number: r.bill_number || r.number,
+        introducedAt: row.introduced_date,
+        introduced_date: row.introduced_date,
+        latestActionDate: row.latest_action_date,
+        latest_action_date: row.latest_action_date,
+        latestActionText: row.latest_action_text,
+        latest_action_text: row.latest_action_text,
 
-        introducedAt: r.introduced_date,
-        introduced_date: r.introduced_date,
-        latestActionDate: r.latest_action_date,
-        latest_action_date: r.latest_action_date,
-        latestActionText: r.latest_action_text,
-        latest_action_text: r.latest_action_text,
+        associationDate: row.association_date,
+        association_date: row.association_date,
+        associationIsActive,
+        association_is_active: associationIsActive,
+        associationStatusLabel,
+        association_status_label: associationStatusLabel,
+        cosponsorJoinedDate: row.cosponsor_joined_date,
+        cosponsor_joined_date: row.cosponsor_joined_date,
+        cosponsorWithdrawnDate: row.cosponsor_withdrawn_date,
+        cosponsor_withdrawn_date: row.cosponsor_withdrawn_date,
+        isOriginalCosponsor: Boolean(row.is_original_cosponsor),
+        is_original_cosponsor: Boolean(row.is_original_cosponsor),
 
         url: congressUrl,
         congressUrl,
@@ -114,31 +144,27 @@ function toItem(r, kind = null) {
         appHref,
         app_href: appHref,
 
-        bioguideId: r.bioguide_id,
-        bioguide_id: r.bioguide_id,
+        bioguideId: row.bioguide_id,
+        bioguide_id: row.bioguide_id,
 
-        policyArea: r.policy_area || r.policy_area_name || null,
-        policy_area: r.policy_area || r.policy_area_name || null,
-        policyAreaId: r.policy_area_id,
-        policy_area_id: r.policy_area_id,
-        policyAreaSlug: r.policy_area_slug,
-        policy_area_slug: r.policy_area_slug,
-        policyAreaName: r.policy_area_name || r.policy_area || null,
-        policy_area_name: r.policy_area_name || r.policy_area || null,
+        policyArea: policyAreaName,
+        policy_area: policyAreaName,
+        policyAreaSlug: row.policy_area_slug,
+        policy_area_slug: row.policy_area_slug,
+        policyAreaName: policyAreaName,
+        policy_area_name: policyAreaName,
 
-        legislativeTopic: r.legislative_topic,
-        legislative_topic: r.legislative_topic,
-        legislativeTopics: r.legislative_topics || [],
-        legislative_topics: r.legislative_topics || [],
+        legislativeTopic: primaryLegislativeTopic,
+        legislative_topic: primaryLegislativeTopic,
+        legislativeTopics,
+        legislative_topics: legislativeTopics,
 
-        statusId: r.status_id,
-        status_id: r.status_id,
-        statusKey: r.status_key,
-        status_key: r.status_key,
-        statusLabel: r.status_label,
-        status_label: r.status_label,
-        originChamber: r.origin_chamber,
-        origin_chamber: r.origin_chamber,
+        statusKey: row.status_key,
+        status_key: row.status_key,
+        statusLabel: row.status_label,
+        status_label: row.status_label,
+        originChamber: row.origin_chamber,
+        origin_chamber: row.origin_chamber,
 
         cosponsorCount: cosponsorsTotal,
         cosponsor_count: cosponsorsTotal,
@@ -149,32 +175,33 @@ function toItem(r, kind = null) {
         cosponsorsWithdrawn,
         cosponsors_withdrawn: cosponsorsWithdrawn,
 
-        hasAiSummary: Boolean(r.has_ai_summary),
-        has_ai_summary: Boolean(r.has_ai_summary),
-        hasSummary: Boolean(r.has_summary),
-        has_summary: Boolean(r.has_summary),
-        hasOfficialSummary: Boolean(r.has_official_summary),
-        has_official_summary: Boolean(r.has_official_summary),
-        summaryShort: r.summary_short,
-        summary_short: r.summary_short,
-        summaryTextPlain: r.summary_text_plain,
-        summary_text_plain: r.summary_text_plain,
-        keyActions: Array.isArray(r.key_actions) ? r.key_actions : [],
-        key_actions: Array.isArray(r.key_actions) ? r.key_actions : [],
+        hasAiSummary: Boolean(row.has_ai_summary),
+        has_ai_summary: Boolean(row.has_ai_summary),
+        hasSummary: Boolean(row.has_summary),
+        has_summary: Boolean(row.has_summary),
+        hasOfficialSummary: Boolean(row.has_official_summary),
+        has_official_summary: Boolean(row.has_official_summary),
+        summaryShort: row.summary_short,
+        summary_short: row.summary_short,
 
-        impactScore: r.impact_score,
-        impact_score: r.impact_score,
-        trendingScore: r.trending_score,
-        trending_score: r.trending_score,
+        // Full summaries and key-action JSON are intentionally omitted from
+        // the profile list projection to keep the member response lightweight.
+        summaryTextPlain: null,
+        summary_text_plain: null,
+        keyActions: [],
+        key_actions: [],
+
+        impactScore: row.impact_score,
+        impact_score: row.impact_score,
+        trendingScore: row.trending_score,
+        trending_score: row.trending_score,
 
         memberRole,
         member_role: memberRole,
         roleCode,
-        my_role: roleCode,
         kinds: roleCode ? [roleCode] : [],
     };
 }
-
 
 const MEMBER_BILL_ACTIVITY_SELECT = `
       bill_id,
@@ -182,42 +209,32 @@ const MEMBER_BILL_ACTIVITY_SELECT = `
       bioguide_id,
       my_role,
       member_role,
-      type,
-      number,
-      title,
+      association_date,
+      association_is_active,
+      association_status_label,
+      cosponsor_joined_date,
+      cosponsor_withdrawn_date,
+      is_original_cosponsor,
+      bill_type,
+      bill_number,
       display_title,
+      title,
       introduced_date,
       latest_action_date,
       latest_action_text,
-      url,
-      policy_area,
-      legislative_topic,
-      legislative_topics,
-      bill_type,
-      bill_number,
       origin_chamber,
-      origin_chamber_code,
-      status_code,
-      status_id,
       status_key,
       status_label,
-      policy_area_id,
-      policy_area_slug,
       policy_area_name,
-      cosponsor_count,
+      policy_area_slug,
+      legislative_topics,
       cosponsors_total,
       cosponsors_active,
       cosponsors_withdrawn,
-      has_ai_summary,
-      summary_short,
-      summary_text_plain,
-      key_actions,
-      summary_generated_at,
-      summary_updated_at,
-      generation_status,
-      summary_generation_type,
       has_summary,
       has_official_summary,
+      has_ai_summary,
+      summary_short,
       impact_score,
       trending_score,
       app_href,
@@ -236,16 +253,74 @@ export async function getMemberProfile(bioguideId) {
       m.state,
       m.state_code         AS "stateCode",
       m.district,
-      m.chamber::text      AS "chamber",
+      m.chamber::text      AS chamber,
       m.image_url          AS "imageUrl",
       m.url,
-      cs.serving_since     AS "servingSince"
+      m.is_current         AS "isCurrent",
+      m.congress           AS "memberCongress",
+      COALESCE(cs.serving_since, term_summary.service_start_year) AS "servingSince",
+      term_summary.service_start_year AS "serviceStartYear",
+      term_summary.service_end_year   AS "serviceEndYear",
+      activity.available_congresses   AS "availableCongresses",
+      COALESCE(activity.last_congress_served, m.congress) AS "lastCongressServed",
+      COALESCE(
+        hd.vacant_since,
+        hd.vacancy_started_at::date,
+        recent_departure.event_date::date
+      ) AS "serviceEndDate",
+      CASE
+        WHEN hd.vacant_since IS NOT NULL THEN 'house_districts_vacant_since'
+        WHEN hd.vacancy_started_at IS NOT NULL THEN 'house_districts_vacancy_started_at'
+        WHEN recent_departure.event_date IS NOT NULL THEN 'recent_changes_event_date'
+        ELSE NULL
+      END AS "serviceEndDateBasis",
+      hd.is_vacant                    AS "seatCurrentlyVacant",
+      hd.vacancy_reason               AS "vacancyReason",
+      COALESCE(hd.vacant_since, hd.vacancy_started_at::date) AS "vacancyEffectiveDate",
+      CASE
+        WHEN hd.vacant_since IS NOT NULL THEN 'house_districts_vacant_since'
+        WHEN hd.vacancy_started_at IS NOT NULL THEN 'house_districts_vacancy_started_at'
+        ELSE NULL
+      END AS "vacancyDateBasis",
+      hd.special_election_scheduled   AS "specialElectionScheduled",
+      hd.special_election_date        AS "specialElectionDate",
+      hd.special_election_url         AS "specialElectionUrl"
     FROM ${ACTIVE_DATA_SCHEMA}.members m
     LEFT JOIN ${ACTIVE_VIEW_SCHEMA}.mv_current_chamber_since_v1 cs
       ON cs.bioguide_id = m.bioguide_id
      AND cs.chamber::text = m.chamber::text
+    LEFT JOIN LATERAL (
+      SELECT
+        MIN(t.start_year)::int AS service_start_year,
+        MAX(t.end_year)::int   AS service_end_year
+      FROM ${ACTIVE_DATA_SCHEMA}.member_terms t
+      WHERE t.member_id = m.bioguide_id
+        AND t.chamber::text = m.chamber::text
+    ) term_summary ON TRUE
+    LEFT JOIN LATERAL (
+      SELECT
+        ARRAY_AGG(DISTINCT a.congress ORDER BY a.congress DESC) AS available_congresses,
+        MAX(a.congress)::int AS last_congress_served
+      FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW} a
+      WHERE a.bioguide_id = m.bioguide_id
+    ) activity ON TRUE
+    LEFT JOIN LATERAL (
+      SELECT
+        rc.event_date,
+        rc.change_type
+      FROM ${ACTIVE_VIEW_SCHEMA}.v_member_recent_changes_v5 rc
+      WHERE rc.former_member_bioguide_id = m.bioguide_id
+        AND rc.ui_event_type = 'seat_vacancy_opened'
+        AND rc.event_date IS NOT NULL
+      ORDER BY rc.event_date DESC
+      LIMIT 1
+    ) recent_departure ON m.is_current IS FALSE
+    LEFT JOIN sandbox_lemur_ref_v2.house_districts_v1 hd
+      ON hd.congress = COALESCE(activity.last_congress_served, m.congress)
+     AND hd.state_code = m.state_code::text
+     AND hd.district = m.district
+     AND m.chamber::text = 'House of Representatives'
     WHERE m.bioguide_id = $1
-      AND m.is_current IS TRUE
     LIMIT 1;
   `;
 
@@ -255,14 +330,13 @@ export async function getMemberProfile(bioguideId) {
         { bioguideId }
     );
 
-    const profile = rows?.[0] ?? null;
+    const raw = rows?.[0] ?? null;
 
-    if (!profile) {
+    if (!raw) {
         perfLog(`memberRoute:getMemberProfile:total: ${Math.round(performance.now() - totalStart)}ms`, {
             bioguideId,
             found: false,
         });
-
         return null;
     }
 
@@ -272,17 +346,34 @@ export async function getMemberProfile(bioguideId) {
         { bioguideId }
     );
 
-    const aboutStart = performance.now();
-    const about = composeMemberAbout(profile, terms);
+    const availableCongresses = Array.from(
+        new Set(
+            [
+                ...(Array.isArray(raw.availableCongresses)
+                    ? raw.availableCongresses
+                    : []),
+                raw.memberCongress,
+                raw.lastCongressServed,
+            ]
+                .map(Number)
+                .filter(Number.isInteger)
+        )
+    ).sort((a, b) => b - a);
 
-    perfLog(`memberRoute:getMemberProfile:composeAbout: ${Math.round(performance.now() - aboutStart)}ms`, {
-        bioguideId,
-        termsCount: terms?.length ?? 0,
-    });
+    const profile = {
+        ...raw,
+        availableCongresses,
+        lastCongressServed:
+            Number(raw.lastCongressServed) || availableCongresses[0] || Number(raw.memberCongress) || null,
+        memberStatus: raw.isCurrent ? "current" : "former",
+    };
+
+    const about = composeMemberAbout(profile, terms);
 
     perfLog(`memberRoute:getMemberProfile:total: ${Math.round(performance.now() - totalStart)}ms`, {
         bioguideId,
         found: true,
+        isCurrent: profile.isCurrent,
         termsCount: terms?.length ?? 0,
     });
 
@@ -312,6 +403,28 @@ export async function getMemberTerms(bioguideId) {
     return rows ?? [];
 }
 
+function isHouseChamber(chamber) {
+    return chamber === "House" || chamber === "House of Representatives";
+}
+
+function formatServiceEnd(profile) {
+    const basis = String(profile?.serviceEndDateBasis || "");
+    const isAuthoritativeDate = basis.startsWith("house_districts_");
+
+    if (isAuthoritativeDate && profile.serviceEndDate) {
+        const date = new Date(`${profile.serviceEndDate}T00:00:00`);
+        if (!Number.isNaN(date.getTime())) {
+            return date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            });
+        }
+    }
+
+    return profile.serviceEndYear || null;
+}
+
 function composeMemberAbout(profile, terms = []) {
     const {
         name,
@@ -321,34 +434,63 @@ function composeMemberAbout(profile, terms = []) {
         district,
         partyName,
         servingSince,
+        isCurrent,
+        serviceStartYear,
     } = profile;
 
     const backupSince = (() => {
-        const currentSameChamber = terms
-            .filter((t) => t.chamber === chamber && t.endYear == null)
-            .map((t) => t.startYear);
+        const sameChamber = terms
+            .filter((t) => t.chamber === chamber)
+            .map((t) => t.startYear)
+            .filter(Number.isFinite);
 
-        return currentSameChamber.length ? Math.min(...currentSameChamber) : null;
+        return sameChamber.length ? Math.min(...sameChamber) : null;
     })();
 
-    const since = servingSince ?? backupSince;
-    const sinceTxt = since ? ` since ${since}` : "";
+    const since = servingSince ?? serviceStartYear ?? backupSince;
     const stateLabel = state || stateCode;
+    const serviceEnd = formatServiceEnd(profile);
 
-    if (chamber === "House of Representatives") {
+    if (isHouseChamber(chamber)) {
         const distText =
             district == null || district === 0 || district === "AL"
                 ? "at-large district"
                 : `${ordinal(+district)} district`;
 
-        return `${name} is a ${partyName} member of the U.S. House representing ${stateLabel}’s ${distText}${sinceTxt}.`;
+        if (!isCurrent) {
+            const range = since && serviceEnd
+                ? ` from ${since} to ${serviceEnd}`
+                : since
+                    ? ` beginning in ${since}`
+                    : serviceEnd
+                        ? ` until ${serviceEnd}`
+                        : "";
+
+            return `${name} served as a ${partyName} member of the U.S. House representing ${stateLabel}’s ${distText}${range}.`;
+        }
+
+        return `${name} is a ${partyName} member of the U.S. House representing ${stateLabel}’s ${distText}${since ? ` since ${since}` : ""}.`;
     }
 
     if (chamber === "Senate") {
-        return `${name} is a ${partyName} U.S. senator for ${stateLabel}${sinceTxt}.`;
+        if (!isCurrent) {
+            const range = since && serviceEnd
+                ? ` from ${since} to ${serviceEnd}`
+                : since
+                    ? ` beginning in ${since}`
+                    : serviceEnd
+                        ? ` until ${serviceEnd}`
+                        : "";
+
+            return `${name} served as a ${partyName} U.S. senator for ${stateLabel}${range}.`;
+        }
+
+        return `${name} is a ${partyName} U.S. senator for ${stateLabel}${since ? ` since ${since}` : ""}.`;
     }
 
-    return `${name} is a ${partyName} member of Congress from ${stateLabel}.`;
+    return !isCurrent
+        ? `${name} previously served in Congress representing ${stateLabel}.`
+        : `${name} is a ${partyName} member of Congress from ${stateLabel}.`;
 }
 
 function ordinal(n) {
@@ -409,54 +551,74 @@ export async function getMemberChamber(bioguideId) {
     return r.rows?.[0]?.chamber ?? null;
 }
 
-export async function getMemberSubjects(bioguideId, { limit = 12 } = {}) {
+export async function getMemberSubjects(
+    bioguideId,
+    { congress, limit = 12, serviceEndDate = null } = {}
+) {
     const sql = `
-    SELECT subject_name, total_count AS count,
-           sponsored_count, cosponsored_count
-    FROM ${ACTIVE_VIEW_SCHEMA}.mv_member_subject_counts_v1
+    SELECT
+      COALESCE(policy_area_name, legislative_topics[1], 'Uncategorized') AS subject_name,
+      COUNT(DISTINCT bill_id)::int AS total_count,
+      COUNT(DISTINCT bill_id) FILTER (WHERE my_role = 's')::int AS sponsored_count,
+      COUNT(DISTINCT bill_id) FILTER (WHERE my_role = 'c')::int AS cosponsored_count
+    FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
     WHERE bioguide_id = $1
+      AND congress = $2
+      AND association_date IS NOT NULL
+      AND ($3::date IS NULL OR association_date <= $3::date)
+    GROUP BY 1
     ORDER BY total_count DESC, subject_name ASC
-    LIMIT $2;
+    LIMIT $4;
   `;
 
     const { rows } = await timed(
         "memberRoute:getMemberSubjects:query",
-        () => q("member:getSubjects:mv", sql, [bioguideId, limit]),
-        { bioguideId, limit }
+        () => q("member:getSubjects:v3", sql, [bioguideId, congress, serviceEndDate, limit]),
+        { bioguideId, congress, serviceEndDate, limit }
     );
 
     return rows;
 }
 
-export async function getMemberMonthlyStats(bioguideId) {
-    const sql = `
-    SELECT month, sponsored_count AS sponsored, cosponsored_count AS cosponsored
-    FROM ${ACTIVE_VIEW_SCHEMA}.member_monthly_activity_v1
-    WHERE bioguide_id = $1
-    ORDER BY month DESC;
-  `;
+export async function getMemberMonthlyStats(
+    bioguideId,
+    { congress, serviceEndDate = null } = {}
+) {
+    const rows = await getMemberMonthlyActivity(bioguideId, {
+        congress,
+        serviceEndDate,
+    });
 
-    const { rows } = await timed(
-        "memberRoute:getMemberMonthlyStats:query",
-        () => q("member:getMonthlyStats:mv", sql, [bioguideId]),
-        { bioguideId }
-    );
-
-    return rows;
+    return rows.map((row) => ({
+        month: row.month,
+        sponsored: row.sponsored_count,
+        cosponsored: row.cosponsored_count,
+    }));
 }
 
-export async function getMemberMonthlyActivity(bioguideId) {
+export async function getMemberMonthlyActivity(
+    bioguideId,
+    { congress, serviceEndDate = null } = {}
+) {
     const sql = `
-    SELECT month, sponsored_count, cosponsored_count, total_count
-    FROM ${ACTIVE_VIEW_SCHEMA}.member_monthly_activity_v1
+    SELECT
+      date_trunc('month', association_date)::date AS month,
+      COUNT(DISTINCT bill_id) FILTER (WHERE my_role = 's')::int AS sponsored_count,
+      COUNT(DISTINCT bill_id) FILTER (WHERE my_role = 'c')::int AS cosponsored_count,
+      COUNT(DISTINCT bill_id)::int AS total_count
+    FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
     WHERE bioguide_id = $1
+      AND congress = $2
+      AND association_date IS NOT NULL
+      AND ($3::date IS NULL OR association_date <= $3::date)
+    GROUP BY 1
     ORDER BY month ASC;
   `;
 
     const { rows } = await timed(
         "memberRoute:getMemberMonthlyActivity:query",
-        () => q("member:getMonthlyActivity:mv", sql, [bioguideId]),
-        { bioguideId }
+        () => q("member:getMonthlyActivity:v3", sql, [bioguideId, congress, serviceEndDate]),
+        { bioguideId, congress, serviceEndDate }
     );
 
     return rows;
@@ -464,65 +626,69 @@ export async function getMemberMonthlyActivity(bioguideId) {
 
 export async function getMemberBills(
     bioguideId,
-    { limit = 50, offset = 0, congress = 119 } = {}
+    { limit = 50, offset = 0, congress, serviceEndDate = null } = {}
 ) {
     const sql = `
     SELECT ${MEMBER_BILL_ACTIVITY_SELECT}
     FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
-    WHERE bioguide_id = $1 AND congress = $2
-    ORDER BY latest_action_date DESC NULLS LAST, bill_id
-    LIMIT $3 OFFSET $4;
+    WHERE bioguide_id = $1
+      AND congress = $2
+      AND association_date IS NOT NULL
+      AND ($3::date IS NULL OR association_date <= $3::date)
+    ORDER BY association_date DESC NULLS LAST, latest_action_date DESC NULLS LAST, bill_id
+    LIMIT $4 OFFSET $5;
   `;
 
     const { rows } = await timed(
         "memberRoute:getMemberBills:query",
-        () => q("member:getBills:mvBillActivityV2", sql, [bioguideId, congress, limit, offset]),
-        { bioguideId, congress, limit, offset }
+        () => q("member:getBills:mvBillActivityV3", sql, [bioguideId, congress, serviceEndDate, limit, offset]),
+        { bioguideId, congress, serviceEndDate, limit, offset }
     );
 
     return rows.map((row) => toItem(row));
 }
 
-export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = {}) {
+export async function getMemberSponsoredLegislation(
+    bioguideId,
+    { congress, max = 250, serviceEndDate = null } = {}
+) {
     const totalStart = performance.now();
+    const queryLimit = Math.min(max, 1000);
 
     const sql = `
     SELECT ${MEMBER_BILL_ACTIVITY_SELECT}
     FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
-    WHERE bioguide_id = $1 AND my_role = 's'
-    ORDER BY latest_action_date DESC NULLS LAST, bill_id
-    LIMIT $2;
+    WHERE bioguide_id = $1
+      AND congress = $2
+      AND my_role = 's'
+      AND association_date IS NOT NULL
+      AND ($3::date IS NULL OR association_date <= $3::date)
+    ORDER BY association_date DESC NULLS LAST, latest_action_date DESC NULLS LAST, bill_id
+    LIMIT $4;
   `;
-
-    const queryLimit = Math.min(max, 1000);
 
     const { rows } = await timed(
         "memberRoute:getMemberSponsoredLegislation:query",
-        () => q("member:getSponsored:mvBillActivityV2", sql, [bioguideId, queryLimit]),
-        { bioguideId, max, queryLimit }
+        () => q("member:getSponsored:mvBillActivityV3", sql, [bioguideId, congress, serviceEndDate, queryLimit]),
+        { bioguideId, congress, serviceEndDate, max, queryLimit }
     );
 
-    const normalizeStart = performance.now();
     const normalized = rows.map((r) => ({
         ...r,
-        subject: r.policy_area ?? r.legislative_topic ?? "Uncategorized",
+        subject:
+            r.policy_area_name ??
+            (Array.isArray(r.legislative_topics) ? r.legislative_topics[0] : null) ??
+            "Uncategorized",
     }));
-
-    perfLog(`memberRoute:getMemberSponsoredLegislation:normalize: ${Math.round(performance.now() - normalizeStart)}ms`, {
-        bioguideId,
-        rowCount: rows.length,
-    });
-
-    const groupStart = performance.now();
 
     const result = {
         groups: {
             policy_area: groupBySubjectWithCounts(
-                normalized.map((r) => ({ ...r, subject: r.policy_area ?? "Uncategorized" })),
+                normalized.map((r) => ({ ...r, subject: r.policy_area_name ?? "Uncategorized" })),
                 "s"
             ),
             legislative: groupBySubjectWithCounts(
-                normalized.map((r) => ({ ...r, subject: r.legislative_topic ?? "Uncategorized" })),
+                normalized.map((r) => ({ ...r, subject: (Array.isArray(r.legislative_topics) ? r.legislative_topics[0] : null) ?? "Uncategorized" })),
                 "s"
             ),
         },
@@ -530,62 +696,56 @@ export async function getMemberSponsoredLegislation(bioguideId, { max = 250 } = 
         items: normalized.map((r) => toItem(r, "s")),
     };
 
-    perfLog(`memberRoute:getMemberSponsoredLegislation:group: ${Math.round(performance.now() - groupStart)}ms`, {
-        bioguideId,
-        itemCount: normalized.length,
-        policyGroups: result.groups.policy_area.length,
-        legislativeGroups: result.groups.legislative.length,
-        legacyGroups: result.legacy.length,
-    });
-
     perfLog(`memberRoute:getMemberSponsoredLegislation:total: ${Math.round(performance.now() - totalStart)}ms`, {
         bioguideId,
+        congress,
         itemCount: normalized.length,
     });
 
     return result;
 }
 
-export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } = {}) {
+export async function getMemberCosponsoredLegislation(
+    bioguideId,
+    { congress, max = 250, serviceEndDate = null } = {}
+) {
     const totalStart = performance.now();
+    const queryLimit = Math.min(max, 1000);
 
     const sql = `
     SELECT ${MEMBER_BILL_ACTIVITY_SELECT}
     FROM ${ACTIVE_VIEW_SCHEMA}.${MEMBER_BILL_ACTIVITY_VIEW}
-    WHERE bioguide_id = $1 AND my_role = 'c'
-    ORDER BY latest_action_date DESC NULLS LAST, bill_id
-    LIMIT $2;
+    WHERE bioguide_id = $1
+      AND congress = $2
+      AND my_role = 'c'
+      AND association_date IS NOT NULL
+      AND ($3::date IS NULL OR association_date <= $3::date)
+    ORDER BY association_date DESC NULLS LAST, latest_action_date DESC NULLS LAST, bill_id
+    LIMIT $4;
   `;
-
-    const queryLimit = Math.min(max, 1000);
 
     const { rows } = await timed(
         "memberRoute:getMemberCosponsoredLegislation:query",
-        () => q("member:getCosponsored:mvBillActivityV2", sql, [bioguideId, queryLimit]),
-        { bioguideId, max, queryLimit }
+        () => q("member:getCosponsored:mvBillActivityV3", sql, [bioguideId, congress, serviceEndDate, queryLimit]),
+        { bioguideId, congress, serviceEndDate, max, queryLimit }
     );
 
-    const normalizeStart = performance.now();
     const normalized = rows.map((r) => ({
         ...r,
-        subject: r.policy_area ?? r.legislative_topic ?? "Uncategorized",
+        subject:
+            r.policy_area_name ??
+            (Array.isArray(r.legislative_topics) ? r.legislative_topics[0] : null) ??
+            "Uncategorized",
     }));
-
-    perfLog(`memberRoute:getMemberCosponsoredLegislation:normalize: ${Math.round(performance.now() - normalizeStart)}ms`, {
-        bioguideId,
-        rowCount: rows.length,
-    });
-
-    const groupStart = performance.now();
 
     const result = {
         groups: {
             policy_area: groupBySubjectWithCounts(
-                normalized.map((r) => ({ ...r, subject: r.policy_area ?? "Uncategorized" })),
+                normalized.map((r) => ({ ...r, subject: r.policy_area_name ?? "Uncategorized" })),
                 "c"
             ),
             legislative: groupBySubjectWithCounts(
-                normalized.map((r) => ({ ...r, subject: r.legislative_topic ?? "Uncategorized" })),
+                normalized.map((r) => ({ ...r, subject: (Array.isArray(r.legislative_topics) ? r.legislative_topics[0] : null) ?? "Uncategorized" })),
                 "c"
             ),
         },
@@ -593,16 +753,9 @@ export async function getMemberCosponsoredLegislation(bioguideId, { max = 250 } 
         items: normalized.map((r) => toItem(r, "c")),
     };
 
-    perfLog(`memberRoute:getMemberCosponsoredLegislation:group: ${Math.round(performance.now() - groupStart)}ms`, {
-        bioguideId,
-        itemCount: normalized.length,
-        policyGroups: result.groups.policy_area.length,
-        legislativeGroups: result.groups.legislative.length,
-        legacyGroups: result.legacy.length,
-    });
-
     perfLog(`memberRoute:getMemberCosponsoredLegislation:total: ${Math.round(performance.now() - totalStart)}ms`, {
         bioguideId,
+        congress,
         itemCount: normalized.length,
     });
 

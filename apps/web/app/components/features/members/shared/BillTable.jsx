@@ -31,9 +31,18 @@ export default function BillTable({
                 const id = billId || pick(it, ["href", "url", "title"]) || cryptoRandomId();
                 const title = pick(it, ["displayTitle", "display_title", "title", "displayyTitle", "id"]) || String(id);
                 const type = (pick(it, ["type", "bill_type"]) ? String(pick(it, ["type", "bill_type"])).toUpperCase() : "") || "";
-                const sortDateRaw = pick(it, ["latestActionDate", "latest_action_date", "introducedAt", "introduced_date", "date"]);
-                const date = sortDateRaw ? new Date(sortDateRaw) : null;
+                const associationRaw = pick(it, ["associationDate", "association_date"]);
+                const associationDate = associationRaw ? new Date(associationRaw) : null;
+                const latestActionRaw = pick(it, ["latestActionDate", "latest_action_date"]);
+                const latestActionDate = latestActionRaw ? new Date(latestActionRaw) : null;
                 const introducedRaw = pick(it, ["introducedAt", "introduced_date"]);
+                const sortDateRaw = associationRaw || latestActionRaw || introducedRaw || pick(it, ["date"]);
+                const date = sortDateRaw ? new Date(sortDateRaw) : null;
+                const associationIsActive = pick(it, ["associationIsActive", "association_is_active"]) !== false;
+                const associationStatusLabel = pick(it, ["associationStatusLabel", "association_status_label"]);
+                const withdrawnRaw = pick(it, ["cosponsorWithdrawnDate", "cosponsor_withdrawn_date"]);
+                const withdrawnDate = withdrawnRaw ? new Date(withdrawnRaw) : null;
+                const isOriginalCosponsor = Boolean(pick(it, ["isOriginalCosponsor", "is_original_cosponsor"]));
                 const kinds = normalizeKinds(it);
 
                 const links = resolveLinks(it, billId);
@@ -52,6 +61,15 @@ export default function BillTable({
                     date,
                     dateRaw: sortDateRaw,
                     introducedRaw,
+                    latestActionRaw,
+                    latestActionDate,
+                    associationRaw,
+                    associationDate,
+                    associationIsActive,
+                    associationStatusLabel,
+                    withdrawnRaw,
+                    withdrawnDate,
+                    isOriginalCosponsor,
                     kinds,
                     links,
                     summaryShort: pick(it, ["summaryShort", "summary_short"]),
@@ -209,7 +227,7 @@ export default function BillTable({
                                                 <div className="billtableCard__metaLine">
                                                     <span>{formatBillCode(r)}</span>
                                                     <span aria-hidden="true">•</span>
-                                                    <span>{r.date ? r.date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : r.dateRaw || "—"}</span>
+                                                    <span>Latest action {r.latestActionDate ? r.latestActionDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : r.latestActionRaw || "—"}</span>
                                                     {r.statusLabel ? <><span aria-hidden="true">•</span><span>{r.statusLabel}</span></> : null}
                                                 </div>
                                             </div>
@@ -222,6 +240,13 @@ export default function BillTable({
                                                 ) : null}
                                             </div>
                                         </div>
+                                        {r.associationDate ? (
+                                            <div className="billtableCard__association">
+                                                {r.associationStatusLabel || "Associated"} {r.associationDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                                                {r.isOriginalCosponsor ? " · Original cosponsor" : ""}
+                                                {r.withdrawnDate ? ` · Withdrawn ${r.withdrawnDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}` : ""}
+                                            </div>
+                                        ) : null}
                                         <div className="billtableCard__topic" title={r.subject}>
                                             <Icon className="billtable__topicIcon" size={15} strokeWidth={2} aria-hidden="true" style={{ color: swatch }} />
                                             <span>{topicMeta.short || r.subject}</span>
@@ -371,14 +396,21 @@ export default function BillTable({
                                                     <div className="billtable__detailsMain">
                                                         <div className="billtable__detailsType">{formatBillCode(r)}</div>
                                                         <div className="billtable__detailsDate">
-                                                            {r.date
-                                                                ? r.date.toLocaleDateString(undefined, {
+                                                            Latest action {r.latestActionDate
+                                                                ? r.latestActionDate.toLocaleDateString(undefined, {
                                                                     month: "short",
                                                                     day: "numeric",
                                                                     year: "numeric",
                                                                 })
-                                                                : r.dateRaw || "—"}
+                                                                : r.latestActionRaw || "—"}
                                                         </div>
+                                                        {r.associationDate ? (
+                                                            <div className="billtable__association">
+                                                                {r.associationStatusLabel || "Associated"} {r.associationDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                                                                {r.isOriginalCosponsor ? " · Original cosponsor" : ""}
+                                                                {r.withdrawnDate ? ` · Withdrawn ${r.withdrawnDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}` : ""}
+                                                            </div>
+                                                        ) : null}
                                                         {r.statusLabel ? <div className="billtable__status">{r.statusLabel}</div> : null}
                                                     </div>
 

@@ -23,7 +23,6 @@ import "@/app/styles/active/core/ll3.filters.css";
 import "@/app/styles/active/core/ll3.explorer-shell.css";
 import "@/app/styles/active/members/ll3.members.page.css";
 import "@/app/styles/active/members/ll3.members.updates.css";
-// import "@/app/styles/active/members/ll3.members.updates.additions.css";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -35,7 +34,6 @@ export default async function MemberDirectoryPage() {
     getViewsFreshness([
       "mv_member_directory_v2",
       "v_house_seats_current_v1",
-      "v_member_recent_changes_v4",
     ]),
   ]);
 

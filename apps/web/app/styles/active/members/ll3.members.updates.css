@@ -405,6 +405,25 @@
     }
 }
 
+.ll3-memberUpdateCard__links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 10px;
+}
+
+.ll3-memberUpdateCard__links .ll3-memberUpdateCard__link {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.ll3-memberUpdateCard__link--secondary {
+    color: var(--llm3-muted);
+    font-weight: 750;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     .ll3-memberUpdateCard,

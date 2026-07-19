@@ -1,0 +1,84 @@
+/* Historical/former-member profile additions. */
+.llmp3-congressSelector {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    padding: 8px 10px;
+    border: 1px solid var(--llm3-border);
+    border-radius: 14px;
+    background: var(--llm3-surface-soft);
+    color: var(--llm3-muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.llmp3-congressSelector__select {
+    min-width: 150px;
+}
+
+.llmp3-badge--former {
+    background: color-mix(in srgb, var(--llm3-accent) 14%, var(--llm3-surface));
+    border: 1px solid color-mix(in srgb, var(--llm3-accent) 36%, var(--llm3-border));
+    color: var(--llm3-ink);
+}
+
+.llmp3-kv--vacant .llmp3-kv__value {
+    color: var(--llm3-party-R-text);
+}
+
+.llmp3-historicalNotice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid color-mix(in srgb, var(--llm3-accent) 28%, var(--llm3-border));
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--llm3-accent) 8%, var(--llm3-surface));
+    color: var(--llm3-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+.llmp3-historicalNotice>div {
+    display: grid;
+    gap: 2px;
+}
+
+.llmp3-historicalNotice strong {
+    color: var(--llm3-ink);
+}
+
+.llm3-tabs__historicalDisclosure {
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--llm3-accent);
+    border-radius: 0 10px 10px 0;
+    background: var(--llm3-surface-soft);
+    color: var(--llm3-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+.billtableCard__association,
+.billtable__association {
+    color: var(--llm3-muted);
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+.billtableCard__association {
+    margin-top: 8px;
+}
+
+@media (max-width: 700px) {
+    .llmp3-congressSelector {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .llmp3-congressSelector__select {
+        min-width: 0;
+        flex: 1;
+    }
+}
