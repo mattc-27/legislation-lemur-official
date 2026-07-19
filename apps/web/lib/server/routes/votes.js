@@ -42,7 +42,7 @@ async function timed(label, fn, meta = {}) {
 /* House member votes */
 export async function getHouseMemberVotes(
   bioguideId,
-  { limit = 1000, offset = 0, verify = true } = {}
+  { limit = 1000, offset = 0, verify = true, congress = null } = {}
 ) {
   const totalStart = performance.now();
 
@@ -74,8 +74,9 @@ export async function getHouseMemberVotes(
      AND vm.session         = hv.session
      AND vm.rollcall_number = hv.rollcall_number
     WHERE hv.member_id = $1
+      AND ($2::int IS NULL OR hv.congress = $2)
     ORDER BY vm.voted_at DESC NULLS LAST
-    LIMIT $2 OFFSET $3;
+    LIMIT $3 OFFSET $4;
   `;
 
   const aggSql = `
@@ -89,19 +90,20 @@ export async function getHouseMemberVotes(
      AND vm.chamber         = hv.chamber
      AND vm.session         = hv.session
      AND vm.rollcall_number = hv.rollcall_number
-    WHERE hv.member_id = $1;
+    WHERE hv.member_id = $1
+      AND ($2::int IS NULL OR hv.congress = $2);
   `;
 
   const [dataRes, aggRes] = await Promise.all([
     timed("votes:getHouseMemberVotes:data", () =>
-      q("house:getVotes:data", dataSql, [bioguideId, limit, offset]), {
+      q("house:getVotes:data", dataSql, [bioguideId, congress, limit, offset]), {
       bioguideId,
       limit,
       offset,
     }
     ),
     timed("votes:getHouseMemberVotes:agg", () =>
-      q("house:getVotes:agg", aggSql, [bioguideId]), {
+      q("house:getVotes:agg", aggSql, [bioguideId, congress]), {
       bioguideId,
     }
     ),
@@ -133,7 +135,7 @@ export async function getHouseMemberVotes(
 /* Senate member votes */
 export async function getSenateMemberVotes(
   bioguideId,
-  { limit = 1000, offset = 0 } = {}
+  { limit = 1000, offset = 0, congress = null } = {}
 ) {
   const totalStart = performance.now();
 
@@ -190,13 +192,14 @@ export async function getSenateMemberVotes(
       ON (pm.congress, pm.session, pm.rollcall_number) =
          (p.congress, p.session, p.rollcall_number)
     WHERE p.bioguide_id = $1
+      AND ($2::int IS NULL OR p.congress = $2)
     ORDER BY p.voted_at DESC
-    LIMIT $2
-    OFFSET $3;
+    LIMIT $3
+    OFFSET $4;
   `;
 
   const { rows } = await timed("votes:getSenateMemberVotes:query", () =>
-    q("member:getSenateVotes", sql, [bioguideId, limit, offset]), {
+    q("member:getSenateVotes", sql, [bioguideId, congress, limit, offset]), {
     bioguideId,
     limit,
     offset,

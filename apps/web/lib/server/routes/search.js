@@ -266,23 +266,93 @@ export async function searchMembers({
 export async function getMemberRecentChanges({ limit = 12 } = {}) {
   const sql = `
     SELECT
-      detected_at AS "detectedAt",
-      ui_event_type AS "eventType",
+      change_event_id,
+      ui_event_type,
+      change_type,
+      event_date,
       headline,
       subheadline,
-      badge_label AS "badge",
-      state_code AS "stateCode",
+      badge_label,
+      state_code,
       district,
       chamber,
-      district_id AS "districtId",
-      is_vacant AS "isVacant",
-      special_election_date AS "specialElectionDate"
-    FROM sandbox_lemur_app_views_v1.v_member_recent_changes_v4
-    ORDER BY detected_at DESC
+      vacancy_reason,
+      vacancy_effective_date,
+      special_election_scheduled,
+      special_election_date,
+      special_election_url,
+      former_member_bioguide_id,
+      current_member_bioguide_id,
+      former_member_name,
+      current_member_name,
+      target_kind,
+      target_href,
+      target_label,
+      secondary_target_kind,
+      secondary_target_href,
+      secondary_target_label
+    FROM sandbox_lemur_app_views_v1.v_member_recent_changes_v5
+    ORDER BY event_date DESC
     LIMIT $1;
   `;
 
-  const { rows } = await q("members:getRecentChanges", sql, [limit]);
-  return rows;
-}
+  const parsedLimit = Number.parseInt(String(limit ?? ""), 10);
+  const safeLimit = Math.max(1, Math.min(Number.isInteger(parsedLimit) ? parsedLimit : 12, 50));
+  const { rows } = await q("members:getRecentChanges:v5", sql, [safeLimit]);
 
+  return rows.map((row) => ({
+    id: row.change_event_id,
+    kind: row.ui_event_type,
+    changeType: row.change_type,
+    occurredAt: row.event_date,
+
+    headline: row.headline,
+    subheadline: row.subheadline,
+    badge: row.badge_label,
+
+    stateCode: row.state_code,
+    district: row.district,
+    chamber: row.chamber,
+
+    vacancy:
+      row.ui_event_type === "seat_vacancy_opened"
+        ? {
+          reason: row.vacancy_reason,
+          effectiveDate: row.vacancy_effective_date,
+          specialElectionScheduled: row.special_election_scheduled,
+          specialElectionDate: row.special_election_date,
+          specialElectionUrl: row.special_election_url,
+        }
+        : null,
+
+    formerMember: row.former_member_bioguide_id
+      ? {
+        bioguideId: row.former_member_bioguide_id,
+        name: row.former_member_name,
+      }
+      : null,
+
+    currentMember: row.current_member_bioguide_id
+      ? {
+        bioguideId: row.current_member_bioguide_id,
+        name: row.current_member_name,
+      }
+      : null,
+
+    target: row.target_href
+      ? {
+        kind: row.target_kind,
+        href: row.target_href,
+        label: row.target_label || "View details",
+      }
+      : null,
+
+    secondaryTarget: row.secondary_target_href
+      ? {
+        kind: row.secondary_target_kind,
+        href: row.secondary_target_href,
+        label: row.secondary_target_label || "More details",
+      }
+      : null,
+  }));
+}

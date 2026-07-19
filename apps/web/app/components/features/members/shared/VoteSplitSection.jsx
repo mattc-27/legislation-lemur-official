@@ -96,9 +96,11 @@ export default function VotesSplitSection({
             data-mode={mode}
             aria-label="Votes overview"
         >
-            <div className="llm3-votesSplit__row llm3-votesSplit__row--alignment">
-                <VoteAlignmentPanel value={alignmentValue} chamber={chamberLabel} mode={mode} />
-            </div>
+            {alignmentValue ? (
+                <div className="llm3-votesSplit__row llm3-votesSplit__row--alignment">
+                    <VoteAlignmentPanel value={alignmentValue} chamber={chamberLabel} mode={mode} />
+                </div>
+            ) : null}
 
             <div className="llm3-votesSplit__row llm3-votesSplit__row--activity llmp3-card">
                 <div className="llmp3-card__head llm3-cardHead llm3-votesSplit__rightHead">

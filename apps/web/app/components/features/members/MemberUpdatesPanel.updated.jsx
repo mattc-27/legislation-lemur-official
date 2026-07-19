@@ -16,25 +16,11 @@ function formatDate(date) {
     });
 }
 
-function hrefFor(change) {
-    if (change.isVacant) {
-        const params = new URLSearchParams();
-
-        if (change.stateCode) params.set("state", change.stateCode);
-        if (change.district != null) params.set("district", change.district);
-
-        params.set("seatStatus", "vacant");
-        return `/search?${params.toString()}`;
-    }
-
-    return "/member";
-}
-
 function keyFor(change, index) {
     return [
-        change.eventType,
-        change.districtId || change.stateCode,
-        change.detectedAt,
+        change.kind,
+        change.id || change.stateCode,
+        change.occurredAt,
         change.headline,
         index,
     ]
@@ -83,23 +69,41 @@ function MemberUpdateCard({ change }) {
                 <div className="ll3-memberUpdateCard__meta">
                     {locationLabel ? <span>{locationLabel}</span> : null}
 
-                    {locationLabel && change.detectedAt ? (
+                    {locationLabel && change.occurredAt ? (
                         <span className="ll3-metaSep" aria-hidden="true">
                             •
                         </span>
                     ) : null}
 
-                    {change.detectedAt ? (
+                    {change.occurredAt ? (
                         <>
                             <Clock3 size={13} aria-hidden="true" />
-                            <span>{formatDate(change.detectedAt)}</span>
+                            <span>{formatDate(change.occurredAt)}</span>
                         </>
                     ) : null}
                 </div>
 
-                <Link href={hrefFor(change)} className="ll3-memberUpdateCard__link">
-                    View details →
-                </Link>
+                {change.target || change.secondaryTarget ? (
+                    <div className="ll3-memberUpdateCard__links">
+                        {change.target ? (
+                            <Link
+                                href={change.target.href}
+                                className="ll3-memberUpdateCard__link"
+                            >
+                                {change.target.label} →
+                            </Link>
+                        ) : null}
+
+                        {change.secondaryTarget ? (
+                            <Link
+                                href={change.secondaryTarget.href}
+                                className="ll3-memberUpdateCard__link ll3-memberUpdateCard__link--secondary"
+                            >
+                                {change.secondaryTarget.label} →
+                            </Link>
+                        ) : null}
+                    </div>
+                ) : null}
             </div>
         </article>
     );
