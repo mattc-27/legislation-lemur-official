@@ -44,6 +44,7 @@ export default function MemberTabs({
     freshnessAsOf = null,
     freshnessPerView = null,
     showPerViewFreshness = false,
+    historicalDisclosure = null,
     mode = "page",
 }) {
     const isPanel = mode === "panel";
@@ -134,6 +135,10 @@ export default function MemberTabs({
                     </div>
                 </div>
             </div>
+
+            {historicalDisclosure ? (
+                <p className="llm3-tabs__historicalDisclosure">{historicalDisclosure}</p>
+            ) : null}
 
             <div className="llm3-tabs__topbar llm3-tabs__topbar--split">
                 <div className="llm3-tabs__modeTabs" role="tablist" aria-label="Topic mode">
